@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using HabitLogger;
 using HabitLoggerLibrary;
 
@@ -102,8 +103,11 @@ static void AddNewLog(HabitLoggerConnection connection)
 {
     Console.WriteLine("Adding new log...");
     Console.WriteLine();
+
+    var date = GetDate();
+
     int cupsOfWater = GetCupsOfWater();
-    bool isSuccess = connection.CreateLog(cupsOfWater);
+    bool isSuccess = connection.CreateLog(date, cupsOfWater);
     
     if (isSuccess)
     {
@@ -113,6 +117,26 @@ static void AddNewLog(HabitLoggerConnection connection)
         Console.WriteLine("Unable to create new log.");
     }
     Console.WriteLine();
+}
+
+static string GetDate()
+{
+    Console.WriteLine("Enter the date (Format: dd-mm-yy): ");
+    string? date = Console.ReadLine();
+    while (!ValidateDate(date))
+    {
+        Console.WriteLine("Incorrect input for date. Must be dd-mm-yy.");
+        Console.WriteLine("Enter date again:");
+        date = Console.ReadLine();
+    }
+    return date!;
+}
+
+static bool ValidateDate(string? date)
+{
+
+    return DateTime.TryParseExact(date, "dd-mm-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d);
+
 }
 
 static int GetCupsOfWater()

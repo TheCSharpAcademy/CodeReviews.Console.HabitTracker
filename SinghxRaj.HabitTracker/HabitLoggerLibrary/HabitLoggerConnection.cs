@@ -3,16 +3,6 @@
 namespace HabitLoggerLibrary;
 
 
-// A wrapper class for the SqliteConnection class which connects
-// to the Habit Logger data base.
-//
-// This class is only fitted for the HabitLogger Application. This will
-// cause errors if two instances of this clas are made within the same scope.
-// This class is not suited for multi-threaded uses.
-//
-// This class interacts with the database using raw sql statements which leaves
-// it prone to sql injection. While this is a not big deal for this application,
-// it is still something to be aware of.
 public class HabitLoggerConnection : IDisposable
 {
     private static string DatabaseFilePath { get; } = @"Data Source=habitlogger.db";
@@ -31,20 +21,19 @@ public class HabitLoggerConnection : IDisposable
         string createTable =
                 @"CREATE TABLE IF NOT EXISTS DRINK_WATER (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Date DATETIME,
+                Date TEXT,
                 Quantity INTEGER
                 )";
 
         ExecuteNonQuery(createTable);
     }
 
-    // Creates a new record in the database.
     // Returns it was successfully created.
-    public bool CreateLog(int cupsOfWater)
+    public bool CreateLog(string date, int cupsOfWater)
     {
         string createLog =
             $@"INSERT INTO DRINK_WATER (Date, Quantity)
-            VALUES (CURRENT_DATE, '{cupsOfWater}')";
+            VALUES ('{date}', {cupsOfWater})";
 
         return ExecuteNonQuery(createLog);
     }
@@ -65,14 +54,13 @@ public class HabitLoggerConnection : IDisposable
         while (reader.Read())
         {
             int id = reader.GetInt32(0);
-            string date = reader.GetDateTime(1).ToString().Split(" ")[0];
+            string date = reader.GetString(1);
             int quantity = reader.GetInt32(2);
             logs.Add(Tuple.Create(id, date, quantity));
         }
         return logs;
     }
 
-    // Deletes a record in the database.
     // Returns whether the record was successfully deleted.
     public bool DeleteLog(int id)
     {
@@ -81,7 +69,6 @@ public class HabitLoggerConnection : IDisposable
         return ExecuteNonQuery(deleteLog);
     }
 
-    // Updates a record in the database.
     // Returns whether the record was successfully updated.
     public bool UpdateLog(int id, int cupsOfWater)
     {
