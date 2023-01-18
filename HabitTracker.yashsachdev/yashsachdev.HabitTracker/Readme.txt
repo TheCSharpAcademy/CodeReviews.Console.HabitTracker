@@ -17,4 +17,17 @@ Challenges:
 1.Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
 2.Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
 
+Approach :
+
+1. Defining the entites using DataTable?
+	- User 
+	- Habit 
+	- Habit 
+	Reference - https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/
+				https://www.c-sharpcorner.com/UploadFile/mahesh/ado-net-disconnected-classes/
+
+What Did I Learn:
+
+Disconnected classes: DataTable, DataSet , DataRelation.
+
 
