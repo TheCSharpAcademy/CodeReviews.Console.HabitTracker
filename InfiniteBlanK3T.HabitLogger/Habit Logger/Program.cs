@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-
-namespace Habit_Logger
+﻿namespace Habit_Logger
 {
     class Program
     {
@@ -30,9 +28,7 @@ namespace Habit_Logger
                 Console.WriteLine("-------------------------------");
                 Console.WriteLine("Type 6 to CREATE YOUR HABIT LOGGER !");
                 Console.WriteLine("-------------------------------\n");
-
                 Console.Write("Your option: ");
-
 
                 string? commandInput = Console.ReadLine();
 
@@ -60,37 +56,7 @@ namespace Habit_Logger
                         database.Report(database.Name);
                         break;
                     case "6":
-
-
-                        Console.Clear();
-                        Console.Write("Name of habit you want to track: ");
-
-                        string? newHabit = Console.ReadLine();
-
-                        while (newHabit == null)
-                        {
-                            Console.Write("Invalid input please try again: ");
-                            newHabit = Console.ReadLine();
-                        }
-                        newHabit = newHabit.Replace(" ", "_");
-
-                        Console.WriteLine("Habit can't be tracked by time.");
-                        Console.WriteLine("Only in quantity (Distance, Quantity, Calories, Laps, e.g.)");
-                        Console.Write("Name of the the value you want to track: ");
-
-                        string? newUserValue = Console.ReadLine();
-
-                        while (newUserValue == null)
-                        {
-                            Console.Write("Invalid input please try again: ");
-                            newUserValue = Console.ReadLine();
-                        }
-
-                        newUserValue = newUserValue.Replace(" ", "_");
-
-
-                        database.Name = database.CreateNewRecord(newHabit, newUserValue);
-
+                        database.Name = database.CreateNewRecord();
                         MainMenu();
                         break;
                     default:
