@@ -1,10 +1,13 @@
-﻿using Microsoft.Data.Sqlite;
-using System.Data;
+﻿
 namespace yashsachdev.HabitTracker;
 public class DatabaseClass
 {
+    public DatabaseClass()
+    {
+
+    }
     private readonly string _connectionString;
-    public DatabaseClass(string connectionString)
+    public DatabaseClass(string connectionString):this()
     {
         _connectionString = connectionString;
     }
@@ -69,20 +72,8 @@ public class DatabaseClass
                 connection.Close();
         }
     }
-    public void UserLogin()
-    {
-        Console.WriteLine("1. Login");
-        Console.WriteLine("2. Register");
-        Console.WriteLine("Enter your choice:");
-        string op = Console.ReadLine(); 
-        switch (op)
-        {
-            case "1": ExistingUserLogin(); break;
-            case "2": NewRegistration(); break;
-            default: Console.WriteLine("you have entered a wrong choice");break;
-        }
-}
-    private void NewRegistration()
+   
+    public void NewRegistration()
     {
         using (SqliteConnection cnn = new SqliteConnection(_connectionString))
         {
@@ -115,7 +106,7 @@ public class DatabaseClass
 
         }
     }
-    private void ExistingUserLogin()
+    public void ExistingUserLogin()
     {
         Console.WriteLine("Enter Email:");
         string email = Console.ReadLine();
@@ -130,7 +121,7 @@ public class DatabaseClass
                 command.CommandText = "SELECT COUNT(*) FROM User WHERE Email = @Email AND Password = @Password";
                 command.Parameters.AddWithValue("@Email", email);
                 command.Parameters.AddWithValue("@Password", password);
-                int result = (int)command.ExecuteScalar();
+                Int64 result = (Int64)command.ExecuteScalar();
                 if (result > 0)
                 {
                     Console.WriteLine("Welcome!!!");
