@@ -8,14 +8,44 @@ using System.Threading.Tasks;
 namespace ConsoleHabitTracker.kraven88.DataAccess;
 internal class SqliteDB
 {
-    public readonly string connectionString;
+    private readonly string connectionString;
 
-	public SqliteDB(string connectionString)
+	public SqliteDB(string nameOfDatabase)
 	{
-		this.connectionString = connectionString;
+		connectionString = $"Data Source={nameOfDatabase}.db; Version=3";
+        if (File.Exists(nameOfDatabase) == false)
+            CreateDatabase(nameOfDatabase);
+
+    }
+
+	public void CreateDatabase(string NameOfDatabase)
+	{
+		SQLiteConnection.CreateFile(NameOfDatabase);
+		CreateHabitsTable();
+		CreateDailyProgressTable();
 	}
 
-	public void CreateTable(string tableName)
+    private void CreateDailyProgressTable()
+    {
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText =
+				@"CREATE TABLE IF NOT EXISTS DailyProgress(
+					Id INTEGER [PRIMARY KEY] [NOT NULL] [AUTOINCREMENT],
+					HabitId INTEGER [NOT NULL],
+					Date TEXT,
+					Quantity INTEGER,
+					DailyGoal INTEGER)";
+
+			sql.ExecuteNonQuery();
+
+			connection.Close();
+		}
+    }
+
+    public void CreateHabitsTable()
 	{
 		using (var connection = new SQLiteConnection(connectionString))
 		{
@@ -23,10 +53,10 @@ internal class SqliteDB
 
 			var sql = connection.CreateCommand();
 			sql.CommandText = 
-				@$"CREATE TABLE IF NOT EXISTS {tableName}(
+				@"CREATE TABLE IF NOT EXISTS Habits(
 					Id INTEGER [PRIMARY KEY] [NOT NULL] [AUTOINCREMENT],
-					Date TEXT,
-					Quantity INTEGER);";
+					Name TEXT,
+					Unit TEXT);";
 
 			sql.ExecuteNonQuery();
 
