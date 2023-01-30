@@ -124,4 +124,22 @@ internal class SqliteDB
 			return habit;
 		}
 	}
+
+    internal void SetNewGoal(Habit habit, int newGoal)
+    {
+        using(var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+
+			sql.CommandText = $@"
+				UPDATE DailyProgress
+				SET DailyGoal = {newGoal}
+				WHERE HabitId = {habit.Id} AND Date = ""{DateOnly.FromDateTime(DateTime.Now):dd.MM.yyyy}""";
+
+			sql.ExecuteNonQuery();
+
+			connection.Close();
+		}
+    }
 }
