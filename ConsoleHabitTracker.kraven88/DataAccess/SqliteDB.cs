@@ -38,7 +38,7 @@ internal class SqliteDB
                 @"CREATE TABLE ""DailyProgress""(
 				""Id""    INTEGER NOT NULL,
 				""HabitId""   INTEGER NOT NULL,
-				""Date""  TEXT,
+				""Date""  TEXT UNIQUE,
 				""Quantity""  INTEGER,
 				""DailyGoal"" INTEGER,
 				PRIMARY KEY(""Id"" AUTOINCREMENT)
@@ -125,7 +125,7 @@ internal class SqliteDB
 		}
 	}
 
-    internal void SetNewGoal(Habit habit, int newGoal)
+    internal void SaveNewGoal(Habit habit, int newGoal)
     {
         using(var connection = new SQLiteConnection(connectionString))
 		{
@@ -141,5 +141,51 @@ internal class SqliteDB
 
 			connection.Close();
 		}
+    }
+
+    internal void SaveProgress(Habit habit, string date, int newProgress)
+    {
+        using(var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText =
+				$@"INSERT INTO DailyProgress (HabitId, Date, Quantity, DailyGoal)
+				VALUES ({habit.Id}, ""{date}"", {newProgress}, {LoadCurrentGoal(habit)})
+				ON CONFLICT (Date) DO UPDATE SET Quantity = Quantity + {newProgress}";
+
+			sql.ExecuteNonQuery();
+
+			connection.Close();
+		}
+    }
+
+    internal int LoadCurrentGoal(Habit habit)
+    {
+		int output = 5;
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+
+			sql.CommandText =
+				$@"SELECT DailyGoal
+				FROM DailyProgress
+				ORDER BY Date DESC
+				LIMIT 1";
+
+			var reader = sql.ExecuteReader();
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+				{
+					output = reader.GetInt32(0);
+				}
+			}
+
+			connection.Close();
+		}
+
+		return output;
     }
 }

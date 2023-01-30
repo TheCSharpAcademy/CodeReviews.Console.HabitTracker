@@ -29,7 +29,7 @@ internal class Menu
             var select = Console.ReadKey(true).KeyChar;
             isRunning = select switch
             {
-                //'1' => UpdateDailyProgress(),
+                '1' => UpdateDailyProgress(),
                 //'2' => ViewCurrentProgress(),
                 //'3' => ViewEntireProgress(),
                 '4' => SetDailyGoal(),
@@ -40,15 +40,32 @@ internal class Menu
 
     }
 
+    private bool UpdateDailyProgress()
+    {
+        HeaderText();
+        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
+
+        var newProgress = AskForInteger($"Please enter the number of ({habit.UnitOfMeasurement}) since your last update: ");
+        if (newProgress == 0) return true;
+        else
+        {
+            db.SaveProgress(habit, today, newProgress);
+            Console.WriteLine("Progress succesfuly updated.");
+            Console.ReadKey();
+            return true;
+        }
+    }
+
     private bool SetDailyGoal()
     {
         HeaderText();
-        Console.WriteLine($"{habit.Name} current daily goal is {habit.CurrentGoal} {habit.UnitOfMeasurement}");
+        var currentGoal = db.LoadCurrentGoal(habit);
+        Console.WriteLine($"{habit.Name} current daily goal is {currentGoal} {habit.UnitOfMeasurement}");
 
         var newGoal = AskForInteger("Enter new daily goal (0 to leave unchanged): ");
 
         if (newGoal == 0) return true;
-        else db.SetNewGoal(habit, newGoal);
+        else db.SaveNewGoal(habit, newGoal);
 
         return true;
         
