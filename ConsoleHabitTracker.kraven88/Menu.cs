@@ -34,7 +34,8 @@ internal class Menu
                 //'3' => ViewEntireProgress(),
                 '4' => SetDailyGoal(),
                 '0' => false,
-            };
+                _ => true
+            }; ;
         }
 
     }
@@ -42,12 +43,12 @@ internal class Menu
     private bool SetDailyGoal()
     {
         HeaderText();
-        Console.WriteLine($"{habit.Name} current daily goal is {habit.ProgressList[0].DailyGoal} {habit.UnitOfMeasurement}");
+        Console.WriteLine($"{habit.Name} current daily goal is {habit.CurrentGoal} {habit.UnitOfMeasurement}");
 
         var newGoal = AskForInteger("Enter new daily goal (0 to leave unchanged): ");
 
         if (newGoal == 0) return true;
-        else habit.ProgressList[0].DailyGoal = newGoal;
+        else db.SetNewGoal(habit, newGoal);
 
         return true;
         
@@ -57,7 +58,7 @@ internal class Menu
     {
         Console.Write(message);
         var input = Console.ReadLine()!.Trim();
-        if (int.TryParse(input, out var value) && value > 0)
+        if (int.TryParse(input, out var value) && value >= 0)
             return value;
         else
         {
