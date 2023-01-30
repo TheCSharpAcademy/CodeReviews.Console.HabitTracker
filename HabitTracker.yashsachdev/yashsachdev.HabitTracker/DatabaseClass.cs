@@ -53,8 +53,7 @@ public class DatabaseClass
                     sb.Append("CREATE TABLE IF NOT EXISTS User (User_Id INTEGER PRIMARY KEY AUTOINCREMENT,Name VARCHAR(45) NOT NULL,Email VARCHAR(45) NOT NULL,Password VARCHAR(8) NOT NULL);");
                     sb.Append("CREATE TABLE IF NOT EXISTS Habit(Habit_Id INTEGER PRIMARY KEY AUTOINCREMENT,Habit_Name VARCHAR(45) NOT NULL,unit VARCHAR(45) NOT NULL);");
                     sb.Append("CREATE TABLE IF NOT EXISTS Habit_Enroll( Users_Id INTEGER NOT NULL, Habit_Id INTEGER NOT NULL,date DATETIME NULL, PRIMARY KEY (Users_Id, Habit_Id), CONSTRAINT fk_Habit_Enroll_Users FOREIGN KEY (Users_Id) REFERENCES Users (User_Id) ON DELETE NO ACTION ON UPDATE CASCADE, CONSTRAINT fk_Habit_Enroll_Habit FOREIGN KEY (Habit_Id) REFERENCES Habit (Habit_Id) ON DELETE NO ACTION ON UPDATE CASCADE);");
-                    sb.Append("CREATE TABLE IF NOT EXISTS Progess(Progess_Id INTEGER  NOT NULL PRIMARY KEY  AUTOINCREMENT, Habit_Id INT NOT NULL, User_Id INT NOT NULL, Progess_Percentage DECIMAL(5,2) NULL, Progess_Status VARCHAR(45) NULL,Habit_Habit_Id INT NOT NULL, CONSTRAINT fk_Progress_Habit FOREIGN KEY (Habit_Habit_Id) REFERENCES Habit(Habit_Id) ON DELETE NO ACTION ON UPDATE CASCADE);");
-                    sb.Append("CREATE TABLE IF NOT EXISTS Goal(Goal_Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Target_Date DATETIME NOT NULL, Habit_Habit_Id INT NOT NULL, Goal_Achievement TINYINT NULL, CONSTRAINT fk_Goal_Habit FOREIGN KEY (Habit_Habit_Id) REFERENCES Habit(Habit_Id) ON DELETE NO ACTION ON UPDATE CASCADE);");
+               
                     command.CommandText = sb.ToString();
                     command.ExecuteNonQuery();
 
