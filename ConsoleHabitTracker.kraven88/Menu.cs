@@ -30,7 +30,7 @@ internal class Menu
             isRunning = select switch
             {
                 '1' => UpdateDailyProgress(),
-                //'2' => ViewCurrentProgress(),
+                '2' => ViewCurrentProgress(),
                 //'3' => ViewEntireProgress(),
                 '4' => SetDailyGoal(),
                 '0' => false,
@@ -38,6 +38,21 @@ internal class Menu
             }; ;
         }
 
+    }
+
+    private bool ViewCurrentProgress()
+    {
+        HeaderText();
+        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
+
+        db.SaveProgress(habit, today, 0);   // This ensures that, when selected, Current Progress will always include current day data
+        habit = db.LoadHabit(habit.Name);
+
+        var current = habit.ProgressList.LastOrDefault();
+        Console.WriteLine($"Todays progress for {habit.Name}: [ {current.Quantity} / {current.DailyGoal} ] {habit.UnitOfMeasurement}.");
+        Console.ReadLine();
+
+        return true;
     }
 
     private bool UpdateDailyProgress()
