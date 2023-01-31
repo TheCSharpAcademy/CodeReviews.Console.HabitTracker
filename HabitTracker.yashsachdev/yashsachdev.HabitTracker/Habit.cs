@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace yashsachdev.HabitTracker;
 
-namespace yashsachdev.HabitTracker
+public class Habit
 {
-    public class Habit
+    public Habit() { }  
+    public Habit(int habit_Id) 
+    { 
+        Habit_Id = habit_Id; habitEnrolls = new List<HabitEnroll> ();
+    }
+    public int Habit_Id { get; set; }
+    public string Habit_Name { get; set; }
+    public string Unit { get; set; }
+    public List<HabitEnroll> habitEnrolls { get; set; }
+    public bool Validate()
     {
-        public Habit() { }  
-        public Habit(int Habit_Id) { }
+        bool isvalue = true;
+        if (string.IsNullOrEmpty(Habit_Name) && string.IsNullOrEmpty(Unit)) isvalue = false ;
 
-        public int Habit_Id { get; set; }
-        public string Habit_Name { get; set; }
-        public string unit { get; set; }
-
-        public bool Validate()
-        {
-            bool isvalue = true;
-            if (string.IsNullOrEmpty(Habit_Name) && string.IsNullOrEmpty(unit)) isvalue = false ;
-
-            return isvalue;
-        }
+        return isvalue;
     }
 }

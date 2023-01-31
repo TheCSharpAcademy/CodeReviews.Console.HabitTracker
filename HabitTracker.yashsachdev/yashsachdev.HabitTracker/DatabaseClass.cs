@@ -1,19 +1,11 @@
-﻿
-namespace yashsachdev.HabitTracker;
-public class DatabaseClass
+﻿namespace yashsachdev.HabitTracker;
+public static class DatabaseClass
 {
-    public DatabaseClass()
+    public static readonly string connectionString = "Habit-Tracker.db";
+    
+    public static void CreateDatabase()
     {
-
-    }
-    private readonly string _connectionString;
-    public DatabaseClass(string connectionString):this()
-    {
-        _connectionString = connectionString;
-    }
-    public void CreateDatabase(string databaseName)
-    {
-        using (SqliteConnection connection = new SqliteConnection(_connectionString))
+        using (SqliteConnection connection = new SqliteConnection(connectionString))
         {
             try
             {
@@ -37,11 +29,11 @@ public class DatabaseClass
 
         }
     }
-    public void CreateTable()
+    public static void CreateTable()
     {
         try
         {
-            using (SqliteConnection connection = new SqliteConnection(_connectionString))
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
             {
 
                 connection.Open();
@@ -51,9 +43,9 @@ public class DatabaseClass
                     StringBuilder sb = new StringBuilder();
 
                     sb.Append("CREATE TABLE IF NOT EXISTS User (User_Id INTEGER PRIMARY KEY AUTOINCREMENT,Name VARCHAR(45) NOT NULL,Email VARCHAR(45) NOT NULL,Password VARCHAR(8) NOT NULL);");
-                    sb.Append("CREATE TABLE IF NOT EXISTS Habit(Habit_Id INTEGER PRIMARY KEY AUTOINCREMENT,Habit_Name VARCHAR(45) NOT NULL,unit VARCHAR(45) NOT NULL);");
-                    sb.Append("CREATE TABLE IF NOT EXISTS Habit_Enroll( Users_Id INTEGER NOT NULL, Habit_Id INTEGER NOT NULL,date DATETIME NULL, PRIMARY KEY (Users_Id, Habit_Id), CONSTRAINT fk_Habit_Enroll_Users FOREIGN KEY (Users_Id) REFERENCES Users (User_Id) ON DELETE NO ACTION ON UPDATE CASCADE, CONSTRAINT fk_Habit_Enroll_Habit FOREIGN KEY (Habit_Id) REFERENCES Habit (Habit_Id) ON DELETE NO ACTION ON UPDATE CASCADE);");
-               
+                    sb.Append("CREATE TABLE IF NOT EXISTS Habit(Habit_Id INTEGER PRIMARY KEY AUTOINCREMENT,Habit_Name VARCHAR(45) NOT NULL,Unit VARCHAR(45) NOT NULL);");
+                    sb.Append("CREATE TABLE IF NOT EXISTS Habit_Enroll( User_Id INTEGER NOT NULL, Habit_Id INTEGER NOT NULL,date DATETIME NULL, PRIMARY KEY (User_Id, Habit_Id), CONSTRAINT fk_Habit_Enroll_Users FOREIGN KEY (Users_Id) REFERENCES User (User_Id) ON DELETE NO ACTION ON UPDATE CASCADE, CONSTRAINT fk_Habit_Enroll_Habit FOREIGN KEY (Habit_Id) REFERENCES Habit (Habit_Id) ON DELETE NO ACTION ON UPDATE CASCADE);");
+
                     command.CommandText = sb.ToString();
                     command.ExecuteNonQuery();
 
@@ -67,73 +59,8 @@ public class DatabaseClass
         }
         finally
         {
-            using (SqliteConnection connection = new SqliteConnection(_connectionString))
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
                 connection.Close();
         }
-    }
-   
-    public void NewRegistration()
-    {
-        using (SqliteConnection cnn = new SqliteConnection(_connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                Console.WriteLine("Enter your Name");
-                string Name = Console.ReadLine();
-                Console.WriteLine("enter your email Id");
-                string Email = Console.ReadLine();
-                Console.WriteLine("Enter ur password");
-                string Password = Console.ReadLine();  
-                command.CommandText = "INSERT INTO User(Name,Email,Password) VALUES(@Name,@Email,@Password)";
-                command.Parameters.AddWithValue("@Name", Name);
-                command.Parameters.AddWithValue("@Email", Email);
-                command.Parameters.AddWithValue("@Password", Password);
-                int result = command.ExecuteNonQuery();
-                if (result > 0)
-                { 
-                    Console.WriteLine("User " + Name + " created successfully");
-                }
-                else
-                {
-
-                    Console.WriteLine("Failed to create user " + Name);
-                }
-
-            }
-
-        }
-    }
-    public void ExistingUserLogin()
-    {
-        Console.WriteLine("Enter Email:");
-        string email = Console.ReadLine();
-        Console.WriteLine("Enter password:");
-        string password = Console.ReadLine();
-        using (SqliteConnection cnn = new SqliteConnection(_connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                command.CommandText = "SELECT COUNT(*) FROM User WHERE Email = @Email AND Password = @Password";
-                command.Parameters.AddWithValue("@Email", email);
-                command.Parameters.AddWithValue("@Password", password);
-                Int64 result = (Int64)command.ExecuteScalar();
-                if (result > 0)
-                {
-                    Console.WriteLine("Welcome!!!");
-                }
-                else
-                {
-                    Console.WriteLine("Invalid User");
-                }
-                cnn.Close();
-            }
-
-        }
-
-
     }
 }

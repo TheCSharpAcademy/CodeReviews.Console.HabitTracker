@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace yashsachdev.HabitTracker;
 
-namespace yashsachdev.HabitTracker
+public class HabitEnroll
 {
-    public class HabitEnroll
-    {
-
-    }
+    public User User { get; set; }
+    public int User_Id { get; set; }
+    public Habit habit { get; set; }
+    public int Habit_Id { get; set; }
+    public DateTime Date { get; set; } 
 }
