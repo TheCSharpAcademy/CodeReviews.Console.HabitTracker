@@ -1,13 +1,8 @@
 ﻿using ConsoleHabitTracker.kraven88.DataAccess;
 using ConsoleHabitTracker.kraven88.Models;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleHabitTracker.kraven88;
+
 internal class Menu
 {
     private SqliteDB db;

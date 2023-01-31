@@ -1,22 +1,15 @@
 ﻿using ConsoleHabitTracker.kraven88.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Globalization;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleHabitTracker.kraven88.DataAccess;
+
 internal class SqliteDB
 {
     private readonly string connectionString;
 
 	public SqliteDB(string nameOfDatabase)
 	{
-		connectionString = $"Data Source={nameOfDatabase}.db; Version=3";
+		connectionString = $"Data Source={nameOfDatabase}; Version=3";
         if (File.Exists(nameOfDatabase) == false)
             CreateDatabase(nameOfDatabase);
 
