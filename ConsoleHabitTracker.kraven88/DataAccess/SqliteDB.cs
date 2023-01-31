@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -28,13 +29,21 @@ internal class SqliteDB
 		CreateDailyProgressTable();
 	}
 
-    private void CreateDailyProgressTable()
-    {
+	private void SaveData(string sqlCommand)
+	{
 		using (var connection = new SQLiteConnection(connectionString))
 		{
 			connection.Open();
 			var sql = connection.CreateCommand();
-			sql.CommandText =
+			sql.CommandText = sqlCommand;
+			sql.ExecuteNonQuery();
+			connection.Close();
+		}
+	}
+	
+    private void CreateDailyProgressTable()
+    {
+		var sql =
                 @"CREATE TABLE ""DailyProgress""(
 				""Id""    INTEGER NOT NULL,
 				""HabitId""   INTEGER NOT NULL,
@@ -43,36 +52,77 @@ internal class SqliteDB
 				""DailyGoal"" INTEGER,
 				PRIMARY KEY(""Id"" AUTOINCREMENT)
 				)";
-			
 
-			sql.ExecuteNonQuery();
-
-			connection.Close();
-		}
+        SaveData(sql);
     }
 
-    public void CreateHabitsTable()
+    private void CreateHabitsTable()
 	{
-		using (var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-
-			var sql = connection.CreateCommand();
-			sql.CommandText =
+		var sql =
                 @"CREATE TABLE ""Habits"" (
 				""Id""	INTEGER NOT NULL,
 				""Name""	TEXT,
 				""Unit""	TEXT,
 				PRIMARY KEY(""Id"" AUTOINCREMENT)
 				)";
-
-			sql.ExecuteNonQuery();
-
-			connection.Close();
-		}
+        
+		SaveData(sql);
 	}
 
-	public Habit LoadHabit(string habitName)
+	internal List<DailyProgress> LoadCurrentProgress(Habit habit)
+	{
+        var sql =
+                $@"SELECT *
+				FROM DailyProgress
+				WHERE HabitId = {habit.Id}
+				ORDER BY Date DESC
+				LIMIT 1;";
+
+		return LoadProgressList(sql);
+    }
+
+	internal List<DailyProgress> LoadAllProgress(Habit habit)
+	{
+		var sql =
+                $@"SELECT *
+				FROM DailyProgress
+				WHERE HabitId = {habit.Id};";
+
+		return LoadProgressList(sql);
+    }
+
+	private List<DailyProgress> LoadProgressList(string sqlCommand)
+	{
+		var progressList = new List<DailyProgress>();
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText = sqlCommand;
+
+            var reader = sql.ExecuteReader();
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+				{
+					var daily = new DailyProgress();
+					daily.Id = reader.GetInt32(0);
+					daily.Date = DateOnly.ParseExact(reader.GetString(2), "dd.MM.yyyy");
+					daily.Quantity = reader.GetInt32(3);
+					daily.DailyGoal = reader.GetInt32(4);
+
+					progressList.Add(daily);
+				}
+			} else throw new ArgumentException($"Couldn't find Progress List.");
+
+			reader.Close();
+			connection.Close();
+        }
+
+		return progressList;
+	}
+
+	internal Habit LoadHabit(string habitName)
 	{
 		using (var connection = new SQLiteConnection(connectionString))
 		{
@@ -100,126 +150,45 @@ internal class SqliteDB
 
 			reader.Close();
 
-			sql.CommandText =
-				$@"SELECT dp.*
-				FROM DailyProgress dp
-				INNER JOIN Habits h ON dp.HabitId=h.Id
-				WHERE h.Name=""{habitName}"";";
-
-			reader = sql.ExecuteReader();
-			if (reader.HasRows)
-			{
-				while (reader.Read())
-				{
-					var daily = new DailyProgress();
-					daily.Id = reader.GetInt32(0);
-					daily.Date = DateOnly.ParseExact(reader.GetString(2), "dd.MM.yyyy");
-					daily.Quantity = reader.GetInt32(3);
-					daily.DailyGoal = reader.GetInt32(4);
-
-					habit.ProgressList.Add(daily);
-				}
-			}
-
 			return habit;
 		}
 	}
 
     internal void SaveNewGoal(Habit habit, int newGoal)
     {
-        using(var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
-
-			sql.CommandText = $@"
-				UPDATE DailyProgress
+		var sql = 
+				$@"UPDATE DailyProgress
 				SET DailyGoal = {newGoal}
 				WHERE HabitId = {habit.Id} AND Date = ""{DateOnly.FromDateTime(DateTime.Now):dd.MM.yyyy}""";
 
-			sql.ExecuteNonQuery();
-
-			connection.Close();
-		}
+		SaveData(sql);
     }
 
     internal void SaveProgress(Habit habit, string date, int newProgress)
     {
-        using(var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
-			sql.CommandText =
-				$@"INSERT INTO DailyProgress (HabitId, Date, Quantity, DailyGoal)
-				VALUES ({habit.Id}, ""{date}"", {newProgress}, {LoadCurrentGoal(habit)})
+        var sql =
+                $@"INSERT INTO DailyProgress (HabitId, Date, Quantity, DailyGoal)
+				VALUES ({habit.Id}, ""{date}"", {newProgress}, {habit.ProgressList.First().DailyGoal})
 				ON CONFLICT (Date) DO UPDATE SET Quantity = Quantity + {newProgress}";
 
-			sql.ExecuteNonQuery();
-
-			connection.Close();
-		}
-    }
-
-    internal int LoadCurrentGoal(Habit habit)
-    {
-		int output = 5;
-		using (var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
-
-			sql.CommandText =
-				$@"SELECT DailyGoal
-				FROM DailyProgress
-				ORDER BY Date DESC
-				LIMIT 1";
-
-			var reader = sql.ExecuteReader();
-			if (reader.HasRows)
-			{
-				while (reader.Read())
-				{
-					output = reader.GetInt32(0);
-				}
-			}
-
-			connection.Close();
-		}
-
-		return output;
+		SaveData(sql);
     }
 
     internal void DeleteCurrentProgress(Habit habit, string date)
     {
-		using (var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
+		var sql =
+                $@"DELETE FROM DailyProgress
+				WHERE Date = ""{date}"" AND HabitId = {habit.Id}";
 
-			sql.CommandText =
-				$@"DELETE FROM DailyProgress
-				WHERE Date = ""{date}""";
-
-			sql.ExecuteNonQuery();
-
-			connection.Close();
-		}
+		SaveData(sql);
     }
 
     internal void DeleteAllProgress(Habit habit)
     {
-		using (var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
-
-			sql.CommandText =
-				$@"DELETE FROM DailyProgress
+		var sql =
+                $@"DELETE FROM DailyProgress
 				WHERE HabitId = {habit.Id}";
 
-			sql.ExecuteNonQuery();
-
-			connection.Close();
-		}
+		SaveData(sql);
     }
 }

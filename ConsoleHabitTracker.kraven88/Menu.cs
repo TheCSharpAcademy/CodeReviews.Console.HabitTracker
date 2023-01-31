@@ -91,14 +91,14 @@ internal class Menu
     private bool ViewEntireProgress()
     {
         HeaderText();
-        habit = db.LoadHabit(habit.Name);
-
+        habit.ProgressList = db.LoadAllProgress(habit);
         var progress = habit.ProgressList.OrderByDescending(x => x.Date);
+
         foreach (var day in progress)
-        {
             Console.WriteLine($" Day: {day.Date}, [ {day.Quantity} / {day.DailyGoal} ] {habit.UnitOfMeasurement}");
-        }
+
         Console.ReadKey();
+
         return true;
     }
 
@@ -108,10 +108,10 @@ internal class Menu
         var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
 
         db.SaveProgress(habit, today, 0);   // This ensures that, when selected, Current Progress will always include current day data
-        habit = db.LoadHabit(habit.Name);
+        habit.ProgressList = db.LoadCurrentProgress(habit);
 
         var current = habit.ProgressList.LastOrDefault();
-        Console.WriteLine($"Todays progress for {habit.Name}: [ {current.Quantity} / {current.DailyGoal} ] {habit.UnitOfMeasurement}.");
+        Console.WriteLine($"Todays progress for {habit.Name}: [ {habit.ProgressList.First().Quantity} / {habit.ProgressList.First().DailyGoal} ] {habit.UnitOfMeasurement}.");
         Console.ReadLine();
 
         return true;
@@ -121,6 +121,7 @@ internal class Menu
     {
         HeaderText();
         var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
+        habit.ProgressList = db.LoadCurrentProgress(habit);
 
         var newProgress = AskForInteger($"Please enter the number of ({habit.UnitOfMeasurement}) since your last update: ");
         if (newProgress == 0) return true;
@@ -136,8 +137,8 @@ internal class Menu
     private bool SetDailyGoal()
     {
         HeaderText();
-        var currentGoal = db.LoadCurrentGoal(habit);
-        Console.WriteLine($"{habit.Name} current daily goal is {currentGoal} {habit.UnitOfMeasurement}");
+        habit.ProgressList = db.LoadCurrentProgress(habit);
+        Console.WriteLine($"{habit.Name} current daily goal is {habit.ProgressList.First().DailyGoal} {habit.UnitOfMeasurement}");
 
         var newGoal = AskForInteger("Enter new daily goal (0 to leave unchanged): ");
 
