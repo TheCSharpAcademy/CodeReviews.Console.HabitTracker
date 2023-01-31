@@ -188,4 +188,38 @@ internal class SqliteDB
 
 		return output;
     }
+
+    internal void DeleteCurrentProgress(Habit habit, string date)
+    {
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+
+			sql.CommandText =
+				$@"DELETE FROM DailyProgress
+				WHERE Date = ""{date}""";
+
+			sql.ExecuteNonQuery();
+
+			connection.Close();
+		}
+    }
+
+    internal void DeleteAllProgress(Habit habit)
+    {
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+
+			sql.CommandText =
+				$@"DELETE FROM DailyProgress
+				WHERE HabitId = {habit.Id}";
+
+			sql.ExecuteNonQuery();
+
+			connection.Close();
+		}
+    }
 }

@@ -31,13 +31,75 @@ internal class Menu
             {
                 '1' => UpdateDailyProgress(),
                 '2' => ViewCurrentProgress(),
-                //'3' => ViewEntireProgress(),
+                '3' => ViewEntireProgress(),
                 '4' => SetDailyGoal(),
+                '5' => DeleteCurrentProgress(),
+                '6' => DeleteAllProgress(),
                 '0' => false,
                 _ => true
-            }; ;
+            };
         }
 
+    }
+
+    private bool DeleteAllProgress()
+    {
+        var validCoice = !ViewEntireProgress();
+        Console.WriteLine("Are you sure you want to delete all records? (Yes/No)");
+
+        while (validCoice == false)
+        {
+            var answer = Console.ReadLine()!.Trim().ToLower();
+            if (answer == "yes")
+            {
+                db.DeleteAllProgress(habit);
+                validCoice = true;
+                Console.WriteLine(nl + "All records has been deleted.");
+            }
+            else if (answer == "no")
+            {
+                validCoice = true;
+            }
+        }
+
+        return true;
+    }
+
+    private bool DeleteCurrentProgress()
+    {
+        var validChoice = !ViewCurrentProgress();
+        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
+        Console.WriteLine("Are you sure you want to delete that record? (Yes/No)");
+        while (validChoice == false)
+        {
+            var answer = Console.ReadLine()!.Trim().ToLower();
+            if (answer == "yes")
+            {
+                db.DeleteCurrentProgress(habit, today);
+                validChoice = true;
+                Console.WriteLine(nl + "Record deleted.");
+                Console.ReadLine();
+            } else if (answer == "no")
+            {
+                validChoice = true;
+            }
+        }
+
+        return true;
+    }
+
+    private bool ViewEntireProgress()
+    {
+        HeaderText();
+        habit = db.LoadHabit(habit.Name);
+
+        var progress = habit.ProgressList.OrderByDescending(x => x.Date);
+        foreach (var day in progress)
+        {
+            Console.WriteLine($" Day: {day.Date}, [ {day.Quantity} / {day.DailyGoal} ] {habit.UnitOfMeasurement}");
+        }
+        Console.ReadKey();
+        return true;
     }
 
     private bool ViewCurrentProgress()
@@ -114,6 +176,8 @@ internal class Menu
         Console.WriteLine("  2 - View todays progress");
         Console.WriteLine("  3 - View entire progress");
         Console.WriteLine("  4 - Set habit daily goal");
+        Console.WriteLine("  5 - Delete current progress");
+        Console.WriteLine("  6 - Delete all progress");
 
         Console.WriteLine($"{nl}  0 - Quit");
     }
