@@ -63,6 +63,7 @@ internal class SqliteDB
 				""Id""	INTEGER NOT NULL,
 				""Name""	TEXT,
 				""Unit""	TEXT,
+				""CurrentGoal""	INTEGER,
 				PRIMARY KEY(""Id"" AUTOINCREMENT)
 				)";
         
@@ -144,6 +145,7 @@ internal class SqliteDB
 					habit.Id = reader.GetInt32(0);
 					habit.Name = reader.GetString(1);
 					habit.UnitOfMeasurement = reader.GetString(2);
+					habit.CurrectGoal = reader.GetInt32(3);
 				}
 			}
 			else throw new ArgumentException($"Couldn't find habit with the name: {habitName}");
@@ -162,13 +164,19 @@ internal class SqliteDB
 				WHERE HabitId = {habit.Id} AND Date = ""{DateOnly.FromDateTime(DateTime.Now):dd.MM.yyyy}""";
 
 		SaveData(sql);
+
+		sql =
+			$@"UPDATE Habits
+			SET CurrentGoal = {newGoal}
+			WHERE Id = {habit.Id}";
+		SaveData(sql);
     }
 
     internal void SaveProgress(Habit habit, string date, int newProgress)
     {
         var sql =
                 $@"INSERT INTO DailyProgress (HabitId, Date, Quantity, DailyGoal)
-				VALUES ({habit.Id}, ""{date}"", {newProgress}, {habit.ProgressList.First().DailyGoal})
+				VALUES ({habit.Id}, ""{date}"", {newProgress}, {habit.CurrectGoal})
 				ON CONFLICT (Date) DO UPDATE SET Quantity = Quantity + {newProgress}";
 
 		SaveData(sql);
@@ -188,6 +196,48 @@ internal class SqliteDB
 		var sql =
                 $@"DELETE FROM DailyProgress
 				WHERE HabitId = {habit.Id}";
+
+		SaveData(sql);
+    }
+
+    internal List<Habit> LoadExistingHabits()
+    {
+		var habits = new List<Habit>();
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText = "SELECT * FROM Habits";
+
+			var reader = sql.ExecuteReader();
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+				{
+					var habit = new Habit();
+					habit.Id = reader.GetInt32(0);
+					habit.Name = reader.GetString(1);
+					habit.UnitOfMeasurement = reader.GetString(2);
+					habit.CurrectGoal = reader.GetInt32(3);
+
+					habits.Add(habit);
+				}
+			}
+			else
+				throw new ArgumentException("No habits found.");
+
+			reader.Close();
+			connection.Close();
+		}
+
+		return habits;
+    }
+
+    internal void SaveNewHabit(string name, string unit)
+    {
+		var sql = 
+				$@"INSERT INTO Habits (Name, Unit)
+				VALUES (""{name}"", ""{unit}"")";
 
 		SaveData(sql);
     }
