@@ -1,5 +1,6 @@
 ﻿using ConsoleHabitTracker.kraven88.Models;
 using System.Data.SQLite;
+using System.Net.WebSockets;
 
 namespace ConsoleHabitTracker.kraven88.DataAccess;
 
@@ -40,7 +41,7 @@ internal class SqliteDB
                 @"CREATE TABLE ""DailyProgress""(
 				""Id""    INTEGER NOT NULL,
 				""HabitId""   INTEGER NOT NULL,
-				""Date""  TEXT UNIQUE,
+				""Date""  TEXT,
 				""Quantity""  INTEGER,
 				""DailyGoal"" INTEGER,
 				PRIMARY KEY(""Id"" AUTOINCREMENT)
@@ -167,12 +168,33 @@ internal class SqliteDB
 
     internal void SaveProgress(Habit habit, string date, int newProgress)
     {
-        var sql =
-                $@"INSERT INTO DailyProgress (HabitId, Date, Quantity, DailyGoal)
-				VALUES ({habit.Id}, ""{date}"", {newProgress}, {habit.CurrectGoal})
-				ON CONFLICT (Date) DO UPDATE SET Quantity = Quantity + {newProgress}";
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText =
+				$@"SELECT * FROM DailyProgress WHERE HabitId = {habit.Id} AND Date = ""{date}""";
+			var reader = sql.ExecuteReader();
+			if (reader.HasRows)
+			{
+				reader.Close();
+				sql.CommandText =
+					$@"UPDATE DailyProgress
+					SET Quantity = Quantity + {newProgress}
+					WHERE HabitId = {habit.Id} AND Date = ""{date}""";
+				sql.ExecuteNonQuery();
+			}
+			else
+			{
+				reader.Close();
+				sql.CommandText =
+					$@"INSERT INTO DailyProgress (HabitId, Date, Quantity, DailyGoal)
+					VALUES ({habit.Id}, ""{date}"", {newProgress}, {habit.CurrectGoal})";
+				sql.ExecuteNonQuery();
+			}
 
-		SaveData(sql);
+			connection.Close();
+		}
     }
 
     internal void DeleteCurrentProgress(Habit habit, string date)
