@@ -26,18 +26,18 @@ The purpose of this app, is to learn and implement CRUD operations with SQLite d
  - The App comes with a self-contain database, which is created on first startup. It is a single file, named "HabitTrackerDB" and can be copied and shared among users. If the database will become corrupted (or deleted) a new one will be created when the app is launched.
  - The app allows for creation of countless habits to track and viewed via a Console UI 
  
-    ![An image of the Main Menu](/assets/images/consoleUI.png "Main Menu")
+    ![An image of the Main Menu](./assets/images/consoleUI.png "Main Menu")
     
 - The app always assumes the data enter into it is from the present day (because you know... it's suppose to be a habit).
 - The app allows for viewing, updating and deleting present day information, or all information. Such operation is performed for each habit separately.
 - List view is provided for both current day progress and entire progress so far
 
-    ![Habit Progress view](/assets/images/habitList.png "Selected Habit progress as a list")
+    ![Habit Progress view](./assets/images/habitList.png "Selected Habit progress as a list")
     
 - Habit Logger also allows for deletion of either present day information, or entire progress.
 - Additional confirmation is required when deleting records, to prevent unfortunate accidents :)
 
-    ![Habit Delete confirmation screen](/assets/images/deleteProgress.png "Delete confirmation screen")
+    ![Habit Delete confirmation screen](./assets/images/deleteProgress.png "Delete confirmation screen")
 
 
 ## Technology Used  
