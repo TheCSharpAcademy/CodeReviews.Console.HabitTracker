@@ -23,26 +23,17 @@ internal class Menu
             isRunning = SelectHabit(habits);
         }
     }
-
-    private bool SelectHabit(List<Habit> habits)
+    private int AskForInteger(string message)
     {
-        Console.Write(nl + "Select: ");
-        var select = Console.ReadLine()!.Trim().ToLower();
-
-        if (select == "new") 
-            return CreateNewHabit();
-
-        else if (select == "0") 
-            return false;
-
-        else if (int.TryParse(select, out int number) && number > 0 && number <= habits.Count)
+        Console.Write(message);
+        var input = Console.ReadLine()!.Trim();
+        if (int.TryParse(input, out var value) && value >= 0)
+            return value;
+        else
         {
-            var habit = habits.Where(x => x.Id == number).First();
-            return HabitMenu(habit);
+            Console.WriteLine("Invalid input. Please enter a whole, positive number." + nl);
+            return AskForInteger(message);
         }
-        else 
-            return true;
-
     }
 
     private bool CreateNewHabit()
@@ -90,6 +81,63 @@ internal class Menu
         return isCorrect;
     }
 
+    private bool DeleteAllProgress(Habit habit)
+    {
+        var validCoice = !ViewEntireProgress(habit);
+        Console.WriteLine("Are you sure you want to delete all records? (Yes/No)");
+
+        while (validCoice == false)
+        {
+            var answer = Console.ReadLine()!.Trim().ToLower();
+            if (answer == "yes")
+            {
+                db.DeleteAllProgress(habit);
+                validCoice = true;
+                Console.WriteLine(nl + "All records has been deleted.");
+            }
+            else if (answer == "no")
+                validCoice = true;
+        }
+
+        return true;
+    }
+    
+    private bool DeleteCurrentProgress(Habit habit)
+    {
+        var validChoice = !ViewCurrentProgress(habit);
+        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
+        Console.WriteLine("Are you sure you want to delete that record? (Yes/No)");
+
+        while (validChoice == false)
+        {
+            var answer = Console.ReadLine()!.Trim().ToLower();
+            if (answer == "yes")
+            {
+                db.DeleteCurrentProgress(habit, today);
+                validChoice = true;
+                Console.WriteLine(nl + "Record deleted.");
+                Console.ReadLine();
+            } 
+            else if (answer == "no")
+                validChoice = true;
+        }
+
+        return true;
+    }
+    
+    private void DisplayHabitMenuItems(Habit habit)
+    {
+        HeaderText(habit.Name);
+        Console.WriteLine("  1 - Update daily progress");
+        Console.WriteLine("  2 - View todays progress");
+        Console.WriteLine("  3 - View entire progress");
+        Console.WriteLine("  4 - Set habit daily goal");
+        Console.WriteLine("  5 - Delete current progress");
+        Console.WriteLine("  6 - Delete all progress");
+
+        Console.WriteLine($"{nl}  0 - Return");
+    }
+    
     private void DisplayMainMenuItems()
     {
         HeaderText();
@@ -113,7 +161,7 @@ internal class Menu
                               "Type \"0\" to quit the Application");
         }
     }
-
+    
     internal bool HabitMenu(Habit habit)
     {
         var isRunning = true;
@@ -135,47 +183,91 @@ internal class Menu
         }
         return true;
     }
-
-    private bool DeleteAllProgress(Habit habit)
+    
+    private void HeaderText(string habitName = "Habit")
     {
-        var validCoice = !ViewEntireProgress(habit);
-        Console.WriteLine("Are you sure you want to delete all records? (Yes/No)");
+        Console.Clear();
+        Console.WriteLine("============================");
+        Console.WriteLine($"   {habitName} Logger by kraven   ");
+        Console.WriteLine("============================" + nl);
+    }
+    
+    private bool SelectHabit(List<Habit> habits)
+    {
+        Console.Write(nl + "Select: ");
+        var select = Console.ReadLine()!.Trim().ToLower();
 
-        while (validCoice == false)
+        if (select == "new") 
+            return CreateNewHabit();
+
+        else if (select == "0") 
+            return false;
+
+        else if (int.TryParse(select, out int number) && number > 0 && number <= habits.Count)
         {
-            var answer = Console.ReadLine()!.Trim().ToLower();
-            if (answer == "yes")
-            {
-                db.DeleteAllProgress(habit);
-                validCoice = true;
-                Console.WriteLine(nl + "All records has been deleted.");
-            }
-            else if (answer == "no")
-                validCoice = true;
+            var habit = habits.Where(x => x.Id == number).First();
+            return HabitMenu(habit);
+        }
+        else 
+            return true;
+
+    }
+    
+    private bool SetDailyGoal(Habit habit)
+    {
+        HeaderText(habit.Name);
+        
+        Console.WriteLine($"{habit.Name} current daily goal is {habit.CurrectGoal} {habit.UnitOfMeasurement}");
+
+        var newGoal = AskForInteger("Enter new daily goal (0 to leave unchanged): ");
+
+        if (newGoal == 0) return true;
+        else
+        {
+            db.SaveNewGoal(habit, newGoal);
+            habit.CurrectGoal = newGoal;
         }
 
         return true;
+        
     }
-
-    private bool DeleteCurrentProgress(Habit habit)
+    
+    private bool UpdateDailyProgress(Habit habit)
     {
-        var validChoice = !ViewCurrentProgress(habit);
+        HeaderText(habit.Name);
         var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
-        Console.WriteLine("Are you sure you want to delete that record? (Yes/No)");
 
-        while (validChoice == false)
+        var newProgress = AskForInteger($"Please enter the number of ({habit.UnitOfMeasurement}) since your last update: ");
+        if (newProgress == 0) return true;
+        else
         {
-            var answer = Console.ReadLine()!.Trim().ToLower();
-            if (answer == "yes")
-            {
-                db.DeleteCurrentProgress(habit, today);
-                validChoice = true;
-                Console.WriteLine(nl + "Record deleted.");
-                Console.ReadLine();
-            } 
-            else if (answer == "no")
-                validChoice = true;
+            db.SaveProgress(habit, today, newProgress);
+            Console.WriteLine("Progress succesfuly updated.");
+            Console.ReadKey();
+            return true;
         }
+    }
+    
+    private bool ViewCurrentProgress(Habit habit)
+    {
+        HeaderText(habit.Name);
+        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
+
+        //db.SaveProgress(habit, today, 0);   // This ensures that, when selected, Current Progress will always include current day data
+        try
+        { 
+            habit.ProgressList = db.LoadCurrentProgress(habit);
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Oops! Something went wrong: {ex.Message}");
+            Console.ReadKey();
+            return true;
+        }
+
+        var current = habit.ProgressList.LastOrDefault();
+        Console.WriteLine($"Todays progress for {habit.Name}: [ {habit.ProgressList.First().Quantity} / {habit.ProgressList.First().DailyGoal} ] {habit.UnitOfMeasurement}.");
+        Console.ReadLine();
 
         return true;
     }
@@ -202,97 +294,3 @@ internal class Menu
 
         return true;
     }
-
-    private bool ViewCurrentProgress(Habit habit)
-    {
-        HeaderText(habit.Name);
-        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
-
-        //db.SaveProgress(habit, today, 0);   // This ensures that, when selected, Current Progress will always include current day data
-        try
-        { 
-            habit.ProgressList = db.LoadCurrentProgress(habit);
-        }
-        catch (ArgumentException ex)
-        {
-            Console.WriteLine($"Oops! Something went wrong: {ex.Message}");
-            Console.ReadKey();
-            return true;
-        }
-
-        var current = habit.ProgressList.LastOrDefault();
-        Console.WriteLine($"Todays progress for {habit.Name}: [ {habit.ProgressList.First().Quantity} / {habit.ProgressList.First().DailyGoal} ] {habit.UnitOfMeasurement}.");
-        Console.ReadLine();
-
-        return true;
-    }
-
-    private bool UpdateDailyProgress(Habit habit)
-    {
-        HeaderText(habit.Name);
-        var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
-
-        var newProgress = AskForInteger($"Please enter the number of ({habit.UnitOfMeasurement}) since your last update: ");
-        if (newProgress == 0) return true;
-        else
-        {
-            db.SaveProgress(habit, today, newProgress);
-            Console.WriteLine("Progress succesfuly updated.");
-            Console.ReadKey();
-            return true;
-        }
-    }
-
-    private bool SetDailyGoal(Habit habit)
-    {
-        HeaderText(habit.Name);
-        
-        Console.WriteLine($"{habit.Name} current daily goal is {habit.CurrectGoal} {habit.UnitOfMeasurement}");
-
-        var newGoal = AskForInteger("Enter new daily goal (0 to leave unchanged): ");
-
-        if (newGoal == 0) return true;
-        else
-        {
-            db.SaveNewGoal(habit, newGoal);
-            habit.CurrectGoal = newGoal;
-        }
-
-        return true;
-        
-    }
-
-    private int AskForInteger(string message)
-    {
-        Console.Write(message);
-        var input = Console.ReadLine()!.Trim();
-        if (int.TryParse(input, out var value) && value >= 0)
-            return value;
-        else
-        {
-            Console.WriteLine("Invalid input. Please enter a whole, positive number." + nl);
-            return AskForInteger(message);
-        }
-    }
-
-    private void HeaderText(string habitName = "Habit")
-    {
-        Console.Clear();
-        Console.WriteLine("============================");
-        Console.WriteLine($"   {habitName} Logger by kraven   ");
-        Console.WriteLine("============================" + nl);
-    }
-
-    private void DisplayHabitMenuItems(Habit habit)
-    {
-        HeaderText(habit.Name);
-        Console.WriteLine("  1 - Update daily progress");
-        Console.WriteLine("  2 - View todays progress");
-        Console.WriteLine("  3 - View entire progress");
-        Console.WriteLine("  4 - Set habit daily goal");
-        Console.WriteLine("  5 - Delete current progress");
-        Console.WriteLine("  6 - Delete all progress");
-
-        Console.WriteLine($"{nl}  0 - Return");
-    }
-}

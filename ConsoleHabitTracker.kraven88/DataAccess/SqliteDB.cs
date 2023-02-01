@@ -1,6 +1,5 @@
 ﻿using ConsoleHabitTracker.kraven88.Models;
 using System.Data.SQLite;
-using System.Net.WebSockets;
 
 namespace ConsoleHabitTracker.kraven88.DataAccess;
 
@@ -13,7 +12,6 @@ internal class SqliteDB
 		connectionString = $"Data Source={nameOfDatabase}; Version=3";
         if (File.Exists(nameOfDatabase) == false)
             CreateDatabase(nameOfDatabase);
-
     }
 
 	public void CreateDatabase(string NameOfDatabase)
@@ -22,20 +20,8 @@ internal class SqliteDB
 		CreateHabitsTable();
 		CreateDailyProgressTable();
 	}
-
-	private void SaveData(string sqlCommand)
-	{
-		using (var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
-			sql.CommandText = sqlCommand;
-			sql.ExecuteNonQuery();
-			connection.Close();
-		}
-	}
-	
-    private void CreateDailyProgressTable()
+    
+	private void CreateDailyProgressTable()
     {
 		var sql =
                 @"CREATE TABLE ""DailyProgress""(
@@ -49,8 +35,8 @@ internal class SqliteDB
 
         SaveData(sql);
     }
-
-    private void CreateHabitsTable()
+    
+	private void CreateHabitsTable()
 	{
 		var sql =
                 @"CREATE TABLE ""Habits"" (
@@ -63,7 +49,35 @@ internal class SqliteDB
         
 		SaveData(sql);
 	}
+    
+	internal void DeleteAllProgress(Habit habit)
+    {
+		var sql =
+                $@"DELETE FROM DailyProgress
+				WHERE HabitId = {habit.Id}";
 
+		SaveData(sql);
+    }
+    
+	internal void DeleteCurrentProgress(Habit habit, string date)
+    {
+		var sql =
+                $@"DELETE FROM DailyProgress
+				WHERE Date = ""{date}"" AND HabitId = {habit.Id}";
+
+		SaveData(sql);
+    }
+	
+	internal List<DailyProgress> LoadAllProgress(Habit habit)
+	{
+		var sql =
+                $@"SELECT *
+				FROM DailyProgress
+				WHERE HabitId = {habit.Id};";
+
+		return LoadProgressList(sql);
+    }
+	
 	internal List<DailyProgress> LoadCurrentProgress(Habit habit)
 	{
         var sql =
@@ -75,48 +89,40 @@ internal class SqliteDB
 
 		return LoadProgressList(sql);
     }
-
-	internal List<DailyProgress> LoadAllProgress(Habit habit)
-	{
-		var sql =
-                $@"SELECT *
-				FROM DailyProgress
-				WHERE HabitId = {habit.Id};";
-
-		return LoadProgressList(sql);
-    }
-
-	private List<DailyProgress> LoadProgressList(string sqlCommand)
-	{
-		var progressList = new List<DailyProgress>();
+    
+	internal List<Habit> LoadExistingHabits()
+    {
+		var habits = new List<Habit>();
 		using (var connection = new SQLiteConnection(connectionString))
 		{
 			connection.Open();
 			var sql = connection.CreateCommand();
-			sql.CommandText = sqlCommand;
+			sql.CommandText = "SELECT * FROM Habits";
 
-            var reader = sql.ExecuteReader();
+			var reader = sql.ExecuteReader();
 			if (reader.HasRows)
 			{
 				while (reader.Read())
 				{
-					var daily = new DailyProgress();
-					daily.Id = reader.GetInt32(0);
-					daily.Date = DateOnly.ParseExact(reader.GetString(2), "dd.MM.yyyy");
-					daily.Quantity = reader.GetInt32(3);
-					daily.DailyGoal = reader.GetInt32(4);
+					var habit = new Habit();
+					habit.Id = reader.GetInt32(0);
+					habit.Name = reader.GetString(1);
+					habit.UnitOfMeasurement = reader.GetString(2);
+					habit.CurrectGoal = reader.GetInt32(3);
 
-					progressList.Add(daily);
+					habits.Add(habit);
 				}
-			} else throw new ArgumentException($"Couldn't find Progress List.");
+			}
+			else
+				throw new ArgumentException("No habits found.");
 
 			reader.Close();
 			connection.Close();
-        }
+		}
 
-		return progressList;
-	}
-
+		return habits;
+    }
+	
 	internal Habit LoadHabit(string habitName)
 	{
 		using (var connection = new SQLiteConnection(connectionString))
@@ -149,8 +155,60 @@ internal class SqliteDB
 			return habit;
 		}
 	}
+	
+	private List<DailyProgress> LoadProgressList(string sqlCommand)
+	{
+		var progressList = new List<DailyProgress>();
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText = sqlCommand;
 
-    internal void SaveNewGoal(Habit habit, int newGoal)
+            var reader = sql.ExecuteReader();
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+				{
+					var daily = new DailyProgress();
+					daily.Id = reader.GetInt32(0);
+					daily.Date = DateOnly.ParseExact(reader.GetString(2), "dd.MM.yyyy");
+					daily.Quantity = reader.GetInt32(3);
+					daily.DailyGoal = reader.GetInt32(4);
+
+					progressList.Add(daily);
+				}
+			} else throw new ArgumentException($"Couldn't find Progress List.");
+
+			reader.Close();
+			connection.Close();
+        }
+
+		return progressList;
+	}
+	
+	private void SaveData(string sqlCommand)
+	{
+		using (var connection = new SQLiteConnection(connectionString))
+		{
+			connection.Open();
+			var sql = connection.CreateCommand();
+			sql.CommandText = sqlCommand;
+			sql.ExecuteNonQuery();
+			connection.Close();
+		}
+	}
+    
+	internal void SaveNewHabit(string name, string unit)
+    {
+		var sql = 
+				$@"INSERT INTO Habits (Name, Unit)
+				VALUES (""{name}"", ""{unit}"")";
+
+		SaveData(sql);
+    }
+    
+	internal void SaveNewGoal(Habit habit, int newGoal)
     {
 		var sql = 
 				$@"UPDATE DailyProgress
@@ -165,8 +223,8 @@ internal class SqliteDB
 			WHERE Id = {habit.Id}";
 		SaveData(sql);
     }
-
-    internal void SaveProgress(Habit habit, string date, int newProgress)
+    
+	internal void SaveProgress(Habit habit, string date, int newProgress)
     {
 		using (var connection = new SQLiteConnection(connectionString))
 		{
@@ -197,63 +255,4 @@ internal class SqliteDB
 		}
     }
 
-    internal void DeleteCurrentProgress(Habit habit, string date)
-    {
-		var sql =
-                $@"DELETE FROM DailyProgress
-				WHERE Date = ""{date}"" AND HabitId = {habit.Id}";
-
-		SaveData(sql);
-    }
-
-    internal void DeleteAllProgress(Habit habit)
-    {
-		var sql =
-                $@"DELETE FROM DailyProgress
-				WHERE HabitId = {habit.Id}";
-
-		SaveData(sql);
-    }
-
-    internal List<Habit> LoadExistingHabits()
-    {
-		var habits = new List<Habit>();
-		using (var connection = new SQLiteConnection(connectionString))
-		{
-			connection.Open();
-			var sql = connection.CreateCommand();
-			sql.CommandText = "SELECT * FROM Habits";
-
-			var reader = sql.ExecuteReader();
-			if (reader.HasRows)
-			{
-				while (reader.Read())
-				{
-					var habit = new Habit();
-					habit.Id = reader.GetInt32(0);
-					habit.Name = reader.GetString(1);
-					habit.UnitOfMeasurement = reader.GetString(2);
-					habit.CurrectGoal = reader.GetInt32(3);
-
-					habits.Add(habit);
-				}
-			}
-			else
-				throw new ArgumentException("No habits found.");
-
-			reader.Close();
-			connection.Close();
-		}
-
-		return habits;
-    }
-
-    internal void SaveNewHabit(string name, string unit)
-    {
-		var sql = 
-				$@"INSERT INTO Habits (Name, Unit)
-				VALUES (""{name}"", ""{unit}"")";
-
-		SaveData(sql);
-    }
 }
