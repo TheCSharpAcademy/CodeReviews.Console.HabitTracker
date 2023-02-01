@@ -11,4 +11,8 @@
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.117" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="assets\images\" />
+  </ItemGroup>
+
 </Project>
