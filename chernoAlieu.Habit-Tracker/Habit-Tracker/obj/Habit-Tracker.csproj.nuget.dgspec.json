@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\StudyProjects\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj": {}
+    "C:\\Users\\User\\CodeReviews.Console.HabitTracker\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\StudyProjects\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj": {
+    "C:\\Users\\User\\CodeReviews.Console.HabitTracker\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\StudyProjects\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj",
+        "projectUniqueName": "C:\\Users\\User\\CodeReviews.Console.HabitTracker\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj",
         "projectName": "Habit-Tracker",
-        "projectPath": "C:\\Users\\User\\Desktop\\StudyProjects\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj",
+        "projectPath": "C:\\Users\\User\\CodeReviews.Console.HabitTracker\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\Habit-Tracker.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\StudyProjects\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\obj\\",
+        "outputPath": "C:\\Users\\User\\CodeReviews.Console.HabitTracker\\chernoAlieu.Habit-Tracker\\Habit-Tracker\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
