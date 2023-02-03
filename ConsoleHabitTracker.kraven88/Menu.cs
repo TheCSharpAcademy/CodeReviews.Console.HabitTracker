@@ -58,7 +58,7 @@ internal class Menu
             var confirmation = Console.ReadLine()!.Trim().ToLower();
             if (confirmation == "yes")
             {
-                db.SaveNewHabit(name, unit);
+                db.SaveNewHabit(name, unit, goal);
                 var habit = new Habit()
                 {
                     Name = name,
@@ -101,7 +101,7 @@ internal class Menu
 
         return true;
     }
-    
+
     private bool DeleteCurrentProgress(Habit habit)
     {
         var validChoice = !ViewCurrentProgress(habit);
@@ -117,14 +117,14 @@ internal class Menu
                 validChoice = true;
                 Console.WriteLine(nl + "Record deleted.");
                 Console.ReadLine();
-            } 
+            }
             else if (answer == "no")
                 validChoice = true;
         }
 
         return true;
     }
-    
+
     private void DisplayHabitMenuItems(Habit habit)
     {
         HeaderText(habit.Name);
@@ -137,7 +137,7 @@ internal class Menu
 
         Console.WriteLine($"{nl}  0 - Return");
     }
-    
+
     private void DisplayMainMenuItems()
     {
         HeaderText();
@@ -161,11 +161,11 @@ internal class Menu
                               "Type \"0\" to quit the Application");
         }
     }
-    
+
     internal bool HabitMenu(Habit habit)
     {
         var isRunning = true;
-        while (isRunning) 
+        while (isRunning)
         {
             DisplayHabitMenuItems(habit);
             var select = Console.ReadKey(true).KeyChar;
@@ -183,7 +183,7 @@ internal class Menu
         }
         return true;
     }
-    
+
     private void HeaderText(string habitName = "Habit")
     {
         Console.Clear();
@@ -191,16 +191,16 @@ internal class Menu
         Console.WriteLine($"   {habitName} Logger by kraven   ");
         Console.WriteLine("============================" + nl);
     }
-    
+
     private bool SelectHabit(List<Habit> habits)
     {
         Console.Write(nl + "Select: ");
         var select = Console.ReadLine()!.Trim().ToLower();
 
-        if (select == "new") 
+        if (select == "new")
             return CreateNewHabit();
 
-        else if (select == "0") 
+        else if (select == "0")
             return false;
 
         else if (int.TryParse(select, out int number) && number > 0 && number <= habits.Count)
@@ -208,15 +208,15 @@ internal class Menu
             var habit = habits.Where(x => x.Id == number).First();
             return HabitMenu(habit);
         }
-        else 
+        else
             return true;
 
     }
-    
+
     private bool SetDailyGoal(Habit habit)
     {
         HeaderText(habit.Name);
-        
+
         Console.WriteLine($"{habit.Name} current daily goal is {habit.CurrectGoal} {habit.UnitOfMeasurement}");
 
         var newGoal = AskForInteger("Enter new daily goal (0 to leave unchanged): ");
@@ -229,9 +229,9 @@ internal class Menu
         }
 
         return true;
-        
+
     }
-    
+
     private bool UpdateDailyProgress(Habit habit)
     {
         HeaderText(habit.Name);
@@ -247,15 +247,14 @@ internal class Menu
             return true;
         }
     }
-    
+
     private bool ViewCurrentProgress(Habit habit)
     {
         HeaderText(habit.Name);
         var today = DateOnly.FromDateTime(DateTime.Now).ToString("dd.MM.yyyy");
 
-        //db.SaveProgress(habit, today, 0);   // This ensures that, when selected, Current Progress will always include current day data
         try
-        { 
+        {
             habit.ProgressList = db.LoadCurrentProgress(habit);
         }
         catch (ArgumentException ex)
@@ -294,3 +293,4 @@ internal class Menu
 
         return true;
     }
+}

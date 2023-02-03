@@ -199,11 +199,11 @@ internal class SqliteDB
 		}
 	}
     
-	internal void SaveNewHabit(string name, string unit)
+	internal void SaveNewHabit(string name, string unit, int goal)
     {
 		var sql = 
-				$@"INSERT INTO Habits (Name, Unit)
-				VALUES (""{name}"", ""{unit}"")";
+				$@"INSERT INTO Habits (Name, Unit, CurrentGoal)
+				VALUES (""{name}"", ""{unit}"", {goal})";
 
 		SaveData(sql);
     }
