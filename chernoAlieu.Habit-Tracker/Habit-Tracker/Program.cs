@@ -64,7 +64,6 @@ class Program
 			}
 		}
 	}
-
 	private static void Insert()
 	{
 		string date = GetDateInput();
@@ -83,7 +82,6 @@ class Program
 			connection.Close();
 		}
 	}
-
 	internal static string GetDateInput()
 	{
 		Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main menu.");
