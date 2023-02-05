@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yashsachdev.HabitTracker", "yashsachdev.HabitTracker.csproj", "{08685853-282B-451A-8FA2-0402020B54E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "yashsachdev.HabitTracker", "yashsachdev.HabitTracker.csproj", "{08685853-282B-451A-8FA2-0402020B54E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C0268A49-857A-42AE-B3E8-B187472F858E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habit-tracher.tests", "..\tests\Habit-tracher.tests\Habit-tracher.tests.csproj", "{1EBF1FAA-569F-4FFA-83B7-1C0E288C377D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{08685853-282B-451A-8FA2-0402020B54E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08685853-282B-451A-8FA2-0402020B54E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08685853-282B-451A-8FA2-0402020B54E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EBF1FAA-569F-4FFA-83B7-1C0E288C377D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EBF1FAA-569F-4FFA-83B7-1C0E288C377D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EBF1FAA-569F-4FFA-83B7-1C0E288C377D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EBF1FAA-569F-4FFA-83B7-1C0E288C377D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1EBF1FAA-569F-4FFA-83B7-1C0E288C377D} = {C0268A49-857A-42AE-B3E8-B187472F858E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75007607-D18D-4E2C-8057-F513EC7B31F2}

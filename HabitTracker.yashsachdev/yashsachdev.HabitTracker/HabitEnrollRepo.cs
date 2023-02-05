@@ -61,6 +61,57 @@ public class HabitEnrollRepo
             }
         }
     }
+    public void DisplayUserHabit(string name, string email)
+    {
+        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        {
+            cnn.Open();
+            using (SqliteCommand command = new SqliteCommand())
+            {
+                command.Connection = cnn;
+                command.CommandText = "SELECT User_Id FROM User WHERE Name = @name AND Email = @email";
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@email", email); 
+                var result = command.ExecuteScalar();
+                if (result == null)
+                {
+                    Console.WriteLine("No Data returned");
+                    return;
+                }
+                var user_ID = (Int64)result;
+                command.CommandText = "SELECT * FROM Habit_Enroll WHERE User_Id = @userId";
+                command.Parameters.AddWithValue("@userId", user_ID);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                       var habit_ID = reader.GetInt32(1);
+                       var startdate = reader.GetDateTime(2);
+                        using (SqliteCommand habitCommand = new SqliteCommand())
+                        {
+                            habitCommand.Connection = cnn;
+                            habitCommand.CommandText = "SELECT Habit_Name FROM Habit WHERE Habit_Id = @habitId";
+                            habitCommand.Parameters.AddWithValue("@habitId", habit_ID);
+                            var res= habitCommand.ExecuteScalar();
+                            if (res == null)
+                            {
+                                Console.WriteLine("No data returned");
+                                return;
+                            }
+                            var habitName = (String)res;
+                            Console.WriteLine($"Habit : {habitName} \t Start Date:{startdate} \t");
+                        }
+
+                    }
+                }
+                
+               
+            }
+        }
+    }
+
+
 
 
 }

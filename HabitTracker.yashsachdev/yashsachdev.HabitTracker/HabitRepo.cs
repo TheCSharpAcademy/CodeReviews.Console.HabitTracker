@@ -1,4 +1,6 @@
-﻿namespace yashsachdev.HabitTracker;
+﻿using System.Xml.Linq;
+
+namespace yashsachdev.HabitTracker;
 public class HabitRepo
 {
     Habit habit = new Habit();
@@ -27,7 +29,6 @@ public class HabitRepo
             }
         }
         return habit;
-
     }
     public void save(Habit habit)
     {
@@ -56,7 +57,36 @@ public class HabitRepo
                 command.CommandText = "SELECT last_insert_rowid()";
                 int lastInsertedId = Convert.ToInt32(command.ExecuteScalar());
                 return lastInsertedId;
-
+            }
+        }
+    }
+    public int GetIdFromEmail(string email)
+    {
+        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        {
+            cnn.Open();
+            using (SqliteCommand command = new SqliteCommand())
+            {
+                command.Connection = cnn;
+                command.CommandText = "SELECT User_Id FROM User WHERE Email = @email";
+                command.Parameters.AddWithValue("@email", email);
+                var result = command.ExecuteScalar();
+                if (result == null)
+                {
+                    Console.WriteLine("No Data returned");
+                    return 0;
+                }
+                var user_ID = (Int64)result;
+                command.CommandText = "SELECT Habit_Id FROM Habit_Enroll WHERE User_Id = @userId";
+                command.Parameters.AddWithValue("@userId", user_ID);
+                var result1 = command.ExecuteScalar();
+                if (result == null)
+                {
+                    Console.WriteLine("No Data returned");
+                    return 0;
+                }
+                int refHabitId = Convert.ToInt32(result1);
+                return refHabitId;
             }
         }
     }

@@ -1,24 +1,40 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using yashsachdev.HabitTracker;
+
 DatabaseClass.CreateDatabase();
 DatabaseClass.CreateTable();
-Console.WriteLine("Enter User Name: ");
-string userName = Console.ReadLine();
-Console.WriteLine("Enter User Email id: ");
-string userEmail = Console.ReadLine();
-Console.WriteLine("Enter User Password: ");
-string userPass = Console.ReadLine();
-
-User user = new User
+DisplayClass app = new DisplayClass();
+while (!app.LoggedIn)
 {
-    Name = userName,
-    Password = userPass,
-    Email = userEmail
-};
-UserRepo userRepo = new UserRepo();
-userRepo.Save(user);
-int userId = userRepo.GetLastInsertedId();
-Console.WriteLine("User created successfully");
-Console.WriteLine("Enter Habit Name: ");
+    Console.WriteLine("Welcome to the Habit Tracker");
+    Console.WriteLine("1. Register");
+    Console.WriteLine("2. Login");
+    Console.Write("Enter your choice: ");
+    int choice = int.Parse(Console.ReadLine());
+    switch (choice)
+    {
+        case 1:
+            app.Register();
+            break;
+        case 2:
+            app.Login();
+            break;
+    }
+}
+app.DisplayMenu();
+
+
+
+
+
+
+
+
+
+
+
+
+/*Console.WriteLine("Enter Habit Name: ");
 string habitName = Console.ReadLine();
 Console.WriteLine("Enter Habit Unit: ");
 string habitUnit = Console.ReadLine();
@@ -33,11 +49,11 @@ habitRepo.save(habit);
 int habitId = habitRepo.GetLastInsertedId();
 Console.WriteLine("Habit created successfully");
 Console.WriteLine("UserId:" + userId);
-Console.WriteLine("HabitId:" + habitId);   
+Console.WriteLine("HabitId:" + habitId);
+Console.WriteLine("-----------------------");
 Console.WriteLine("Enter Start Date (YYYY-MM-DD): ");
 var startDateInput = Console.ReadLine();
-Console.WriteLine("UserId:" + user.User_Id);
-Console.WriteLine("HabitId:" + habit.Habit_Id);
+
 HabitEnroll habitEnroll = new HabitEnroll
 {
     User_Id = userId,
@@ -46,13 +62,14 @@ HabitEnroll habitEnroll = new HabitEnroll
 };
 HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
 habitEnrollRepo.Save(habitEnroll);  
-Console.WriteLine("User enrolled in habit successfully");
-Console.WriteLine("---------------------");
+Console.WriteLine("User enrolled in habit successfully");*/
+/*Console.WriteLine("---------------------");
 Console.WriteLine("Enter Email id to retrieve User: ");
 string emailId = Console.ReadLine();
 user = userRepo.GetByEmail(emailId);
 if (user != null)
 {
+    Console.WriteLine("User Id:" + user.User_Id);
     Console.WriteLine("User Name: " + user.Name);
     Console.WriteLine("User Email: " + user.Email);
     Console.WriteLine("User Password: " + user.Password);
@@ -74,5 +91,11 @@ else
 {
     Console.WriteLine("habit not found.");
 }
+Console.WriteLine("Enter email id to to see all Habits");*/
+/*var user_email=Console.ReadLine();
+Console.WriteLine("Enter name to to see all Habits");
+var user_name = Console.ReadLine();
+habitEnrollRepo.DisplayUserHabit(user_name, user_name);*/
+
 
 
