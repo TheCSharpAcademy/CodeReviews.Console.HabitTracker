@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace yashsachdev.HabitTracker;
+﻿namespace yashsachdev.HabitTracker;
 public class HabitRepo
 {
     Habit habit = new Habit();

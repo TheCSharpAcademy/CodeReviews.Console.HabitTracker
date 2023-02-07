@@ -1,7 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using System.Xml.Linq;
-
-namespace yashsachdev.HabitTracker;
+﻿namespace yashsachdev.HabitTracker;
 /// <summary>
 /// Display actions 
 /// </summary>
@@ -17,12 +14,9 @@ public class DisplayClass
     public string email { get; set; }
     public void Register()
     {
-        Console.WriteLine("Please enter your name:");
-        string name = Console.ReadLine();
-        Console.WriteLine("Please enter your email:");
-        email = Console.ReadLine();
-        Console.WriteLine("Please enter your password:");
-        string password = Console.ReadLine();
+        string name = UserInput.GetName();
+        email = UserInput.GetEmail();
+        string password = UserInput.GetPassword();
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
             cnn.Open();
@@ -62,10 +56,8 @@ public class DisplayClass
     }
     public void Login()
     {
-        Console.WriteLine("Enter email:");
-        email = Console.ReadLine();
-        Console.WriteLine("Enter password:");
-        string password = Console.ReadLine();
+        email = UserInput.GetEmail();
+        string password =UserInput.GetPassword(); 
 
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
@@ -129,7 +121,19 @@ public class DisplayClass
 
     private void UpdateHabit()
     {
-        throw new NotImplementedException();
+        HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
+        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        {
+            cnn.Open();
+            SqliteCommand cmd = new SqliteCommand("SELECT Name FROM User WHERE Email = @email", cnn);
+            cmd.Parameters.AddWithValue("@email", email);
+            string name = (string)cmd.ExecuteScalar();
+            string updatedHabitName = UserInput.GetHabitName();
+            string updatedHabitUnit = UserInput.GetHabitUnit(); 
+            habitEnrollRepo.UpdateUserHabit(name, email,updatedHabitName,updatedHabitUnit);
+            habitEnrollRepo.DisplayUserHabit(name, email);
+             
+        }
     }
 
     private void DeleteHabit()
@@ -157,14 +161,13 @@ public class DisplayClass
 
     public void InsertHabit()
     {
-        Console.WriteLine("Enter Habit Name: ");
-        string habitName = Console.ReadLine();
-        Console.WriteLine("Enter Habit Unit: ");
-        string habitUnit = Console.ReadLine();
+        string habitName = UserInput.GetHabitName();
+        string habitUnit = UserInput.GetHabitUnit();
+        string resunit = UserInput.GetUnitMeasurement(habitUnit);
         Habit habit = new Habit
         {
             Habit_Name = habitName,
-            Unit = habitUnit
+            Unit = resunit
         };
         HabitRepo habitRepo = new HabitRepo();
         habitRepo.save(habit);
@@ -175,13 +178,12 @@ public class DisplayClass
         Console.WriteLine("UserId:" + UserId);
         Console.WriteLine("HabitId:" + HabitId);
         Console.WriteLine("-----------------------");
-        Console.WriteLine("Enter Start Date (YYYY-MM-DD): ");
-        var startDateInput = Console.ReadLine();
+        var startDateInput = UserInput.GetStartDate();
         HabitEnroll habitEnroll = new HabitEnroll
         {
             User_Id = UserId,
             Habit_Id = HabitId,
-            Date = DateTime.Parse(startDateInput),
+            Date = startDateInput,
         };
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
         habitEnrollRepo.Save(habitEnroll);

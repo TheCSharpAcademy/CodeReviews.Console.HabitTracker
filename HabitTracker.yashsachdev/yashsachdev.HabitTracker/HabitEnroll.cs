@@ -1,11 +1,7 @@
 ﻿namespace yashsachdev.HabitTracker;
-
 public class HabitEnroll
 {
-    public HabitEnroll()
-    {
-
-    }
+    public HabitEnroll(){}
     public User User { get; set; }
     public int User_Id { get; set; }
     public Habit Habit { get; set; }

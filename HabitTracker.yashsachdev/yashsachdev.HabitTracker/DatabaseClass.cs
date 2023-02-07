@@ -1,5 +1,4 @@
-﻿namespace yashsachdev.HabitTracker;
-public static class DatabaseClass
+﻿public static class DatabaseClass
 {
     public static readonly string connectionString = "Data Source=Habit-Tracker.db";
     public static void CreateDatabase()

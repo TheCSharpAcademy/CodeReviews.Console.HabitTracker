@@ -15,7 +15,7 @@ public class Habit
     {
         bool isvalue = true;
         if (string.IsNullOrEmpty(Habit_Name) && string.IsNullOrEmpty(Unit)) isvalue = false ;
-
         return isvalue;
     }
+    
 }

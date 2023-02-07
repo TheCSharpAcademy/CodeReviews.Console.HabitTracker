@@ -1,6 +1,4 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using yashsachdev.HabitTracker;
-
 DatabaseClass.CreateDatabase();
 DatabaseClass.CreateTable();
 DisplayClass app = new DisplayClass();
