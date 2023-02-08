@@ -1,6 +1,10 @@
 ﻿namespace yashsachdev.HabitTracker;
 internal static class UserInput
 {
+    /// <summary>
+    /// Enter Name of the User
+    /// </summary>
+    /// <returns></returns>
     public static string GetName()
     {
         Console.WriteLine("Please enter your name :");
@@ -12,6 +16,10 @@ internal static class UserInput
         }
         return input;
     }
+    /// <summary>
+    /// Enter user's Emaild
+    /// </summary>
+    /// <returns></returns>
     public static string GetEmail()
     {
         Console.WriteLine("Please enter your email id :");
@@ -23,6 +31,10 @@ internal static class UserInput
         }
         return input;
     }
+    /// <summary>
+    /// Enter the password
+    /// </summary>
+    /// <returns></returns>
     public static string GetPassword()
     {
         Console.WriteLine("Please enter your password:");
@@ -46,7 +58,7 @@ internal static class UserInput
         }
         return input;
     }
-    public static string GetHabitUnit()
+    public static string GetHabitUnit(string unit)
     {
         Console.WriteLine("Please enter the unit:");
         string input = Console.ReadLine();
@@ -55,14 +67,14 @@ internal static class UserInput
             Console.WriteLine("Invalid inputs. Email and password are required.");
             return string.Empty;
         }
-        return input;
+        return (unit+" "+input);
     }
-    public static string GetUnitMeasurement(string habitUnit)
+    public static string GetUnitMeasurement()
     {
         Console.WriteLine("Select a unit of measurement:");
         Console.WriteLine("1. Days");
         Console.WriteLine("2. Times");
-        Console.WriteLine("3 Amount(eg: 8 Litres of water");
+        Console.WriteLine("3 Amount(eg: 8 Litres of water)");
         int unitChoice = int.Parse(Console.ReadLine());
         string unit = string.Empty;
         switch (unitChoice)
@@ -80,7 +92,7 @@ internal static class UserInput
                 Console.WriteLine("Invalid selection. Please choose again.");
                 break;
         }
-        return(habitUnit + unit);
+        return(unit);
     }
     public static DateTime GetStartDate()
     {

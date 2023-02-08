@@ -1,4 +1,6 @@
-﻿namespace yashsachdev.HabitTracker;
+﻿using Microsoft.Data.Sqlite;
+
+namespace yashsachdev.HabitTracker;
 /// <summary>
 /// Display actions 
 /// </summary>
@@ -113,10 +115,19 @@ public class DisplayClass
                     ViewHabits();
                     break;
                 case 5:
+                    GenerateReport();
+                    break;
+                case 6:
                     Logout();
                     break;
             }
         }
+    }
+
+    private void GenerateReport()
+    {
+        HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
+        habitEnrollRepo.GenerateReport(email);
     }
 
     private void UpdateHabit()
@@ -128,18 +139,25 @@ public class DisplayClass
             SqliteCommand cmd = new SqliteCommand("SELECT Name FROM User WHERE Email = @email", cnn);
             cmd.Parameters.AddWithValue("@email", email);
             string name = (string)cmd.ExecuteScalar();
+            Console.WriteLine("Enter habit Name you want to update");
+            string habitname = UserInput.GetHabitName();
+            Console.WriteLine($"Enter the values you want to update");
             string updatedHabitName = UserInput.GetHabitName();
-            string updatedHabitUnit = UserInput.GetHabitUnit(); 
-            habitEnrollRepo.UpdateUserHabit(name, email,updatedHabitName,updatedHabitUnit);
+            string resunit = UserInput.GetUnitMeasurement();
+            string habitUnit = UserInput.GetHabitUnit(resunit);
+            habitEnrollRepo.UpdateUserHabit(name, email,habitname,updatedHabitName,habitUnit);
             habitEnrollRepo.DisplayUserHabit(name, email);
-             
         }
     }
 
     private void DeleteHabit()
     {
-        throw new NotImplementedException();
+        HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
+        string habitname = UserInput.GetHabitName();
+        habitEnrollRepo.DeleteHabit(email, habitname);
     }
+
+
 
     private void Logout()
     {
@@ -162,12 +180,12 @@ public class DisplayClass
     public void InsertHabit()
     {
         string habitName = UserInput.GetHabitName();
-        string habitUnit = UserInput.GetHabitUnit();
-        string resunit = UserInput.GetUnitMeasurement(habitUnit);
+        string resunit = UserInput.GetUnitMeasurement();
+        string habitUnit = UserInput.GetHabitUnit(resunit);
         Habit habit = new Habit
         {
             Habit_Name = habitName,
-            Unit = resunit
+            Unit = habitUnit
         };
         HabitRepo habitRepo = new HabitRepo();
         habitRepo.save(habit);
@@ -190,93 +208,3 @@ public class DisplayClass
         Console.WriteLine("User enrolled in habit successfully");
     }
 }
-/*    public int RegisterUser(string name, string email, string password)
-    {
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", email);
-            var emailCount = (Int64)cmd.ExecuteScalar();
-            if (emailCount > 0)
-            {
-                Console.WriteLine("Email already exists. Please select from Habit Menu");
-                return 0;
-
-            }
-            if(emailCount == 0)
-            {
-                User user = new User
-                {
-                    Name = name,
-                    Password = email,
-                    Email = password
-                };
-                UserRepo userRepo = new UserRepo();
-                userRepo.GetLastInsertedId();
-                try
-                {
-                    userRepo.Save(user);
-                }
-                catch(Exception ex) 
-                {
-                   Console.WriteLine(ex.Message);
-                }
-                 Console.WriteLine("User created successfully");
-                return userRepo.GetLastInsertedId(); ;
-            }
-        }
-        return 0;
-    }
-    public void AddHabit(int userId)
-    {
-        Console.WriteLine("Enter Habit Name: ");
-        string habitName = Console.ReadLine();
-        Console.WriteLine("Enter Habit Unit: ");
-        string habitUnit = Console.ReadLine();
-
-        Habit habit = new Habit
-        {
-            Habit_Name = habitName,
-            Unit = habitUnit
-        };
-        HabitRepo habitRepo = new HabitRepo();
-        habitRepo.save(habit);
-        int habitId = habitRepo.GetLastInsertedId();
-        Console.WriteLine("Habit created successfully");
-        Console.WriteLine("UserId:" + userId);
-        Console.WriteLine("HabitId:" + habitId);
-        Console.WriteLine("-----------------------");
-        Console.WriteLine("Enter Start Date (YYYY-MM-DD): ");
-        var startDateInput = Console.ReadLine();
-        HabitEnroll habitEnroll = new HabitEnroll
-        {
-            User_Id = userId,
-            Habit_Id = habitId,
-            Date = DateTime.Parse(startDateInput),
-        };
-        HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
-        habitEnrollRepo.Save(habitEnroll);
-        Console.WriteLine("User enrolled in habit successfully");
-    }
-
-    public void DeleteHabit()
-    {
-        // Code to delete a habit
-        Console.WriteLine("Delete Habit");
-    }
-
-    public void UpdateHabit()
-    {
-        // Code to update a habit
-        Console.WriteLine("Update Habit");
-    }
-
-    public void ViewHabits(string email, string name)
-    {
-        HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
-        habitEnrollRepo.DisplayUserHabit(email,name);
-        Console.WriteLine("View Habits");
-    }
-}
-*/

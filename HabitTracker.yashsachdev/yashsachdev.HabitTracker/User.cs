@@ -15,16 +15,4 @@ public class User
     public string Name { get; set; }
     public string Password { get; set; }
     public string Email { get; set; }
-   /// <summary>
-   /// Validate the properties of User class.
-   /// </summary>
-   /// <returns></returns>
-   public bool validate()
-    {
-        var isValid = true;
-        if(string.IsNullOrEmpty(Name)) isValid = false; 
-        if(string.IsNullOrWhiteSpace(Password)) isValid = false;
-        if(string.IsNullOrWhiteSpace(Email))isValid= false;
-        return isValid; 
-    }
 }
