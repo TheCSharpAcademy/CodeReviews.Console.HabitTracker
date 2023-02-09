@@ -69,8 +69,7 @@ class Program
 		string date = GetDateInput();
 
 		int quantity =
-			GetNumberInput(@"\n\nPlease insert number of glasses or other measure of your choice " +
-						   "(no decimals allowed)\n\n");
+			GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
 
 		using (var connection = new SqliteConnection(connectionString))
 		{
