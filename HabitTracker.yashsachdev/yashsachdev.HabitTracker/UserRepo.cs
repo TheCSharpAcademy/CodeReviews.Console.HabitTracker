@@ -1,37 +1,6 @@
 ﻿namespace yashsachdev.HabitTracker;
 public class UserRepo
 {
- 
-    public User Retrieve(int userId)
-    {
-        User user = null;
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                command.CommandText = "SELECT * FROM User WHERE User_Id = @Id";
-                command.Parameters.AddWithValue("@Id", userId);
-                command.ExecuteNonQuery();
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        user = new User
-                        {
-                            User_Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            Password = reader.GetString(2),
-                            Email = reader.GetString(3)
-                        };
-                    }
-                }
-            }
-        }
-        return user;
-    }
-
     public void Save(User user)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
@@ -64,38 +33,9 @@ public class UserRepo
                     Console.WriteLine("No Data returned");
                     return 0;
                 }
-                int refEmailId = Convert.ToInt32(result);
-                return refEmailId;
+                int userid = Convert.ToInt32(result);
+                return userid;
             }
         }
-    }
-    public User GetByEmail(string email)
-    {
-        User user = null;
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                command.CommandText = "SELECT * FROM User WHERE Email = @email";
-                command.Parameters.AddWithValue("@email", email);
-                command.ExecuteNonQuery();
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        user = new User
-                        {
-                            User_Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            Email = reader.GetString(2),
-                            Password = reader.GetString(3)
-                        };
-                    }
-                }
-            }
-        }
-        return user;
     }
 }

@@ -1,40 +1,11 @@
 ﻿using System.Reflection.PortableExecutable;
 using System.Transactions;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace yashsachdev.HabitTracker;
 public class HabitEnrollRepo
 {
-    public HabitEnroll Retrieve(int User_Id, int Habit_Id)
-    {
-        HabitEnroll habitEnroll = null;
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                command.CommandText = "SELECT * FROM Habit_Enroll WHERE User_Id = @User_Id AND Habit_Id = @Habit_Id";
-                command.Parameters.AddWithValue("@User_Id", User_Id);
-                command.Parameters.AddWithValue("@Habit_Id", Habit_Id);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        habitEnroll = new HabitEnroll
-                        {
-                            User_Id = reader.GetInt32(0),
-                            Habit_Id = reader.GetInt32(1),
-                            Date = reader.GetDateTime(2),
-                        };
-                    }
-                }
-
-            }
-        }
-        return habitEnroll;
-    }
     public void Save(HabitEnroll habitEnroll)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
@@ -48,20 +19,6 @@ public class HabitEnrollRepo
                 command.Parameters.AddWithValue("@Habit_Id", habitEnroll.Habit_Id);
                 command.Parameters.AddWithValue("@date", habitEnroll.Date);
                 command.ExecuteNonQuery();
-            }
-        }
-    }
-    public int GetLastInsertedId()
-    {
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                command.CommandText = "SELECT last_insert_rowid()";
-                int lastInsertedId = Convert.ToInt32(command.ExecuteScalar());
-                return lastInsertedId;
             }
         }
     }
@@ -103,7 +60,7 @@ public class HabitEnrollRepo
                                 Console.WriteLine("No data returned");
                                 return;
                             }
-                            var habitName = (String)res;
+                            var habitName = (string)res;
                             Console.WriteLine($"Habit : {habitName} \t Start Date:{startdate} \t");
                         }
 
@@ -186,7 +143,6 @@ public class HabitEnrollRepo
             }
         }
     }
-
     internal void GenerateReport(string email)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
@@ -194,18 +150,39 @@ public class HabitEnrollRepo
             cnn.Open();
             using (SqliteCommand command = new SqliteCommand())
             {
-                command.CommandText = "SELECT User_Id FROM User WHERE Name = @name AND Email = @email";
+                command.Connection = cnn;
+                command.CommandText = "SELECT User_Id FROM User WHERE Email = @email";
                 command.Parameters.AddWithValue("@email", email);
                 var result = command.ExecuteScalar();
                 if (result == null)
                 {
                     Console.WriteLine("No Data returned");
-                    return;
                 }
+
                 var user_ID = (Int64)result;
-                command.Connection = cnn;
+                command.CommandText = "SELECT Habit_Id FROM Habit_Enroll WHERE User_Id = @userId";
+                command.Parameters.AddWithValue("@userId", user_ID);
+                var res = command.ExecuteScalar();
+                if (result == null)
+                {
+                    Console.WriteLine("No Data returned");
+                }
+                var habit_ID = (Int64)result;
                 command.CommandText = "SELECT user.Name,habit.Habit_Name,habit.Unit,habitenroll.Date FROM Habit_Enroll habitenroll JOIN Habit habit ON habitenroll.Habit_Id = habit.Habit_Id JOIN User user ON habitenroll.User_Id =user.User_Id WHERE user.User_Id =@userid";
                 command.Parameters.AddWithValue("@userid", user_ID);
+                command.ExecuteNonQuery();
+                StringBuilder sb = new StringBuilder();
+                SqliteDataReader reader = command.ExecuteReader();
+                var tableData = new List<Report>();
+                while (reader.Read()) 
+                {
+                    string username = Convert.ToString(reader["Name"]);
+                    string habitname = Convert.ToString(reader["Habit_Name"]);
+                    DateTime date = Convert.ToDateTime(reader["Date"]);
+                    string unit = Convert.ToString(reader["Unit"]);
+                    tableData.Add(new Report(username, habitname, date, unit));
+                }
+                ConsoleTableBuilder.From(tableData).WithTitle("REPORT ", ConsoleColor.Yellow, ConsoleColor.DarkGray).WithColumn("User_Name","Habit_Name","Date","Unit").ExportAndWriteLine();
             }
         }
     }

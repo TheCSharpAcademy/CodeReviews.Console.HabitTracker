@@ -11,11 +11,4 @@ public class Habit
     public string Habit_Name { get; set; }
     public string Unit { get; set; }
     public List<HabitEnroll> habitEnrolls { get; set; }
-    public bool Validate()
-    {
-        bool isvalue = true;
-        if (string.IsNullOrEmpty(Habit_Name) && string.IsNullOrEmpty(Unit)) isvalue = false ;
-        return isvalue;
-    }
-    
 }

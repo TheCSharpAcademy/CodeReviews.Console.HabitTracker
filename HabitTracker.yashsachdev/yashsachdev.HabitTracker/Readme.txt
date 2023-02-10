@@ -17,18 +17,19 @@ Challenges:
 1.Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
 2.Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
 
+Features
+1.Register: You can register for the application by providing your name, email, and password.
+2.Login: You can log in to the application using the email and password.
+3.Habit Tracker: Once you have logged in, you can add, delete, update and view your habits. Data stored in a SQLite database. 
+
+
 Approach :
 
-1. Defining the entites using DataTable?
-	- User 
-	- Habit 
-	- Habit 
-	Reference - https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/
-				https://www.c-sharpcorner.com/UploadFile/mahesh/ado-net-disconnected-classes/
+1.A database was created using SQLite and the tables User, Habit, and Habit Enroll were created if they don't exist. This was done using the ADO.NET and SQLite libraries.
+2.A many-to-many relationship was established between the User and Habit entities using the intermediate table, Habit Enroll.
+3.SQLite commands were used to perform CRUD operations, with some challenges in working with foreign key constraints.
+4.A menu was created in the console for registration, login, and habit management.
 
-What Did I Learn:
-
-Disconnected classes: DataTable, DataSet , DataRelation.
 
 
 

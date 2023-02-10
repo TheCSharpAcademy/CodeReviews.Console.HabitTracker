@@ -45,7 +45,6 @@ internal static class UserInput
             return string.Empty;
         }
         return input;
-    
     }
     public static string GetHabitName()
     {
@@ -117,6 +116,4 @@ internal static class UserInput
         }
         return DateTime.MinValue;
     }
-
-
 }
