@@ -79,6 +79,8 @@ internal class Program
     {
         string date = GetDateInput();
         if (date == null) return;
+
+        int quantity = GetNumberInput();
     }
 
     private static string GetDateInput()
