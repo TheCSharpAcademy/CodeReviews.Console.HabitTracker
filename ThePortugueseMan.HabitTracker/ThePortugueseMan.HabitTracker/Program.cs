@@ -3,10 +3,9 @@ using System.Threading.Channels;
 
 internal class Program
 {
+    static string connectionString = @"Data Source=habit-Tracker.db";
     private static void Main(string[] args)
     {
-        string connectionString = @"Data Source=habit-Tracker.db";
-
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -79,6 +78,21 @@ internal class Program
     {
         string date = GetDateInput();
         if (date == null) return;
+
+        string? quantity = GetNumberInput("\n\nPlease insert the number of glasses. Integers only\n\n");
+        if (int.TryParse(quantity, out int quantity_number)) return;
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText =
+                $"INSERT INTO drinking_water (date, quantity) VALUES ('{date}',{quantity_number})";
+
+            tableCmd.ExecuteNonQuery();
+
+            connection.Close();
+        }
     }
 
     private static string GetDateInput()
@@ -87,9 +101,24 @@ internal class Program
 
         string? dateInput = Console.ReadLine();
 
-        if (dateInput == "0") dateInput = null;
+        if (dateInput == "0" || dateInput == "") dateInput = null;
 
         return dateInput;
+    }
+
+    private static string? GetNumberInput(string message)
+    {
+        Console.WriteLine(message);
+        int number;
+        string? input = null;
+        input = Console.ReadLine();
+
+        if (int.TryParse(input, out number))
+        {
+            return input;
+        }
+        else { return input; }
+        
     }
 
     private static void ViewAllRecords()
