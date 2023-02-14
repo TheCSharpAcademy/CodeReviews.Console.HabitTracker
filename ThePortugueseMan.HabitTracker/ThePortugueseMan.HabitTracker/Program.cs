@@ -79,6 +79,7 @@ internal class Program
         string date = GetDateInput();
         if (date == null) return;
 
+<<<<<<< HEAD
         string? quantity = GetNumberInput("\n\nPlease insert the number of glasses. Integers only\n\n");
         if (int.TryParse(quantity, out int quantity_number)) return;
 
@@ -93,6 +94,9 @@ internal class Program
 
             connection.Close();
         }
+=======
+        int quantity = GetNumberInput();
+>>>>>>> f64a2f1666a69248802e5f1bd4d23603593787cc
     }
 
     private static string GetDateInput()
