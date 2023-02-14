@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Globalization;
+using System.Security.Cryptography;
 using System.Threading.Channels;
 
 internal class Program
@@ -79,24 +81,21 @@ internal class Program
         string date = GetDateInput();
         if (date == null) return;
 
-<<<<<<< HEAD
-        string? quantity = GetNumberInput("\n\nPlease insert the number of glasses. Integers only\n\n");
-        if (int.TryParse(quantity, out int quantity_number)) return;
+        string? quantity = GetNumberInput("\n\nPlease insert the number of glasses. Integers only");
+        if (!int.TryParse(quantity, out int quantity_number)) return;
 
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
+
             tableCmd.CommandText =
-                $"INSERT INTO drinking_water (date, quantity) VALUES ('{date}',{quantity_number})";
+                $"INSERT INTO drinking_water(date, quantity) VALUES ('{date}',{quantity_number})";
 
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
-=======
-        int quantity = GetNumberInput();
->>>>>>> f64a2f1666a69248802e5f1bd4d23603593787cc
     }
 
     private static string GetDateInput()
@@ -113,6 +112,7 @@ internal class Program
     private static string? GetNumberInput(string message)
     {
         Console.WriteLine(message);
+        Console.Write("\n");
         int number;
         string? input = null;
         input = Console.ReadLine();
@@ -127,6 +127,49 @@ internal class Program
 
     private static void ViewAllRecords()
     {
-        throw new NotImplementedException();
+        Console.Clear();
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                $"SELECT * FROM drinking_water ";
+
+            List<DrinkingWater> tableData = new();
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows) 
+            {
+                while (reader.Read()) 
+                {
+                    tableData.Add(
+                    new DrinkingWater
+                    {
+                        Id = reader.GetInt32(0),
+                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                        Quantity = reader.GetInt32(2)
+                    }); ;
+                }
+            } else { Console.WriteLine("No rows found"); }
+
+            connection.Close();
+
+            Console.WriteLine("-----------------------------\n");
+            foreach (var dw in tableData)
+            {
+                Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - Quantity: {dw.Quantity}"); 
+            }
+            Console.WriteLine("\n-----------------------------\n");
+        }
+        Console.ReadLine();
+    }
+
+    public class DrinkingWater
+    {
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public int Quantity { get; set; }
     }
 }
