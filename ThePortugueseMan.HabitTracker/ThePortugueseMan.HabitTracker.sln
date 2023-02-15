@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThePortugueseMan.HabitTracker", "ThePortugueseMan.HabitTracker\ThePortugueseMan.HabitTracker.csproj", "{7E65FC8D-8875-4538-9A15-77BE550647D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThePortugueseMan.HabitTracker", "ThePortugueseMan.HabitTracker\ThePortugueseMan.HabitTracker.csproj", "{7E65FC8D-8875-4538-9A15-77BE550647D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseLibrary", "Habit_DataBase\DataBaseLibrary.csproj", "{F1D81F86-DAFF-411D-AB52-026C46BF362C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7E65FC8D-8875-4538-9A15-77BE550647D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E65FC8D-8875-4538-9A15-77BE550647D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E65FC8D-8875-4538-9A15-77BE550647D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1D81F86-DAFF-411D-AB52-026C46BF362C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1D81F86-DAFF-411D-AB52-026C46BF362C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1D81F86-DAFF-411D-AB52-026C46BF362C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1D81F86-DAFF-411D-AB52-026C46BF362C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,30 +1,18 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using DataBaseLibrary;
+using Microsoft.Data.Sqlite;
+using System;
 using System.Globalization;
-using System.Security.Cryptography;
-using System.Threading.Channels;
+using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 
 internal class Program
 {
-    static string connectionString = @"Data Source=habit-Tracker.db";
+    static DataBaseCommands dbCommands = new();
     private static void Main(string[] args)
     {
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
+        //DataBaseCommands dbCommands = new();
 
-            // AUTOINCREMENT - everytime an entry is added, it will increment
-            tableCmd.CommandText =
-                @"CREATE TABLE IF NOT EXISTS drinking_water (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Date TEXT,
-                Quantity INTEGER
-                )";
-
-            tableCmd.ExecuteNonQuery();
-
-            connection.Close();
-        }
+        dbCommands.Initialization();
 
         GetUserInput();
     }
@@ -57,24 +45,89 @@ internal class Program
                 case "0": closeApp = true; break;
                 case "1": ViewAllRecords(); break;
                 case "2": InsertRecord(); break;
-                case "3": DeleteRecord(); break;
-                case "4": UpdateRecord(); break;
+                case "3": DeleteScreen(); break;
+                case "4": UpdateScreen(); break;
                 default:
                     invalidCommand = true;
                     break;
             }
         }
+        Console.Clear();
+        Console.WriteLine("\nGoodbye!");
+        Environment.Exit(0);
     }
 
-    private static void UpdateRecord()
+    private static void UpdateScreen()
     {
-        throw new NotImplementedException();
+        bool started = false;
+        bool success = false;
+        int index = 0;
+
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("\nUPDATE");
+            dbCommands.ViewAll();
+
+            if (started && !success) Console.WriteLine("\nIndex not valid");
+            else if (success) Console.WriteLine($"\nUpdated record {index}");
+            else if (!started) Console.WriteLine("\n");
+
+            success = false;
+            string? index_str = GetNumberInput(
+                "\n\nPlease select write the index of the number you want to update" +
+                "\nOr press 0 to return to the menu");
+            if (!int.TryParse(index_str, out index)) continue;
+            if (index == 0) return;
+            else if (!dbCommands.CheckIndex(index)) continue;
+
+            string date = GetDateInput();
+            if (date == null) continue;
+
+            string? quantity_str = GetNumberInput(
+                "\nPlease insert the number of glasses. Integers only" +
+                "\nOr press 0 to return to the menu");
+
+            if (!int.TryParse(quantity_str, out int quantity)) continue;
+            if (quantity == 0) return;
+
+            success = dbCommands.UpdateByIndex(index, date, quantity);
+
+            started = true;
+        }
+        while (true);
     }
 
-    private static void DeleteRecord()
+    private static void DeleteScreen()
     {
-        throw new NotImplementedException();
+        bool started = false;
+        bool success = false;
+        int index = 0;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("\nDELETE");
+            dbCommands.ViewAll();
+
+            if (started && !success) Console.WriteLine("\nIndex not valid");
+            else if (success) Console.WriteLine($"\nDeleted record {index}");
+            else if (!started) Console.WriteLine("\n");
+
+            success = false;
+            string? index_str = GetNumberInput(
+                "\n\nPlease select write the index of the number you want to delete" +
+                "\nOr press 0 to return to the menu");
+            if (!int.TryParse(index_str, out index)) continue;
+            if (index == 0) return;
+            else if (!dbCommands.CheckIndex(index)) continue;
+
+            success = dbCommands.DeleteByIndex(index);
+
+            started = true;
+        }
+        while (true);
     }
+
 
     private static void InsertRecord()
     {
@@ -84,27 +137,35 @@ internal class Program
         string? quantity = GetNumberInput("\n\nPlease insert the number of glasses. Integers only");
         if (!int.TryParse(quantity, out int quantity_number)) return;
 
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
+        dbCommands.Insert(date, quantity_number);
+    }
 
-            tableCmd.CommandText =
-                $"INSERT INTO drinking_water(date, quantity) VALUES ('{date}',{quantity_number})";
+    private static bool GetInsertData(ref string date, ref int quantity)
+    {
+        date = GetDateInput();
+        if (date == null) return false;
 
-            tableCmd.ExecuteNonQuery();
-
-            connection.Close();
-        }
+        string? quantity_str = GetNumberInput("\n\nPlease insert the number of glasses. " +
+            "Integers only");
+        if (!int.TryParse(quantity_str, out quantity)) return false;
+        
+        return true;
     }
 
     private static string GetDateInput()
     {
-        Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main menu");
+        Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). " +
+            "Type 0 to return to main menu");
 
         string? dateInput = Console.ReadLine();
 
-        if (dateInput == "0" || dateInput == "") dateInput = null;
+        while(!DateTime.TryParseExact(dateInput, "dd-MM-yy", 
+            new CultureInfo("en-US"), DateTimeStyles.None, out _))
+        {
+            Console.WriteLine("\n\nInvalid date. Please follow the format dd-mm-yy");
+            dateInput = Console.ReadLine();
+            if (dateInput == "0") return null;
+        }
 
         return dateInput;
     }
@@ -114,62 +175,27 @@ internal class Program
         Console.WriteLine(message);
         Console.Write("\n");
         int number;
-        string? input = null;
+        string? input;
         input = Console.ReadLine();
 
-        if (int.TryParse(input, out number))
+        while (!Int32.TryParse(input, out number) || Convert.ToInt32(input) < 0)
         {
-            return input;
+            Console.WriteLine("\n\nInvalid input. Please write a positive integer above 0 " +
+                "Or 0 to return to the menu");
+            input = Console.ReadLine();
+            if (input == "0") return null;
         }
-        else { return input; }
+
+        return input;
         
     }
 
     private static void ViewAllRecords()
     {
         Console.Clear();
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-
-            tableCmd.CommandText =
-                $"SELECT * FROM drinking_water ";
-
-            List<DrinkingWater> tableData = new();
-
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (reader.HasRows) 
-            {
-                while (reader.Read()) 
-                {
-                    tableData.Add(
-                    new DrinkingWater
-                    {
-                        Id = reader.GetInt32(0),
-                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                        Quantity = reader.GetInt32(2)
-                    }); ;
-                }
-            } else { Console.WriteLine("No rows found"); }
-
-            connection.Close();
-
-            Console.WriteLine("-----------------------------\n");
-            foreach (var dw in tableData)
-            {
-                Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - Quantity: {dw.Quantity}"); 
-            }
-            Console.WriteLine("\n-----------------------------\n");
-        }
+        Console.WriteLine("\nVIEW");
+        dbCommands.ViewAll();
+        Console.WriteLine("\n\n\n\nPress any key and ENTER to return to the menu");
         Console.ReadLine();
-    }
-
-    public class DrinkingWater
-    {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public int Quantity { get; set; }
     }
 }
