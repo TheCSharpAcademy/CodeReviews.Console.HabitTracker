@@ -1,20 +1,63 @@
 ﻿using DataBaseLibrary;
-using Microsoft.Data.Sqlite;
-using System;
+using HabitsLibrary;
 using System.Globalization;
-using System.Net.Http.Headers;
-using System.Reflection.Metadata.Ecma335;
+
 
 internal class Program
 {
+    static string connectionString = @"Data Source=habit-Tracker.db";
+    static string habitsTableName = "HabitsTable";
     static DataBaseCommands dbCommands = new();
+    static HabitsTable habitsTable = new(habitsTableName, connectionString);
     private static void Main(string[] args)
     {
         //DataBaseCommands dbCommands = new();
 
-        dbCommands.Initialization();
-
+        dbCommands.Initialization(habitsTableName);
+        
+        MainMenu();
         GetUserInput();
+    }
+
+    static void MainMenu()
+    {
+        Console.Clear();
+        bool closeApp = false;
+        bool invalidCommand = false;
+        while (!closeApp)
+        {
+            Console.Clear();
+            Console.WriteLine("HABIT TRACKER");
+            Console.WriteLine("\nMAIN MENU");
+            Console.WriteLine("\nWhat would you like to do?");
+            Console.WriteLine("\nType 0 to Close Application.");
+            Console.WriteLine("Type 1 to View all Habits.");
+            Console.WriteLine("Type 2 to Insert a new Habit.");
+            Console.WriteLine("Type 3 do Delete a Habit.");
+            Console.WriteLine("Type 4 to Update a Habit.");
+            Console.WriteLine("----------------------------------------");
+            if (invalidCommand)
+            {
+                Console.Write("Invalid Command. Please choose one of the commands above");
+            }
+            Console.Write("\n");
+            string? commandInput = Console.ReadLine();
+
+            switch (commandInput)
+            {
+                case "0": closeApp = true; break;
+                case "1": habitsTable.ViewAll(); break;
+                case "2": habitsTable.Insert(); break;
+                case "3": DeleteScreen(); break;
+                case "4": UpdateScreen(); break;
+                default:
+                    invalidCommand = true;
+                    break;
+            }
+        }
+        Console.Clear();
+        Console.WriteLine("\nGoodbye!");
+        Environment.Exit(0);
     }
 
     static void GetUserInput()
@@ -25,9 +68,10 @@ internal class Program
         while (!closeApp)
         {
             Console.Clear();
-            Console.WriteLine("\nMAIN MENU");
+            Console.WriteLine("HABIT TRACKER");
+            Console.WriteLine("\nHABIT X");
             Console.WriteLine("\nWhat would you like to do?");
-            Console.WriteLine("\nType 0 to Close Application.");
+            Console.WriteLine("\nType 0 to Return to the Main Menu.");
             Console.WriteLine("Type 1 to View All Records.");
             Console.WriteLine("Type 2 to Insert Record.");
             Console.WriteLine("Type 3 do Delete Record.");
@@ -43,8 +87,8 @@ internal class Program
             switch (commandInput)
             {
                 case "0": closeApp = true; break;
-                case "1": ViewAllRecords(); break;
-                case "2": InsertRecord(); break;
+                case "1": ViewAllHabits(""); break;
+                case "2": Insert(); break;
                 case "3": DeleteScreen(); break;
                 case "4": UpdateScreen(); break;
                 default:
@@ -129,7 +173,7 @@ internal class Program
     }
 
 
-    private static void InsertRecord()
+    private static void Insert()
     {
         string date = GetDateInput();
         if (date == null) return;
@@ -190,11 +234,14 @@ internal class Program
         
     }
 
-    private static void ViewAllRecords()
+    private static void ViewAllHabits(string db_name)
     {
-        Console.Clear();
+        /*Console.Clear();
         Console.WriteLine("\nVIEW");
-        dbCommands.ViewAll();
+        dbCommands.ViewAll(db_name);
+        Console.WriteLine("\n\n\n\nPress any key and ENTER to return to the menu");
+        Console.ReadLine();*/
+        habitsTable.ViewAll();
         Console.WriteLine("\n\n\n\nPress any key and ENTER to return to the menu");
         Console.ReadLine();
     }

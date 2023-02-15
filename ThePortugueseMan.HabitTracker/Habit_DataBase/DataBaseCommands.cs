@@ -7,7 +7,7 @@ public class DataBaseCommands
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
 
-    public void Initialization()
+    public void Initialization(string habitsTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -16,17 +16,19 @@ public class DataBaseCommands
 
             // AUTOINCREMENT - everytime an entry is added, it will increment
             tableCmd.CommandText =
-                @"CREATE TABLE IF NOT EXISTS drinking_water (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date TEXT,
-                    Quantity INTEGER
-                    )";
+                @"CREATE TABLE IF NOT EXISTS "+
+                    habitsTableName +
+                    "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "HabitTableName TEXT," +
+                    "HabitUnit TEXT)";
 
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
     }
+
+
 
     public void Insert(string date, int quantity)
     {
@@ -37,6 +39,25 @@ public class DataBaseCommands
 
             tableCmd.CommandText =
                 $"INSERT INTO drinking_water(date, quantity) VALUES ('{date}',{quantity})";
+
+            tableCmd.ExecuteNonQuery();
+
+            connection.Close();
+        }
+    }
+
+    public void Insert(string habitsTableName,string habitTableName, string habitUnit)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                $"INSERT INTO " +
+                habitsTableName +
+                "(HabitTableName, HabitUnit)" +
+                $" VALUES ('{habitTableName}','{habitUnit}')";
 
             tableCmd.ExecuteNonQuery();
 
@@ -114,6 +135,46 @@ public class DataBaseCommands
         }
     }   
 
+    public void ViewAll(string habit_db_name)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                $"SELECT * FROM " + habit_db_name;
+
+            List<Habit> tableData = new();
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    tableData.Add(
+                    new Habit
+                    {
+                        Id = reader.GetInt32(0),
+                        HabitDB = reader.GetString(1),
+                        Habit_unit = reader.GetString(2)
+                    }); ;
+                }
+            }
+            else { Console.WriteLine("Empty"); }
+
+            connection.Close();
+
+            Console.WriteLine("-----------------------------\n");
+            foreach (var dw in tableData)
+            {
+                Console.WriteLine($"{dw.Id} - {dw.HabitDB} - Unit: {dw.Habit_unit}");
+            }
+            Console.WriteLine("\n-----------------------------");
+        }
+    }
+
     public void ViewAll()
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -122,7 +183,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"SELECT * FROM drinking_water ";
+                $"SELECT * FROM drinking_water";
 
             List<DrinkingWater> tableData = new();
 
@@ -154,11 +215,39 @@ public class DataBaseCommands
         }
     }
 
+    public SqliteDataReader GetReader(string? db_name)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                $"SELECT * FROM " + db_name;
+
+            List<DrinkingWater> tableData = new();
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (!reader.HasRows) reader = null;
+
+            return reader;
+        }
+    }
+
     public class DrinkingWater
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
+    }
+
+    public class Habit
+    {
+        public int Id { get; set; }
+        public string? HabitDB { get; set; }
+        public string? Habit_unit { get; set;}
+
     }
 
 }
