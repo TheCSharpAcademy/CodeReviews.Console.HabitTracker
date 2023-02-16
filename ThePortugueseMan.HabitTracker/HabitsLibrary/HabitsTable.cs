@@ -43,7 +43,7 @@ public class HabitsTable
 
     private string? TransformToTableName(string habitName) { return $"[{habitName}]"; }
 
-    private bool CheckForHabitNameInTable(string testTableName)
+    public bool CheckForHabitNameInTable(string testTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -58,25 +58,6 @@ public class HabitsTable
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
             connection.Close();
 
-            if (checkQuery == 0) return false;
-            else return true;
-        }
-    }
-
-    public bool CheckForHabitByIndex(int index)
-    {
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var checkCmd = connection.CreateCommand();
-
-            checkCmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM " +
-                tableName +
-                $" WHERE Id = {index})";
-            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-            
-            connection.Close();
             if (checkQuery == 0) return false;
             else return true;
         }

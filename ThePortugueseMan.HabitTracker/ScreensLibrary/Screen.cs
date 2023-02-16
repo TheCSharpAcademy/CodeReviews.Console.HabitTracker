@@ -37,7 +37,15 @@ public class Screen
 
     private void InsertHabit() 
     {
-        string habitName = askInput.LettersNumberAndSpaces("Write the name of your habit.");
+        string habitName;
+        bool showError = false;
+        do
+        {
+            if (!showError) habitName = askInput.LettersNumberAndSpaces("Write the name of your habit.");
+            else habitName = askInput.LettersNumberAndSpaces("Habit already exists.");
+            showError= true;
+        } while (habitsTable.CheckForHabitNameInTable(habitName));
+
         string habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
         habitsTable.InsertNewHabit(habitName, habitUnit);
         return;
