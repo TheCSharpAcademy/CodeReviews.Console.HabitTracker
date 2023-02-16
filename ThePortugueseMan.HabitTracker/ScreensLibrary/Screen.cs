@@ -1,4 +1,5 @@
 ﻿using HabitsLibrary;
+using DataBaseLibrary;
 namespace ScreensLibrary;
 
 public class Screen
@@ -6,31 +7,26 @@ public class Screen
     HabitsTable habitsTable;
     HabitsSubTable habitsSubTable;
     AskInput askInput = new();
+    DataBaseCommands dbCmd = new();
 
     public Screen(HabitsTable habitsTable,HabitsSubTable habitsSubTable)
     {
         this.habitsTable = habitsTable;
         this.habitsSubTable = habitsSubTable;
     }
+
+    private string GetTableNameFromMenuName(string menuName)
+    {
+        if (menuName == "Habits") return habitsTable.tableName;
+        else if (menuName == "SubHabits") return null;
+
+        return null;
+    }
     public void ViewAll(string menuString)
     {
         Console.Clear();
-        if (menuString == "Habits") ViewAllHabits();
-        else if (menuString == "SubHabits") ViewAllSubHabits();
-        else return;
-
-        Console.ReadLine();
-    }
-
-    private void ViewAllHabits()
-    {
-        habitsTable.ViewAll();
-        return;
-    }
-
-    private void ViewAllSubHabits()
-    {
-        return;
+        dbCmd.ViewAll(GetTableNameFromMenuName(menuString));
+        askInput.AnyAndEnterToContinue();
     }
 
     public void Insert(string menuString)
@@ -60,7 +56,13 @@ public class Screen
             Console.Clear();
             Console.WriteLine("DELETE");
 
-            if (!DeleteHabit()) Console.WriteLine("Couldn't delete entry");
+            if (!DeleteEntry(menuString))
+            {
+                Console.WriteLine("Couldn't delete entry");
+                if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
+                continue;
+            }
+            else Console.WriteLine("Entry deleted successfully!");
             if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
             else continue;
         } while (!exitScreen);
@@ -68,19 +70,15 @@ public class Screen
 
     }
 
-    private bool DeleteHabit()
+    private bool DeleteEntry(string menuString)
     {
-        habitsTable.ViewAll();
-        int index = askInput.Digits("Write the number of the you want to delete and press enter.");
-        if (!habitsTable.CheckForHabitByIndex(index)) return false;
+        string tableName = GetTableNameFromMenuName(menuString);
+        dbCmd.ViewAll(GetTableNameFromMenuName(menuString));
+        int index = askInput.Digits("Write the number of the entry you want to delete and press enter.");
+        if (!dbCmd.CheckIndex(index, tableName)) return false;
 
-        habitsTable.DeleteHabitByIndex(index);
+        if (!dbCmd.DeleteByIndex(index,tableName)) return false;
         return true;
-    }
-
-    private bool DeleteSubHabit()
-    {
-        return false;
     }
 
     public void Update(string menuString)
@@ -90,8 +88,10 @@ public class Screen
         {
             Console.Clear();
             Console.WriteLine("UPDATE");
+            dbCmd.ViewAll(GetTableNameFromMenuName(menuString));
+            if (UpdateEntry(menuString)) Console.WriteLine("Entry successfully updated");
+            else Console.WriteLine("Couldn't update entry");
 
-            if (!DeleteHabit()) Console.WriteLine("Couldn't delete entry");
             if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
             else continue;
         } while (!exitScreen);
@@ -99,9 +99,19 @@ public class Screen
 
     }
 
-    private bool UpdateHabit()
+    private bool UpdateEntry(string menuString)
     {
-        habitsTable.ViewAll();
+        string tableName = GetTableNameFromMenuName(menuString);
+        int index = askInput.Digits("Write the index of the entry you want to update");
+        if (!dbCmd.CheckIndex(index, tableName)) return false;
+
+        if (menuString == "Habits")
+        {
+            string newName = askInput.LettersNumberAndSpaces("Write the new name");
+            string newUnit = askInput.LettersNumberAndSpaces("Write the new unit");
+            if (!dbCmd.Update(tableName, index, newName, newUnit)) return false;
+            else return true;
+        }
         return false;
     }
 

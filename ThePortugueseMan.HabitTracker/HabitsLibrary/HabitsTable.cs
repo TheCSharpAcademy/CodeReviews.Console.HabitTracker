@@ -82,88 +82,10 @@ public class HabitsTable
         }
     }
 
-    public void InsertNewHabit()
-    {
-        string habitName;
-        string habitTableName;
-        string habitUnit;
-        bool showError = false;
-
-        do
-        {
-            habitName = AskForString("Write you habit's name", showError);
-            showError= true;
-        }
-        while (habitName == null);
-        habitTableName = TransformToTableName(habitName);
-
-        if (CheckForHabitNameInTable(habitTableName))
-        {
-            Console.WriteLine("Habit already exists. Press any key and ENTER to return to the menu");
-            Console.ReadLine();
-            return;
-        }
-
-        showError = false;
-        do
-        {
-            habitUnit = AskForString("Write you habit's units", showError);
-            showError = true;
-        }
-        while (habitUnit == null);
-
-        dbCommands.Insert(tableName, habitTableName, habitUnit);
-        dbCommands.Initialization(habitTableName);
-    }
-
     public void InsertNewHabit(string habitName, string habitUnit)
     {
        string habitTableName = TransformToTableName(habitName);
        dbCommands.Insert(tableName, habitTableName, habitUnit);
        dbCommands.CreateHabitTable(habitTableName);
-    }
-    public void DeleteHabitByIndex(int index)
-    {
-        dbCommands.DeleteByIndex(index, tableName);
-    }
-    public void ViewAll()
-    {
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-
-            tableCmd.CommandText =
-                $"SELECT * FROM " + tableName;
-
-            List<Habit> tableData = new();
-
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    tableData.Add(
-                    new Habit
-                    {
-                        Id = reader.GetInt32(0),
-                        HabitTableName = reader.GetString(1),
-                        HabitUnit = reader.GetString(2)
-                    }); ;
-                }
-            }
-            else { Console.WriteLine("Empty"); }
-
-            connection.Close();
-
-            Console.WriteLine("-----------------------------\n");
-            foreach (var dw in tableData)
-            {
-                string habitTableName_display = dw.HabitTableName.TrimEnd(']').TrimStart('[');
-                Console.WriteLine($"{dw.Id} - {habitTableName_display} - Unit: {dw.HabitUnit}");
-            }
-            Console.WriteLine("\n-----------------------------");
-        }
     }
 }
