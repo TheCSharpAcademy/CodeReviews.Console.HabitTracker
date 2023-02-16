@@ -5,6 +5,7 @@ public class Screen
 {
     HabitsTable habitsTable;
     HabitsSubTable habitsSubTable;
+    AskInput askInput = new();
 
     public Screen(HabitsTable habitsTable,HabitsSubTable habitsSubTable)
     {
@@ -33,6 +34,36 @@ public class Screen
     }
 
     public void Insert(string menuString)
+    {
+        if (menuString == "Habits") InsertHabit();
+        else if (menuString == "SubHabits") InsertSubHabit();
+    }
+
+    private void InsertHabit() 
+    {
+        string habitName = askInput.LettersNumberAndSpaces("Write the name of your habit.");
+        string habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
+        habitsTable.InsertNewHabit(habitName, habitUnit);
+        return;
+    }
+
+    private void InsertSubHabit()
+    {
+        return;
+    }
+
+    public void Delete(string menuString) 
+    {
+        if (menuString == "Habits") DeleteHabit();
+        else if (menuString == "SubHabits") DeleteSubHabit();
+    }
+
+    private void DeleteHabit()
+    {
+
+    }
+
+    private void DeleteSubHabit()
     {
 
     }

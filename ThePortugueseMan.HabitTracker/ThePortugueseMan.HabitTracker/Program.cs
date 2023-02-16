@@ -24,6 +24,7 @@ internal class Program
     static void MainMenu()
     {
         Console.Clear();
+        string menuName = "Habits";
         bool closeApp = false;
         bool invalidCommand = false;
         while (!closeApp)
@@ -48,8 +49,8 @@ internal class Program
             switch (commandInput)
             {
                 case "0": closeApp = true; break;
-                case "1": screen.ViewAll("Habits"); break;
-                case "2": habitsTable.InsertNewHabit(); break;
+                case "1": screen.ViewAll(menuName); break;
+                case "2": screen.Insert(menuName); break;
                 case "3": DeleteScreen(); break;
                 case "4": UpdateScreen(); break;
                 default:

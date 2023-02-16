@@ -97,6 +97,12 @@ public class HabitsTable
         dbCommands.Initialization(habitTableName);
     }
 
+    public void InsertNewHabit(string habitName, string habitUnit)
+    {
+       string habitTableName = TransformToTableName(habitName);
+       dbCommands.Insert(tableName, habitTableName, habitUnit);
+       dbCommands.Initialization(habitTableName);
+    }
     public void DeleteHabitByIndex()
     {
 
