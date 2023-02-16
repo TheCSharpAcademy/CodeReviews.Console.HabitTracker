@@ -1,5 +1,6 @@
 ﻿using DataBaseLibrary;
 using HabitsLibrary;
+using ScreensLibrary;
 using System.Globalization;
 
 
@@ -9,6 +10,7 @@ internal class Program
     static string habitsTableName = "HabitsTable";
     static DataBaseCommands dbCommands = new();
     static HabitsTable habitsTable = new(habitsTableName, connectionString);
+    static Screen screen = new(habitsTable, null);
     private static void Main(string[] args)
     {
         //DataBaseCommands dbCommands = new();
@@ -31,7 +33,7 @@ internal class Program
             Console.WriteLine("\nMAIN MENU");
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine("\nType 0 to Close Application.");
-            Console.WriteLine("Type 1 to View all Habits.");
+            Console.WriteLine("Type 1 to View all Habits and select one.");
             Console.WriteLine("Type 2 to Insert a new Habit.");
             Console.WriteLine("Type 3 do Delete a Habit.");
             Console.WriteLine("Type 4 to Update a Habit.");
@@ -46,8 +48,8 @@ internal class Program
             switch (commandInput)
             {
                 case "0": closeApp = true; break;
-                case "1": habitsTable.ViewAll(); break;
-                case "2": habitsTable.Insert(); break;
+                case "1": screen.ViewAll("Habits"); break;
+                case "2": habitsTable.InsertNewHabit(); break;
                 case "3": DeleteScreen(); break;
                 case "4": UpdateScreen(); break;
                 default:

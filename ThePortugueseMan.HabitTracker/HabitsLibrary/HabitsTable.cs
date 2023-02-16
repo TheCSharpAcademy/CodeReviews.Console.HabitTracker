@@ -23,20 +23,22 @@ public class HabitsTable
         public string? HabitUnit { get; set; }
 
     }
-    private string? AskHabitName()
+
+    private string? AskForString(string message, bool showError)
     {
-        Console.WriteLine("Please write the name of your habit");
-        string habitName = Console.ReadLine();
+        if (showError) Console.WriteLine("Invalid Input.");
+        else Console.WriteLine(message);
 
-        return habitName;
-    }
+        Console.WriteLine("Use only letters, numbers and spaces");
 
-    private string? AskHabitUnit()
-    {
-        Console.WriteLine("Please write the units of your habit");
-        string habitUnit = Console.ReadLine();
+        char c = default;
+        string returnString = Console.ReadLine();
+        if (returnString == null) return returnString;
 
-        return habitUnit;
+        if ((returnString.All(c => Char.IsLetterOrDigit(c)) || c == ' ') && returnString != "")
+            return returnString;
+        else
+            return null;
     }
 
     private string? TransformToTableName(string habitName) { return $"[{habitName}]"; }
@@ -51,7 +53,7 @@ public class HabitsTable
             checkCmd.CommandText =
                 $"SELECT EXISTS(SELECT 2 FROM " +
                 tableName +
-                $" WHERE HabitTableName = {testTableName})";
+                $" WHERE HabitTableName = '{testTableName}')";
 
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
             connection.Close();
@@ -61,19 +63,44 @@ public class HabitsTable
         }
     }
 
-    public void Insert()
+    public void InsertNewHabit()
     {
-        string habitName = AskHabitName();
-        string habitTableName = TransformToTableName(habitName);
-        if (CheckForHabitNameInTable(habitTableName)) return;
+        string habitName;
+        string habitTableName;
+        string habitUnit;
+        bool showError = false;
 
-        string habitUnit = AskHabitUnit();
+        do
+        {
+            habitName = AskForString("Write you habit's name", showError);
+            showError= true;
+        }
+        while (habitName == null);
+        habitTableName = TransformToTableName(habitName);
+
+        if (CheckForHabitNameInTable(habitTableName))
+        {
+            Console.WriteLine("Habit already exists. Press any key and ENTER to return to the menu");
+            Console.ReadLine();
+            return;
+        }
+
+        showError = false;
+        do
+        {
+            habitUnit = AskForString("Write you habit's units", showError);
+            showError = true;
+        }
+        while (habitUnit == null);
 
         dbCommands.Insert(tableName, habitTableName, habitUnit);
         dbCommands.Initialization(habitTableName);
     }
 
+    public void DeleteHabitByIndex()
+    {
 
+    }
     public void ViewAll()
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -108,11 +135,10 @@ public class HabitsTable
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
             {
-                Console.WriteLine($"{dw.Id} - {dw.HabitTableName} - Unit: {dw.HabitUnit}");
+                string habitTableName_display = dw.HabitTableName.TrimEnd(']').TrimStart('[');
+                Console.WriteLine($"{dw.Id} - {habitTableName_display} - Unit: {dw.HabitUnit}");
             }
             Console.WriteLine("\n-----------------------------");
-            Console.ReadLine();
         }
     }
-
 }

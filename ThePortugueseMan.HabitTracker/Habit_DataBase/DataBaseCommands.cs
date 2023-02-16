@@ -16,7 +16,7 @@ public class DataBaseCommands
 
             // AUTOINCREMENT - everytime an entry is added, it will increment
             tableCmd.CommandText =
-                @"CREATE TABLE IF NOT EXISTS "+
+                @$"CREATE TABLE IF NOT EXISTS "+
                     habitsTableName +
                     "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "HabitTableName TEXT," +
