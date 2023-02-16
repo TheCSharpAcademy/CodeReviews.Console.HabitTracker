@@ -28,9 +28,29 @@ public class DataBaseCommands
         }
     }
 
+    public void CreateHabitTable(string tableName)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            // AUTOINCREMENT - everytime an entry is added, it will increment
+            tableCmd.CommandText =
+                @$"CREATE TABLE IF NOT EXISTS " +
+                    tableName +
+                    "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "Date TEXT," +
+                    "Quantity TEXT)";
+
+            tableCmd.ExecuteNonQuery();
+
+            connection.Close();
+        }
+    }
 
 
-    public void Insert(string date, int quantity)
+    public void Insert(string tableName, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -38,12 +58,18 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO drinking_water(date, quantity) VALUES ('{date}',{quantity})";
+                $"INSERT INTO " +
+                tableName +
+                $"(date, quantity) VALUES ('{date}',{quantity})";
 
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
+    }
+    public void Insert(string date, int quantity)
+    {
+        return;
     }
 
     public void Insert(string habitsTableName,string habitTableName, string habitUnit)
@@ -65,7 +91,7 @@ public class DataBaseCommands
         }
     }
 
-    public bool CheckIndex(int index) 
+    public bool CheckIndex(int index, string tableName) 
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -73,7 +99,9 @@ public class DataBaseCommands
             var checkCmd = connection.CreateCommand();
 
             checkCmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {index})";
+                $"SELECT EXISTS(SELECT 1 FROM " +
+                tableName +
+                $" WHERE Id = {index})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
             connection.Close();
 
@@ -82,22 +110,22 @@ public class DataBaseCommands
         }
     }
 
-    public bool DeleteByIndex(int index) 
+    public bool DeleteByIndex(int index, string tableName) 
     {
-        if(!CheckIndex(index)) { return false; }
-
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"DELETE from drinking_water WHERE Id = '{index}'";
+                $"DELETE from " +
+                tableName +
+                $" WHERE Id = '{index}'";
 
             int rowCount = tableCmd.ExecuteNonQuery();
             connection.Close();
-
-            return true;
+            if (rowCount == 0 ) return false;
+            else return true;
         }
     }
 
@@ -134,46 +162,6 @@ public class DataBaseCommands
             }
         }
     }   
-
-    public void ViewAll(string habit_db_name)
-    {
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-
-            tableCmd.CommandText =
-                $"SELECT * FROM " + habit_db_name;
-
-            List<Habit> tableData = new();
-
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    tableData.Add(
-                    new Habit
-                    {
-                        Id = reader.GetInt32(0),
-                        HabitDB = reader.GetString(1),
-                        Habit_unit = reader.GetString(2)
-                    }); ;
-                }
-            }
-            else { Console.WriteLine("Empty"); }
-
-            connection.Close();
-
-            Console.WriteLine("-----------------------------\n");
-            foreach (var dw in tableData)
-            {
-                Console.WriteLine($"{dw.Id} - {dw.HabitDB} - Unit: {dw.Habit_unit}");
-            }
-            Console.WriteLine("\n-----------------------------");
-        }
-    }
 
     public void ViewAll()
     {

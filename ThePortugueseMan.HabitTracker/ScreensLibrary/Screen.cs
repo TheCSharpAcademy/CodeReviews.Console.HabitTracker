@@ -54,17 +54,55 @@ public class Screen
 
     public void Delete(string menuString) 
     {
-        if (menuString == "Habits") DeleteHabit();
-        else if (menuString == "SubHabits") DeleteSubHabit();
+        bool exitScreen = false;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("DELETE");
+
+            if (!DeleteHabit()) Console.WriteLine("Couldn't delete entry");
+            if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
+            else continue;
+        } while (!exitScreen);
+        return;
+
     }
 
-    private void DeleteHabit()
+    private bool DeleteHabit()
     {
+        habitsTable.ViewAll();
+        int index = askInput.Digits("Write the number of the you want to delete and press enter.");
+        if (!habitsTable.CheckForHabitByIndex(index)) return false;
 
+        habitsTable.DeleteHabitByIndex(index);
+        return true;
     }
 
-    private void DeleteSubHabit()
+    private bool DeleteSubHabit()
     {
+        return false;
+    }
+
+    public void Update(string menuString)
+    {
+        bool exitScreen = false;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("UPDATE");
+
+            if (!DeleteHabit()) Console.WriteLine("Couldn't delete entry");
+            if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
+            else continue;
+        } while (!exitScreen);
+        return;
 
     }
+
+    private bool UpdateHabit()
+    {
+        habitsTable.ViewAll();
+        return false;
+    }
+
 }

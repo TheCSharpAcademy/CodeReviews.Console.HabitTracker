@@ -18,7 +18,7 @@ internal class Program
         dbCommands.Initialization(habitsTableName);
         
         MainMenu();
-        GetUserInput();
+        //GetUserInput();
     }
 
     static void MainMenu()
@@ -51,8 +51,8 @@ internal class Program
                 case "0": closeApp = true; break;
                 case "1": screen.ViewAll(menuName); break;
                 case "2": screen.Insert(menuName); break;
-                case "3": DeleteScreen(); break;
-                case "4": UpdateScreen(); break;
+                case "3": screen.Delete(menuName); break;
+                case "4": screen.Update(menuName); break;
                 default:
                     invalidCommand = true;
                     break;
@@ -63,6 +63,7 @@ internal class Program
         Environment.Exit(0);
     }
 
+    /*
     static void GetUserInput()
     {
         Console.Clear();
@@ -168,7 +169,7 @@ internal class Program
             if (index == 0) return;
             else if (!dbCommands.CheckIndex(index)) continue;
 
-            success = dbCommands.DeleteByIndex(index);
+            success = dbCommands.DeleteByIndex(index, "");
 
             started = true;
         }
@@ -243,9 +244,9 @@ internal class Program
         Console.WriteLine("\nVIEW");
         dbCommands.ViewAll(db_name);
         Console.WriteLine("\n\n\n\nPress any key and ENTER to return to the menu");
-        Console.ReadLine();*/
+        Console.ReadLine();
         habitsTable.ViewAll();
         Console.WriteLine("\n\n\n\nPress any key and ENTER to return to the menu");
         Console.ReadLine();
-    }
+    }*/
 }

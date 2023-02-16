@@ -63,6 +63,25 @@ public class HabitsTable
         }
     }
 
+    public bool CheckForHabitByIndex(int index)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var checkCmd = connection.CreateCommand();
+
+            checkCmd.CommandText =
+                $"SELECT EXISTS(SELECT 1 FROM " +
+                tableName +
+                $" WHERE Id = {index})";
+            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+            
+            connection.Close();
+            if (checkQuery == 0) return false;
+            else return true;
+        }
+    }
+
     public void InsertNewHabit()
     {
         string habitName;
@@ -101,11 +120,11 @@ public class HabitsTable
     {
        string habitTableName = TransformToTableName(habitName);
        dbCommands.Insert(tableName, habitTableName, habitUnit);
-       dbCommands.Initialization(habitTableName);
+       dbCommands.CreateHabitTable(habitTableName);
     }
-    public void DeleteHabitByIndex()
+    public void DeleteHabitByIndex(int index)
     {
-
+        dbCommands.DeleteByIndex(index, tableName);
     }
     public void ViewAll()
     {

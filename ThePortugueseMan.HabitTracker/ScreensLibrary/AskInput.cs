@@ -45,19 +45,32 @@ public class AskInput
         int number;
         do
         {
+            Console.WriteLine(message);
             if (showError)
             {
-                ClearPreviousLines(2);
-                Console.Write("Invalid Input.");
+                ClearPreviousLines(3);
+                Console.Write("Invalid Input. ");
             }
-            else Console.Write(message);
 
-            Console.WriteLine(" Use numbers only.");
+            Console.WriteLine("Use numbers only.");
             input = Console.ReadLine();
-
             showError = true;
         }
-        while (!(Int32.TryParse(input, out number) || Convert.ToInt32(input) < 0));
+        while (!(Int32.TryParse(input, out number) || number < 0));
         return number;
+    }
+
+    public void AnyAndEnterToContinue()
+    {
+        Console.WriteLine("Press any key and Enter to continue");
+        Console.ReadLine();
+    }
+
+    public bool ZeroOrAnyKeyAndEnterToContinue()
+    {
+        Console.WriteLine("Press any key and Enter to continue. Or press 0 to return to the menu");
+        if (Console.ReadLine() == "0") return true;
+        else return false;
+
     }
 }
