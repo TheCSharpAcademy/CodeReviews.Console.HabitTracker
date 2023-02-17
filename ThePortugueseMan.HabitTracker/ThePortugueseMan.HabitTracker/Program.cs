@@ -10,21 +10,17 @@ internal class Program
     static string habitsTableName = "HabitsTable";
     static DataBaseCommands dbCommands = new();
     static HabitsTable habitsTable = new(habitsTableName, connectionString);
-    static Screen screen = new(habitsTable, null);
+    static Screen screen = new(habitsTable);
     private static void Main(string[] args)
     {
-        //DataBaseCommands dbCommands = new();
 
         dbCommands.Initialization(habitsTableName);
-        
         MainMenu();
-        //GetUserInput();
     }
 
     static void MainMenu()
     {
         Console.Clear();
-        string menuName = "Habits";
         bool closeApp = false;
         bool invalidCommand = false;
         while (!closeApp)
@@ -49,10 +45,10 @@ internal class Program
             switch (commandInput)
             {
                 case "0": closeApp = true; break;
-                case "1": screen.ViewAll(menuName); break;
-                case "2": screen.Insert(menuName); break;
-                case "3": screen.Delete(menuName); break;
-                case "4": screen.Update(menuName); break;
+                case "1": screen.ViewAll(habitsTableName); break;
+                case "2": screen.Insert(habitsTableName); break;
+                case "3": screen.Delete(habitsTableName); break;
+                case "4": screen.Update(habitsTableName); break;
                 default:
                     invalidCommand = true;
                     break;

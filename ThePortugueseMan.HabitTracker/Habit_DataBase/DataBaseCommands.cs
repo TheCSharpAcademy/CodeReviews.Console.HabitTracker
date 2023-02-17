@@ -298,25 +298,6 @@ public class DataBaseCommands
         }
     }
 
-    public SqliteDataReader GetReader(string? db_name)
-    {
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-
-            tableCmd.CommandText =
-                $"SELECT * FROM " + db_name;
-
-            List<DrinkingWater> tableData = new();
-
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (!reader.HasRows) reader = null;
-
-            return reader;
-        }
-    }
 
     public class DrinkingWater
     {

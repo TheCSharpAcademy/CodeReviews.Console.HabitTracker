@@ -17,7 +17,6 @@ public class AskInput
     public string LettersNumberAndSpaces (string message)
     {
         string returnString;
-        char c = default;
         bool showError = false;
         do
         {
@@ -32,7 +31,7 @@ public class AskInput
             returnString = Console.ReadLine();
             showError= true;
         }
-        while (!((returnString.All(c => Char.IsLetterOrDigit(c)) || c == ' ') && returnString != ""));
+        while (!((returnString.All(c => Char.IsLetterOrDigit(c) || c == ' ')) && returnString != ""));
         
         returnString.Trim();
         return returnString;
