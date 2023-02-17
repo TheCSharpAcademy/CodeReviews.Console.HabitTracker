@@ -69,4 +69,40 @@ public class HabitsTable
        dbCommands.Insert(tableName, habitTableName, habitUnit);
        dbCommands.CreateHabitTable(habitTableName);
     }
+
+    public string? GetTableNameOrUnitsFromIndex (string tableName, int index, string returnType)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            string? returnString;
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                "SELECT * FROM " + tableName + $" WHERE Id = {index}";
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (!reader.HasRows)
+            {
+                connection.Close();
+                return null;
+            }
+            else 
+            {
+                if (returnType == "TableName")
+                {
+                    returnString = reader.GetString(1);
+                }
+                else if (returnType == "Unit")
+                {
+                    returnString = reader.GetString(2);
+                }
+
+                else returnString = null;
+                
+            }
+            return returnString;
+        }
+    }
 }

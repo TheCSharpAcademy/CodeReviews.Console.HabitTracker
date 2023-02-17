@@ -50,7 +50,6 @@ public class DataBaseCommands
         }
     }
 
-
     public void Insert(string tableName, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -198,16 +197,6 @@ public class DataBaseCommands
                 return true;
             }
         }
-    }
-
-    private string GetUpdateCommand(string tableName, int index, string date, int quantity)
-    {
-        return $"UPDATE {tableName} SET date = '{date}', quantity = {quantity} WHERE Id = {index}";
-    }
-
-    private string GetUpdateCommand(string tableName, int index, string habitName, string habitUnit)
-    {
-        return $"UPDATE {tableName} SET HabitTableName = '{tableName}', HabitUnit = '{habitUnit}' WHERE Id = {index}";
     }
 
     public void ViewAll(string tableName)

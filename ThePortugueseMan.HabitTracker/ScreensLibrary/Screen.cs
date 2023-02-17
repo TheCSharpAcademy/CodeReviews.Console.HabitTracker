@@ -22,7 +22,14 @@ public class Screen
         {
             int index = askInput.Digits("Write the index of the habit you want to see. Or press 0 to return.");
             if (index == 0) return;
-            else SubMenu(null);
+
+
+            else
+            {
+
+                string habitTableName = habitsTable.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
+                SubMenu(habitTableName);
+            }
         }
         askInput.AnyAndEnterToContinue();
     }
