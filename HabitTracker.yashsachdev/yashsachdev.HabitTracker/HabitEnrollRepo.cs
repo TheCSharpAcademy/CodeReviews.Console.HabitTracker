@@ -1,9 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-using System.Transactions;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace yashsachdev.HabitTracker;
+﻿namespace yashsachdev.HabitTracker;
 public class HabitEnrollRepo
 {
     public void Save(HabitEnroll habitEnroll)
@@ -22,125 +17,80 @@ public class HabitEnrollRepo
             }
         }
     }
-    public void DisplayUserHabit(string name, string email)
+    public bool CheckIfHabitExistsForUser(string habitName, int userId)
     {
+        HabitRepo habitRepo = new HabitRepo();
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
             cnn.Open();
             using (SqliteCommand command = new SqliteCommand())
             {
                 command.Connection = cnn;
-                command.CommandText = "SELECT User_Id FROM User WHERE Name = @name AND Email = @email";
-                command.Parameters.AddWithValue("@name", name);
-                command.Parameters.AddWithValue("@email", email);
-                var result = command.ExecuteScalar();
-                if (result == null)
-                {
-                    Console.WriteLine("No Data returned");
-                    return;
-                }
-                var user_ID = (Int64)result;
+                command.CommandText = "SELECT 1 FROM Habit_Enroll WHERE User_Id = @UserId AND Habit_Id = @HabitId";
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@HabitId", habitRepo.GetHabitId(habitName));
+                var reader = command.ExecuteReader();
+                return reader.Read();
+            }
+        }
+    }
+    public void DisplayUserHabit(string email)
+    {
+        UserRepo userRepo   = new UserRepo();
+        HabitRepo habitRepo = new HabitRepo();
+        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        {
+            cnn.Open();
+            using (SqliteCommand command = new SqliteCommand())
+            {
+                command.Connection = cnn;
+                var user_ID = userRepo.GetIdFromEmail(email);
                 command.CommandText = "SELECT * FROM Habit_Enroll WHERE User_Id = @userId";
                 command.Parameters.AddWithValue("@userId", user_ID);
-
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         var habit_ID = reader.GetInt32(1);
                         var startdate = reader.GetDateTime(2);
-                        using (SqliteCommand habitCommand = new SqliteCommand())
-                        {
-                            habitCommand.Connection = cnn;
-                            habitCommand.CommandText = "SELECT Habit_Name FROM Habit WHERE Habit_Id = @habitId";
-                            habitCommand.Parameters.AddWithValue("@habitId", habit_ID);
-                            var res = habitCommand.ExecuteScalar();
-                            if (res == null)
-                            {
-                                Console.WriteLine("No data returned");
-                                return;
-                            }
-                            var habitName = (string)res;
-                            Console.WriteLine($"Habit : {habitName} \t Start Date:{startdate} \t");
-                        }
-
+                        var habitName=habitRepo.GetHabitName(habit_ID);
+                        Console.WriteLine($"Habit : {habitName} \t Start Date:{startdate} \t");
                     }
                 }
-
             }
+
         }
     }
-    public void UpdateUserHabit(string name, string email, string habitName, string updatedHabitname, string updatedunit)
+    public void UpdateUserHabit(string email, string habitName, string updatedunit)
     {
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
-            {
-                command.Connection = cnn;
-                command.CommandText = "SELECT User_Id FROM User WHERE Name = @name AND Email = @email";
-                command.Parameters.AddWithValue("@name", name);
-                command.Parameters.AddWithValue("@email", email);
-                var result = command.ExecuteScalar();
-                if (result == null)
-                {
-                    Console.WriteLine("No Data returned");
-                    return;
-                }
-                var user_ID = (Int64)result;
-                command.CommandText = "SELECT * FROM Habit_Enroll WHERE User_Id = @userId";
-                command.Parameters.AddWithValue("@userId", user_ID);
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var habit_ID = reader.GetInt32(1);
-                        using (SqliteCommand habitCommand = new SqliteCommand())
-                        {
-                            habitCommand.Connection = cnn;
-                            habitCommand.CommandText = "UPDATE Habit SET Habit_Name = @UpdatedName,Unit = @UpdatedUnit WHERE Habit_Name =@habitname AND Habit_Id = @habitId";
-                            habitCommand.Parameters.AddWithValue("@habitname", habitName);
-                            habitCommand.Parameters.AddWithValue("@habitId", habit_ID);
-                            habitCommand.Parameters.AddWithValue("@UpdatedName", updatedHabitname);
-                            habitCommand.Parameters.AddWithValue("@UpdatedUnit", updatedunit);
-                            habitCommand.ExecuteNonQuery();
-                        }
-                    }
+        try {
 
-                }
-            }
-        }
-    }
-    public void DeleteHabit(string email, string habitname)
-    {
-        using (SqliteConnection connection = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            connection.Open();
+            UserRepo userRepo = new UserRepo();
+            HabitRepo habitRepo = new HabitRepo();
+            using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
             {
-                try
+                cnn.Open();
+                using (SqliteCommand command = new SqliteCommand())
                 {
-                    using (SqliteCommand command = new SqliteCommand())
+                    var user_ID = userRepo.GetIdFromEmail(email,cnn);
+                    command.Connection = cnn;
+                    command.CommandText = "SELECT * FROM Habit_Enroll WHERE User_Id = @userId";
+                    command.Parameters.AddWithValue("@userId", user_ID);
+                    using (var reader = command.ExecuteReader())
                     {
-                        command.Connection = connection;
-                        command.CommandText = "SELECT Habit_Id FROM Habit WHERE Habit_Name = @habitname";
-                        command.Parameters.AddWithValue("@habitname", habitname);
-                        var result = command.ExecuteScalar();
-                        if (result == null)
+                        while (reader.Read())
                         {
-                            Console.WriteLine("No Data returned");
-                            return;
+                            var habit_ID = reader.GetInt32(1);
+                            habitRepo.UpdateHabitTable(habitName, habit_ID, updatedunit, cnn);
                         }
-                        var habitid = (Int64)result;
-                        command.CommandText = "DELETE FROM Habit WHERE Habit_Id =@habitid";
-                        command.Parameters.AddWithValue("@habitid", habitid);
-                        command.ExecuteNonQuery();
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
             }
+        } 
+        catch (Exception ex) 
+        {
+            Console.WriteLine("Error in UpdateUserHabit()");
+            Console.WriteLine(ex.Message);
         }
     }
     internal void GenerateReport(string email)

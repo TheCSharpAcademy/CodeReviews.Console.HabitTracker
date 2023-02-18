@@ -52,7 +52,7 @@ internal static class UserInput
         string input = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(input))
         {
-            Console.WriteLine("Invalid inputs. Email and password are required.");
+            Console.WriteLine("Invalid inputs.Enter a proper Habit");
             return string.Empty;
         }
         return input;
@@ -60,13 +60,14 @@ internal static class UserInput
     public static string GetHabitUnit(string unit)
     {
         Console.WriteLine("Please enter the unit:");
-        string input = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(input))
+        int input = Convert.ToInt32(Console.ReadLine());
+        var inputString=Convert.ToString(input);
+        if (string.IsNullOrWhiteSpace(inputString))
         {
             Console.WriteLine("Invalid inputs. Email and password are required.");
             return string.Empty;
         }
-        return (unit+" "+input);
+        return (unit+" "+ inputString);
     }
     public static string GetUnitMeasurement()
     {
@@ -115,5 +116,49 @@ internal static class UserInput
             }
         }
         return DateTime.MinValue;
+    }
+    public static bool CheckPassword(string email, string password)
+    {
+        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        {
+            cnn.Open();
+            SqliteCommand cmd = new SqliteCommand("SELECT Password FROM User WHERE Email = @email", cnn);
+            cmd.Parameters.AddWithValue("@email", email);
+            string correctPassword = (string)cmd.ExecuteScalar();
+            return correctPassword == password;
+        }
+    }
+    /// <summary>
+    /// Refer https://mailtrap.io/blog/validate-email-address-c/
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    public static bool ValidateEmail(string email)
+    {
+        var valid = true;
+        try
+        {
+            MailAddress emailAddress = new MailAddress(email);
+        }
+        catch
+        {
+            valid = false;
+        }
+        return valid;
+    }
+    public static bool ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return false;
+        }
+        foreach (char c in name)
+        {
+            if (!char.IsLetter(c))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

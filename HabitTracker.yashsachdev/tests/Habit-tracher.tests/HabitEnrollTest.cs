@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Bson;
+using SQLitePCL;
 using yashsachdev.HabitTracker;
 namespace Habit_tracher.tests;
 public class HabitEnrollTest
@@ -21,4 +23,6 @@ public class HabitEnrollTest
         }
 
     }
+    [Fact]
+    public void DisplayUserHabits() { }
 }

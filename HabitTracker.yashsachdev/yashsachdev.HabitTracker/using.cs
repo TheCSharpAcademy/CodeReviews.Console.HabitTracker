@@ -4,3 +4,6 @@ global using Microsoft.Data.Sqlite;
 global using yashsachdev.HabitTracker;
 global using System.Globalization;
 global using ConsoleTableExt;
+global using System.Net.Mail;
+global using System.Text.RegularExpressions;
+

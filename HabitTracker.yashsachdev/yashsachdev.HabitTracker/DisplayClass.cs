@@ -6,7 +6,7 @@ namespace yashsachdev.HabitTracker;
 /// </summary>
 public class DisplayClass
 {
-    public DisplayClass(){}
+    public DisplayClass() { }
     public bool LoggedIn { get; set; }
     private int HabitId { get; set; }
     private int UserId { get; set; }
@@ -16,73 +16,60 @@ public class DisplayClass
         string name = UserInput.GetName();
         Email = UserInput.GetEmail();
         string password = UserInput.GetPassword();
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        if(UserInput.ValidateName(name) == false || UserInput.ValidateEmail(Email) == false)
         {
-            cnn.Open();
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(password))
-            {
-                Console.WriteLine("Invalid inputs. Name, email and password are required.");
-                return;
-            }
-            SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", Email);
-            var emailCount = (Int64)cmd.ExecuteScalar();
-            if (emailCount > 0)
-            {
-                Console.WriteLine("Email already exists. Please Login.");
-                return;
-            }
-            User user = new User
-            {
-                Name = name,
-                Email = Email,
-                Password = password
-            };
-            UserRepo userRepo = new UserRepo();
-            try
-            {
-                userRepo.Save(user);
-                UserId = userRepo.GetIdFromEmail(Email);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            Console.WriteLine("User created successfully");
+            Console.WriteLine("Plase enter correct details");
+            return;
         }
+        UserRepo userRepo = new UserRepo();
+        var emailCount = userRepo.CountofUser(Email);
+        if (emailCount > 0)
+        {
+            Console.WriteLine("Email already exists. Please Login.");
+            return;
+        }
+        User user = new User
+        {
+            Name = name,
+            Email = Email,
+            Password = password
+        };
+        try
+        {
+            userRepo.Save(user);
+            UserId = userRepo.GetIdFromEmail(Email);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        Console.WriteLine("User created successfully");
     }
+
     public void Login()
     {
+        UserRepo userRepo = new UserRepo();
         Email = UserInput.GetEmail();
-        string password = UserInput.GetPassword();
-
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        if (userRepo.CountofUser(Email) == 0)
+            {
+                Console.WriteLine("Email doesnt exist Register First");
+                return;
+            }
+        string password;
+        int i = 0;
+        do
         {
-            cnn.Open();
-            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(password))
+            if(i>0)
             {
-                Console.WriteLine("Invalid inputs. Email and password are required.");
-                return;
+                Console.WriteLine("Wrong Password. Please Try Again");
             }
-            SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", Email);
-            var emailCount = (Int64)cmd.ExecuteScalar();
-            if (emailCount == 0)
-            {
-                Console.WriteLine("Email not found. Please register first.");
-                return;
-            }
-            cmd = new SqliteCommand("SELECT Password FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", Email);
-            string correctPassword = (string)cmd.ExecuteScalar();
-            if (password != correctPassword)
-            {
-                Console.WriteLine("Incorrect password. Please try again.");
-                return;
-            }
-            Console.WriteLine("Login successful.");
-            LoggedIn = true;
-        }
+            i++;
+            password = UserInput.GetPassword();
+        } while (!userRepo.CheckPassword(Email,password));
+        Console.WriteLine("Password is correct");
+
+        Console.WriteLine("Login successful.");
+        LoggedIn = true;
     }
     public void DisplayMenu()
     {
@@ -124,9 +111,9 @@ public class DisplayClass
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("Invalid input");
+                Console.WriteLine("Invalid input"+ex.Message);
             }
         }
     }
@@ -140,38 +127,51 @@ public class DisplayClass
     private void UpdateHabit()
     {
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
+        HabitRepo habit = new HabitRepo();
+        UserRepo userRepo = new UserRepo();
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
             cnn.Open();
-            SqliteCommand cmd = new SqliteCommand("SELECT Name FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", Email);
-            string name = (string)cmd.ExecuteScalar();
             Console.WriteLine("Enter habit Name you want to update");
             string habitname = UserInput.GetHabitName();
-            SqliteCommand cmd1 = new SqliteCommand("SELECT COUNT(*) FROM Habit WHERE Habit_Name = @habitname", cnn);
-            cmd1.Parameters.AddWithValue("@habitname", habitname);
-            var habitCount = (Int64)cmd1.ExecuteScalar();
+            UserId = userRepo.GetIdFromEmail(Email);
+            if(UserInput.ValidateName(habitname) == false)
+            {
+                Console.WriteLine("Please enter correct details");
+                return;
+            }
+            var habitCount = habit.CountofHabit(Email, habitname);
             if (habitCount == 0)
             {
                 Console.WriteLine("Habit not found. Please Insert Habit first.");
                 return;
             }
-            Console.WriteLine($"Enter the values you want to update");
-            string resunit = UserInput.GetUnitMeasurement();
-            string habitUnit = UserInput.GetHabitUnit(resunit);
-            habitEnrollRepo.UpdateUserHabit(name, Email, habitname, habitname, habitUnit);
-            habitEnrollRepo.DisplayUserHabit(name, Email);
+            if (!habitEnrollRepo.CheckIfHabitExistsForUser(habitname, UserId))
+            {
+                Console.WriteLine("You do not have a habit with that name. Please try again.");
+                return;
+            }
+                Console.WriteLine($"Enter the values you want to update");
+                string resunit = UserInput.GetUnitMeasurement();
+                string habitUnit = UserInput.GetHabitUnit(resunit);
+                habitEnrollRepo.UpdateUserHabit(Email, habitname, habitUnit);
+                habitEnrollRepo.DisplayUserHabit(Email);
         }
     }
-    private void DeleteHabit()
+    private void DeleteHabit() 
     {
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
+        HabitRepo habitRepo = new HabitRepo();  
         string habitname = UserInput.GetHabitName();
-        habitEnrollRepo.DeleteHabit(Email, habitname);
-        Console.WriteLine($"Deleted {habitname}");
+        if (!habitEnrollRepo.CheckIfHabitExistsForUser(habitname, UserId))
+        {
+            Console.WriteLine("You do not have a habit with that name. Please try again.");
+            return;
+        }
+        habitRepo.DeleteHabit(Email, habitname);
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
-    }
+    } 
     private void Logout()
     {
         LoggedIn = false;
@@ -179,57 +179,55 @@ public class DisplayClass
     private void ViewHabits()
     {
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            SqliteCommand cmd = new SqliteCommand("SELECT Name FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", Email);
-            string name = (string)cmd.ExecuteScalar();
-            habitEnrollRepo.DisplayUserHabit(name, Email);
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
+        UserRepo userRepo = new UserRepo();
+        string name = userRepo.GetNameFromEmail(Email);
+        habitEnrollRepo.DisplayUserHabit(Email);
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
     }
     private void InsertHabit()
     {
         string habitName = UserInput.GetHabitName();
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM Habit WHERE Habit_Name = @habitname", cnn);
-            cmd.Parameters.AddWithValue("@habitname", habitName);
-            var habitCount = (Int64)cmd.ExecuteScalar();
-            if (habitCount > 0)
-            {
-                Console.WriteLine("Habit already exist.Goto to update habit to edit it");
-                return;
-            }
-            string unit = UserInput.GetUnitMeasurement();
-            string habitUnit = UserInput.GetHabitUnit(unit);
-            Habit habit = new Habit
-            {
-                Habit_Name = habitName,
-                Unit = habitUnit
-            };
-            HabitRepo habitRepo = new HabitRepo();
-            habitRepo.save(habit);
-            UserRepo userRepo = new UserRepo();
-            UserId = userRepo.GetIdFromEmail(Email);
-            HabitId = habitRepo.GetLastInsertedId();
-            Console.WriteLine("Habit created successfully");
-            Console.WriteLine("UserId:" + UserId);
-            Console.WriteLine("HabitId:" + HabitId);
-            Console.WriteLine("-----------------------");
-            var startDateInput = UserInput.GetStartDate();
-            HabitEnroll habitEnroll = new HabitEnroll
-            {
-                User_Id = UserId,
-                Habit_Id = HabitId,
-                Date = startDateInput,
-            };
-            HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
-            habitEnrollRepo.Save(habitEnroll);
-            Console.WriteLine("User enrolled in habit successfully");
+        if (UserInput.ValidateName(habitName) == false) 
+        { Console.WriteLine("Please enter valid habit"); 
+            return; 
         }
+        HabitRepo habitRepo = new HabitRepo();
+        UserRepo userRepo = new UserRepo();
+        HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
+        string unit = UserInput.GetUnitMeasurement();
+        string habitUnit = UserInput.GetHabitUnit(unit);
+        Habit habit = new Habit
+        {
+            Habit_Name = habitName,
+            Unit = habitUnit
+        };
+        if (userRepo.GetIdFromEmail(Email) == 0)
+        {
+            Console.WriteLine("User with email '{0}' not found.", Email);
+            return;
+        }
+        UserId = userRepo.GetIdFromEmail(Email);
+        Console.WriteLine(habitEnrollRepo.CheckIfHabitExistsForUser(habitName, UserId));
+        if (habitEnrollRepo.CheckIfHabitExistsForUser(habitName, UserId))
+        {
+            Console.WriteLine("Habit '{0}' already exists for user with email '{1}'.", habitName, Email);
+            return;
+        }
+        habitRepo.save(habit);
+        userRepo = new UserRepo();
+        UserId = userRepo.GetIdFromEmail(Email);
+        HabitId = habitRepo.GetLastInsertedId();
+        Console.WriteLine("Habit created successfully");
+        Console.WriteLine("-----------------------");
+        var startDateInput = UserInput.GetStartDate();
+        HabitEnroll habitEnroll = new HabitEnroll
+        {
+            User_Id = UserId,
+            Habit_Id = HabitId,
+            Date = startDateInput,
+        };
+        habitEnrollRepo.Save(habitEnroll);
+        Console.WriteLine("User enrolled in habit successfully");
     }
 }
