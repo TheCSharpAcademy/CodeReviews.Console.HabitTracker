@@ -24,11 +24,11 @@ while (!app.LoggedIn)
                 break;
         }
     }
-    catch(Exception ex)
+    catch (Exception ex)
     {
         Console.WriteLine("Invalid input");
     }
-   
+
 }
 Console.Clear();
 app.DisplayMenu();

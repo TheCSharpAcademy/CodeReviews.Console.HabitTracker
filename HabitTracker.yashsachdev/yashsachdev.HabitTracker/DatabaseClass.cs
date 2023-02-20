@@ -53,7 +53,7 @@
         finally
         {
             using (SqliteConnection connection = new SqliteConnection(connectionString))
-            connection.Close();
+                connection.Close();
         }
     }
 }

@@ -16,8 +16,9 @@ internal static class UserInput
         }
         return input;
     }
+
     /// <summary>
-    /// Enter user's Emaild
+    /// Enter user's Emaild.
     /// </summary>
     /// <returns></returns>
     public static string GetEmail()
@@ -31,8 +32,9 @@ internal static class UserInput
         }
         return input;
     }
+
     /// <summary>
-    /// Enter the password
+    /// Enter the password.
     /// </summary>
     /// <returns></returns>
     public static string GetPassword()
@@ -44,8 +46,10 @@ internal static class UserInput
             Console.WriteLine("Invalid inputs. Email and password are required.");
             return string.Empty;
         }
+
         return input;
     }
+
     public static string GetHabitName()
     {
         Console.WriteLine("Please enter the habit Name:");
@@ -55,20 +59,24 @@ internal static class UserInput
             Console.WriteLine("Invalid inputs.Enter a proper Habit");
             return string.Empty;
         }
+
         return input;
     }
+
     public static string GetHabitUnit(string unit)
     {
         Console.WriteLine("Please enter the unit:");
         int input = Convert.ToInt32(Console.ReadLine());
-        var inputString=Convert.ToString(input);
+        var inputString = Convert.ToString(input);
         if (string.IsNullOrWhiteSpace(inputString))
         {
             Console.WriteLine("Invalid inputs. Email and password are required.");
             return string.Empty;
         }
-        return (unit+" "+ inputString);
+
+        return unit + " " + inputString;
     }
+
     public static string GetUnitMeasurement()
     {
         Console.WriteLine("Select a unit of measurement:");
@@ -86,14 +94,17 @@ internal static class UserInput
                 unit = "Times";
                 break;
             case 3:
-                unit = "Amount";
+                Console.WriteLine("Enter the amount (Eg: Litre, hours, kms)");
+                unit = Console.ReadLine();
                 break;
             default:
                 Console.WriteLine("Invalid selection. Please choose again.");
                 break;
         }
-        return(unit);
+
+        return (unit);
     }
+
     public static DateTime GetStartDate()
     {
         DateTime dateTime;
@@ -105,7 +116,7 @@ internal static class UserInput
             string input = Console.ReadLine();
 
             if (DateTime.TryParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture,
-                                       DateTimeStyles.None, out dateTime))
+                                        DateTimeStyles.None, out dateTime))
             {
                 isValidDate = true;
                 return dateTime;
@@ -115,8 +126,10 @@ internal static class UserInput
                 Console.WriteLine("Invalid date format. Please try again.");
             }
         }
+
         return DateTime.MinValue;
     }
+
     public static bool CheckPassword(string email, string password)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
@@ -128,6 +141,7 @@ internal static class UserInput
             return correctPassword == password;
         }
     }
+
     /// <summary>
     /// Refer https://mailtrap.io/blog/validate-email-address-c/
     /// </summary>
@@ -144,14 +158,17 @@ internal static class UserInput
         {
             valid = false;
         }
+
         return valid;
     }
+
     public static bool ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             return false;
         }
+
         foreach (char c in name)
         {
             if (!char.IsLetter(c))
@@ -159,6 +176,7 @@ internal static class UserInput
                 return false;
             }
         }
+
         return true;
     }
 }

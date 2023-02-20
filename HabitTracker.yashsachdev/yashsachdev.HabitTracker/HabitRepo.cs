@@ -1,8 +1,9 @@
 ﻿namespace yashsachdev.HabitTracker;
 public class HabitRepo
 {
-    Habit habit = new Habit();
-    public void save(Habit habit)
+    private Habit habit = new Habit();
+
+    public void Save(Habit habit)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
@@ -37,16 +38,11 @@ public class HabitRepo
         HabitEnrollRepo habitEnroll = new HabitEnrollRepo();
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
-        {
+            {
                 cnn.Open();
                 SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM Habit WHERE Habit_Name = @habitname", cnn);
                 cmd.Parameters.AddWithValue("@habitname", habitName);
                 var habitCount = Convert.ToInt32(cmd.ExecuteScalar());
-                if (habitCount > 0)
-                {
-                    Console.WriteLine("Habit already exist.Goto to update habit to edit it");
-                    return int.MinValue;
-                } 
                 return habitCount;
             }
 
@@ -92,59 +88,50 @@ public class HabitRepo
                     return 0;
                 }
                 return res;
-                
+
             }
         }
     }
 
-    public void UpdateHabitTable(string habitName, int habit_ID, string updatedunit,SqliteConnection cnn)
+    public void UpdateHabitTable(string habitName, int habit_ID, string updatedunit, SqliteConnection cnn)
     {
-        try {
-                using (SqliteCommand habitCommand = new SqliteCommand())
-                {
-                    habitCommand.Connection = cnn;
-                    cnn.Open();
-                    habitCommand.CommandText = "UPDATE Habit SET Habit_Name = @habitname,Unit = @UpdatedUnit WHERE Habit_Name =@habitname AND Habit_Id = @habitId";
-                    habitCommand.Parameters.AddWithValue("@habitname", habitName);
-                    habitCommand.Parameters.AddWithValue("@habitId", habit_ID);
-                    habitCommand.Parameters.AddWithValue("@UpdatedUnit", updatedunit);
-                    habitCommand.ExecuteNonQuery();
-                }
+        try
+        {
+            using (SqliteCommand habitCommand = new SqliteCommand())
+            {
+                habitCommand.Connection = cnn;
+                cnn.Open();
+                habitCommand.CommandText = "UPDATE Habit SET Habit_Name = @habitname,Unit = @UpdatedUnit WHERE Habit_Name =@habitname AND Habit_Id = @habitId";
+                habitCommand.Parameters.AddWithValue("@habitname", habitName);
+                habitCommand.Parameters.AddWithValue("@habitId", habit_ID);
+                habitCommand.Parameters.AddWithValue("@UpdatedUnit", updatedunit);
+                habitCommand.ExecuteNonQuery();
+            }
         }
-        catch(Exception ex) { Console.WriteLine(ex.Message); }
-        }
-    public void DeleteHabit(string email, string habitname)
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+    public void DeleteHabit(int habitid)
     {
         HabitEnrollRepo habitEnroll = new HabitEnrollRepo();
-        using (SqliteConnection connection = new SqliteConnection(DatabaseClass.connectionString))
+        try
         {
-            connection.Open();
+            using (SqliteConnection connection = new SqliteConnection(DatabaseClass.connectionString))
             {
-                try
+                connection.Open();
                 {
-                        using (SqliteCommand command = new SqliteCommand())
-                        {
-                            command.Connection = connection;
-                            command.CommandText = "SELECT Habit_Id FROM Habit WHERE Habit_Name = @habitname";
-                            command.Parameters.AddWithValue("@habitname", habitname);
-                            var result = command.ExecuteScalar();
-                            if (result == null)
-                            {
-                                Console.WriteLine("No Data returned");
-                                return;
-                            }
-                            var habitid = (Int64)result;
-                            command.CommandText = "DELETE FROM Habit WHERE Habit_Id =@habitid";
-                            command.Parameters.AddWithValue("@habitid", habitid);
-                            command.ExecuteNonQuery();
-                            Console.WriteLine($"Deleted {habitname}");
-                        }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
+                    using (SqliteCommand command = new SqliteCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "DELETE FROM Habit WHERE Habit_Id =@habitid";
+                        command.Parameters.AddWithValue("@habitid", habitid);
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
         }
     }
 }

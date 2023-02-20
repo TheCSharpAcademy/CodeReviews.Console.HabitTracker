@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace yashsachdev.HabitTracker;
+﻿namespace yashsachdev.HabitTracker;
 public class UserRepo
 {
     public void Save(User user)
@@ -40,23 +38,23 @@ public class UserRepo
             }
         }
     }
-    public int GetIdFromEmail(string email,SqliteConnection cnn)
+    public int GetIdFromEmail(string email, SqliteConnection cnn)
     {
-            cnn.Open();
-            using (SqliteCommand command = new SqliteCommand())
+        cnn.Open();
+        using (SqliteCommand command = new SqliteCommand())
+        {
+            command.Connection = cnn;
+            command.CommandText = "SELECT User_Id FROM User WHERE Email = @email";
+            command.Parameters.AddWithValue("@email", email);
+            var result = command.ExecuteScalar();
+            if (result == null)
             {
-                command.Connection = cnn;
-                command.CommandText = "SELECT User_Id FROM User WHERE Email = @email";
-                command.Parameters.AddWithValue("@email", email);
-                var result = command.ExecuteScalar();
-                if (result == null)
-                {
-                    Console.WriteLine("No Data returned");
-                    return 0;
-                }
-                int userid = Convert.ToInt32(result);
-                return userid;
+                Console.WriteLine("No Data returned");
+                return 0;
             }
+            int userid = Convert.ToInt32(result);
+            return userid;
+        }
     }
     public string GetNameFromEmail(string email)
     {
@@ -82,18 +80,18 @@ public class UserRepo
                 return emailCount;
             }
         }
-        catch (Exception ex) { Console.WriteLine("An error occurred"+ex.Message); }
+        catch (Exception ex) { Console.WriteLine("An error occurred" + ex.Message); }
         return int.MinValue;
     }
     public bool CheckPassword(string email, string password)
     {
-            using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-            {
-                cnn.Open();
-                SqliteCommand cmd = new SqliteCommand("SELECT Password FROM User WHERE Email = @email", cnn);
-                cmd.Parameters.AddWithValue("@email", email);
-                string correctPassword = (string)cmd.ExecuteScalar();
-            return correctPassword == password; 
-            }
+        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
+        {
+            cnn.Open();
+            SqliteCommand cmd = new SqliteCommand("SELECT Password FROM User WHERE Email = @email", cnn);
+            cmd.Parameters.AddWithValue("@email", email);
+            string correctPassword = (string)cmd.ExecuteScalar();
+            return correctPassword == password;
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace yashsachdev.HabitTracker;
 public class User
 {
-    public User():this(0)
+    public User() : this(0)
     {
 
     }
@@ -16,5 +16,5 @@ public class User
     public string Password { get; set; }
     public string Email { get; set; }
 
-    
+
 }

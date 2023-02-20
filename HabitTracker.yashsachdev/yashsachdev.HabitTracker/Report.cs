@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace yashsachdev.HabitTracker
+﻿namespace yashsachdev.HabitTracker
 {
     internal class Report
     {
-        public Report(string username,string habitname,DateTime date,string unit)
+        public Report(string username, string habitname, DateTime date, string unit)
         {
             UserName = username;
             HabitName = habitname;

@@ -1,9 +1,8 @@
-﻿global using System.Data;
-global using System.Text;
+﻿global using ConsoleTableExt;
 global using Microsoft.Data.Sqlite;
-global using yashsachdev.HabitTracker;
+global using System.Data;
 global using System.Globalization;
-global using ConsoleTableExt;
 global using System.Net.Mail;
-global using System.Text.RegularExpressions;
+global using System.Text;
+global using yashsachdev.HabitTracker;
 
