@@ -187,7 +187,6 @@ public class DisplayClass
     private void ViewHabits()
     {
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
-        UserRepo userRepo = new UserRepo();
         habitEnrollRepo.DisplayUserHabit(this.Email);
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();

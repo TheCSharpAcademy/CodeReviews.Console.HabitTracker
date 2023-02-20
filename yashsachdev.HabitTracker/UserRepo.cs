@@ -22,7 +22,7 @@ public class UserRepo
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
             cnn.Open();
-            using (SqliteCommand command = new ())
+            using (SqliteCommand command = new())
             {
                 command.Connection = cnn;
                 command.CommandText = "SELECT User_Id FROM User WHERE Email = @email";

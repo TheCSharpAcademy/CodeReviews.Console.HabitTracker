@@ -65,8 +65,6 @@ public class HabitEnrollRepo
     {
         try
         {
-
-            UserRepo userRepo = new UserRepo();
             HabitRepo habitRepo = new HabitRepo();
             using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
             {

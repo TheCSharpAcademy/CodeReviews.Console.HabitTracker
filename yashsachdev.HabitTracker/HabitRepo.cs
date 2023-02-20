@@ -36,13 +36,11 @@ public class HabitRepo
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
-            
-                cnn.Open();
-                SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM Habit WHERE Habit_Name = @habitname", cnn);
-                cmd.Parameters.AddWithValue("@habitname", habitName);
-                var habitCount = Convert.ToInt32(cmd.ExecuteScalar());
-                return habitCount;
-            
+            cnn.Open();
+            SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM Habit WHERE Habit_Name = @habitname", cnn);
+            cmd.Parameters.AddWithValue("@habitname", habitName);
+            var habitCount = Convert.ToInt32(cmd.ExecuteScalar());
+            return habitCount;
         }
         return 0;
     }
@@ -108,7 +106,6 @@ public class HabitRepo
     }
     public void DeleteHabit(int habitid)
     {
-        HabitEnrollRepo habitEnroll = new HabitEnrollRepo();
         try
         {
             using (SqliteConnection connection = new SqliteConnection(DatabaseClass.connectionString))
