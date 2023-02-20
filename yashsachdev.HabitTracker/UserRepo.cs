@@ -39,36 +39,6 @@ public class UserRepo
             }
         }
     }
-    public int GetIdFromEmail(string email, SqliteConnection cnn)
-    {
-        cnn.Open();
-        using (SqliteCommand command = new SqliteCommand())
-        {
-            command.Connection = cnn;
-            command.CommandText = "SELECT User_Id FROM User WHERE Email = @email";
-            command.Parameters.AddWithValue("@email", email);
-            var result = command.ExecuteScalar();
-            if (result == null)
-            {
-                Console.WriteLine("No Data returned");
-                return 0;
-            }
-
-            int userid = Convert.ToInt32(result);
-            return userid;
-        }
-    }
-    public string GetNameFromEmail(string email)
-    {
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            SqliteCommand cmd = new SqliteCommand("SELECT Name FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", email);
-            string name = (string)cmd.ExecuteScalar();
-            return name;
-        }
-    }
     public int CountofUser(string Email)
     {
         try

@@ -188,7 +188,6 @@ public class DisplayClass
     {
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
         UserRepo userRepo = new UserRepo();
-        string name = userRepo.GetNameFromEmail(this.Email);
         habitEnrollRepo.DisplayUserHabit(this.Email);
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();

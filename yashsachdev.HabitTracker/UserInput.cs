@@ -128,19 +128,6 @@ internal static class UserInput
         }
         return DateTime.MinValue;
     }
-
-    public static bool CheckPassword(string email, string password)
-    {
-        using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
-        {
-            cnn.Open();
-            SqliteCommand cmd = new SqliteCommand("SELECT Password FROM User WHERE Email = @email", cnn);
-            cmd.Parameters.AddWithValue("@email", email);
-            string correctPassword = (string)cmd.ExecuteScalar();
-            return correctPassword == password;
-        }
-    }
-
     /// <summary>
     /// Refer https://mailtrap.io/blog/validate-email-address-c/
     /// </summary>

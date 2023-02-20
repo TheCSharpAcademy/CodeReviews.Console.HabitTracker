@@ -73,7 +73,6 @@ public class HabitEnrollRepo
                 cnn.Open();
                 using (SqliteCommand command = new SqliteCommand())
                 {
-                    var user_ID = userRepo.GetIdFromEmail(email, cnn);
                     command.Connection = cnn;
                     habitRepo.UpdateHabitTable(habitName, Habit_Id, updatedunit, cnn);
                 }
@@ -102,19 +101,9 @@ public class HabitEnrollRepo
                 }
 
                 var user_ID = (Int64)result;
-                command.CommandText = "SELECT Habit_Id FROM Habit_Enroll WHERE User_Id = @userId";
-                command.Parameters.AddWithValue("@userId", user_ID);
-                var res = command.ExecuteScalar();
-                if (result == null)
-                {
-                    Console.WriteLine("No Data returned");
-                }
-
-                var habit_ID = (Int64)result;
                 command.CommandText = "SELECT user.Name,habit.Habit_Name,habit.Unit,habitenroll.Date FROM Habit_Enroll habitenroll JOIN Habit habit ON habitenroll.Habit_Id = habit.Habit_Id JOIN User user ON habitenroll.User_Id =user.User_Id WHERE user.User_Id =@userid";
                 command.Parameters.AddWithValue("@userid", user_ID);
                 command.ExecuteNonQuery();
-                StringBuilder sb = new StringBuilder();
                 SqliteDataReader reader = command.ExecuteReader();
                 var tableData = new List<Report>();
                 while (reader.Read())

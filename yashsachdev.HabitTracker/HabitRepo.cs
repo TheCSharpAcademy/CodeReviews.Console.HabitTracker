@@ -34,16 +34,15 @@ public class HabitRepo
     }
     public int CountofHabit(string Email, string habitName)
     {
-        HabitEnrollRepo habitEnroll = new HabitEnrollRepo();
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
-            {
+            
                 cnn.Open();
                 SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM Habit WHERE Habit_Name = @habitname", cnn);
                 cmd.Parameters.AddWithValue("@habitname", habitName);
                 var habitCount = Convert.ToInt32(cmd.ExecuteScalar());
                 return habitCount;
-            }
+            
         }
         return 0;
     }
