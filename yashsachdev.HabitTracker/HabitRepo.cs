@@ -120,7 +120,6 @@ public class HabitRepo
                     }
                 }
             }
-        }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
