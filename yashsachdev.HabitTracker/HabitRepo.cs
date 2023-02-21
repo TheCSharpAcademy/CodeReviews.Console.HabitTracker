@@ -111,13 +111,17 @@ public class HabitRepo
             using (SqliteConnection connection = new SqliteConnection(DatabaseClass.connectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandText = "DELETE FROM Habit WHERE Habit_Id =@habitid";
-                    command.Parameters.AddWithValue("@habitid", habitid);
-                    command.ExecuteNonQuery();
+                    using (SqliteCommand command = new SqliteCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "DELETE FROM Habit WHERE Habit_Id =@habitid";
+                        command.Parameters.AddWithValue("@habitid", habitid);
+                        command.ExecuteNonQuery();
+                    }
                 }
+            }
+            }
+        }
             }
         }
         catch (Exception ex)
