@@ -27,6 +27,7 @@ while (!app.LoggedIn)
     catch (Exception ex)
     {
         Console.WriteLine("Invalid input");
+        Console.WriteLine(ex.Message);
     }
 
 }
