@@ -118,10 +118,6 @@ public class HabitRepo
                         command.Parameters.AddWithValue("@habitid", habitid);
                         command.ExecuteNonQuery();
                     }
-                }
-            }
-            }
-        }
             }
         }
         catch (Exception ex)
