@@ -124,7 +124,7 @@ public class DisplayClass
     private void GenerateReport()
     {
         HabitEnrollRepo habitEnrollRepo = new HabitEnrollRepo();
-        habitEnrollRepo.GenerateReport(Email);
+        habitEnrollRepo.GenerateReport(UserId);
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
     }
