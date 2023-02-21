@@ -111,7 +111,6 @@ public class HabitRepo
             using (SqliteConnection connection = new SqliteConnection(DatabaseClass.connectionString))
             {
                 connection.Open();
-                {
                     using (SqliteCommand command = new SqliteCommand())
                     {
                         command.Connection = connection;
