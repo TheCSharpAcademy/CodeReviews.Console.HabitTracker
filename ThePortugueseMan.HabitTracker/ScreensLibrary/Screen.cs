@@ -26,18 +26,17 @@ public class Screen
 
             else
             {
-
-                string habitTableName = habitsTable.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
+                string habitTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
                 SubMenu(habitTableName);
             }
         }
-        askInput.AnyAndEnterToContinue();
+        else askInput.AnyAndEnterToContinue();
     }
 
     public void Insert(string tableName)
     {
         if (tableName == "HabitsTable") InsertHabit();
-        else InsertSubHabit();
+        else InsertSubHabit(tableName);
     }
 
     private void InsertHabit()
@@ -56,8 +55,17 @@ public class Screen
         return;
     }
 
-    private void InsertSubHabit()
+    private void InsertSubHabit(string tableName)
     {
+        string date;
+        bool showError = false;
+
+        date = askInput.Date("Write a date in the format dd-mm-yy.");
+
+        int quantity = askInput.Digits("Write the quantity.");
+
+        dbCmd.Insert(tableName, date, quantity);
+        
         return;
     }
 
@@ -158,7 +166,7 @@ public class Screen
         {
             Console.Clear();
             Console.WriteLine("HABIT TRACKER");
-            Console.WriteLine("\nHABIT NAME");
+            Console.WriteLine("\n" + tableName.TrimEnd(']').TrimStart('['));
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine("\nType 0 to Return to the Main Menu.");
             Console.WriteLine("Type 1 to View All Records.");

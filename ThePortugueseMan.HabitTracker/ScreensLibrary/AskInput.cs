@@ -1,4 +1,7 @@
 ﻿using HabitsLibrary;
+using System.Globalization;
+using System.Reflection.PortableExecutable;
+
 namespace ScreensLibrary;
 
 public class AskInput
@@ -36,7 +39,6 @@ public class AskInput
         returnString.Trim();
         return returnString;
     }
-
     public int Digits(string message)
     {
         string? input;
@@ -59,6 +61,30 @@ public class AskInput
         return number;
     }
 
+    public string? Date(string message)
+    {
+        string? input;
+        bool showError = false;
+        
+        do
+        {
+            if (!showError) Console.WriteLine(message);
+            else Console.WriteLine("Please write a valid date");
+
+            input = Console.ReadLine();
+
+            try
+            {
+                _ = DateTime.ParseExact(input, "dd-MM-yy", new CultureInfo("en-US"));
+                return input;
+            }
+            catch (FormatException)
+            {
+                showError = true;
+            }
+        }
+        while (true);
+    }
     public void AnyAndEnterToContinue()
     {
         Console.WriteLine("Press any key and Enter to continue");

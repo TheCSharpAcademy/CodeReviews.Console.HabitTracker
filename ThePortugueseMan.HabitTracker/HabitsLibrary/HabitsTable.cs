@@ -24,23 +24,6 @@ public class HabitsTable
 
     }
 
-    private string? AskForString(string message, bool showError)
-    {
-        if (showError) Console.WriteLine("Invalid Input.");
-        else Console.WriteLine(message);
-
-        Console.WriteLine("Use only letters, numbers and spaces");
-
-        char c = default;
-        string returnString = Console.ReadLine();
-        if (returnString == null) return returnString;
-
-        if ((returnString.All(c => Char.IsLetterOrDigit(c)) || c == ' ') && returnString != "")
-            return returnString;
-        else
-            return null;
-    }
-
     private string? TransformToTableName(string habitName) { return $"[{habitName}]"; }
 
     public bool CheckForHabitNameInTable(string testTableName)
@@ -68,41 +51,5 @@ public class HabitsTable
        string habitTableName = TransformToTableName(habitName);
        dbCommands.Insert(tableName, habitTableName, habitUnit);
        dbCommands.CreateHabitTable(habitTableName);
-    }
-
-    public string? GetTableNameOrUnitsFromIndex (string tableName, int index, string returnType)
-    {
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            string? returnString;
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-
-            tableCmd.CommandText =
-                "SELECT * FROM " + tableName + $" WHERE Id = {index}";
-
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (!reader.HasRows)
-            {
-                connection.Close();
-                return null;
-            }
-            else 
-            {
-                if (returnType == "TableName")
-                {
-                    returnString = reader.GetString(1);
-                }
-                else if (returnType == "Unit")
-                {
-                    returnString = reader.GetString(2);
-                }
-
-                else returnString = null;
-                
-            }
-            return returnString;
-        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace DataBaseLibrary;
 using Microsoft.Data.Sqlite;
+using System;
 using System.ComponentModel.Design;
 using System.Globalization;
 
@@ -58,9 +59,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO " +
-                tableName +
-                $"(date, quantity) VALUES ('{date}',{quantity})";
+                $"INSERT INTO " + tableName + $"(date, quantity) VALUES ('{date}',{quantity})";
 
             tableCmd.ExecuteNonQuery();
 
@@ -257,7 +256,7 @@ public class DataBaseCommands
             tableCmd.CommandText =
                 $"SELECT * FROM " + tableName;
 
-            List<DrinkingWater> tableData = new();
+            List<SubHabit> tableData = new();
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -266,7 +265,7 @@ public class DataBaseCommands
                 while (reader.Read())
                 {
                     tableData.Add(
-                    new DrinkingWater
+                    new SubHabit
                     {
                         Id = reader.GetInt32(0),
                         Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
@@ -277,18 +276,78 @@ public class DataBaseCommands
             else { Console.WriteLine("Empty"); }
 
             connection.Close();
+            string? units = GetUnitFromTableName("HabitsTable", tableName);
 
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
             {
-                Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - Quantity: {dw.Quantity}");
+                Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - Quantity: {dw.Quantity} " + units);
             }
             Console.WriteLine("\n-----------------------------");
         }
     }
 
+    public string? GetTableNameOrUnitsFromIndex(string tableName, int index, string returnType)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            string? returnString = null;
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
 
-    public class DrinkingWater
+            tableCmd.CommandText =
+                "SELECT * FROM " + tableName + $" WHERE Id = {index}";
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+
+            if (!reader.HasRows)
+            {
+                connection.Close();
+                return null;
+            }
+            else
+            {
+                reader.Read();
+                if (returnType == "TableName") returnString = reader.GetString(1);
+                else if (returnType == "HabitUnit") returnString = reader.GetString(2);
+
+                reader.Close();
+                return returnString;
+            }
+        }
+    }
+
+    public string? GetUnitFromTableName(string habitTableName, string tableName)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            string? returnString = null;
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                "SELECT HabitUnit FROM " + habitTableName + $" WHERE HabitTableName = '{tableName}'";
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+
+            if (!reader.HasRows)
+            {
+                connection.Close();
+                return null;
+            }
+            else
+            {
+                reader.Read();
+                returnString = reader.GetString(0);
+                reader.Close();
+                return returnString;
+            }
+        }
+    }
+
+    public class SubHabit
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
