@@ -57,10 +57,7 @@ public class Screen
 
     private void InsertSubHabit(string tableName)
     {
-        string date;
-        bool showError = false;
-
-        date = askInput.Date("Write a date in the format dd-mm-yy.");
+        string? date = askInput.Date("Write a date in the format dd-mm-yy.");
 
         int quantity = askInput.Digits("Write the quantity.");
 
