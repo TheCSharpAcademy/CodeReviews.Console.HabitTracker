@@ -6,7 +6,7 @@ namespace ScreensLibrary;
 
 public class AskInput
 {
-    private void ClearPreviousLines (int numberOfLines)
+    public void ClearPreviousLines (int numberOfLines)
     {
         for (int i = 1; i <= numberOfLines; i++)
         {

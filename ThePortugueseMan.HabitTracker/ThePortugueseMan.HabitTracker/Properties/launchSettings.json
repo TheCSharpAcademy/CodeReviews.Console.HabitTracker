@@ -2,7 +2,7 @@
   "profiles": {
     "ThePortugueseMan.HabitTracker": {
       "commandName": "Project",
-      "workingDirectory": "E:\\Code Academy\\C#\\TheC#Academy\\CodeReviews.Console.HabitTracker\\ThePortugueseMan.HabitTracker"
+      "workingDirectory": "C:\\Users\\emartins\\Desktop\\Projetos\\CodeReviews.Console.HabitTracker\\ThePortugueseMan.HabitTracker"
     }
   }
 }

@@ -7,6 +7,7 @@ public class Screen
     MainTable mainTable;
     AskInput askInput = new();
     DataBaseCommands dbCmd = new();
+    DataBaseViews dbView = new();
 
     public Screen(MainTable mainTable)
     {
@@ -17,6 +18,7 @@ public class Screen
     {
         Console.Clear();
         dbCmd.ViewAll(tableName);
+        int inputNumber;
 
         if (tableName == mainTable.tableName)
         {
@@ -30,7 +32,33 @@ public class Screen
                 SubMenu(subTableName);
             }
         }
-        else askInput.AnyAndEnterToContinue();
+        else
+        {
+            Console.WriteLine("Press 1 to view stats by year or 0 to return to the menu");
+            do
+            {
+                inputNumber = askInput.Digits("");
+                if (inputNumber == 0) return;
+                else if (inputNumber == 1) YearView(tableName);
+                else Console.WriteLine("Please select a valid option");
+            }
+            while (inputNumber != 0 && inputNumber != 1);
+        }
+    }
+
+    private void YearView(string tableName)
+    {
+        int yearIn = 0;
+        askInput.ClearPreviousLines(4);
+        do
+        {
+            yearIn = askInput.Digits("Write the year you want to view");
+        } while (false);
+
+        int timesPerYear = dbView.TimesPerYear(tableName, yearIn);
+        Console.WriteLine($"In the year {yearIn} you did it {timesPerYear} times");
+        Console.ReadLine();
+
     }
 
     public void Insert(string tableName)
@@ -88,7 +116,6 @@ public class Screen
             }
             else
             {
-                if(tableName == mainTable.tableName )
                 Console.WriteLine("Entry deleted successfully!");
             }
 
