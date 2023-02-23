@@ -24,9 +24,9 @@ public class MainTable
 
     }
 
-    private string? TransformToTableName(string name) { return $"[{name}]"; }
+    public string? TransformToSubTableName(string? name) { return $"[{name}]"; }
 
-    public bool CheckForHabitName(string testName)
+    public bool CheckForTableName(string testTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -36,7 +36,7 @@ public class MainTable
             checkCmd.CommandText =
                 $"SELECT EXISTS(SELECT 2 FROM " +
                 tableName +
-                $" WHERE HabitTableName = '{TransformToTableName(testName)}')";
+                $" WHERE HabitTableName = '{testTableName}')";
 
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
             connection.Close();
@@ -48,7 +48,7 @@ public class MainTable
 
     public void InsertNew(string name, string unit)
     {
-       string? tableName = TransformToTableName(name);
+       string? tableName = TransformToSubTableName(name);
        dbCommands.Insert(this.tableName, tableName, unit);
        dbCommands.CreateSubTable(tableName);
     }

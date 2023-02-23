@@ -49,7 +49,7 @@ public class Screen
             if (!showError) habitName = askInput.LettersNumberAndSpaces("Write the name of your habit.");
             else habitName = askInput.LettersNumberAndSpaces("Habit already exists.");
             showError = true;
-        } while (mainTable.CheckForHabitName(habitName));
+        } while (mainTable.CheckForTableName(mainTable.TransformToSubTableName(habitName)));
 
         string habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
         mainTable.InsertNew(habitName, habitUnit);
@@ -86,7 +86,12 @@ public class Screen
                 if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
                 continue;
             }
-            else Console.WriteLine("Entry deleted successfully!");
+            else
+            {
+                if(tableName == mainTable.tableName )
+                Console.WriteLine("Entry deleted successfully!");
+            }
+
             if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
             else continue;
         } while (!exitScreen);
@@ -131,6 +136,7 @@ public class Screen
     {
         bool showError;
         string newName;
+        string? newTableName;
 
         if (!dbCmd.CheckIndex(index, tableName)) return false;
 
@@ -141,12 +147,13 @@ public class Screen
             {
                 if (!showError) newName = askInput.LettersNumberAndSpaces("Write the new name of your habit.");
                 else newName = askInput.LettersNumberAndSpaces("Habit already exists.");
+                newTableName = mainTable.TransformToSubTableName(newName);
                 showError = true;
-            } while (mainTable.CheckForHabitName(newName));
+            } while (mainTable.CheckForTableName(newTableName));
 
             string newUnit = askInput.LettersNumberAndSpaces("Write the new unit");
 
-            if (!dbCmd.Update(tableName, index, newName, newUnit))
+            if (!dbCmd.Update(tableName, index, newTableName, newUnit))
             {
                 Console.WriteLine("Couldn't update habit!");
                 return false;

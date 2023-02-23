@@ -8,8 +8,8 @@ using System.Globalization;
 public class DataBaseCommands
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
+    static string s_MainTableName = "HabitsTable";
 
-    private string? TransformToTableName(string name) { return $"[{name}]"; }
     public void Initialization(string mainTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -53,7 +53,7 @@ public class DataBaseCommands
     }
 
     //Insert subtable
-    public void Insert(string subTableName, string date, int quantity)
+    public void Insert(string? subTableName, string? date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -109,6 +109,7 @@ public class DataBaseCommands
 
     public bool DeleteByIndex(int index, string tableName) 
     {
+        string? subTableName = GetTableNameOrUnitsFromIndex(tableName,index, "TableName");
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -121,8 +122,32 @@ public class DataBaseCommands
 
             int rowCount = tableCmd.ExecuteNonQuery();
             connection.Close();
-            if (rowCount == 0 ) return false;
+            if (rowCount == 0) return false;
+            else if (tableName == s_MainTableName && !DeleteSubTable(subTableName)) return false;
             else return true;
+            
+        }
+    }
+
+    public bool DeleteSubTable(string subTableName)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText = "DROP TABLE " + subTableName;
+
+            if(tableCmd.ExecuteNonQuery() == 0)
+            {
+                connection.Close();
+                return false;
+            }
+            else
+            {
+                connection.Close();
+                return true;
+            }
         }
     }
     //Update subTable
@@ -162,9 +187,8 @@ public class DataBaseCommands
         }
     }
     //Update main table
-    public bool Update(string mainTableName, int index, string newName, string newUnit)
+    public bool Update(string? mainTableName, int index, string newTableName, string newUnit)
     {
-        string newTableName = TransformToTableName(newName);
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -294,7 +318,7 @@ public class DataBaseCommands
         }
     }
 
-    public string? GetTableNameOrUnitsFromIndex(string tableName, int index, string returnType)
+    public string? GetTableNameOrUnitsFromIndex(string? tableName, int index, string returnType)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
