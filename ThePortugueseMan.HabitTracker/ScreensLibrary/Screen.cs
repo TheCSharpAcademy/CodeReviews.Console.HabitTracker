@@ -4,13 +4,13 @@ namespace ScreensLibrary;
 
 public class Screen
 {
-    HabitsTable habitsTable;
+    MainTable mainTable;
     AskInput askInput = new();
     DataBaseCommands dbCmd = new();
 
-    public Screen(HabitsTable habitsTable)
+    public Screen(MainTable mainTable)
     {
-        this.habitsTable = habitsTable;
+        this.mainTable = mainTable;
     }
 
     public void ViewAll(string tableName)
@@ -18,7 +18,7 @@ public class Screen
         Console.Clear();
         dbCmd.ViewAll(tableName);
 
-        if (tableName == habitsTable.tableName)
+        if (tableName == mainTable.tableName)
         {
             int index = askInput.Digits("Write the index of the habit you want to see. Or press 0 to return.");
             if (index == 0) return;
@@ -26,8 +26,8 @@ public class Screen
 
             else
             {
-                string habitTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
-                SubMenu(habitTableName);
+                string subTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
+                SubMenu(subTableName);
             }
         }
         else askInput.AnyAndEnterToContinue();
@@ -35,33 +35,34 @@ public class Screen
 
     public void Insert(string tableName)
     {
-        if (tableName == "HabitsTable") InsertHabit();
-        else InsertSubHabit(tableName);
+        if (tableName == mainTable.tableName) InsertToMainTable();
+        else InsertToSubtable(tableName);
     }
 
-    private void InsertHabit()
+    private void InsertToMainTable()
     {
         string habitName;
         bool showError = false;
 
-        do {
+        do 
+        {
             if (!showError) habitName = askInput.LettersNumberAndSpaces("Write the name of your habit.");
             else habitName = askInput.LettersNumberAndSpaces("Habit already exists.");
             showError = true;
-        } while (habitsTable.CheckForHabitNameInTable(habitName));
+        } while (mainTable.CheckForHabitName(habitName));
 
         string habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
-        habitsTable.InsertNewHabit(habitName, habitUnit);
+        mainTable.InsertNew(habitName, habitUnit);
         return;
     }
 
-    private void InsertSubHabit(string tableName)
+    private void InsertToSubtable(string subTableName)
     {
         string? date = askInput.Date("Write a date in the format dd-mm-yy.");
 
         int quantity = askInput.Digits("Write the quantity.");
 
-        dbCmd.Insert(tableName, date, quantity);
+        dbCmd.Insert(subTableName, date, quantity);
         
         return;
     }
@@ -100,8 +101,7 @@ public class Screen
         return true;
     }
 
-    public void Update(string tableName
-        )
+    public void Update(string tableName)
     {
         bool exitScreen = false;
         do
@@ -113,7 +113,10 @@ public class Screen
             int index = askInput.Digits("Write the index of the entry you want to update, or press 0 to return.");
 
             if (index == 0) return;
-            else if (UpdateEntry(tableName, index)) Console.WriteLine("Entry successfully updated");
+            else if (UpdateEntry(tableName, index))
+            {
+                Console.WriteLine("Entry successfully updated");
+            }
             else Console.WriteLine("Couldn't update entry");
 
             if (askInput.ZeroOrAnyKeyAndEnterToContinue()) exitScreen = true;
@@ -131,7 +134,7 @@ public class Screen
 
         if (!dbCmd.CheckIndex(index, tableName)) return false;
 
-        if (tableName == "Habits")
+        if (tableName == mainTable.tableName)
         {
             showError = false;
             do
@@ -139,7 +142,7 @@ public class Screen
                 if (!showError) newName = askInput.LettersNumberAndSpaces("Write the new name of your habit.");
                 else newName = askInput.LettersNumberAndSpaces("Habit already exists.");
                 showError = true;
-            } while (habitsTable.CheckForHabitNameInTable(newName));
+            } while (mainTable.CheckForHabitName(newName));
 
             string newUnit = askInput.LettersNumberAndSpaces("Write the new unit");
 
@@ -154,16 +157,16 @@ public class Screen
         else return false;
     }
 
-    public void SubMenu(string tableName)
+    public void SubMenu(string subTableName)
     {
         Console.Clear();
-        bool closeApp = false;
         bool invalidCommand = false;
-        while (!closeApp)
+
+        while (true)
         {
             Console.Clear();
             Console.WriteLine("HABIT TRACKER");
-            Console.WriteLine("\n" + tableName.TrimEnd(']').TrimStart('['));
+            Console.WriteLine("\n" + subTableName.TrimEnd(']').TrimStart('['));
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine("\nType 0 to Return to the Main Menu.");
             Console.WriteLine("Type 1 to View All Records.");
@@ -180,11 +183,11 @@ public class Screen
 
             switch (commandInput)
             {
-                case "0": closeApp = true; return;
-                case "1": ViewAll(tableName); break;
-                case "2": Insert(tableName); break;
-                case "3": Delete(tableName); break;
-                case "4": Update(tableName); break;
+                case "0": return;
+                case "1": ViewAll(subTableName); break;
+                case "2": Insert(subTableName); break;
+                case "3": Delete(subTableName); break;
+                case "4": Update(subTableName); break;
                 default:
                     invalidCommand = true;
                     break;

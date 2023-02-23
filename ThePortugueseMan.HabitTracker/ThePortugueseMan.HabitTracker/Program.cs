@@ -7,14 +7,14 @@ using System.Globalization;
 internal class Program
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
-    static string habitsTableName = "HabitsTable";
+    static string mainTableName = "HabitsTable";
     static DataBaseCommands dbCommands = new();
-    static HabitsTable habitsTable = new(habitsTableName, connectionString);
-    static Screen screen = new(habitsTable);
+    static MainTable mainTable = new(mainTableName, connectionString);
+    static Screen screen = new(mainTable);
     private static void Main(string[] args)
     {
 
-        dbCommands.Initialization(habitsTableName);
+        dbCommands.Initialization(mainTableName);
         MainMenu();
     }
 
@@ -45,10 +45,10 @@ internal class Program
             switch (commandInput)
             {
                 case "0": closeApp = true; break;
-                case "1": screen.ViewAll(habitsTableName); break;
-                case "2": screen.Insert(habitsTableName); break;
-                case "3": screen.Delete(habitsTableName); break;
-                case "4": screen.Update(habitsTableName); break;
+                case "1": screen.ViewAll(mainTableName); break;
+                case "2": screen.Insert(mainTableName); break;
+                case "3": screen.Delete(mainTableName); break;
+                case "4": screen.Update(mainTableName); break;
                 default:
                     invalidCommand = true;
                     break;

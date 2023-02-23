@@ -5,13 +5,13 @@ using System;
 namespace HabitsLibrary;
 
 
-public class HabitsTable
+public class MainTable
 {
     private static DataBaseCommands dbCommands = new();
 
     public string? tableName;
     public string? connectionString;
-    public HabitsTable(string tableName, string connectionString) 
+    public MainTable(string tableName, string connectionString) 
     {
         this.tableName = tableName;
         this.connectionString = connectionString;
@@ -19,14 +19,14 @@ public class HabitsTable
     private class Habit
     {
         public int Id { get; set; }
-        public string? HabitTableName { get; set; }
-        public string? HabitUnit { get; set; }
+        public string? TableName { get; set; }
+        public string? Unit { get; set; }
 
     }
 
-    private string? TransformToTableName(string habitName) { return $"[{habitName}]"; }
+    private string? TransformToTableName(string name) { return $"[{name}]"; }
 
-    public bool CheckForHabitNameInTable(string testTableName)
+    public bool CheckForHabitName(string testName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -36,7 +36,7 @@ public class HabitsTable
             checkCmd.CommandText =
                 $"SELECT EXISTS(SELECT 2 FROM " +
                 tableName +
-                $" WHERE HabitTableName = '{testTableName}')";
+                $" WHERE HabitTableName = '{TransformToTableName(testName)}')";
 
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
             connection.Close();
@@ -46,10 +46,10 @@ public class HabitsTable
         }
     }
 
-    public void InsertNewHabit(string habitName, string habitUnit)
+    public void InsertNew(string name, string unit)
     {
-       string habitTableName = TransformToTableName(habitName);
-       dbCommands.Insert(tableName, habitTableName, habitUnit);
-       dbCommands.CreateHabitTable(habitTableName);
+       string? tableName = TransformToTableName(name);
+       dbCommands.Insert(this.tableName, tableName, unit);
+       dbCommands.CreateSubTable(tableName);
     }
 }

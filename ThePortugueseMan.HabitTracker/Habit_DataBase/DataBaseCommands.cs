@@ -9,7 +9,8 @@ public class DataBaseCommands
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
 
-    public void Initialization(string habitsTableName)
+    private string? TransformToTableName(string name) { return $"[{name}]"; }
+    public void Initialization(string mainTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -19,7 +20,7 @@ public class DataBaseCommands
             // AUTOINCREMENT - everytime an entry is added, it will increment
             tableCmd.CommandText =
                 @$"CREATE TABLE IF NOT EXISTS "+
-                    habitsTableName +
+                    mainTableName +
                     "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "HabitTableName TEXT," +
                     "HabitUnit TEXT)";
@@ -30,7 +31,7 @@ public class DataBaseCommands
         }
     }
 
-    public void CreateHabitTable(string tableName)
+    public void CreateSubTable(string tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -51,7 +52,8 @@ public class DataBaseCommands
         }
     }
 
-    public void Insert(string tableName, string date, int quantity)
+    //Insert subtable
+    public void Insert(string subTableName, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -59,15 +61,15 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO " + tableName + $"(date, quantity) VALUES ('{date}',{quantity})";
+                $"INSERT INTO " + subTableName + $"(date, quantity) VALUES ('{date}',{quantity})";
 
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
     }
-
-    public void Insert(string habitsTableName,string habitTableName, string habitUnit)
+    //Insert main table
+    public void Insert(string mainTableName,string subTableName, string habitUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -76,9 +78,9 @@ public class DataBaseCommands
 
             tableCmd.CommandText =
                 $"INSERT INTO " +
-                habitsTableName +
+                mainTableName +
                 "(HabitTableName, HabitUnit)" +
-                $" VALUES ('{habitTableName}','{habitUnit}')";
+                $" VALUES ('{subTableName}','{habitUnit}')";
 
             tableCmd.ExecuteNonQuery();
 
@@ -123,7 +125,7 @@ public class DataBaseCommands
             else return true;
         }
     }
-
+    //Update subTable
     public bool Update(string tableName, int index, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -148,7 +150,7 @@ public class DataBaseCommands
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} " +
+                    $"UPDATE "+ tableName +" SET date = '{date}', quantity = {quantity} " +
                     $"WHERE Id = {index}";
 
                 tableCmd.ExecuteNonQuery();
@@ -159,9 +161,10 @@ public class DataBaseCommands
             }
         }
     }
-
-    public bool Update(string tableName, int index, string habitTableName, string unit)
+    //Update main table
+    public bool Update(string mainTableName, int index, string newName, string newUnit)
     {
+        string newTableName = TransformToTableName(newName);
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -169,7 +172,7 @@ public class DataBaseCommands
 
             checkCmd.CommandText =
                 $"SELECT EXISTS(SELECT 1 FROM " +
-                tableName +
+                mainTableName +
                 $" WHERE Id = {index})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
@@ -181,12 +184,16 @@ public class DataBaseCommands
 
             else
             {
+                if (!ChangeSubTableName(
+                        GetTableNameOrUnitsFromIndex(mainTableName, index, "TableName"), 
+                        newTableName))
+                { return false; }
+
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"UPDATE " +
-                    tableName +
-                    $" SET HabitTableName = '{habitTableName}', HabitUnit = '{unit}'" +
+                    $"UPDATE " + mainTableName +
+                    $" SET HabitTableName = '{newTableName}', HabitUnit = '{newUnit}'" +
                     $" WHERE Id = {index}";
 
                 tableCmd.ExecuteNonQuery();
@@ -200,12 +207,12 @@ public class DataBaseCommands
 
     public void ViewAll(string tableName)
     {
-        if (tableName == "HabitsTable") ViewHabits(tableName);
-        else ViewSubHabits(tableName);
+        if (tableName == "HabitsTable") ViewMainTable(tableName);
+        else ViewSubTable(tableName);
 
     }
 
-    private void ViewHabits(string tableName)
+    private void ViewMainTable(string mainTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -213,7 +220,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"SELECT * FROM " + tableName;
+                $"SELECT * FROM " + mainTableName;
 
             List<Habit> tableData = new();
 
@@ -227,8 +234,8 @@ public class DataBaseCommands
                     new Habit
                     {
                         Id = reader.GetInt32(0),
-                        HabitTableName = reader.GetString(1),
-                        HabitUnit = reader.GetString(2)
+                        TableName = reader.GetString(1),
+                        Unit = reader.GetString(2)
                     }); ;
                 }
             }
@@ -239,14 +246,14 @@ public class DataBaseCommands
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
             {
-                string habitTableName_display = dw.HabitTableName.TrimEnd(']').TrimStart('[');
-                Console.WriteLine($"{dw.Id} - {habitTableName_display} - Unit: {dw.HabitUnit}");
+                string habitTableName_display = dw.TableName.TrimEnd(']').TrimStart('[');
+                Console.WriteLine($"{dw.Id} - {habitTableName_display} - Unit: {dw.Unit}");
             }
             Console.WriteLine("\n-----------------------------");
         }
     }
 
-    private void ViewSubHabits(string tableName)
+    private void ViewSubTable(string subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -254,9 +261,9 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"SELECT * FROM " + tableName;
+                $"SELECT * FROM " + subTableName;
 
-            List<SubHabit> tableData = new();
+            List<SubTable> tableData = new();
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -265,7 +272,7 @@ public class DataBaseCommands
                 while (reader.Read())
                 {
                     tableData.Add(
-                    new SubHabit
+                    new SubTable
                     {
                         Id = reader.GetInt32(0),
                         Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
@@ -276,7 +283,7 @@ public class DataBaseCommands
             else { Console.WriteLine("Empty"); }
 
             connection.Close();
-            string? units = GetUnitFromTableName("HabitsTable", tableName);
+            string? units = GetUnitFromTableName("HabitsTable", subTableName);
 
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
@@ -347,7 +354,28 @@ public class DataBaseCommands
         }
     }
 
-    public class SubHabit
+    public bool ChangeSubTableName(string currentTableName, string newTableName)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+
+            try
+            {
+                tableCmd.CommandText =
+                $"ALTER TABLE " + currentTableName + " RENAME TO " + newTableName;
+
+                tableCmd.ExecuteNonQuery();
+                connection.Close();
+                return true;
+            }
+            catch { return false; }
+            
+        }
+    }
+    public class SubTable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -357,8 +385,8 @@ public class DataBaseCommands
     public class Habit
     {
         public int Id { get; set; }
-        public string? HabitTableName { get; set; }
-        public string? HabitUnit { get; set;}
+        public string? TableName { get; set; }
+        public string? Unit { get; set;}
 
     }
 
