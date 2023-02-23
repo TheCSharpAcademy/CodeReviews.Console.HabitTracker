@@ -26,7 +26,7 @@ public class Screen
 
             else
             {
-                string subTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
+                string? subTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
                 SubMenu(subTableName);
             }
         }
@@ -41,7 +41,7 @@ public class Screen
 
     private void InsertToMainTable()
     {
-        string habitName;
+        string? habitName;
         bool showError = false;
 
         do 
@@ -51,7 +51,7 @@ public class Screen
             showError = true;
         } while (mainTable.CheckForTableName(mainTable.TransformToSubTableName(habitName)));
 
-        string habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
+        string? habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
         mainTable.InsertNew(habitName, habitUnit);
         return;
     }
@@ -135,7 +135,7 @@ public class Screen
     private bool UpdateEntry(string tableName, int index)
     {
         bool showError;
-        string newName;
+        string? newName;
         string? newTableName;
 
         if (!dbCmd.CheckIndex(index, tableName)) return false;
@@ -151,7 +151,7 @@ public class Screen
                 showError = true;
             } while (mainTable.CheckForTableName(newTableName));
 
-            string newUnit = askInput.LettersNumberAndSpaces("Write the new unit");
+            string? newUnit = askInput.LettersNumberAndSpaces("Write the new unit");
 
             if (!dbCmd.Update(tableName, index, newTableName, newUnit))
             {
@@ -164,10 +164,12 @@ public class Screen
         else return false;
     }
 
-    public void SubMenu(string subTableName)
+    public void SubMenu(string? subTableName)
     {
         Console.Clear();
         bool invalidCommand = false;
+
+        if (subTableName is null) return;
 
         while (true)
         {

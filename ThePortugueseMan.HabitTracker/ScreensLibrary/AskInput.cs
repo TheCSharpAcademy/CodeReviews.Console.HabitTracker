@@ -17,9 +17,9 @@ public class AskInput
             Console.SetCursorPosition(0, currentLineCursor);
         }
     }
-    public string LettersNumberAndSpaces (string message)
+    public string? LettersNumberAndSpaces (string message)
     {
-        string returnString;
+        string? returnString;
         bool showError = false;
         do
         {
@@ -34,7 +34,8 @@ public class AskInput
             returnString = Console.ReadLine();
             showError= true;
         }
-        while (!((returnString.All(c => Char.IsLetterOrDigit(c) || c == ' ')) && returnString != ""));
+        //if every char c in returnString is a letter a digit or a space AND is not blank
+        while (!(returnString.All(c => Char.IsLetterOrDigit(c) || c == ' ') && returnString != ""));
         
         returnString.Trim();
         return returnString;

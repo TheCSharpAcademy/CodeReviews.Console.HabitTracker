@@ -1,7 +1,6 @@
 ﻿namespace DataBaseLibrary;
 using Microsoft.Data.Sqlite;
 using System;
-using System.ComponentModel.Design;
 using System.Globalization;
 
 
@@ -10,7 +9,7 @@ public class DataBaseCommands
     static string connectionString = @"Data Source=habit-Tracker.db";
     static string s_MainTableName = "HabitsTable";
 
-    public void Initialization(string mainTableName)
+    public void Initialization(string? mainTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -31,7 +30,7 @@ public class DataBaseCommands
         }
     }
 
-    public void CreateSubTable(string tableName)
+    public void CreateSubTable(string? tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -69,7 +68,7 @@ public class DataBaseCommands
         }
     }
     //Insert main table
-    public void Insert(string mainTableName,string subTableName, string habitUnit)
+    public void Insert(string? mainTableName,string? subTableName, string? habitUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -88,7 +87,7 @@ public class DataBaseCommands
         }
     }
 
-    public bool CheckIndex(int index, string tableName) 
+    public bool CheckIndex(int index, string? tableName) 
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -107,7 +106,7 @@ public class DataBaseCommands
         }
     }
 
-    public bool DeleteByIndex(int index, string tableName) 
+    public bool DeleteByIndex(int index, string? tableName) 
     {
         string? subTableName = GetTableNameOrUnitsFromIndex(tableName,index, "TableName");
         using (var connection = new SqliteConnection(connectionString))
@@ -129,7 +128,7 @@ public class DataBaseCommands
         }
     }
 
-    public bool DeleteSubTable(string subTableName)
+    public bool DeleteSubTable(string? subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -187,7 +186,7 @@ public class DataBaseCommands
         }
     }
     //Update main table
-    public bool Update(string? mainTableName, int index, string newTableName, string newUnit)
+    public bool Update(string? mainTableName, int index, string? newTableName, string? newUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -238,6 +237,7 @@ public class DataBaseCommands
 
     private void ViewMainTable(string mainTableName)
     {
+        string? habitTableName_display = null;
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -270,7 +270,7 @@ public class DataBaseCommands
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
             {
-                string habitTableName_display = dw.TableName.TrimEnd(']').TrimStart('[');
+                if(dw.TableName is not null) { habitTableName_display = dw.TableName.TrimEnd(']').TrimStart('['); }
                 Console.WriteLine($"{dw.Id} - {habitTableName_display} - Unit: {dw.Unit}");
             }
             Console.WriteLine("\n-----------------------------");
@@ -318,7 +318,7 @@ public class DataBaseCommands
         }
     }
 
-    public string? GetTableNameOrUnitsFromIndex(string? tableName, int index, string returnType)
+    public string? GetTableNameOrUnitsFromIndex(string? tableName, int index, string? returnType)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -378,7 +378,7 @@ public class DataBaseCommands
         }
     }
 
-    public bool ChangeSubTableName(string currentTableName, string newTableName)
+    public bool ChangeSubTableName(string? currentTableName, string? newTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {

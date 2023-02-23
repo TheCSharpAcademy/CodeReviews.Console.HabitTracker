@@ -26,7 +26,7 @@ public class MainTable
 
     public string? TransformToSubTableName(string? name) { return $"[{name}]"; }
 
-    public bool CheckForTableName(string testTableName)
+    public bool CheckForTableName(string? testTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -46,7 +46,7 @@ public class MainTable
         }
     }
 
-    public void InsertNew(string name, string unit)
+    public void InsertNew(string? name, string? unit)
     {
        string? tableName = TransformToSubTableName(name);
        dbCommands.Insert(this.tableName, tableName, unit);
