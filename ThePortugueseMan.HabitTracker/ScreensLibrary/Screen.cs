@@ -48,15 +48,26 @@ public class Screen
 
     private void YearView(string tableName)
     {
-        int yearIn = 0;
+        int yearIn;
+        int timesPerYear = -1, totalOfYear;
+        bool showError = false;
         askInput.ClearPreviousLines(4);
         do
         {
-            yearIn = askInput.Digits("Write the year you want to view");
-        } while (false);
+            if (!showError) yearIn = askInput.Digits("Write the year you want to view");
+            else
+            {
+                askInput.ClearPreviousLines(3);
+                yearIn = askInput.Digits("Please write a valid year");
+            }
+            timesPerYear = dbView.TimesLoggedInYear(tableName, yearIn);
+            totalOfYear = dbView.TotalOfYear(tableName, yearIn);
+            showError = true;
+        } while (timesPerYear == -1 || totalOfYear == -1);
 
-        int timesPerYear = dbView.TimesPerYear(tableName, yearIn);
-        Console.WriteLine($"In the year {yearIn} you did it {timesPerYear} times");
+        timesPerYear = dbView.TimesLoggedInYear(tableName, yearIn);
+        totalOfYear = dbView.TotalOfYear(tableName, yearIn);
+        Console.WriteLine($"In {yearIn} you logged {timesPerYear} times, totalling {totalOfYear} ");
         Console.ReadLine();
 
     }
