@@ -48,4 +48,14 @@ Console based CRUD application to log and track any habit. Developed using C#/.N
 
 ![image](https://user-images.githubusercontent.com/64802476/221361731-9dc9b708-5b7b-4c08-98c6-495649b78d56.png)
 
+- Generate yearly reports
+
+![image](https://user-images.githubusercontent.com/64802476/221361941-6e0e07eb-abc5-4d19-b327-0a050ff81e55.png)
+
+
 # Resources Used
+
+- The [C#Academy project](https://www.thecsharpacademy.com/project/12) was the project guide.
+- The [C#Academy Tutorial](https://www.youtube.com/watch?v=d1JIJdDVFjs) for this project, which helped me kickstart everything SQL and SQLite related.
+- The C#Academy discord community that are always ready to help!
+- Other resources all over the web when dealing with specific issues. Shoutout to [geeksforgeeks](geeksforgeeks.org)
