@@ -1,5 +1,7 @@
 ﻿using HabitsLibrary;
 using DataBaseLibrary;
+using System.Globalization;
+
 namespace ScreensLibrary;
 
 public class Screen
@@ -13,63 +15,67 @@ public class Screen
     {
         this.mainTable = mainTable;
     }
-
+    //Displays table of tableName
     public void ViewAll(string tableName)
     {
-        Console.Clear();
-        dbCmd.ViewAll(tableName);
         int inputNumber;
-
-        if (tableName == mainTable.tableName)
+        //Can only be exited with 0
+        while (true)
         {
-            int index = askInput.Digits("Write the index of the habit you want to see. Or press 0 to return.");
-            if (index == 0) return;
-
-
-            else
+            Console.Clear();
+            Console.WriteLine("VIEW");
+            dbCmd.ViewAll(tableName);
+            if (tableName == mainTable.tableName)
             {
-                string? subTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
-                SubMenu(subTableName);
+                int index = askInput.PositiveNumber("Write the index of the habit you want to see. Or press 0 to return.");
+                if (index == 0) return;
+                else
+                {
+                    //Gets the subTable of the selected index and enters the submenu for it
+                    string? subTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
+                    SubMenu(subTableName);
+                }
+            }
+            else //it's a subtable
+            {
+                    Console.WriteLine("Press 1 to view stats by year or 0 to return to the menu");
+                    inputNumber = askInput.PositiveNumber("");
+                    if (inputNumber == 0) return;
+                    else if (inputNumber == 1) YearView(tableName);
+                    else Console.WriteLine("Please select a valid option");
             }
         }
-        else
-        {
-            Console.WriteLine("Press 1 to view stats by year or 0 to return to the menu");
-            do
-            {
-                inputNumber = askInput.Digits("");
-                if (inputNumber == 0) return;
-                else if (inputNumber == 1) YearView(tableName);
-                else Console.WriteLine("Please select a valid option");
-            }
-            while (inputNumber != 0 && inputNumber != 1);
-        }
+
     }
 
     private void YearView(string tableName)
     {
         int yearIn;
-        int timesPerYear = -1, totalOfYear;
+        int timesPerYear, totalOfYear;
         bool showError = false;
-        askInput.ClearPreviousLines(4);
+        askInput.ClearPreviousLines(4); //clears previous prompts
+        
         do
         {
-            if (!showError) yearIn = askInput.Digits("Write the year you want to view");
+            if (!showError) yearIn = askInput.PositiveNumber("Write the year you want to view. Use the last 2 digits of the year.");
             else
             {
                 askInput.ClearPreviousLines(3);
-                yearIn = askInput.Digits("Please write a valid year");
+                yearIn = askInput.PositiveNumber("Please write a valid year. Use the last 2 digits of the year");
             }
             timesPerYear = dbView.TimesLoggedInYear(tableName, yearIn);
             totalOfYear = dbView.TotalOfYear(tableName, yearIn);
-            showError = true;
+            showError = true; //used to change prompt if input was incorrect after the 1st
         } while (timesPerYear == -1 || totalOfYear == -1);
+
+        //Parses the last 2 digits of the input to a full year for display purposes
+        string fullYear = (DateTime.ParseExact(yearIn.ToString(),"yy", new CultureInfo("en-US"))).ToString("yyyy");
 
         timesPerYear = dbView.TimesLoggedInYear(tableName, yearIn);
         totalOfYear = dbView.TotalOfYear(tableName, yearIn);
-        Console.WriteLine($"In {yearIn} you logged {timesPerYear} times, totalling {totalOfYear} ");
-        Console.ReadLine();
-
+        string habitUnits = dbCmd.GetUnitFromTableName(mainTable.tableName, tableName);
+        Console.WriteLine($"In {fullYear} you logged {timesPerYear} times, totalling {totalOfYear} {habitUnits}!");
+        askInput.AnyAndEnterToContinue();
     }
 
     public void Insert(string tableName)
@@ -77,29 +83,32 @@ public class Screen
         if (tableName == mainTable.tableName) InsertToMainTable();
         else InsertToSubtable(tableName);
     }
-
+    //Main Table expects string with name of the table of the habit and string with the unit associated with the habit
     private void InsertToMainTable()
     {
         string? habitName;
         bool showError = false;
-
-        do 
+        do //while the name inserted already exists
         {
-            if (!showError) habitName = askInput.LettersNumberAndSpaces("Write the name of your habit.");
+            if (!showError) habitName = askInput.LettersNumberAndSpaces("Write the name of your habit or 0 to return.");
             else habitName = askInput.LettersNumberAndSpaces("Habit already exists.");
-            showError = true;
+            if (habitName == "0") return;
+            showError = true; //used to change prompt if input was incorrect after the 1st
         } while (mainTable.CheckForTableName(mainTable.TransformToSubTableName(habitName)));
 
-        string? habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit.");
+        string? habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit. Or 0 to return");
+        if (habitUnit == "0") return;
         mainTable.InsertNew(habitName, habitUnit);
         return;
     }
-
+    //subtable expects string with a date and int with a quantity
     private void InsertToSubtable(string subTableName)
     {
-        string? date = askInput.Date("Write a date in the format dd-mm-yy.");
+        string? date = askInput.Date("Write a date in the format dd-mm-yy. Or 0 to return");
+        if (date == "0") return;
 
-        int quantity = askInput.Digits("Write the quantity.");
+        int quantity = askInput.PositiveNumber("Write the quantity. Or 0 to return");
+        if (quantity == 0) return;
 
         dbCmd.Insert(subTableName, date, quantity);
         
@@ -115,7 +124,7 @@ public class Screen
             Console.WriteLine("DELETE");
 
             dbCmd.ViewAll(tableName);
-            int index = askInput.Digits("Write the number of the entry you want to delete and press enter." +
+            int index = askInput.PositiveNumber("Write the number of the entry you want to delete and press enter." +
                 " Or press 0 to return to the Menu");
 
             if (index == 0) break;
@@ -135,10 +144,10 @@ public class Screen
         } while (!exitScreen);
         return;
     }
-
+    //returns true if entry exists and is deleted successfully
     private bool DeleteEntry(string tableName, int index)
     {
-        if (!dbCmd.CheckIndex(index, tableName)) return false;
+        if (!dbCmd.CheckIfIndexExists(index, tableName)) return false;
 
         if (!dbCmd.DeleteByIndex(index, tableName)) return false;
         return true;
@@ -153,7 +162,7 @@ public class Screen
             Console.WriteLine("UPDATE");
             dbCmd.ViewAll(tableName);
 
-            int index = askInput.Digits("Write the index of the entry you want to update, or press 0 to return.");
+            int index = askInput.PositiveNumber("Write the index of the entry you want to update, or press 0 to return.");
 
             if (index == 0) return;
             else if (UpdateEntry(tableName, index))
@@ -176,8 +185,8 @@ public class Screen
         string? newName;
         string? newTableName;
 
-        if (!dbCmd.CheckIndex(index, tableName)) return false;
-
+        if (!dbCmd.CheckIfIndexExists(index, tableName)) return false;
+        //if it's the main table - unique habitName and an habit unit are needed
         if (tableName == mainTable.tableName)
         {
             showError = false;
@@ -198,10 +207,20 @@ public class Screen
             }
             else return true;
         }
-
-        else return false;
+        //if it's a subTable - date and quantity are needed
+        else
+        {
+            string? newDate = askInput.Date("Insert the new date");
+            int newQuantity = askInput.PositiveNumber("Insert the new amount");
+            if (!dbCmd.Update(tableName, index, newDate, newQuantity))
+            {
+                Console.WriteLine("Couldn't update log!");
+                return false;
+            }
+            else return true;
+        }
     }
-
+    //menu for the habits
     public void SubMenu(string? subTableName)
     {
         Console.Clear();
@@ -232,7 +251,11 @@ public class Screen
             {
                 case "0": return;
                 case "1": ViewAll(subTableName); break;
-                case "2": Insert(subTableName); break;
+                case "2":
+                    askInput.ClearPreviousLines(1);
+                    Console.WriteLine("INSERT");
+                    Insert(subTableName); 
+                    break;
                 case "3": Delete(subTableName); break;
                 case "4": Update(subTableName); break;
                 default:

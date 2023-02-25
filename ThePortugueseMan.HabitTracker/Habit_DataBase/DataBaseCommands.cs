@@ -9,6 +9,7 @@ public class DataBaseCommands
     static string connectionString = @"Data Source=habit-Tracker.db";
     static string s_MainTableName = "HabitsTable";
 
+    //if the main table doesn't exist, it's created
     public void Initialization(string? mainTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -29,7 +30,7 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-
+    //creates o new subtable represeting an habit - each entry has a string date and an int quantity
     public void CreateSubTable(string? tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -43,7 +44,7 @@ public class DataBaseCommands
                     tableName +
                     "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "Date TEXT," +
-                    "Quantity TEXT)";
+                    "Quantity INTEGER)";
 
             tableCmd.ExecuteNonQuery();
 
@@ -51,7 +52,7 @@ public class DataBaseCommands
         }
     }
 
-    //Insert subtable
+    //Insert log to subtable - overload based on data types
     public void Insert(string? subTableName, string? date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -67,7 +68,7 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-    //Insert main table
+    //Insert habit to main table - overload based on data types
     public void Insert(string? mainTableName,string? subTableName, string? habitUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -86,8 +87,8 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-
-    public bool CheckIndex(int index, string? tableName) 
+    //checks if there is an entry at Id = index
+    public bool CheckIfIndexExists(int index, string? tableName) 
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -105,7 +106,6 @@ public class DataBaseCommands
             else return true;
         }
     }
-
     public bool DeleteByIndex(int index, string? tableName) 
     {
         string? subTableName = GetTableNameOrUnitsFromIndex(tableName,index, "TableName");
@@ -122,12 +122,13 @@ public class DataBaseCommands
             int rowCount = tableCmd.ExecuteNonQuery();
             connection.Close();
             if (rowCount == 0) return false;
+            //Deleting a row from the main Table means deleting an habit, including the habit's table
             else if (tableName == s_MainTableName && !DeleteSubTable(subTableName)) return false;
             else return true;
             
         }
     }
-
+    //Deletes the table of name subTableName
     public bool DeleteSubTable(string? subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -149,7 +150,7 @@ public class DataBaseCommands
             }
         }
     }
-    //Update subTable
+    //Updates entry on subTable by index - overload based on datatypes
     public bool Update(string tableName, int index, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -174,7 +175,7 @@ public class DataBaseCommands
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"UPDATE "+ tableName +" SET date = '{date}', quantity = {quantity} " +
+                    $"UPDATE "+ tableName + $" SET date = '{date}', quantity = {quantity} " +
                     $"WHERE Id = {index}";
 
                 tableCmd.ExecuteNonQuery();
@@ -185,7 +186,7 @@ public class DataBaseCommands
             }
         }
     }
-    //Update main table
+    //Update entry on main table by index - overload based on datatypes
     public bool Update(string? mainTableName, int index, string? newTableName, string? newUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -270,6 +271,7 @@ public class DataBaseCommands
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
             {
+                //for display removes the [] at the beggining and end of the tableName to get to the habit name
                 if(dw.TableName is not null) { habitTableName_display = dw.TableName.TrimEnd(']').TrimStart('['); }
                 Console.WriteLine($"{dw.Id} - {habitTableName_display} - Unit: {dw.Unit}");
             }
@@ -301,7 +303,7 @@ public class DataBaseCommands
                         Id = reader.GetInt32(0),
                         Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                         Quantity = reader.GetInt32(2)
-                    }); ;
+                    });
                 }
             }
             else { Console.WriteLine("Empty"); }
@@ -317,8 +319,9 @@ public class DataBaseCommands
             Console.WriteLine("\n-----------------------------");
         }
     }
-
-    public string? GetTableNameOrUnitsFromIndex(string? tableName, int index, string? returnType)
+    //returnType == "TableName" returns the name of the table at index of the mainTable
+    //returnType == "HabitUnit" return the name of the habit's unit ^""
+    public string? GetTableNameOrUnitsFromIndex(string? mainTableName, int index, string? returnType)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -327,7 +330,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                "SELECT * FROM " + tableName + $" WHERE Id = {index}";
+                "SELECT * FROM " + mainTableName + $" WHERE Id = {index}";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -348,8 +351,8 @@ public class DataBaseCommands
             }
         }
     }
-
-    public string? GetUnitFromTableName(string habitTableName, string tableName)
+    //return the habit unit of a specific habit name
+    public string? GetUnitFromTableName(string? mainTableName, string? subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -358,7 +361,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                "SELECT HabitUnit FROM " + habitTableName + $" WHERE HabitTableName = '{tableName}'";
+                "SELECT HabitUnit FROM " + mainTableName + $" WHERE HabitTableName = '{subTableName}'";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -377,15 +380,13 @@ public class DataBaseCommands
             }
         }
     }
-
+    //updates the subtable name
     public bool ChangeSubTableName(string? currentTableName, string? newTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-
-
             try
             {
                 tableCmd.CommandText =
@@ -396,7 +397,6 @@ public class DataBaseCommands
                 return true;
             }
             catch { return false; }
-            
         }
     }
     public class SubTable
@@ -405,13 +405,13 @@ public class DataBaseCommands
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
     }
-
+    //repesents an entry in the main table - a habit
+    //a habit is composed of it's tableName where entries are stores
+    //and it's unit, the name of what is meant to be trackes
     public class Habit
     {
         public int Id { get; set; }
         public string? TableName { get; set; }
         public string? Unit { get; set;}
-
     }
-
 }

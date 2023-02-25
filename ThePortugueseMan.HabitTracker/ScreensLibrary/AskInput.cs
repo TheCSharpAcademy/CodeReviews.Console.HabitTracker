@@ -34,13 +34,13 @@ public class AskInput
             returnString = Console.ReadLine();
             showError= true;
         }
-        //if every char c in returnString is a letter a digit or a space AND is not blank
+        //NOT while every char c in returnString is a letter a digit or a space AND returnString is not blank
         while (!(returnString.All(c => Char.IsLetterOrDigit(c) || c == ' ') && returnString != ""));
         
         returnString.Trim();
         return returnString;
     }
-    public int Digits(string message)
+    public int PositiveNumber(string message)
     {
         string? input;
         bool showError = false;
@@ -54,11 +54,12 @@ public class AskInput
                 Console.Write("Invalid Input. ");
             }
 
-            Console.WriteLine("Use numbers only.");
+            Console.WriteLine("Use positive numbers only.");
             input = Console.ReadLine();
             showError = true;
         }
-        while (!(Int32.TryParse(input, out number) || number < 0));
+        //while it's not a number OR not a positive number
+        while (!(Int32.TryParse(input, out number) && number >= 0));
         return number;
     }
 
@@ -66,13 +67,17 @@ public class AskInput
     {
         string? input;
         bool showError = false;
-        
         do
         {
             if (!showError) Console.WriteLine(message);
-            else Console.WriteLine("Please write a valid date");
+            else
+            { 
+                ClearPreviousLines(2);
+                Console.WriteLine("Please write a valid date. Or 0 to return"); 
+            }
 
             input = Console.ReadLine();
+            if (input is "0") return input;
 
             try
             {

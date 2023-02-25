@@ -1,8 +1,6 @@
 ﻿using DataBaseLibrary;
 using HabitsLibrary;
 using ScreensLibrary;
-using System.Globalization;
-
 
 internal class Program
 {
