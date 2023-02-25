@@ -56,8 +56,12 @@ Console based CRUD application to log and track any habit. Developed using C#/.N
 
 # Challenges
 
-- It was my first time using SQL and by extension SQLite. I had to learn the basic syntax and use it to access the database and retrieve the exact information I wanted. Overall it was a great introduction, and got me curious to keep working with it.
-- 
+- It was my first time using SQL and by extension SQLite
+  - I had to learn the basic syntax
+  - Access the SQL database and write the statements that retrieve the exact information I wanted
+  - Overall it was very enjoyable and it got me curious to do more things with it.
+- User testing
+  - I had to test for multiple inputs to make sure the app didn't crash, which took me quite a while and I'm still not 100% sure it won't crash.
 
 # Lessons learned
 
@@ -70,12 +74,12 @@ Console based CRUD application to log and track any habit. Developed using C#/.N
 
 - Although in this project, I've only used git to essentiatly save my work, I still want to learn more on how to use it.
 - I need to improve my efficiency debugging. Altough I know how to use some of Visual Studio debugging features, I'm not proficient with them so I end up reverting to testing most things by running the program from the start.
-- 
+  - As part of this, I also need to improve my user testing.
 
 
 # Resources Used
 
 - The [C#Academy project](https://www.thecsharpacademy.com/project/12) was the project guide.
 - The [C#Academy Tutorial](https://www.youtube.com/watch?v=d1JIJdDVFjs) for this project, which helped me kickstart everything SQL and SQLite related.
-- The C#Academy discord community that are always ready to help!
-- Other resources all over the web when dealing with specific issues. Special shoutout to [geeksforgeeks](geeksforgeeks.org)
+- The [C#Academy discord community](https://discord.com/invite/JVnwYdM79C) that are always ready to help!
+- Various resources from all over the web. Special shoutout to [geeksforgeeks](geeksforgeeks.org)!
