@@ -18,8 +18,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                @$"CREATE TABLE IF NOT EXISTS "+
-                    mainTableName +
+                @$"CREATE TABLE IF NOT EXISTS {mainTableName}" +
                     "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "HabitTableName TEXT," +
                     "HabitUnit TEXT)";
@@ -38,8 +37,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                @$"CREATE TABLE IF NOT EXISTS " +
-                    tableName +
+                @$"CREATE TABLE IF NOT EXISTS {tableName}" +
                     "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "Date TEXT," +
                     "Quantity INTEGER)";
@@ -59,7 +57,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO " + subTableName + $"(date, quantity) VALUES ('{date}',{quantity})";
+                $"INSERT INTO {subTableName}(date, quantity) VALUES ('{date}',{quantity})";
 
             tableCmd.ExecuteNonQuery();
 
@@ -75,9 +73,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO " +
-                mainTableName +
-                "(HabitTableName, HabitUnit)" +
+                $"INSERT INTO {mainTableName}(HabitTableName, HabitUnit)" +
                 $" VALUES ('{subTableName}','{habitUnit}')";
 
             tableCmd.ExecuteNonQuery();
@@ -94,9 +90,7 @@ public class DataBaseCommands
             var checkCmd = connection.CreateCommand();
 
             checkCmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM " +
-                tableName +
-                $" WHERE Id = {index})";
+                $"SELECT EXISTS(SELECT 1 FROM {tableName} WHERE Id = {index})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
             connection.Close();
 
@@ -113,9 +107,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"DELETE from " +
-                tableName +
-                $" WHERE Id = '{index}'";
+                $"DELETE from {tableName} WHERE Id = '{index}'";
 
             int rowCount = tableCmd.ExecuteNonQuery();
             connection.Close();
@@ -133,7 +125,7 @@ public class DataBaseCommands
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = "DROP TABLE " + tableName;
+            tableCmd.CommandText = $"DROP TABLE {tableName}";
 
             if(tableCmd.ExecuteNonQuery() == 0)
             {
@@ -156,9 +148,7 @@ public class DataBaseCommands
             var checkCmd = connection.CreateCommand();
 
             checkCmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM " +
-                tableName +
-                $" WHERE Id = {index})";
+                $"SELECT EXISTS(SELECT 1 FROM {tableName} WHERE Id = {index})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
             if (checkQuery == 0)
@@ -172,8 +162,7 @@ public class DataBaseCommands
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"UPDATE "+ tableName + $" SET date = '{date}', quantity = {quantity} " +
-                    $"WHERE Id = {index}";
+                    $"UPDATE {tableName} SET date = '{date}', quantity = {quantity} WHERE Id = {index}";
 
                 tableCmd.ExecuteNonQuery();
                 
@@ -192,9 +181,7 @@ public class DataBaseCommands
             var checkCmd = connection.CreateCommand();
 
             checkCmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM " +
-                mainTableName +
-                $" WHERE Id = {index})";
+                $"SELECT EXISTS(SELECT 1 FROM {mainTableName} WHERE Id = {index})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
             if (checkQuery == 0)
@@ -213,7 +200,7 @@ public class DataBaseCommands
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"UPDATE " + mainTableName +
+                    $"UPDATE {mainTableName}" +
                     $" SET HabitTableName = '{newTableName}', HabitUnit = '{newUnit}'" +
                     $" WHERE Id = {index}";
 
@@ -239,7 +226,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"SELECT * FROM " + mainTableName;
+                $"SELECT * FROM {mainTableName}";
 
             List<Habit> tableData = new();
 
@@ -280,7 +267,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"SELECT * FROM " + subTableName;
+                $"SELECT * FROM {subTableName}";
 
             List<SubTable> tableData = new();
 
@@ -323,10 +310,9 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                "SELECT * FROM " + mainTableName + $" WHERE Id = {index}";
+                $"SELECT * FROM {mainTableName} WHERE Id = {index}";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
-
 
             if (!reader.HasRows)
             {
@@ -353,7 +339,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                "SELECT HabitUnit FROM " + mainTableName + $" WHERE HabitTableName = '{subTableName}'";
+                $"SELECT HabitUnit FROM {mainTableName} WHERE HabitTableName = '{subTableName}'";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -381,7 +367,7 @@ public class DataBaseCommands
             try
             {
                 tableCmd.CommandText =
-                $"ALTER TABLE " + currentTableName + " RENAME TO " + newTableName;
+                $"ALTER TABLE {currentTableName} RENAME TO {newTableName}";
 
                 tableCmd.ExecuteNonQuery();
                 connection.Close();
