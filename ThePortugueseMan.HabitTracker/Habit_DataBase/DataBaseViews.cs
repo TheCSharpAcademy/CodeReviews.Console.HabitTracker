@@ -15,7 +15,7 @@ public class DataBaseViews
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = "SELECT COUNT(*) FROM " + tableName + $"WHERE Date LIKE '%{year}'";
+            tableCmd.CommandText = $"SELECT COUNT(*) FROM {tableName} WHERE Date LIKE '%{year}'";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -36,7 +36,7 @@ public class DataBaseViews
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = "SELECT SUM(Quantity) FROM " + tableName + $"WHERE Date LIKE '%{year}'";
+            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM {tableName} WHERE Date LIKE '%{year}'";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 

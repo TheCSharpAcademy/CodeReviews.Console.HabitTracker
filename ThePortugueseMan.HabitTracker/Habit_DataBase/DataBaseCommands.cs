@@ -17,7 +17,6 @@ public class DataBaseCommands
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            // AUTOINCREMENT - everytime an entry is added, it will increment
             tableCmd.CommandText =
                 @$"CREATE TABLE IF NOT EXISTS "+
                     mainTableName +
@@ -30,7 +29,7 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-    //creates o new subtable represeting an habit - each entry has a string date and an int quantity
+    //creates a new subtable represeting an habit - each entry has a string date and an int quantity
     public void CreateSubTable(string? tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -38,7 +37,6 @@ public class DataBaseCommands
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            // AUTOINCREMENT - everytime an entry is added, it will increment
             tableCmd.CommandText =
                 @$"CREATE TABLE IF NOT EXISTS " +
                     tableName +
@@ -123,20 +121,19 @@ public class DataBaseCommands
             connection.Close();
             if (rowCount == 0) return false;
             //Deleting a row from the main Table means deleting an habit, including the habit's table
-            else if (tableName == s_MainTableName && !DeleteSubTable(subTableName)) return false;
+            else if (tableName == s_MainTableName && !DeleteTable(subTableName)) return false;
             else return true;
             
         }
     }
-    //Deletes the table of name subTableName
-    public bool DeleteSubTable(string? subTableName)
+    public bool DeleteTable(string? tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = "DROP TABLE " + subTableName;
+            tableCmd.CommandText = "DROP TABLE " + tableName;
 
             if(tableCmd.ExecuteNonQuery() == 0)
             {
@@ -228,14 +225,11 @@ public class DataBaseCommands
             }
         }
     }
-
     public void ViewAll(string tableName)
     {
         if (tableName == "HabitsTable") ViewMainTable(tableName);
         else ViewSubTable(tableName);
-
     }
-
     private void ViewMainTable(string mainTableName)
     {
         string? habitTableName_display = null;
@@ -278,7 +272,6 @@ public class DataBaseCommands
             Console.WriteLine("\n-----------------------------");
         }
     }
-
     private void ViewSubTable(string subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -351,7 +344,6 @@ public class DataBaseCommands
             }
         }
     }
-    //return the habit unit of a specific habit name
     public string? GetUnitFromTableName(string? mainTableName, string? subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -380,7 +372,6 @@ public class DataBaseCommands
             }
         }
     }
-    //updates the subtable name
     public bool ChangeSubTableName(string? currentTableName, string? newTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -405,7 +396,7 @@ public class DataBaseCommands
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
     }
-    //repesents an entry in the main table - a habit
+    //represents an entry in the main table - a habit
     //a habit is composed of it's tableName where entries are stores
     //and it's unit, the name of what is meant to be trackes
     public class Habit

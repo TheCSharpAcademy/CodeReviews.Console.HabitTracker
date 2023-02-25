@@ -1,6 +1,4 @@
-﻿using HabitsLibrary;
-using System.Globalization;
-using System.Reflection.PortableExecutable;
+﻿using System.Globalization;
 
 namespace ScreensLibrary;
 
@@ -34,7 +32,6 @@ public class AskInput
             returnString = Console.ReadLine();
             showError= true;
         }
-        //NOT while every char c in returnString is a letter a digit or a space AND returnString is not blank
         while (!(returnString.All(c => Char.IsLetterOrDigit(c) || c == ' ') && returnString != ""));
         
         returnString.Trim();
@@ -62,7 +59,6 @@ public class AskInput
         while (!(Int32.TryParse(input, out number) && number >= 0));
         return number;
     }
-
     public string? Date(string message)
     {
         string? input;
@@ -96,7 +92,6 @@ public class AskInput
         Console.WriteLine("Press any key and Enter to continue");
         Console.ReadLine();
     }
-
     public bool ZeroOrAnyKeyAndEnterToContinue()
     {
         Console.WriteLine("Press any key and Enter to continue. Or press 0 to return to the menu");

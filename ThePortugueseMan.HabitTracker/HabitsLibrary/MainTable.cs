@@ -4,28 +4,18 @@ using System;
 
 namespace HabitsLibrary;
 
-
 public class MainTable
 {
     private static DataBaseCommands dbCommands = new();
-
     public string? tableName;
     public string? connectionString;
+
     public MainTable(string tableName, string connectionString) 
     {
         this.tableName = tableName;
         this.connectionString = connectionString;
     }
-    private class Habit
-    {
-        public int Id { get; set; }
-        public string? TableName { get; set; }
-        public string? Unit { get; set; }
-
-    }
-
     public string? TransformToSubTableName(string? name) { return $"[{name}]"; }
-
     public bool CheckForTableName(string? testTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -45,7 +35,6 @@ public class MainTable
             else return true;
         }
     }
-
     public void InsertNew(string? name, string? unit)
     {
        string? tableName = TransformToSubTableName(name);
