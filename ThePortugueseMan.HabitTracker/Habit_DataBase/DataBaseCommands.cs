@@ -242,7 +242,7 @@ public class DataBaseCommands
                         Id = reader.GetInt32(0),
                         TableName = reader.GetString(1),
                         Unit = reader.GetString(2)
-                    }); ;
+                    });
                 }
             }
             else { Console.WriteLine("Empty"); }
