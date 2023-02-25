@@ -56,12 +56,21 @@ Console based CRUD application to log and track any habit. Developed using C#/.N
 
 # Challenges
 
-- It was my first time using SQL and by extension SQLite. I had to learn the basic syntax and what I could and could not do with it.
+- It was my first time using SQL and by extension SQLite. I had to learn the basic syntax and use it to access the database and retrieve the exact information I wanted. Overall it was a great introduction, and got me curious to keep working with it.
 - 
 
 # Lessons learned
 
-- I got more used to implmenting classes from the start, which helped me manage the growing complexity of the code.
+- I got more used to implementing classes from the start, which helped me manage the growing complexity of the code.
+- As I keep using Visual Studio, I learn more "tricks" that help me speed up the development proccess.
+- Method overloading is a great resource for simplicity
+
+
+# Areas to improve
+
+- Although in this project, I've only used git to essentiatly save my work, I still want to learn more on how to use it.
+- I need to improve my efficiency debugging. Altough I know how to use some of Visual Studio debugging features, I'm not proficient with them so I end up reverting to testing most things by running the program from the start.
+- 
 
 
 # Resources Used
