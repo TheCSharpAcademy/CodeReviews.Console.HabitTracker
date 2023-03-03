@@ -1,6 +1,5 @@
 ﻿using DataBaseLibrary;
 using Microsoft.Data.Sqlite;
-using System;
 
 namespace HabitsLibrary;
 
@@ -15,7 +14,9 @@ public class MainTable
         this.tableName = tableName;
         this.connectionString = connectionString;
     }
+    
     public string? TransformToSubTableName(string? name) { return $"[{name}]"; }
+    
     public bool CheckForTableName(string? testTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -35,6 +36,7 @@ public class MainTable
             else return true;
         }
     }
+    
     public void InsertNew(string? name, string? unit)
     {
        string? tableName = TransformToSubTableName(name);

@@ -9,10 +9,10 @@ internal class Program
     static DataBaseCommands dbCommands = new();
     static MainTable mainTable = new(mainTableName, connectionString);
     static Screen screen = new(mainTable);
+
     private static void Main(string[] args)
     {
-
-        dbCommands.Initialization(mainTableName);
+        dbCommands.InitializeMainTable(mainTableName);
         MainMenu();
     }
 
@@ -43,7 +43,7 @@ internal class Program
             switch (commandInput)
             {
                 case "0": closeApp = true; break;
-                case "1": screen.ViewAll(mainTableName); break;
+                case "1": screen.ViewAllInTable(mainTableName); break;
                 case "2": screen.Insert(mainTableName); break;
                 case "3": screen.Delete(mainTableName); break;
                 case "4": screen.Update(mainTableName); break;

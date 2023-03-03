@@ -15,23 +15,24 @@ public class Screen
     {
         this.mainTable = mainTable;
     }
-    //Displays table of tableName
-    public void ViewAll(string tableName)
+
+    public void ViewAllInTable(string tableName)
     {
         int inputNumber;
-        //Can only be exited with 0
-        while (true)
+        bool exit = false;
+
+        while (!exit)
         {
             Console.Clear();
             Console.WriteLine("VIEW");
             dbCmd.ViewAll(tableName);
+
             if (tableName == mainTable.tableName)
             {
                 int index = askInput.PositiveNumber("Write the index of the habit you want to see. Or press 0 to return.");
-                if (index == 0) return;
+                if (index == 0) { exit = true; continue; }
                 else
                 {
-                    //Gets the subTable of the selected index and enters the submenu for it
                     string? subTableName = dbCmd.GetTableNameOrUnitsFromIndex(tableName, index, "TableName");
                     SubMenu(subTableName);
                 }
@@ -40,12 +41,11 @@ public class Screen
             {
                     Console.WriteLine("Press 1 to view stats by year or 0 to return to the menu");
                     inputNumber = askInput.PositiveNumber("");
-                    if (inputNumber == 0) return;
+                    if (inputNumber == 0) { exit = true; continue; }
                     else if (inputNumber == 1) YearView(tableName);
                     else Console.WriteLine("Please select a valid option");
             }
         }
-
     }
 
     private void YearView(string tableName)
@@ -53,7 +53,7 @@ public class Screen
         int yearIn;
         int timesPerYear, totalOfYear;
         bool showError = false;
-        askInput.ClearPreviousLines(4); //clears previous prompts
+        askInput.ClearPreviousLines(4); //clears previous prompt
         
         do
         {
@@ -65,15 +65,15 @@ public class Screen
             }
             timesPerYear = dbView.TimesLoggedInYear(tableName, yearIn);
             totalOfYear = dbView.TotalOfYear(tableName, yearIn);
-            showError = true; //used to change prompt if input was incorrect after the 1st
+            showError = true;
         } while (timesPerYear == -1 || totalOfYear == -1);
 
-        //Parses the last 2 digits of the input to a full year for display purposes
-        string fullYear = (DateTime.ParseExact(yearIn.ToString(),"yy", new CultureInfo("en-US"))).ToString("yyyy");
-
+        
+        string fullYear = (DateTime.ParseExact(yearIn.ToString(),"yy", new CultureInfo("en-US"))).ToString("yyyy"); //Parses the last 2 digits of the input into a full year for display purposes
         timesPerYear = dbView.TimesLoggedInYear(tableName, yearIn);
         totalOfYear = dbView.TotalOfYear(tableName, yearIn);
-        string habitUnits = dbCmd.GetUnitFromTableName(mainTable.tableName, tableName);
+        string habitUnits = dbCmd.GetUnitsFromTableName(mainTable.tableName, tableName);
+
         Console.WriteLine($"In {fullYear} you logged {timesPerYear} times, totalling {totalOfYear} {habitUnits}!");
         askInput.AnyAndEnterToContinue();
     }
@@ -83,17 +83,19 @@ public class Screen
         if (tableName == mainTable.tableName) InsertToMainTable();
         else InsertToSubtable(tableName);
     }
+
     //Main Table expects string with name of the table of the habit and string with the unit associated with the habit
     private void InsertToMainTable()
     {
         string? habitName;
         bool showError = false;
+
         do //while the name inserted already exists
         {
             if (!showError) habitName = askInput.LettersNumberAndSpaces("Write the name of your habit or 0 to return.");
             else habitName = askInput.LettersNumberAndSpaces("Habit already exists.");
             if (habitName == "0") return;
-            showError = true; //used to change prompt if input was incorrect after the 1st
+            showError = true;
         } while (mainTable.CheckForTableName(mainTable.TransformToSubTableName(habitName)));
 
         string? habitUnit = askInput.LettersNumberAndSpaces("Write the units of your habit. Or 0 to return");
@@ -101,6 +103,7 @@ public class Screen
         mainTable.InsertNew(habitName, habitUnit);
         return;
     }
+
     //subtable expects string with a date and int with a quantity
     private void InsertToSubtable(string subTableName)
     {
@@ -144,6 +147,7 @@ public class Screen
         } while (!exitScreen);
         return;
     }
+
     //returns true if entry exists and is deleted successfully
     private bool DeleteEntry(string tableName, int index)
     {
@@ -176,7 +180,6 @@ public class Screen
         } while (!exitScreen);
 
         return;
-
     }
 
     private bool UpdateEntry(string tableName, int index)
@@ -200,7 +203,7 @@ public class Screen
 
             string? newUnit = askInput.LettersNumberAndSpaces("Write the new unit");
 
-            if (!dbCmd.Update(tableName, index, newTableName, newUnit))
+            if (!dbCmd.UpdateByIndex(tableName, index, newTableName, newUnit))
             {
                 Console.WriteLine("Couldn't update habit!");
                 return false;
@@ -212,7 +215,7 @@ public class Screen
         {
             string? newDate = askInput.Date("Insert the new date");
             int newQuantity = askInput.PositiveNumber("Insert the new amount");
-            if (!dbCmd.Update(tableName, index, newDate, newQuantity))
+            if (!dbCmd.UpdateByIndex(tableName, index, newDate, newQuantity))
             {
                 Console.WriteLine("Couldn't update log!");
                 return false;
@@ -220,6 +223,7 @@ public class Screen
             else return true;
         }
     }
+
     //menu for the habits
     public void SubMenu(string? subTableName)
     {
@@ -250,7 +254,7 @@ public class Screen
             switch (commandInput)
             {
                 case "0": return;
-                case "1": ViewAll(subTableName); break;
+                case "1": ViewAllInTable(subTableName); break;
                 case "2":
                     askInput.ClearPreviousLines(1);
                     Console.WriteLine("INSERT");

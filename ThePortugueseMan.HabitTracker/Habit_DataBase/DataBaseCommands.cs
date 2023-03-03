@@ -9,8 +9,7 @@ public class DataBaseCommands
     static string connectionString = @"Data Source=habit-Tracker.db";
     static string s_MainTableName = "HabitsTable";
 
-    //if the main table doesn't exist, it's created
-    public void Initialization(string? mainTableName)
+    public void InitializeMainTable(string? mainTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -28,8 +27,8 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-    //creates a new subtable represeting an habit - each entry has a string date and an int quantity
-    public void CreateSubTable(string? tableName)
+    
+    public void CreateSubTable(string? habitTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -37,7 +36,7 @@ public class DataBaseCommands
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                @$"CREATE TABLE IF NOT EXISTS {tableName}" +
+                @$"CREATE TABLE IF NOT EXISTS {habitTableName}" +
                     "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "Date TEXT," +
                     "Quantity INTEGER)";
@@ -48,7 +47,6 @@ public class DataBaseCommands
         }
     }
 
-    //Insert log to subtable - overload based on data types
     public void Insert(string? subTableName, string? date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -64,7 +62,7 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-    //Insert habit to main table - overload based on data types
+    
     public void Insert(string? mainTableName,string? subTableName, string? habitUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -81,7 +79,7 @@ public class DataBaseCommands
             connection.Close();
         }
     }
-    //checks if there is an entry at Id = index
+    
     public bool CheckIfIndexExists(int index, string? tableName) 
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -98,6 +96,7 @@ public class DataBaseCommands
             else return true;
         }
     }
+    
     public bool DeleteByIndex(int index, string? tableName) 
     {
         string? subTableName = GetTableNameOrUnitsFromIndex(tableName,index, "TableName");
@@ -118,6 +117,7 @@ public class DataBaseCommands
             
         }
     }
+    
     public bool DeleteTable(string? tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -139,8 +139,8 @@ public class DataBaseCommands
             }
         }
     }
-    //Updates entry on subTable by index - overload based on datatypes
-    public bool Update(string tableName, int index, string date, int quantity)
+    
+    public bool UpdateByIndex(string tableName, int index, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -172,8 +172,8 @@ public class DataBaseCommands
             }
         }
     }
-    //Update entry on main table by index - overload based on datatypes
-    public bool Update(string? mainTableName, int index, string? newTableName, string? newUnit)
+    
+    public bool UpdateByIndex(string? mainTableName, int index, string? newTableName, string? newUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -212,11 +212,13 @@ public class DataBaseCommands
             }
         }
     }
+    
     public void ViewAll(string tableName)
     {
         if (tableName == "HabitsTable") ViewMainTable(tableName);
         else ViewSubTable(tableName);
     }
+    
     private void ViewMainTable(string mainTableName)
     {
         string? habitTableName_display = null;
@@ -259,6 +261,7 @@ public class DataBaseCommands
             Console.WriteLine("\n-----------------------------");
         }
     }
+    
     private void ViewSubTable(string subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -289,7 +292,7 @@ public class DataBaseCommands
             else { Console.WriteLine("Empty"); }
 
             connection.Close();
-            string? units = GetUnitFromTableName("HabitsTable", subTableName);
+            string? units = GetUnitsFromTableName("HabitsTable", subTableName);
 
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
@@ -299,8 +302,9 @@ public class DataBaseCommands
             Console.WriteLine("\n-----------------------------");
         }
     }
+
     //returnType == "TableName" returns the name of the table at index of the mainTable
-    //returnType == "HabitUnit" return the name of the habit's unit ^""
+    //returnType == "HabitUnit" return the name of the habit's unit at index of the mainTable
     public string? GetTableNameOrUnitsFromIndex(string? mainTableName, int index, string? returnType)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -330,7 +334,8 @@ public class DataBaseCommands
             }
         }
     }
-    public string? GetUnitFromTableName(string? mainTableName, string? subTableName)
+    
+    public string? GetUnitsFromTableName(string? mainTableName, string? subTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -358,6 +363,7 @@ public class DataBaseCommands
             }
         }
     }
+    
     public bool ChangeSubTableName(string? currentTableName, string? newTableName)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -376,15 +382,14 @@ public class DataBaseCommands
             catch { return false; }
         }
     }
+    
     public class SubTable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
     }
-    //represents an entry in the main table - a habit
-    //a habit is composed of it's tableName where entries are stores
-    //and it's unit, the name of what is meant to be trackes
+
     public class Habit
     {
         public int Id { get; set; }

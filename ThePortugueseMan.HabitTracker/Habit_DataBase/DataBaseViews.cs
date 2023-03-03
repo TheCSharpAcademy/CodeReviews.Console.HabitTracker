@@ -6,7 +6,6 @@ public class DataBaseViews
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
 
-    //returns the amount of log in a giver year (YY format)
     public int TimesLoggedInYear(string? tableName,int year)
     {
         int times = -1;
@@ -27,7 +26,7 @@ public class DataBaseViews
         }
         return times;
     }
-    //returns the amount of quantinty in a given year (YY format)
+    
     public int TotalOfYear(string? tableName, int year)
     {
         int total = -1;

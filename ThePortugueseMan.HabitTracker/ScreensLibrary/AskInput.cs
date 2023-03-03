@@ -15,6 +15,7 @@ public class AskInput
             Console.SetCursorPosition(0, currentLineCursor);
         }
     }
+    
     public string? LettersNumberAndSpaces (string message)
     {
         string? returnString;
@@ -37,6 +38,7 @@ public class AskInput
         returnString.Trim();
         return returnString;
     }
+    
     public int PositiveNumber(string message)
     {
         string? input;
@@ -59,6 +61,7 @@ public class AskInput
         while (!(Int32.TryParse(input, out number) && number >= 0));
         return number;
     }
+    
     public string? Date(string message)
     {
         string? input;
@@ -87,11 +90,13 @@ public class AskInput
         }
         while (true);
     }
+    
     public void AnyAndEnterToContinue()
     {
         Console.WriteLine("Press any key and Enter to continue");
         Console.ReadLine();
     }
+    
     public bool ZeroOrAnyKeyAndEnterToContinue()
     {
         Console.WriteLine("Press any key and Enter to continue. Or press 0 to return to the menu");
