@@ -133,12 +133,13 @@ Type 0 to Close the App
             int id_input;
             while (!int.TryParse(input, out id_input))
             {
-                Console.Write("Type a integer please: ");
+                Console.WriteLine("Invalid input. Type a integer please.");
                 input = Console.ReadLine();
             }
             
             if (!checkIdExists(id_input))
             {
+                Console.WriteLine($"Record with Id = {id_input} doesn't exist. Please try again.");
                 Update();
             }
 
@@ -149,17 +150,18 @@ Type 0 to Close the App
             {
                 myConnection.Open();
 
-                string query = $"UPDATE reading_habit SET date = {new_date}, quantity = {new_quantity} WHERE Id={id_input}";
-
+                string query = $"UPDATE reading_habit SET date = '{new_date}', quantity = {new_quantity} WHERE Id = {id_input}";
                 SQLiteCommand command = new SQLiteCommand(query, myConnection);
                 command.ExecuteNonQuery();
 
                 myConnection.Close();
-            }       
+            }
+
         }
         
         static bool checkIdExists(int id)
         {
+            bool exists;
             using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
             {
                 myConnection.Open();
@@ -167,17 +169,14 @@ Type 0 to Close the App
                 var cmd = myConnection.CreateCommand();
                 cmd.CommandText = $"SELECT * FROM reading_habit WHERE Id={id}";
                 SQLiteDataReader reader = cmd.ExecuteReader();
-                
-                if (!reader.HasRows)
-                {
-                    Console.WriteLine($"Record with Id = {id} doesn't exist. Try again.");
-                    return false;
-                }
 
+                exists = reader.HasRows;
+
+                reader.Close();
                 myConnection.Close();
-            }
 
-            return true;
+            }
+            return exists;
         }
     }
 }
