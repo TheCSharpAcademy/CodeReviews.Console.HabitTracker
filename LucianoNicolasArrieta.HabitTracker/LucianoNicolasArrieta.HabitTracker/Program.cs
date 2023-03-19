@@ -1,29 +1,40 @@
-﻿using LucianoNicolasArrieta.HabitTracker;
+﻿using System.Data;
+using System.Data.Entity;
 using System.Data.SQLite;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker
 {
     class Program
     {
-        static Database database = new Database();
+        static string connectionString = @"Data Source=habit-tracker.db";
         static void Main(string[] args)
         {
-            database.OpenConnection();
+            if (!File.Exists("./habit-tracker.db"))
+            {
+                SQLiteConnection.CreateFile("habit-tracker.db");
+                Console.WriteLine("Database file created.");
+            }
 
-            string createTableQuery = 
-                @"CREATE TABLE IF NOT EXISTS reading_habit (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                    Date TEXT,
-                    Quantity INTEGER
-                    )";
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            { 
+                myConnection.Open();
 
-            SQLiteCommand command = new SQLiteCommand(createTableQuery, database.myConnection);
-            command.ExecuteNonQuery();
+                string createTableQuery = 
+                    @"CREATE TABLE IF NOT EXISTS reading_habit (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                        Date TEXT,
+                        Quantity INTEGER
+                        )";
 
-            database.CloseConnection();
+                SQLiteCommand command = new SQLiteCommand(createTableQuery, myConnection);
+                command.ExecuteNonQuery();
 
-            Console.WriteLine("\nWelcome to Reading Habit Tracker");
-            GetUserInput();
+                myConnection.Close();
+            }
+
+                Console.WriteLine("\nWelcome to Reading Habit Tracker");
+                GetUserInput();
         }
 
         static void PrintMenu()
@@ -52,6 +63,7 @@ Type 0 to Close the App
                         Insert();
                         break;
                     case "u":
+                        Update();
                         break;
                     case "v":
                         break;
@@ -72,13 +84,19 @@ Type 0 to Close the App
             string date = DateInput();
             int quantity = NumberInput();
 
-            string query = "INSERT INTO reading_habit ('date', 'quantity') VALUES (@date, @quantity)";
-            SQLiteCommand command = new SQLiteCommand(query, database.myConnection);
-            database.OpenConnection();
-            command.Parameters.AddWithValue("@date", date);
-            command.Parameters.AddWithValue("@quantity", quantity);
-            command.ExecuteNonQuery();
-            database.CloseConnection();
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                string query = "INSERT INTO reading_habit ('date', 'quantity') VALUES (@date, @quantity)";
+                SQLiteCommand command = new SQLiteCommand(query, myConnection);
+
+                myConnection.Open();
+
+                command.Parameters.AddWithValue("@date", date);
+                command.Parameters.AddWithValue("@quantity", quantity);
+                command.ExecuteNonQuery();
+
+                myConnection.Close();
+            }
 
             Console.WriteLine("Record added to database successfully!");
         }
@@ -106,6 +124,60 @@ Type 0 to Close the App
             if (num_input == 0) GetUserInput();
 
             return num_input;
+        }
+        
+        static void Update()
+        {
+            Console.Write("Please enter the ID of the record you want to update or type 0 to return to main menu: ");
+            string input = Console.ReadLine();
+            int id_input;
+            while (!int.TryParse(input, out id_input))
+            {
+                Console.Write("Type a integer please: ");
+                input = Console.ReadLine();
+            }
+            
+            if (!checkIdExists(id_input))
+            {
+                Update();
+            }
+
+            string new_date = DateInput();
+            int new_quantity = NumberInput();
+
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                myConnection.Open();
+
+                string query = $"UPDATE reading_habit SET date = {new_date}, quantity = {new_quantity} WHERE Id={id_input}";
+
+                SQLiteCommand command = new SQLiteCommand(query, myConnection);
+                command.ExecuteNonQuery();
+
+                myConnection.Close();
+            }       
+        }
+        
+        static bool checkIdExists(int id)
+        {
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                myConnection.Open();
+
+                var cmd = myConnection.CreateCommand();
+                cmd.CommandText = $"SELECT * FROM reading_habit WHERE Id={id}";
+                SQLiteDataReader reader = cmd.ExecuteReader();
+                
+                if (!reader.HasRows)
+                {
+                    Console.WriteLine($"Record with Id = {id} doesn't exist. Try again.");
+                    return false;
+                }
+
+                myConnection.Close();
+            }
+
+            return true;
         }
     }
 }
