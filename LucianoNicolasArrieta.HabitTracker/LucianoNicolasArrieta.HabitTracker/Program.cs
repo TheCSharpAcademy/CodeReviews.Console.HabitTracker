@@ -68,6 +68,7 @@ Type 0 to Close the App
                     case "v":
                         break;
                     case "d":
+                        Delete();
                         break;
                     case "0":
                         close = true;
@@ -77,28 +78,6 @@ Type 0 to Close the App
                         break;
                 }
             }
-        }
-
-        static void Insert()
-        {
-            string date = DateInput();
-            int quantity = NumberInput();
-
-            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
-            {
-                string query = "INSERT INTO reading_habit ('date', 'quantity') VALUES (@date, @quantity)";
-                SQLiteCommand command = new SQLiteCommand(query, myConnection);
-
-                myConnection.Open();
-
-                command.Parameters.AddWithValue("@date", date);
-                command.Parameters.AddWithValue("@quantity", quantity);
-                command.ExecuteNonQuery();
-
-                myConnection.Close();
-            }
-
-            Console.WriteLine("Record added to database successfully!");
         }
 
         static string DateInput()
@@ -125,7 +104,50 @@ Type 0 to Close the App
 
             return num_input;
         }
-        
+
+        static bool checkIdExists(int id)
+        {
+            bool exists;
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                myConnection.Open();
+
+                var cmd = myConnection.CreateCommand();
+                cmd.CommandText = $"SELECT * FROM reading_habit WHERE Id={id}";
+                SQLiteDataReader reader = cmd.ExecuteReader();
+
+                exists = reader.HasRows;
+
+                reader.Close();
+                myConnection.Close();
+
+            }
+            return exists;
+        }
+
+        static void Insert()
+        {
+            string date = DateInput();
+            int quantity = NumberInput();
+
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                string query = "INSERT INTO reading_habit ('date', 'quantity') VALUES (@date, @quantity)";
+                SQLiteCommand command = new SQLiteCommand(query, myConnection);
+
+                myConnection.Open();
+
+                command.Parameters.AddWithValue("@date", date);
+                command.Parameters.AddWithValue("@quantity", quantity);
+                command.ExecuteNonQuery();
+
+                myConnection.Close();
+            }
+
+            Console.Clear();
+            Console.WriteLine("Record added to database successfully!");
+        }
+
         static void Update()
         {
             Console.Write("Please enter the ID of the record you want to update or type 0 to return to main menu: ");
@@ -157,26 +179,40 @@ Type 0 to Close the App
                 myConnection.Close();
             }
 
+            Console.Clear();
+            Console.WriteLine("Record updated successfully!");
         }
         
-        static bool checkIdExists(int id)
+        static void Delete()
         {
-            bool exists;
+            Console.Write("Please enter the ID of the record you want to delete or type 0 to return to main menu: ");
+            string input = Console.ReadLine();
+            int id_input;
+            while (!int.TryParse(input, out id_input))
+            {
+                Console.WriteLine("Invalid input. Type a integer please.");
+                input = Console.ReadLine();
+            }
+
+            if (!checkIdExists(id_input))
+            {
+                Console.WriteLine($"Record with Id = {id_input} doesn't exist. Please try again.");
+                Delete();
+            }
+
             using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
             {
                 myConnection.Open();
 
-                var cmd = myConnection.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM reading_habit WHERE Id={id}";
-                SQLiteDataReader reader = cmd.ExecuteReader();
+                string query = $"DELETE FROM reading_habit WHERE Id = {id_input}";
+                SQLiteCommand command = new SQLiteCommand(query, myConnection);
+                command.ExecuteNonQuery();
 
-                exists = reader.HasRows;
-
-                reader.Close();
                 myConnection.Close();
-
             }
-            return exists;
+
+            Console.Clear();
+            Console.WriteLine("Record deleted successfully!");
         }
     }
 }
