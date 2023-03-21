@@ -66,6 +66,7 @@ Type 0 to Close the App
                         Update();
                         break;
                     case "v":
+                        ViewRecords();
                         break;
                     case "d":
                         Delete();
@@ -85,7 +86,11 @@ Type 0 to Close the App
             Console.Write("\n\nEnter the date (format: dd/mm/yy) or type 0 to return to main menu: ");
             string input = Console.ReadLine();
 
-            if (input == "0") GetUserInput();
+            if (input == "0")
+            {
+                Console.Clear();
+                GetUserInput();
+            }
 
             return input;
         }
@@ -100,7 +105,11 @@ Type 0 to Close the App
                 Console.Write("Type a integer please: ");
                 input = Console.ReadLine();
             }
-            if (num_input == 0) GetUserInput();
+            if (num_input == 0)
+            {
+                Console.Clear();
+                GetUserInput();
+            }
 
             return num_input;
         }
@@ -158,7 +167,11 @@ Type 0 to Close the App
                 Console.WriteLine("Invalid input. Type a integer please.");
                 input = Console.ReadLine();
             }
-            
+            if (id_input == 0)
+            {
+                Console.Clear();
+                GetUserInput();
+            }
             if (!checkIdExists(id_input))
             {
                 Console.WriteLine($"Record with Id = {id_input} doesn't exist. Please try again.");
@@ -193,7 +206,11 @@ Type 0 to Close the App
                 Console.WriteLine("Invalid input. Type a integer please.");
                 input = Console.ReadLine();
             }
-
+            if (id_input == 0)
+            {
+                Console.Clear();
+                GetUserInput();
+            }
             if (!checkIdExists(id_input))
             {
                 Console.WriteLine($"Record with Id = {id_input} doesn't exist. Please try again.");
@@ -213,6 +230,37 @@ Type 0 to Close the App
 
             Console.Clear();
             Console.WriteLine("Record deleted successfully!");
+        }
+
+        static void ViewRecords()
+        {
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                myConnection.Open();
+
+                string query = "SELECT * FROM reading_habit";
+                SQLiteCommand command = new SQLiteCommand(query, myConnection);
+                SQLiteDataReader records = command.ExecuteReader();
+
+                if(records != null)
+                {
+                    Console.WriteLine("\n----------------------");
+                    Console.WriteLine(" Id - Date - Quantity");
+                    Console.WriteLine("----------------------");
+
+                    while (records.Read())
+                    {
+                        Console.WriteLine(" {0} - {1} - {2} ", records[0], records[1], records[2]);
+                    }
+                    Console.WriteLine("----------------------");
+                }
+
+                myConnection.Close();
+
+                Console.WriteLine("\nPress any key to continue to main menu");
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
     }
 }
