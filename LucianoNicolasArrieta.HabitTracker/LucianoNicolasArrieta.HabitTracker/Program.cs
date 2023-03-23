@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.CodeDom;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SQLite;
@@ -53,6 +54,7 @@ namespace habit_tracker
 Type 'u' to Update Record
 Type 'v' to View All Records
 Type 'd' to Delete Record
+Type 'r' to View Reports
 Type 0 to Close the App
 ----------------------------------");
         }
@@ -79,6 +81,9 @@ Type 0 to Close the App
                         break;
                     case "d":
                         Delete();
+                        break;
+                    case "r":
+                        ViewReports();
                         break;
                     case "0":
                         close = true;
@@ -175,7 +180,7 @@ Type 0 to Close the App
 
         static void Update()
         {
-            Console.Write("Please enter the ID of the record you want to update or type 0 to return to main menu: ");
+            Console.Write("\n\nPlease enter the ID of the record you want to update or type 0 to return to main menu: ");
             string input = Console.ReadLine();
             int id_input;
             while (!int.TryParse(input, out id_input))
@@ -214,7 +219,7 @@ Type 0 to Close the App
         
         static void Delete()
         {
-            Console.Write("Please enter the ID of the record you want to delete or type 0 to return to main menu: ");
+            Console.Write("\n\nPlease enter the ID of the record you want to delete or type 0 to return to main menu: ");
             string input = Console.ReadLine();
             int id_input;
             while (!int.TryParse(input, out id_input))
@@ -269,6 +274,64 @@ Type 0 to Close the App
                         Console.WriteLine(" {0} - {1} - {2} ", records[0], records[1], records[2]);
                     }
                     Console.WriteLine("----------------------");
+                }
+
+                myConnection.Close();
+
+                Console.WriteLine("\nPress any key to continue to main menu");
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        static void ViewReports()
+        {
+            Console.WriteLine("\n\nType the year you want to see reports about (YY) or 0 to go back to main menu: ");
+            string year_input = Console.ReadLine();
+            if (year_input == "0")
+            {
+                Console.Clear();
+                GetUserInput();
+            }
+            while (!DateTime.TryParseExact(year_input, "yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+            {
+                Console.Write("Enter the year in the correct format (YY): ");
+                year_input = Console.ReadLine();
+            }
+            GetReports(year_input);
+        }
+
+        static void GetReports(string year)
+        {
+            using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
+            {
+                myConnection.Open();
+
+                string query = $"SELECT * FROM habit_tracker WHERE date LIKE '%{year}'";
+                SQLiteCommand command = new SQLiteCommand(query, myConnection);
+                SQLiteDataReader records = command.ExecuteReader();
+
+                
+                if (records.HasRows) // ; records != null
+                {
+                    int reached = 0, quantity = 0, record = 0;
+                    string recordDate = "";
+                    while (records.Read())
+                    {
+                        quantity = Convert.ToInt32(records[2]);
+                        reached += quantity;
+                        if (quantity > record)
+                        {
+                            record = quantity;
+                            recordDate = Convert.ToString(records[1]);
+                        }
+                    }
+                    string unit = LucianoNicolasArrieta.HabitTracker.Settings1.Default.Unit;
+                    Console.WriteLine($"\nIn 20{year}, you reached {reached}{unit}");
+                    Console.WriteLine($"On {recordDate}, you reached {record}{unit} in a day!");
+                } else
+                {
+                    Console.WriteLine("There is no record of that year.");
                 }
 
                 myConnection.Close();
