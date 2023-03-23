@@ -1,6 +1,8 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
 using System.Data.Entity;
 using System.Data.SQLite;
+using System.Globalization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker
@@ -8,12 +10,18 @@ namespace habit_tracker
     class Program
     {
         static string connectionString = @"Data Source=habit-tracker.db";
+
         static void Main(string[] args)
         {
             if (!File.Exists("./habit-tracker.db"))
             {
                 SQLiteConnection.CreateFile("habit-tracker.db");
-                Console.WriteLine("Database file created.");
+                Console.WriteLine("Hi! This is the first time you open the app");
+                Console.Write("Please, enter the habit you want to track: ");
+                LucianoNicolasArrieta.HabitTracker.Settings1.Default.HabitName = Console.ReadLine();
+                Console.Write("Now enter the unit of measurement of that habit (ex. kms, pages, calories, cups, etc.): ");
+                LucianoNicolasArrieta.HabitTracker.Settings1.Default.Unit = Console.ReadLine();
+                LucianoNicolasArrieta.HabitTracker.Settings1.Default.Save();
             }
 
             using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
@@ -21,7 +29,7 @@ namespace habit_tracker
                 myConnection.Open();
 
                 string createTableQuery = 
-                    @"CREATE TABLE IF NOT EXISTS reading_habit (
+                    @"CREATE TABLE IF NOT EXISTS habit_tracker (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT, 
                         Date TEXT,
                         Quantity INTEGER
@@ -33,8 +41,9 @@ namespace habit_tracker
                 myConnection.Close();
             }
 
-                Console.WriteLine("\nWelcome to Reading Habit Tracker");
-                GetUserInput();
+            string habit_name = LucianoNicolasArrieta.HabitTracker.Settings1.Default.HabitName;
+            Console.WriteLine($"\nWelcome to {habit_name} Habit Tracker");
+            GetUserInput();
         }
 
         static void PrintMenu()
@@ -74,6 +83,7 @@ Type 0 to Close the App
                     case "0":
                         close = true;
                         Console.WriteLine("See you!");
+                        Environment.Exit(0);
                         break;
                     default:
                         break;
@@ -83,7 +93,7 @@ Type 0 to Close the App
 
         static string DateInput()
         {
-            Console.Write("\n\nEnter the date (format: dd/mm/yy) or type 0 to return to main menu: ");
+            Console.Write("\n\nEnter the date (format: dd-mm-yy) or type 0 to return to main menu: ");
             string input = Console.ReadLine();
 
             if (input == "0")
@@ -91,13 +101,19 @@ Type 0 to Close the App
                 Console.Clear();
                 GetUserInput();
             }
+            while (!DateTime.TryParseExact(input, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+            {
+                Console.WriteLine("Invalid date. Try again (Remember, format: dd-mm-yy: ");
+                input = Console.ReadLine();
+            }
 
             return input;
         }
 
         static int NumberInput()
         {
-            Console.Write("Enter the number of pages you read or type 0 to return to main menu: ");
+            string unit = LucianoNicolasArrieta.HabitTracker.Settings1.Default.Unit;
+            Console.Write($"Enter the number of {unit} or type 0 to return to main menu: ");
             string input = Console.ReadLine();
             int num_input;
             while(!int.TryParse(input, out num_input))
@@ -122,7 +138,7 @@ Type 0 to Close the App
                 myConnection.Open();
 
                 var cmd = myConnection.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM reading_habit WHERE Id={id}";
+                cmd.CommandText = $"SELECT * FROM habit_tracker WHERE Id={id}";
                 SQLiteDataReader reader = cmd.ExecuteReader();
 
                 exists = reader.HasRows;
@@ -141,7 +157,7 @@ Type 0 to Close the App
 
             using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
             {
-                string query = "INSERT INTO reading_habit ('date', 'quantity') VALUES (@date, @quantity)";
+                string query = "INSERT INTO habit_tracker ('date', 'quantity') VALUES (@date, @quantity)";
                 SQLiteCommand command = new SQLiteCommand(query, myConnection);
 
                 myConnection.Open();
@@ -185,7 +201,7 @@ Type 0 to Close the App
             {
                 myConnection.Open();
 
-                string query = $"UPDATE reading_habit SET date = '{new_date}', quantity = {new_quantity} WHERE Id = {id_input}";
+                string query = $"UPDATE habit_tracker SET date = '{new_date}', quantity = {new_quantity} WHERE Id = {id_input}";
                 SQLiteCommand command = new SQLiteCommand(query, myConnection);
                 command.ExecuteNonQuery();
 
@@ -221,7 +237,7 @@ Type 0 to Close the App
             {
                 myConnection.Open();
 
-                string query = $"DELETE FROM reading_habit WHERE Id = {id_input}";
+                string query = $"DELETE FROM habit_tracker WHERE Id = {id_input}";
                 SQLiteCommand command = new SQLiteCommand(query, myConnection);
                 command.ExecuteNonQuery();
 
@@ -238,7 +254,7 @@ Type 0 to Close the App
             {
                 myConnection.Open();
 
-                string query = "SELECT * FROM reading_habit";
+                string query = "SELECT * FROM habit_tracker";
                 SQLiteCommand command = new SQLiteCommand(query, myConnection);
                 SQLiteDataReader records = command.ExecuteReader();
 
