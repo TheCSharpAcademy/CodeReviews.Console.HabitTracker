@@ -1,10 +1,5 @@
-﻿using System.CodeDom;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Entity;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker
 {
@@ -135,7 +130,7 @@ Type 0 to Close the App
             return num_input;
         }
 
-        static bool checkIdExists(int id)
+        static bool CheckIdExists(int id)
         {
             bool exists;
             using (SQLiteConnection myConnection = new SQLiteConnection(connectionString))
