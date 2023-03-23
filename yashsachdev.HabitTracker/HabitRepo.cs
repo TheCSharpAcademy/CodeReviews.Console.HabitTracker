@@ -1,8 +1,6 @@
 ﻿namespace yashsachdev.HabitTracker;
 public class HabitRepo
 {
-    private Habit habit = new Habit();
-
     public void Save(Habit habit)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))

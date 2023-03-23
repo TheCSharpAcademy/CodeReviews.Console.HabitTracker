@@ -7,5 +7,4 @@ public class HabitEnroll
     public Habit Habit { get; set; }
     public int Habit_Id { get; set; }
     public DateTime Date { get; set; }
-
 }
