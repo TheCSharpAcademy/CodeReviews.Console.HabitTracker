@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ConsoleUI": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\C#Academy\\CodeReviews.Console.HabitTracker\\HabitTracker.sadklouds\\ConsoleUI"
+    }
+  }
+}
