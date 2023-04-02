@@ -1,4 +1,5 @@
 ﻿namespace yashsachdev.HabitTracker;
+
 internal static class UserInput
 {
     /// <summary>

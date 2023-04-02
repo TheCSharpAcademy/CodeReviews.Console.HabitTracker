@@ -1,4 +1,5 @@
 ﻿namespace yashsachdev.HabitTracker;
+
 public class User
 {
     public User() : this(0)

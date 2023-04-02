@@ -26,6 +26,7 @@
             }
         }
     }
+    
     public static void CreateTable()
     {
         try
@@ -37,9 +38,32 @@
                 {
                     command.Connection = connection;
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("CREATE TABLE IF NOT EXISTS User (User_Id INTEGER PRIMARY KEY AUTOINCREMENT,Name VARCHAR(45) NOT NULL,Email VARCHAR(45) NOT NULL,Password VARCHAR(8) NOT NULL);");
-                    sb.Append("CREATE TABLE IF NOT EXISTS Habit(Habit_Id INTEGER PRIMARY KEY AUTOINCREMENT,Habit_Name VARCHAR(45) NOT NULL,Unit VARCHAR(45) NOT NULL);");
-                    sb.Append("CREATE TABLE IF NOT EXISTS Habit_Enroll( User_Id INTEGER NOT NULL, Habit_Id INTEGER NOT NULL,Date DATETIME NULL, PRIMARY KEY (User_Id, Habit_Id), CONSTRAINT fk_Habit_Enroll_Users FOREIGN KEY (User_Id) REFERENCES User (User_Id) ON DELETE NO ACTION ON UPDATE CASCADE, CONSTRAINT fk_Habit_Enroll_Habit FOREIGN KEY (Habit_Id) REFERENCES Habit (Habit_Id) ON DELETE CASCADE ON UPDATE CASCADE);");
+                    sb.Append(@"CREATE TABLE IF NOT EXISTS User 
+                        (User_Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name VARCHAR(45) NOT NULL,
+                        Email VARCHAR(45) NOT NULL,
+                        Password VARCHAR(8) NOT NULL);");
+                    
+                    sb.Append(@"CREATE TABLE IF NOT EXISTS Habit
+                        (Habit_Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Habit_Name VARCHAR(45) NOT NULL,
+                        Unit VARCHAR(45) NOT NULL);");
+                    
+                    sb.Append(@"CREATE TABLE IF NOT EXISTS Habit_Enroll
+                        ( User_Id INTEGER NOT NULL, 
+                        Habit_Id INTEGER NOT NULL,
+                        Date DATETIME NULL, 
+                        PRIMARY KEY (User_Id, Habit_Id), 
+                        CONSTRAINT fk_Habit_Enroll_Users FOREIGN KEY (User_Id) REFERENCES User (User_Id) ON DELETE NO ACTION ON UPDATE CASCADE, 
+                        CONSTRAINT fk_Habit_Enroll_Habit FOREIGN KEY (Habit_Id) REFERENCES Habit (Habit_Id) ON DELETE CASCADE ON UPDATE CASCADE);");
+/*                    sb.Append(@"CREATE TABLE IF NOT EXISTS Report 
+                        ( Report_Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        User_Id INTEGER NOT NULL,
+                        Habit_Id INTEGER NOT NULL,
+                        Date DATE NOT NULL,
+                        Amount INTEGER NOT NULL,
+                        FOREIGN KEY(User_Id) REFERENCES User(User_Id),
+                        FOREIGN KEY(Habit_Id) REFERENCES Habit(Habit_Id);");*/
                     command.CommandText = sb.ToString();
                     command.ExecuteNonQuery();
                 }

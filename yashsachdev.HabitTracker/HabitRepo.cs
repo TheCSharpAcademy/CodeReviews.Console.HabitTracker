@@ -1,4 +1,5 @@
 ﻿namespace yashsachdev.HabitTracker;
+
 public class HabitRepo
 {
     public void Save(Habit habit)
@@ -30,7 +31,7 @@ public class HabitRepo
             }
         }
     }
-    public int CountofHabit(string Email, string habitName)
+    public int CountofHabit(string habitName)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
@@ -75,6 +76,7 @@ public class HabitRepo
                 habitCommand.CommandText = "SELECT Habit_Id FROM Habit WHERE Habit_Name = @habitname";
                 habitCommand.Parameters.AddWithValue("@habitname", habitName);
                 var res = Convert.ToInt32(habitCommand.ExecuteScalar());
+
                 if (res == null)
                 {
                     Console.WriteLine("No data returned");
@@ -93,7 +95,8 @@ public class HabitRepo
             {
                 habitCommand.Connection = cnn;
                 cnn.Open();
-                habitCommand.CommandText = "UPDATE Habit SET Habit_Name = @habitname,Unit = @UpdatedUnit WHERE Habit_Name =@habitname AND Habit_Id = @habitId";
+                habitCommand.CommandText = @"UPDATE Habit SET Habit_Name = @habitname,Unit = @UpdatedUnit
+                    WHERE Habit_Name =@habitname AND Habit_Id = @habitId";
                 habitCommand.Parameters.AddWithValue("@habitname", habitName);
                 habitCommand.Parameters.AddWithValue("@habitId", habit_ID);
                 habitCommand.Parameters.AddWithValue("@UpdatedUnit", updatedunit);
@@ -124,3 +127,5 @@ public class HabitRepo
         }
     }
 }
+
+

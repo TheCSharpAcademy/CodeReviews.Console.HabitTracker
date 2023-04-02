@@ -1,4 +1,5 @@
 ﻿namespace yashsachdev.HabitTracker;
+
 public class UserRepo
 {
     public void Save(User user)
@@ -17,6 +18,7 @@ public class UserRepo
             }
         }
     }
+    
     public int GetIdFromEmail(string email)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
@@ -39,6 +41,7 @@ public class UserRepo
             }
         }
     }
+    
     public int CountofUser(string Email)
     {
         try
@@ -55,6 +58,7 @@ public class UserRepo
         catch (Exception ex) { Console.WriteLine("An error occurred" + ex.Message); }
         return int.MinValue;
     }
+    
     public bool CheckPassword(string email, string password)
     {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
