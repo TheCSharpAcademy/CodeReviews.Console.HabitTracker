@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabbitTracker.jwhitt3r", "HabbitTracker.jwhitt3r\HabbitTracker.jwhitt3r.csproj", "{87D13FF5-4D7F-44D4-90D2-73A98E3F7BDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87D13FF5-4D7F-44D4-90D2-73A98E3F7BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87D13FF5-4D7F-44D4-90D2-73A98E3F7BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87D13FF5-4D7F-44D4-90D2-73A98E3F7BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87D13FF5-4D7F-44D4-90D2-73A98E3F7BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79C0A790-A2DE-4EC6-8416-7F7A33770077}
+	EndGlobalSection
+EndGlobal
