@@ -64,7 +64,7 @@ namespace ConsoleUI
             }
             catch (Exception e)
             {
-                Console.WriteLine($"\nHabit name was not found\n");
+                Console.WriteLine($"\nError occured inserting Habit\n");
             }
 
         }

@@ -123,7 +123,10 @@ public class SqliteDataAccess
             try
             {
                 var insert = connection.CreateCommand();
-                insert.CommandText = $"INSERT INTO drinking_water (Date, Quanitiy, Unit) VALUES('{date}', {quantity}, '{unit}');";
+                insert.CommandText = $"insert into drinking_water (Date, Quantity, Unit) VALUES (@Date, @Quantity, @Unit);";
+                insert.Parameters.AddWithValue("@Date", date);
+                insert.Parameters.AddWithValue("@Quantity", quantity);
+                insert.Parameters.AddWithValue("@Unit", unit);
                 insert.ExecuteNonQuery();
                 connection.Close();
                 output = "\nrecord was inserted\n";
