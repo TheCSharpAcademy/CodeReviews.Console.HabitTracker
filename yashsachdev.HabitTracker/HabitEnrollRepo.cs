@@ -2,6 +2,7 @@
 public class HabitEnrollRepo
 {
         public void Save(HabitEnroll habitEnroll)
+        {
         using (SqliteConnection cnn = new SqliteConnection(DatabaseClass.connectionString))
         {
             cnn.Open();
