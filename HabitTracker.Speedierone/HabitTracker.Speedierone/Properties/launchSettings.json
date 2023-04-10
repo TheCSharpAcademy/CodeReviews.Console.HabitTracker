@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.Speedierone": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\Users\\davie\\source\\repos\\CodeReviews.Console.HabitTracker\\HabitTracker.Speedierone\\HabitTracker.Speedierone"
+    }
+  }
+}
