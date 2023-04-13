@@ -90,7 +90,7 @@ class Program
 
     internal static string GetDateInput()
     {
-        Console.WriteLine("Please enter date in format dd-mm-yyyy");
+        Console.WriteLine("Please enter date in format dd-mm-yy");
 
         string dateInput = Console.ReadLine();
 
