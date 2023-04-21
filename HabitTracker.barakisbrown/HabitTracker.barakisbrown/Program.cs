@@ -1,6 +1,7 @@
 ﻿using HabitTracker.barakisbrown;
 
-Helpers help = new();
+Helpers _help = new();
+Habit _habit = new();
 
-help.GetMenu();
-var date = help.GetDate();
+Console.WriteLine($"Welcmoe to Habit Tracker. I will be using the following habit {_habit.HabitName}");
+
