@@ -25,10 +25,8 @@ namespace HabitTracker.Chad1082
             return doesExist;
         }
 
-        private static bool CreateDatabase()
+        private static void CreateDatabase()
         {
-            bool created = false;
-            
             using (SqliteConnection conn = new SqliteConnection(connString))
             {
                 conn.Open();
@@ -43,11 +41,7 @@ namespace HabitTracker.Chad1082
 
                 command.ExecuteNonQuery();
                 conn.Close();
-                created = true;
-
             }
-
-            return created;
         }
 
         public static void AddEntry(string stepDate, int stepAmount)
