@@ -58,7 +58,7 @@ public class Helpers
             }
             catch (FormatException _)
             {
-                Console.WriteLine("Date Result needs to be entered via dd-mm-yyyy");
+                Console.WriteLine("Date Result needs to be entered via dd-MM-yyyy");
                 Console.WriteLine("Please try again.");
                 Console.Write(DateInputString);
                 result = Console.ReadLine();
