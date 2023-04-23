@@ -1,12 +1,13 @@
 ﻿namespace HabitTracker.barakisbrown;
 
 using System;
+using System.Globalization;
 
 public class Helpers
 {
     private readonly string MenuInputString = "Please Select (1-4) OR 0 to exit";
     private readonly string AmountInputString = "Enter your blood sugar reading from the blood sugar meter: ";
-    private readonly string DateInputString = "Enter the date [MM-DD-YYYY]: ";
+    private readonly string DateInputString = "Enter the date [dd-mm-yyyy]: ";
 
     public void GetMenu()
     {
@@ -35,7 +36,7 @@ public class Helpers
 
         while (string.IsNullOrEmpty(result) || !Int32.TryParse(result, out amount))
         {
-            Console.WriteLine("Your answer needs to be a positive interger and not null or empty please.");
+            Console.WriteLine("Your answer needs to be a positive interger.");
             Console.Write(AmountInputString);
             result = Console.ReadLine();
         }
@@ -52,12 +53,12 @@ public class Helpers
         {
             try
             {
-                date = DateTime.Parse(result);
-                return date;
+               DateTime.TryParseExact(result,"dd-MM-yyyy",new CultureInfo("en-us"),DateTimeStyles.None,out date);
+               return date;
             }
             catch (FormatException _)
             {
-                Console.WriteLine("Date Result needs to be entered via MM-DD-YYYY");
+                Console.WriteLine("Date Result needs to be entered via dd-mm-yyyy");
                 Console.WriteLine("Please try again.");
                 Console.Write(DateInputString);
                 result = Console.ReadLine();
