@@ -18,20 +18,6 @@ public class DataLayer
         
     }
 
-    private void GetVersion()
-    {
-        string cs = "Data Source=:memory:";
-        string stm = "SELECT SQLITE_VERSION()";
-
-        using var conn = new SqliteConnection(cs);
-        conn.Open();
-
-        using var cmd = new SqliteCommand(stm, conn);
-        string version = cmd.ExecuteScalar().ToString();
-
-        Console.WriteLine($"SQLITE version = {version}");
-    }
-
     private void CreateDB()
     {
         using var conn = new SqliteConnection(DataSource);
