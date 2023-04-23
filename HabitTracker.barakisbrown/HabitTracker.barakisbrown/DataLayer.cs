@@ -124,21 +124,4 @@ public class DataLayer
         }
         return habits;
     }
-
-    private void InsertTestData()
-    {
-        using var conn = new SqliteConnection(DataSource);
-        conn.Open();
-
-        int amount = 250;
-        string date = "22-04-2023";
-
-        using var cmd = new SqliteCommand();
-        cmd.Connection = conn;
-        cmd.CommandText = "INSERT INTO READINGS(Amount,Date) VALUES(@amount,@date)";
-        cmd.Parameters.AddWithValue("@amount", amount);
-        cmd.Parameters.AddWithValue("@date", date);
-        cmd.Prepare();
-        cmd.ExecuteNonQuery();
-    }
 }
