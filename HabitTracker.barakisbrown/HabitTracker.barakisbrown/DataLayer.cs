@@ -154,29 +154,7 @@ public class DataLayer
 
         return (numberRows == 0);
     }
-
-    public int GetRowCount()
-    {
-        using var conn = new SqliteConnection(DataSource);
-        conn.Open();
-
-        var cmd = conn.CreateCommand();
-        cmd.CommandText = $"SELECT Max(id) FROM {TableName}";
-        int numberRows = Convert.ToInt32(cmd.ExecuteScalar());
-        return numberRows;
-    }
-
-    public bool IdExist(int id)
-    {
-        using var conn = new SqliteConnection(DataSource);
-        conn.Open();
-
-        var cmd = conn.CreateCommand();
-        cmd.CommandText = $"SELECT ID FROM READINGS WHERE ID = {id}";
-        int numberRows = Convert.ToInt32(cmd.ExecuteScalar());
-        return (numberRows > 0);
-    }
-
+    
     public int[]? GetValidId()
     {
         using var conn = new SqliteConnection(DataSource);
@@ -201,7 +179,7 @@ public class DataLayer
         return null;
     }
 
-    public int MAX()
+    public int Max()
     {
         using var conn = new SqliteConnection(DataSource);
         conn.Open();
@@ -210,7 +188,7 @@ public class DataLayer
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
-    public int AVG()
+    public int Avg()
     {
         using var conn = new SqliteConnection(DataSource);
         conn.Open();
@@ -219,7 +197,7 @@ public class DataLayer
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
-    public int MIN()
+    public int Min()
     {
         using var conn = new SqliteConnection(DataSource);
         conn.Open();
