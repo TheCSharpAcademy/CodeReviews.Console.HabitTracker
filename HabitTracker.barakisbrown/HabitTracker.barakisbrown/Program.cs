@@ -50,9 +50,9 @@ void ShowReport()
     if (!data.IsTableEmpty())
     {
         Console.Clear();
-        int avg = data.AVG();
-        int max = data.MAX();
-        int min = data.MIN();
+        int avg = data.Avg();
+        int max = data.Max();
+        int min = data.Min();
         int ovr = data.Beyond200();
 
         Console.WriteLine("Report for the Habbit Tracker[Blood Sugar Readings]");
@@ -115,7 +115,7 @@ void DeleteRow()
         {
             Console.WriteLine();
             Console.WriteLine($"Do you wish {id} to be deleted? (Y/N)");
-            if (Helpers.GetYESNO())
+            if (Helpers.GetYesno())
             {
                 if (id != 0)
                 {
