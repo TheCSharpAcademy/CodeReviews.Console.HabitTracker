@@ -110,7 +110,7 @@ public class Helpers
         }
     }
 
-    public static bool GetYESNO()
+    public static bool GetYesno()
     {
        ConsoleKeyInfo input = Console.ReadKey(true);
         if (input.Key == ConsoleKey.Y)
