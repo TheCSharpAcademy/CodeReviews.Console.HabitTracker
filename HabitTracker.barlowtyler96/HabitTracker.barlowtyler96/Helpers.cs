@@ -103,11 +103,6 @@ namespace HabitTracker
                               "Type 0 to return to the Main Menu\n\n");
             var dateViewType = Console.ReadLine().Trim();
 
-            if (dateViewType != "specific" || dateViewType != "year")
-            {
-
-            }
-
             string date;
             string tableCmd = "";
 
