@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 
 namespace HabitTracker
 {
-    /// <summary>
-    /// This class will serve as a service class for the habits table which "refers" to all other specific habit tables
-    /// </summary>
     internal class HabitService
     {
 
@@ -30,7 +27,6 @@ namespace HabitTracker
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         TableName TEXT,
                         HabitName TEXT,
-                        TableType TEXT,
                         TableUnit TEXT
                         )";
 
@@ -39,8 +35,6 @@ namespace HabitTracker
                 connection.Close();
             }
         }
-
-        //HABIT TABLE FUNCTIONS//
 
         public static List<HabitTable> GetAllHabits()
         {
@@ -60,7 +54,7 @@ namespace HabitTracker
                 {
                     while (reader.Read())
                     {
-                        list.Add(new HabitTable { ID = reader.GetInt32(0), TableName = reader.GetString(1), HabitName = reader.GetString(2), TableType = reader.GetString(3), TableUnit = reader.GetString(4)});
+                        list.Add(new HabitTable(reader.GetInt32(0), reader.GetString(2), reader.GetString(1), reader.GetString(3)));
                     }
                 }
 
@@ -70,13 +64,7 @@ namespace HabitTracker
             return list;
         }
 
-        /// <summary>
-        /// Handles inserting a new habit table to track
-        /// </summary>
-        /// <param name="habitName"></param>
-        /// <param name="tableType"></param>
-        /// <param name="tableUnit"></param>
-        public static HabitTable? InsertHabit(string habitName, string tableType, string tableUnit)
+        public static HabitTable? InsertHabit(string habitName, string tableUnit)
         {
             //transform given habit name into a proper table name
             string tableName = habitName.Replace(' ', '_').ToLower();
@@ -87,7 +75,7 @@ namespace HabitTracker
                 return null;
             }
 
-            HabitTable table = new HabitTable();
+            HabitTable table = null;
 
             using (SqliteConnection connection = new SqliteConnection(connectionString))
             {
@@ -95,22 +83,24 @@ namespace HabitTracker
 
                 SqliteCommand command = connection.CreateCommand();
                 command.CommandText =
-                    $@"INSERT INTO habit_table(TableName, HabitName, TableType, TableUnit) VALUES('{tableName}', '{habitName}', '{tableType}', '{tableUnit}'); SELECT last_insert_rowid();";
+                    $@"INSERT INTO habit_table(TableName, HabitName, TableUnit) VALUES('{tableName}', '{habitName}', '{tableUnit}'); SELECT last_insert_rowid();";
 
                 int id = Convert.ToInt32(command.ExecuteScalar());
 
-                table = new HabitTable(id, habitName, tableName, tableType, tableUnit);
+                table = new HabitTable(id, habitName, tableName, tableUnit);
 
                 connection.Close();
             }
 
+            CreateHabitTable(tableName);
+
             return table;
         }
 
-        public static HabitTable GetHabitByID(int ID)
+        public static HabitTable? GetHabitByID(int ID)
         {
 
-            HabitTable table = new HabitTable();
+            HabitTable table = null;
 
             using (SqliteConnection connection = new SqliteConnection(connectionString))
             {
@@ -126,7 +116,7 @@ namespace HabitTracker
                 {
                     while (reader.Read())
                     {
-                         table = new HabitTable { ID = reader.GetInt32(0), TableName = reader.GetString(1), HabitName = reader.GetString(2), TableType = reader.GetString(3), TableUnit = reader.GetString(4) };
+                         table = new HabitTable(reader.GetInt32(0), reader.GetString(2), reader.GetString(1), reader.GetString(3));
                     }
                 }
 
@@ -155,7 +145,7 @@ namespace HabitTracker
                 {
                     while (reader.Read())
                     {
-                        table = new HabitTable { ID = reader.GetInt32(0), TableName = reader.GetString(1), HabitName = reader.GetString(2), TableType = reader.GetString(3), TableUnit = reader.GetString(4) };
+                        table = new HabitTable(reader.GetInt32(0), reader.GetString(2), reader.GetString(1), reader.GetString(3));
                     }
                 }
 
@@ -165,6 +155,41 @@ namespace HabitTracker
             return table;
         }
 
+        public static void Delete(HabitTable table)
+        {
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
 
+                SqliteCommand command = connection.CreateCommand();
+                command.CommandText =
+                    $@"DELETE FROM habit_table WHERE Id={table.ID}";
+
+                command.ExecuteNonQuery();        
+
+                connection.Close();
+            }
+        }
+
+        private static void CreateHabitTable(string tableName)
+        {
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                SqliteCommand command = connection.CreateCommand();
+
+                command.CommandText =
+                    @$"CREATE TABLE IF NOT EXISTS {tableName} (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Date TEXT,
+                        Value TEXT
+                        )";
+
+                command.ExecuteNonQuery();
+
+                connection.Close();
+            }
+        }
     }
 }

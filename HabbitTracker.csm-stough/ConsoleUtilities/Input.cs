@@ -13,6 +13,11 @@ namespace ConsoleUtilities
     public class Input
     {
 
+        /// <summary>
+        /// Allows the user to enter an integer number
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns></returns>
         public static int GetInt(string prompt)
         {
             Console.WriteLine(prompt + ":");
@@ -28,6 +33,11 @@ namespace ConsoleUtilities
             return input;
         }
 
+        /// <summary>
+        /// Allows the user to enter a floating point number
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns></returns>
         public static float GetFloat(string prompt)
         {
             Console.WriteLine(prompt + ":");
@@ -43,6 +53,12 @@ namespace ConsoleUtilities
             return input;
         }
 
+        /// <summary>
+        /// Allows user to enter a formatted DateTime object
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static DateTime GetDate(string prompt, string format)
         {
             Console.WriteLine(prompt + ":");
@@ -58,6 +74,12 @@ namespace ConsoleUtilities
             return dateTime;
         }
 
+        /// <summary>
+        /// Allows a user to choose from a menu of options
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="choices"></param>
+        /// <returns></returns>
         public static string GetChoice(string prompt, params string[] choices)
         {
             Menu choiceMenu = new Menu(prompt);
