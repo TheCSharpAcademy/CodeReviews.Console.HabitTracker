@@ -9,6 +9,7 @@ namespace ConsoleUtilities
 {
     public class Form
     {
+        private struct Choice { };
 
         private struct FormStep
         {
@@ -71,6 +72,11 @@ namespace ConsoleUtilities
             AddQuery<DateTime>(prompt + $" ({format})", format);
         }
 
+        public void AddChoiceQuery(string prompt, params string[] choices)
+        {
+            AddQuery<Choice>(prompt, choices);
+        }
+
         /// <summary>
         /// Begins the form entry process, then calls the supplied Processor delegate upon completion
         /// </summary>
@@ -91,6 +97,9 @@ namespace ConsoleUtilities
                         break;
                     case "System.DateTime":
                         values.Add(Input.GetDate(step.prompt, step.props[0]));
+                        break;
+                    case "ConsoleUtilities.Form+Choice":
+                        values.Add(Input.GetChoice(step.prompt, step.props));
                         break;
                     case "string":
                     default:

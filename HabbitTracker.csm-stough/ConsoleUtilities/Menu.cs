@@ -45,11 +45,14 @@
         /// Selec an option in the menu
         /// </summary>
         /// <param name="key">The key of the option to select</param>
-        public void SelectOption()
+        public void SelectOption(bool clearScreen = true)
         {
             while(true)
             {
-                Console.Clear();
+                if (clearScreen)
+                {
+                    Console.Clear();
+                }
 
                 Console.WriteLine(GetMenuText());
 
@@ -59,6 +62,7 @@
                 {
                     if (flattenSelectors) { key = key.ToUpper(); }
                     optionPointers[key.Trim()].operation();
+                    return;
                 }
             }
         }

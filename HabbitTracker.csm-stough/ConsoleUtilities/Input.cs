@@ -21,7 +21,7 @@ namespace ConsoleUtilities
 
             while(!int.TryParse(integer, out input))
             {
-                Console.WriteLine("Invalid Input...\n {0}", prompt);
+                Console.WriteLine($"Invalid Input...\n {prompt}");
                 integer = Console.ReadLine();
             }
 
@@ -36,7 +36,7 @@ namespace ConsoleUtilities
 
             while (!float.TryParse(floating, out input))
             {
-                Console.WriteLine("Invalid Input...\n {0}", prompt);
+                Console.WriteLine($"Invalid Input...\n {prompt}");
                 floating = Console.ReadLine();
             }
 
@@ -51,11 +51,29 @@ namespace ConsoleUtilities
 
             while (!DateTime.TryParseExact(date, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
             {
-                Console.WriteLine("Invalid Input...\n{0}", prompt);
+                Console.WriteLine($"Invalid Input...\n{prompt}");
                 date = Console.ReadLine();
             }
 
             return dateTime;
+        }
+
+        public static string GetChoice(string prompt, params string[] choices)
+        {
+            Menu choiceMenu = new Menu(prompt);
+
+            int num = 1;
+            string selected = "";
+
+            choices.ToList().ForEach(choice =>
+            {
+                choiceMenu.AddOption(num.ToString(), choice, () => { selected = choice; });
+                num++;
+            });
+
+            choiceMenu.SelectOption(false);
+
+            return selected;
         }
     }
 }
