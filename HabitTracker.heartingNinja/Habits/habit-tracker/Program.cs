@@ -6,7 +6,7 @@ namespace habit_tracker;
 class Program
 {
     static string connectionsString = @"Data Source=habit-Tracker.db";
-    static bool totalBeersBool = false;
+    static bool totalBeersBool;
     static void Main(string[] args)
     {
        
@@ -109,7 +109,7 @@ class Program
                         Id = reader.GetInt32(0),
                         Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                         Quantity = reader.GetInt32(2)
-                    }); ;
+                    });
                 }
 
             }
@@ -158,8 +158,7 @@ class Program
     }
 
     private static void Delete()
-    {
-        //Console.Clear();
+    {     
         GetAllRecords();
 
         var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to go back to Main Menu\n\n");
