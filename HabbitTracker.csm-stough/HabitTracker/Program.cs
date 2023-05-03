@@ -31,8 +31,8 @@ namespace habit_tracker {
 
                 });
 
-                insertForm.AddQuery<DateTime>("Enter the date (dd/mm/yyyy)");
-                insertForm.AddQuery<int>("Enter the quantity");
+                insertForm.AddDateTimeQuery("Enter the date", "dd/MM/yyyy");
+                insertForm.AddIntQuery("Enter the quantity");
 
                 insertForm.Start();
             });
@@ -79,9 +79,9 @@ namespace habit_tracker {
                     }
                 });
 
-                updateForm.AddQuery<string>("Are you sure you want to update this record?");
-                updateForm.AddQuery<DateTime>("Please enter a new date (dd/mm/yyyy)");
-                updateForm.AddQuery<int>("Please enter a new quantity");
+                updateForm.AddStringQuery("Are you sure you want to update this record?");
+                updateForm.AddDateTimeQuery("Please enter a new date", "dd/MM/yyyy");
+                updateForm.AddIntQuery("Please enter a new quantity");
 
                 updateForm.Start();
             });

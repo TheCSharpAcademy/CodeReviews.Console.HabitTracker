@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,11 +14,13 @@ namespace ConsoleUtilities
         {
             public string type;
             public string prompt;
+            public string[]? props;
 
-            public FormStep(string type, string prompt)
+            public FormStep(string type, string prompt, string[]? props)
             {
                 this.type = type;
                 this.prompt = prompt;
+                this.props = props;
             }
         }
 
@@ -38,14 +41,34 @@ namespace ConsoleUtilities
         /// - string
         /// - int
         /// - float
-        /// - DateTime (dd/MM/yyyy format only)
+        /// - DateTime
         /// **All other types default to string**
         /// </summary>
         /// <typeparam name="T">Type to query</typeparam>
         /// <param name="prompt">Prompt to display</param>
-        public void AddQuery<T>(string prompt)
+        public void AddQuery<T>(string prompt, params string[]? props)
         {
-            steps.Add(new FormStep(typeof(T).ToString(), prompt));
+            steps.Add(new FormStep(typeof(T).ToString(), prompt, props));
+        }
+
+        public void AddIntQuery(string prompt)
+        {
+            AddQuery<int>(prompt);
+        }
+
+        public void AddFloatQuery(string prompt)
+        {
+            AddQuery<float>(prompt);
+        }
+
+        public void AddStringQuery(string prompt)
+        {
+            AddQuery<string>(prompt);
+        }
+
+        public void AddDateTimeQuery(string prompt, string format)
+        {
+            AddQuery<DateTime>(prompt + $" ({format})", format);
         }
 
         /// <summary>
@@ -67,7 +90,7 @@ namespace ConsoleUtilities
                         values.Add(Input.GetFloat(step.prompt));
                         break;
                     case "System.DateTime":
-                        values.Add(Input.GetDate(step.prompt));
+                        values.Add(Input.GetDate(step.prompt, step.props[0]));
                         break;
                     case "string":
                     default:

@@ -43,13 +43,13 @@ namespace ConsoleUtilities
             return input;
         }
 
-        public static DateTime GetDate(string prompt)
+        public static DateTime GetDate(string prompt, string format)
         {
             Console.WriteLine(prompt + ":");
             string date = Console.ReadLine();
             DateTime dateTime;
 
-            while (!DateTime.TryParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            while (!DateTime.TryParseExact(date, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
             {
                 Console.WriteLine("Invalid Input...\n{0}", prompt);
                 date = Console.ReadLine();
