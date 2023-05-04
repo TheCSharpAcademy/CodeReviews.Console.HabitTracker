@@ -1,17 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker
 {
     internal class HabitService
     {
-
         static string connectionString = @"Data Source=habit-tracker.db";
 
         public static void Init()
@@ -99,7 +91,6 @@ namespace HabitTracker
 
         public static HabitTable? GetHabitByID(int ID)
         {
-
             HabitTable table = null;
 
             using (SqliteConnection connection = new SqliteConnection(connectionString))
@@ -128,7 +119,6 @@ namespace HabitTracker
 
         public static HabitTable? GetHabitByName(string name)
         {
-
             HabitTable? table = null;
 
             using (SqliteConnection connection = new SqliteConnection(connectionString))

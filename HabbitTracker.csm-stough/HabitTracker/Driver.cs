@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HabitTracker
+﻿namespace HabitTracker
 {
     internal class Driver
     {
-
         public static void Main(string[] args)
         {
-
             HabitService.Init();
 
             MainMenu();
-
         }
 
         static void MainMenu()
@@ -45,7 +36,6 @@ namespace HabitTracker
             habitsMenu.AddOption("B", "Go Back To Main Menu...", () => { MainMenu(); });
 
             habitsMenu.SelectOption();
-
         }
 
         static void NewHabit()
@@ -83,6 +73,7 @@ namespace HabitTracker
 
                 confirmationForm.Start();
             });
+            habitMenu.AddOption("S", "Statistics For This Habit...", () => { StatisticsMenu(habitTable); });
             habitMenu.AddOption("B", "Go Back To Main Menu...", () => { MainMenu(); });
 
             habitMenu.SelectOption();
@@ -95,7 +86,7 @@ namespace HabitTracker
 
             habitTable.GetAllRecords().ForEach((record) =>
             {
-                allRecords.AddOption((num++).ToString(), record.Date.Date.ToShortDateString(), () => { HabitRecordMenu(habitTable, record); });
+                allRecords.AddOption((num++).ToString(), record.Date.Date.ToString("yyyy-MM-dd"), () => { HabitRecordMenu(habitTable, record); });
             });
 
             allRecords.AddOption("B", "Go Back This Habits Menu...", () => { HabitMenu(habitTable); });
@@ -111,7 +102,7 @@ namespace HabitTracker
                 HabitMenuAllRecords(habitTable);
             });
 
-            newRecord.AddDateTimeQuery("Enter the date of the new record", "dd/MM/yyyy");
+            newRecord.AddDateTimeQuery("Enter the date of the new record", "yyyy-MM-dd");
             newRecord.AddStringQuery($"Enter the value ({habitTable.TableUnit})");
 
             newRecord.Start();
@@ -119,7 +110,7 @@ namespace HabitTracker
 
         static void HabitRecordMenu(HabitTable habitTable, HabitRecord habitRecord)
         {
-            ConsoleUtilities.Menu recordMenu = new ConsoleUtilities.Menu($"{habitTable.HabitName.ToUpper()} Menu for Record {habitRecord.Date.Date.ToShortDateString()}");
+            ConsoleUtilities.Menu recordMenu = new ConsoleUtilities.Menu($"{habitTable.HabitName.ToUpper()} Menu for Record {habitRecord.Date.Date.ToString("yyyy-MM-dd")} : {habitRecord.Value} {habitTable.TableUnit}");
 
             recordMenu.AddOption("U", "Update This Record", () => {
                 ConsoleUtilities.Form confirmationForm = new ConsoleUtilities.Form((values) =>
@@ -135,7 +126,7 @@ namespace HabitTracker
                 });
 
                 confirmationForm.AddStringQuery("Are you sure you want to update this record? (y/n)");
-                confirmationForm.AddDateTimeQuery("Please enter a new date for this record", "dd/MM/yyyy");
+                confirmationForm.AddDateTimeQuery("Please enter a new date for this record", "yyyy-MM-dd");
                 confirmationForm.AddStringQuery($"Please enter a new value for this record ({habitTable.TableUnit})");
 
                 confirmationForm.Start();
@@ -157,6 +148,70 @@ namespace HabitTracker
             recordMenu.AddOption("B", "Go Back To All Records Menu...", () => { HabitMenuAllRecords(habitTable); });
 
             recordMenu.SelectOption();
+        }
+
+        static void StatisticsMenu(HabitTable habitTable)
+        {
+            ConsoleUtilities.Menu statsMenu = new ConsoleUtilities.Menu($"Statistics Menu for {habitTable.HabitName.ToUpper()}");
+
+            statsMenu.AddOption("R", "Select All Records Between Dates", () =>
+            {
+                ConsoleUtilities.Form datesForm = new ConsoleUtilities.Form((values) =>
+                {
+                    List<HabitRecord> results = Statistics.RecordBetweenDates(habitTable, (DateTime)values[0], (DateTime)values[1]);
+
+                    RecordsBetweenDatesMenu(habitTable, results, (DateTime)values[0], (DateTime)values[1]);
+                });
+
+                datesForm.AddDateTimeQuery("Enter the start date", "yyyy-MM-dd");
+                datesForm.AddDateTimeQuery("Enter the end date", "yyyy-MM-dd");
+                
+                datesForm.Start();
+            });
+            statsMenu.AddOption("S", "Calculate Sum Of Values Between Dates", () =>
+            {
+                ConsoleUtilities.Form datesForm = new ConsoleUtilities.Form((values) =>
+                {
+                    float sum = Statistics.SumOfValuesBetweenDates(habitTable, (DateTime)values[0], (DateTime)values[1]);
+
+                    Console.WriteLine($"Sum of values in records between {((DateTime)values[0]).Date.ToString("yyyy-MM-dd")} and {((DateTime)values[1]).Date.ToString("yyyy-MM-dd")}: {sum} {habitTable.TableUnit}");
+
+                    Console.ReadLine();
+
+                    StatisticsMenu(habitTable);
+                });
+
+                datesForm.AddDateTimeQuery("Enter the start date", "yyyy-MM-dd");
+                datesForm.AddDateTimeQuery("Enter the end date", "yyyy-MM-dd");
+
+                datesForm.Start();
+            });
+            statsMenu.AddOption("A", "Calculate Sum Of All Records Values", () =>
+            {
+                Console.WriteLine($"Sum of all values in records: {Statistics.SumOfValuesBetweenDates(habitTable)} {habitTable.TableUnit}");
+
+                Console.ReadLine();
+
+                StatisticsMenu(habitTable);
+            });
+            statsMenu.AddOption("B", "Go Back To This Habits Menu...", () => { HabitMenu(habitTable); });
+
+            statsMenu.SelectOption();
+        }
+
+        static void RecordsBetweenDatesMenu(HabitTable habitTable, List<HabitRecord> results, DateTime start, DateTime end)
+        {
+            ConsoleUtilities.Menu resultsMenu = new ConsoleUtilities.Menu($"All records in {habitTable.HabitName} between {start.Date.ToString("yyyy-MM-dd")} and {end.Date.ToString("yyyy-MM-dd")}");
+            int num = 1;
+
+            results.ForEach(record =>
+            {
+                resultsMenu.AddOption((num++).ToString(), $"{record.Date.Date.ToString("yyyy-MM-dd")} - {record.Value} {habitTable.TableUnit}", () => { HabitRecordMenu(habitTable, record); });
+            });
+
+            resultsMenu.AddOption("B", "Go Back To Statistics Menu...", () => { StatisticsMenu(habitTable); });
+
+            resultsMenu.SelectOption();
         }
     }
 }

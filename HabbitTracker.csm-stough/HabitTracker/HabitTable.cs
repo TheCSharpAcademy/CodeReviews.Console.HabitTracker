@@ -1,15 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker
 {
     internal class HabitTable
     {
-
         public int ID;
         public string HabitName;
         public string TableName;
@@ -35,7 +29,7 @@ namespace HabitTracker
 
                 SqliteCommand command = connection.CreateCommand();
                 command.CommandText =
-                    $@"INSERT INTO {TableName}(Date, Value) VALUES('{date.Date.ToShortDateString()}', '{value}'); SELECT last_insert_rowid();";
+                    $@"INSERT INTO {TableName}(Date, Value) VALUES('{date.Date.ToString("yyyy-MM-dd")}', '{value}'); SELECT last_insert_rowid();";
 
                 int id = Convert.ToInt32(command.ExecuteScalar());
 
@@ -99,7 +93,7 @@ namespace HabitTracker
 
                 SqliteCommand command = connection.CreateCommand();
                 command.CommandText =
-                    $@"UPDATE {TableName} SET Date='{record.Date.Date.ToShortDateString()}', Value={record.Value} WHERE Id={record.Id}";
+                    $@"UPDATE {TableName} SET Date='{record.Date.Date.ToString("yyyy-MM-dd")}', Value={record.Value} WHERE Id={record.Id}";
 
                 command.ExecuteNonQuery();
 

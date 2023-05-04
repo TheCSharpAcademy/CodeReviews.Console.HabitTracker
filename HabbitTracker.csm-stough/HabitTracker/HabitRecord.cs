@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HabitTracker
+﻿namespace HabitTracker
 {
     internal struct HabitRecord
     {
-
         public int Id;
         public DateTime Date;
         public string Value;
@@ -19,6 +12,5 @@ namespace HabitTracker
             Date = date;
             Value = value;
         }
-
     }
 }

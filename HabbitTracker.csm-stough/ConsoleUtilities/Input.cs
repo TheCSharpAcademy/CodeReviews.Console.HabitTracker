@@ -12,7 +12,6 @@ namespace ConsoleUtilities
     /// </summary>
     public class Input
     {
-
         /// <summary>
         /// Allows the user to enter an integer number
         /// </summary>
