@@ -152,7 +152,7 @@ void UpdateHabitEntry() {
     string numberOfTimes = Console.ReadLine();
 
     Console.WriteLine("Do you want to edit the date? y/n");
-    string sql = GenerateUpdateSQL(Console.ReadLine(), habit, id, numberOfTimes);
+    string sql = GenerateUpdateSql(Console.ReadLine(), habit, id, numberOfTimes);
 
     using (var connection = new SqliteConnection("Data Source=habits.db")) {
         connection.Open();
@@ -167,7 +167,7 @@ void UpdateHabitEntry() {
     }
 }
 
-string GenerateUpdateSQL( string response, string habit, string id, string numberOfTimes ) {
+string GenerateUpdateSql( string response, string habit, string id, string numberOfTimes ) {
     if (response == "y") {
 
         string date = GetDateInput();
@@ -248,50 +248,50 @@ void GetMainInput() {
             case "1":
                 try {
                     InsertNewHabit();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "2":
                 try {
                     InsertHabitEntry();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "3":
                 try {
                     UpdateHabitEntry();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "4":
                 try {
                     DeleteHabitEntry();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "5":
                 try {
                     DeleteAHabit();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "6":
                 try {
                     ViewHabitEntries();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "7":
                 try {
                     ListHabits();
-                } catch (Exception ex) {
-                    DealWithError(ex);
+                } catch (Exception) {
+                    DealWithError();
                 }
                 break;
             case "0":
@@ -308,6 +308,6 @@ void GetMainInput() {
     }
 }
 
-void DealWithError( Exception ex ) {
+void DealWithError() {
     Console.WriteLine("Something Went wrong! Check what you typed, you might have typed the name of the habit incorrectly!");
 }
