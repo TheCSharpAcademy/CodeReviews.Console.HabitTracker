@@ -3,115 +3,99 @@ using System.Globalization;
 
 string divider = "----------------------------------\n";
 SqlCommands.InitializeDB(DataConnection.ConnString);
+MainMenu();
 
-bool closeApp = false;
-while (!closeApp)
-{
-    DisplayMainMenu();
-    string choice = Console.ReadLine()!;
 
-    switch (choice.ToLower())
-    {
-        case "q":
-            Console.WriteLine($"{divider}Goodbye!\n{divider}");
-            closeApp = true;
-            break;
-        case "1":
-            DisplayEntries();
-            break;
-        case "2":
-            AddNewEntry();
-            break;
-        case "3":
-            DeleteEntry();
-            break;
-        case "4":
-            EditEntry();
-            break;
-        default:
-            Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
-            Console.ReadLine();
-            break;
-    }
-}
 
 void EditEntry()
 {
-    Console.Clear();
-    DisplayEntries();
-    var recordId = GetNumberInput("Enter the record ID you wish to edit or \"X\" to return to Main Menu");
+    //Console.Clear();
+    //DisplayEntries();
+    //var recordId = GetNumberInput("Enter the record ID you wish to edit or \"X\" to return to Main Menu");
     
-    if (recordId == -999)
-    {
-        return;
-    }
+    //if (recordId == -999)
+    //{
+    //    return;
+    //}
 
-    try
-    {
-        SqlCommands.UpdateRecord(recordId);
-        Console.WriteLine("Entry update\nHit Enter\n");
-        Console.ReadLine();
-    }
-    catch (Exception)
-    {
+    //Console.WriteLine("Choose field to edit:");
+    //Console.WriteLine("\t1: Date");
+    //Console.WriteLine("\t2: Quantity");
+    //Console.WriteLine("\t3: Both");
+    //Console.WriteLine("\tX: Return");
+    //string editChoice = Console.ReadLine()!;
 
-        Console.WriteLine("Edit failed\nHit Enter\n");
-        Console.ReadLine();
-    }
+    //switch (editChoice.ToLower())
+    //{
+    //    case "x":
+    //        return;
+    //    case "1":
+    //        break;
+    //    case "2":
+    //        break;
+    //    case "3":
+    //        break;
+    //    default:
+    //        Console.WriteLine("Invalid Choice.\n Hit Enter.\n");
+    //        Console.ReadLine();
+    //        EditEntry();
+    //        return;
+    //}
+
+    //try
+    //{
+    //    SqlCommands.UpdateRecord(recordId);
+    //    Console.WriteLine("Entry update\nHit Enter\n");
+    //    Console.ReadLine();
+    //}
+    //catch (Exception)
+    //{
+    //    Console.WriteLine("Edit failed\nHit Enter\n");
+    //    Console.ReadLine();
+    //}
 }
 
 void DeleteEntry()
 {
-    Console.Clear();
-    DisplayEntries();
+    //Console.Clear();
+    //DisplayEntries();
 }
 
-void DisplayEntries()
+void DisplayEntries(List<DrinkingWater> drinks)
 {
     Console.Clear();
-    try
+    if (drinks.Count == 0)
     {
-        List<DrinkingWater> table = SqlCommands.GetAllRecords();
+        Console.WriteLine("\nNo records found.\nHit Enter...\n");
+        Console.ReadLine();
+    }
+    else
+    {
         Console.WriteLine(divider);
-        foreach (var entry in table)
+        foreach (var entry in drinks) 
         {
-            Console.WriteLine($"{entry.Id}: {entry.Date} - Qty: {entry.Quantity}");
+            Console.WriteLine($"{entry.Id}: {entry.Date:MMM dd, yyyy} - Qty: {entry.Quantity}");
         }
         Console.WriteLine(divider);
 
-    }
-    catch (Exception)
-    {
-
-        Console.WriteLine("No entries found\nHit Enter\n");
-        Console.ReadLine();
     }
 }
 
 void AddNewEntry()
 {
     Console.Clear();
-    string date = GetDateInput();
-    if (date == "x")
-    {
-        return;
-    }
-    
+    string date = GetDateInput();    
     int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu:");
-    if (quantity == -999)
-    {
-        return;
-    }
         
     try
     {
         SqlCommands.InsertRecord(date, quantity);
-        Console.WriteLine("Entry added\nHit Enter\n");
+        Console.WriteLine("\nEntry added\nHit Enter...\n");
         Console.ReadLine();
     }
     catch (Exception)
     {
-        Console.WriteLine("Entry failed to insert\nHit Enter\n");
+        Console.WriteLine("\nEntry failed to insert\nHit Enter...\n");
         Console.ReadLine();
     }
 }
@@ -124,7 +108,8 @@ int GetNumberInput(string prompt)
    
     if (numberInput.ToLower() == "x")
     {
-        return -999;
+        Console.Clear();
+        MainMenu();
     }
     
     while (!int.TryParse(numberInput, out output) || output < 0)
@@ -142,7 +127,8 @@ string GetDateInput()
 
     if (dateInput.ToLower() == "x")
     {
-        return "x";
+        Console.Clear();
+        MainMenu();
     }
 
     while (!DateTime.TryParseExact(dateInput, "MM-dd-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
@@ -153,15 +139,62 @@ string GetDateInput()
     return dateInput;
 }
 
-void DisplayMainMenu()
+void MainMenu()
 {
-    Console.Clear();
-    Console.WriteLine($"{divider}MAIN MENU\n{divider}");
-    Console.WriteLine("What would you like to do?");
-    Console.WriteLine("\tQ: Exit");
-    Console.WriteLine("\t1: View entries");
-    Console.WriteLine("\t2: Add new entry");
-    Console.WriteLine("\t3: Delete entry");
-    Console.WriteLine("\t4: Edit entry");
-    Console.WriteLine(divider);
+    bool closeApp = false;
+    while (!closeApp)
+    {
+
+        //Console.Clear();
+        Console.WriteLine($"{divider}MAIN MENU\n{divider}");
+        Console.WriteLine("What would you like to do?");
+        Console.WriteLine("\t0: Exit");
+        Console.WriteLine("\t1: View entries");
+        Console.WriteLine("\t2: Add new entry");
+        Console.WriteLine("\t3: Delete entry");
+        Console.WriteLine("\t4: Edit entry");
+        Console.WriteLine(divider);
+
+        string choice = Console.ReadLine()!;
+        switch (choice)
+        {
+            case "0":
+                Console.WriteLine($"{divider}Goodbye!\n{divider}");
+                closeApp = true;
+                Environment.Exit(0);
+                break;
+            case "1":
+                
+                DisplayEntries(GetEntries());
+                break;
+            case "2":
+                AddNewEntry();
+                break;
+            case "3":
+                DeleteEntry();
+                break;
+            case "4":
+                EditEntry();
+                break;
+            default:
+                Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
+                Console.ReadLine();
+                break;
+        }
+    }
+}
+
+List<DrinkingWater> GetEntries()
+{
+    List<DrinkingWater> drinks = new();
+    try
+    {
+       drinks = SqlCommands.GetAllRecords();
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("\nError retrieving records\nHit Enter...\n");
+        Console.ReadLine();
+    }
+    return drinks;
 }
