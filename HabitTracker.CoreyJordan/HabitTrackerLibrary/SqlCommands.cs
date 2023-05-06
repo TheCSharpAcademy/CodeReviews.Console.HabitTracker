@@ -4,6 +4,20 @@ using System.Globalization;
 namespace HabitTrackerLibrary;
 public static class SqlCommands
 {
+    public static int DeleteRecord(int entryId)
+    {
+        int rowCount;
+        using (var conn = new SqliteConnection(DataConnection.ConnString))
+        {
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                $"DELETE FROM drinking_water WHERE Id = {entryId}";
+            rowCount = cmd.ExecuteNonQuery();
+        }
+        return rowCount;
+    }
+
     public static List<DrinkingWater> GetAllRecords()
     {
         List<DrinkingWater> drinks = new();

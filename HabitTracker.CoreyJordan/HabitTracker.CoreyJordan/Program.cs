@@ -57,8 +57,30 @@ void EditEntry()
 
 void DeleteEntry()
 {
-    //Console.Clear();
-    //DisplayEntries();
+    Console.Clear();
+    DisplayEntries(GetEntries());
+    int entryId = GetNumberInput("Select the record you wish to delete or \"X\" to return to Main Menu: ");
+
+    try
+    {
+        int rowsDeleted = SqlCommands.DeleteRecord(entryId);
+        if (rowsDeleted == 0)
+        {
+            Console.WriteLine("\nRecord does not exist\nHit Enter...\n");
+            Console.ReadLine();
+            DeleteEntry();
+        }
+        else
+        {
+            Console.WriteLine($"\nRecord {entryId} deleted successfully.\nHit Enter...\n ");
+            Console.ReadLine();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"There was an error attempting to delete the record.\n{ex}\nHit Enter...\n");
+        Console.ReadLine();
+    }
 }
 
 void DisplayEntries(List<DrinkingWater> drinks)
@@ -76,6 +98,7 @@ void DisplayEntries(List<DrinkingWater> drinks)
         {
             Console.WriteLine($"{entry.Id}: {entry.Date:MMM dd, yyyy} - Qty: {entry.Quantity}");
         }
+        Console.WriteLine();
         Console.WriteLine(divider);
 
     }
@@ -93,9 +116,9 @@ void AddNewEntry()
         Console.WriteLine("\nEntry added\nHit Enter...\n");
         Console.ReadLine();
     }
-    catch (Exception)
+    catch (Exception ex)
     {
-        Console.WriteLine("\nEntry failed to insert\nHit Enter...\n");
+        Console.WriteLine($"\nEntry failed to insert\n{ex}\nHit Enter...\n");
         Console.ReadLine();
     }
 }
@@ -164,7 +187,6 @@ void MainMenu()
                 Environment.Exit(0);
                 break;
             case "1":
-                
                 DisplayEntries(GetEntries());
                 break;
             case "2":
