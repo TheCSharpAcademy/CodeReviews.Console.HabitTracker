@@ -70,8 +70,36 @@ public static class SqlCommands
         }
     }
 
-    public static void UpdateRecord(int recordId)
+    public static bool RecordExists(int entryId)
     {
-        throw new NotImplementedException();
+        bool recordExists = true;
+        int checkQuery;
+        using (var conn = new SqliteConnection(DataConnection.ConnString))
+        {
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {entryId})";
+            checkQuery = Convert.ToInt32(cmd.ExecuteScalar());
+        }
+
+        if (checkQuery == 0)
+        {
+            recordExists = false;
+        }
+
+        return recordExists;
+    }
+
+    public static void UpdateRecord(DrinkingWater drink)
+    {
+        using (var conn = new SqliteConnection(DataConnection.ConnString))
+        {
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                $"UPDATE drinking_water SET date = '{drink.Date:MM-dd-yy}', quantity = {drink.Quantity} WHERE Id = {drink.Id}";
+            cmd.ExecuteNonQuery();
+        }
     }
 }

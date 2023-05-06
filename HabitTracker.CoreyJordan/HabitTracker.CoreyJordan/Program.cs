@@ -9,76 +9,67 @@ MainMenu();
 
 void EditEntry()
 {
-    //Console.Clear();
-    //DisplayEntries();
-    //var recordId = GetNumberInput("Enter the record ID you wish to edit or \"X\" to return to Main Menu");
+    Console.Clear();
+    DisplayEntries(GetEntries());
+
+    int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
     
-    //if (recordId == -999)
-    //{
-    //    return;
-    //}
+    try
+    {
+        if (SqlCommands.RecordExists(entryId))
+        {
+            string date = GetDateInput();
+            int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu: ");
+            DrinkingWater drink = new()
+            {
+                Id = entryId,
+                Date = DateTime.ParseExact(date, "MM-dd-yy", new CultureInfo("en-US")),
+                Quantity = quantity
+            };
 
-    //Console.WriteLine("Choose field to edit:");
-    //Console.WriteLine("\t1: Date");
-    //Console.WriteLine("\t2: Quantity");
-    //Console.WriteLine("\t3: Both");
-    //Console.WriteLine("\tX: Return");
-    //string editChoice = Console.ReadLine()!;
+            SqlCommands.UpdateRecord(drink);
 
-    //switch (editChoice.ToLower())
-    //{
-    //    case "x":
-    //        return;
-    //    case "1":
-    //        break;
-    //    case "2":
-    //        break;
-    //    case "3":
-    //        break;
-    //    default:
-    //        Console.WriteLine("Invalid Choice.\n Hit Enter.\n");
-    //        Console.ReadLine();
-    //        EditEntry();
-    //        return;
-    //}
-
-    //try
-    //{
-    //    SqlCommands.UpdateRecord(recordId);
-    //    Console.WriteLine("Entry update\nHit Enter\n");
-    //    Console.ReadLine();
-    //}
-    //catch (Exception)
-    //{
-    //    Console.WriteLine("Edit failed\nHit Enter\n");
-    //    Console.ReadLine();
-    //}
+            Console.WriteLine($"\nEntry {entryId} updated successfully.\nHit Enter...\n");
+            Console.ReadLine();
+        }
+        else
+        {
+            Console.WriteLine($"\nEntry {entryId} does not exist.\nHit Enter...\n");
+            Console.ReadLine();
+            EditEntry();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"\nAn unexpected error has occured\n{ex}\nHit Enter...\n");
+        Console.ReadLine();
+    } 
 }
 
 void DeleteEntry()
 {
     Console.Clear();
     DisplayEntries(GetEntries());
-    int entryId = GetNumberInput("Select the record you wish to delete or \"X\" to return to Main Menu: ");
+    int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
 
     try
     {
         int rowsDeleted = SqlCommands.DeleteRecord(entryId);
         if (rowsDeleted == 0)
         {
-            Console.WriteLine("\nRecord does not exist\nHit Enter...\n");
+            Console.WriteLine("\nEntry does not exist\nHit Enter...\n");
             Console.ReadLine();
             DeleteEntry();
         }
         else
         {
-            Console.WriteLine($"\nRecord {entryId} deleted successfully.\nHit Enter...\n ");
+            Console.WriteLine($"\nEntry {entryId} deleted successfully.\nHit Enter...\n ");
             Console.ReadLine();
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"There was an error attempting to delete the record.\n{ex}\nHit Enter...\n");
+        Console.WriteLine($"There was an error attempting to delete the entry.\n{ex}\nHit Enter...\n");
         Console.ReadLine();
     }
 }
@@ -88,7 +79,7 @@ void DisplayEntries(List<DrinkingWater> drinks)
     Console.Clear();
     if (drinks.Count == 0)
     {
-        Console.WriteLine("\nNo records found.\nHit Enter...\n");
+        Console.WriteLine("\nNo entries found.\nHit Enter...\n");
         Console.ReadLine();
     }
     else
@@ -108,7 +99,7 @@ void AddNewEntry()
 {
     Console.Clear();
     string date = GetDateInput();    
-    int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu:");
+    int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu: ");
         
     try
     {
