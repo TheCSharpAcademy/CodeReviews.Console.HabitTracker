@@ -34,7 +34,7 @@ public class DbOperations
             var tableCommand = connection.CreateCommand();
 
             tableCommand.CommandText =
-                @"select name from sqlite_master where type = 'table' and name NOT LIKE 'sqlite_%';";
+                @"SELECT NAME FROM sqlite_master WHERE TYPE = 'table' AND NAME NOT LIKE 'sqlite_%';";
 
             SqliteDataReader reader = tableCommand.ExecuteReader();
             
@@ -67,7 +67,7 @@ public class DbOperations
             connection.Open();
             var tableCommand = connection.CreateCommand();
 
-            tableCommand.CommandText = $"select * from {habitName}";
+            tableCommand.CommandText = $"SELECT * FROM {habitName}";
 
             List<TrackedHabits> habitData = new List<TrackedHabits>();
 
@@ -127,7 +127,7 @@ public class DbOperations
                 entryId = Program.GetNumberFromUser("Id of entry you want to delete");
                 if (entryId == -1) return;
 
-                tableCommand.CommandText = $"delete from {dbName} where id = '{entryId}'";
+                tableCommand.CommandText = $"DELETE FROM {dbName} WHERE id = '{entryId}'";
 
                 invalidRow = tableCommand.ExecuteNonQuery();
                 if (invalidRow == 0) Console.WriteLine("Looks like there you've chosen entry that does not exist, or there are no entries left");
@@ -156,7 +156,7 @@ public class DbOperations
                 entryId = Program.GetNumberFromUser("Id of entry you want to edit");
                 if (entryId == -1) return;
                 
-                tableCommand.CommandText = $"select exists(select 1 from {dbName} where Id = {entryId})";
+                tableCommand.CommandText = $"SELECT exists(SELECT 1 FROM {dbName} WHERE Id = {entryId})";
                 
                 checkEntryExist = Convert.ToInt32(tableCommand.ExecuteScalar());
 
@@ -174,8 +174,9 @@ public class DbOperations
    
             int newAmount = Program.GetNumberFromUser("new amount");
             if (newAmount == -1) return;
-            
-            tableCommand.CommandText = $"update {dbName} set date = '{newDate}', quantity = {newAmount} WHERE Id = {entryId}";
+
+            string habitQuantifier = GetHabitQuantifier(dbName);
+            tableCommand.CommandText = $"UPDATE {dbName} SET date = '{newDate}', {habitQuantifier} = {newAmount} WHERE Id = {entryId}";
 
             tableCommand.ExecuteNonQuery();
                 
@@ -208,7 +209,8 @@ public class DbOperations
 
             string habitQuantifier = GetHabitQuantifier(habit.HabitName);
             
-            tableCommand.CommandText = $"INSERT into {habit.HabitName} (date, {habitQuantifier}) values ('{habit.Date}', {habit.Quantity})";
+            tableCommand.CommandText = $"INSERT INTO {habit.HabitName} (date, {habitQuantifier}) " +
+                                       $"VALUES ('{habit.Date}', {habit.Quantity})";
 
             tableCommand.ExecuteNonQuery();
             
@@ -248,10 +250,10 @@ public class DbOperations
             connection.Open();
             var tableCommand = connection.CreateCommand();
 
-            tableCommand.CommandText = @"select count(*)
-                                            from sqlite_master
-                                            where type = 'table'
-                                            and name not like 'sqlite_%'";
+            tableCommand.CommandText = @"SELECT count(*)
+                                            FROM sqlite_master
+                                            WHERE TYPE = 'table'
+                                            AND NAME NOT LIKE 'sqlite_%'";
 
             int habitsAmount = Convert.ToInt32(tableCommand.ExecuteScalar());
             

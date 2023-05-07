@@ -116,6 +116,7 @@ public class Menus
             switch (userInput)
             {
                 case ConsoleKey.D1:
+                    _dbOperations.PrintAllTables();
                     TrackedHabits habit = _habitOperator.ChooseHabit();
                     if (habit == null) continue;
                     DatabaseOperationsMenu(habit.HabitName);
