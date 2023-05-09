@@ -4,7 +4,7 @@ using System.Globalization;
 namespace HabitTrackerLibrary;
 public static class SqlCommands
 {
-    public static int DeleteRecord(int entryId)
+    public static int DeleteRecord(int entryId, string tableName)
     {
         int rowCount;
         using (var conn = new SqliteConnection(DataConnection.ConnString))
@@ -12,26 +12,26 @@ public static class SqlCommands
             conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText =
-                $"DELETE FROM drinking_water WHERE Id = {entryId}";
+                $"DELETE FROM {tableName} WHERE Id = {entryId}";
             rowCount = cmd.ExecuteNonQuery();
         }
         return rowCount;
     }
 
-    public static List<DrinkingWater> GetAllRecords()
+    public static List<Habit> GetAllRecords(string tableName)
     {
-        List<DrinkingWater> drinks = new();
+        List<Habit> habits = new();
 
         using (var conn = new SqliteConnection(DataConnection.ConnString))
         {
             conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText =
-                $"SELECT * FROM drinking_water";
+                $"SELECT * FROM {tableName}";
             SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                drinks.Add(new DrinkingWater
+                habits.Add(new Habit
                 {
                     Id = reader.GetInt32(0),
                     Date = DateTime.ParseExact(reader.GetString(1), "MM-dd-yy", new CultureInfo("en-US")),
@@ -39,38 +39,56 @@ public static class SqlCommands
                 });
             }
         }
-        return drinks;
+        return habits;
     }
 
-    public static void InitializeDB(string connString)
+    public static List<string> GetTables()
+    {
+        List<string> tables = new();
+        using (var conn = new SqliteConnection(DataConnection.ConnString))
+        {
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                $"SELECT name FROM sqlite_master WHERE type='table' ORDER BY name";
+            SqliteDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                tables.Add(reader.GetString(0));
+            }
+        }
+        return tables;
+    }
+
+    public static void InitializeDB(string connString, string tableName)
     {
         using (var conn = new SqliteConnection(connString))
         {
             conn.Open();
             var cmd = conn.CreateCommand();
 
-            cmd.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water
-        (Id INTEGER PRIMARY KEY AUTOINCREMENT,
-        Date TEXT,
-        Quantity INTEGER)";
+            cmd.CommandText = @$"CREATE TABLE IF NOT EXISTS {tableName}
+                (Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Date TEXT,
+                Quantity INTEGER)";
 
             cmd.ExecuteNonQuery();
         }
     }
 
-    public static void InsertRecord(string date, int quantity)
+    public static void InsertRecord(string date, int quantity, string tableName)
     {
         using (var conn = new SqliteConnection(DataConnection.ConnString))
         {
             conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText =
-                $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+                $"INSERT INTO {tableName}(date, quantity) VALUES('{date}', {quantity})";
             cmd.ExecuteNonQuery();
         }
     }
 
-    public static bool RecordExists(int entryId)
+    public static bool RecordExists(int entryId, string tableName)
     {
         bool recordExists = true;
         int checkQuery;
@@ -79,7 +97,7 @@ public static class SqlCommands
             conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {entryId})";
+                $"SELECT EXISTS(SELECT 1 FROM {tableName} WHERE Id = {entryId})";
             checkQuery = Convert.ToInt32(cmd.ExecuteScalar());
         }
 
@@ -91,14 +109,14 @@ public static class SqlCommands
         return recordExists;
     }
 
-    public static void UpdateRecord(DrinkingWater drink)
+    public static void UpdateRecord(Habit habit)
     {
         using (var conn = new SqliteConnection(DataConnection.ConnString))
         {
             conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText =
-                $"UPDATE drinking_water SET date = '{drink.Date:MM-dd-yy}', quantity = {drink.Quantity} WHERE Id = {drink.Id}";
+                $"UPDATE {habit.HabitName} SET date = '{habit.Date:MM-dd-yy}', quantity = {habit.Quantity} WHERE Id = {habit.Id}";
             cmd.ExecuteNonQuery();
         }
     }

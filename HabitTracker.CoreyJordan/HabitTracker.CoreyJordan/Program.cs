@@ -2,32 +2,72 @@
 using System.Globalization;
 
 string divider = "----------------------------------\n";
-SqlCommands.InitializeDB(DataConnection.ConnString);
-MainMenu();
+bool closeApp = false;
+while (!closeApp)
+{
+    MainMenu();
+}
 
+void MainMenu()
+{
+    List<string> habits = SqlCommands.GetTables();
 
+    Console.WriteLine("What would you like to do?");
+    Console.WriteLine("\t0: Exit");
+    Console.WriteLine("\t1: Open Habit");
+    Console.WriteLine("\t2: New Habit");
 
-void EditEntry()
+    string choice = Console.ReadLine()!;
+    switch (choice)
+    {
+        case "0":
+            Console.WriteLine($"{divider}Goodbye!\n{divider}");
+            closeApp = true;
+            Environment.Exit(0);
+            break;
+        case "1":
+            OpenHabit(habits);
+            break;
+        case "2":
+            CreateHabit();
+            break;
+        default:
+            Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
+            Console.ReadLine();
+            break;
+    }
+}
+
+void DisplayHabits(List<string> habits)
+{
+    for (int i = 0; i < habits.Count - 1; i++)
+    {
+        Console.WriteLine($"{i}: {habits[i]}");
+    }
+}
+
+void EditEntry(string habit)
 {
     Console.Clear();
-    DisplayEntries(GetEntries());
+    DisplayEntries(GetEntries(habit));
 
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
-    
+
     try
     {
-        if (SqlCommands.RecordExists(entryId))
+        if (SqlCommands.RecordExists(entryId, habit))
         {
             string date = GetDateInput();
             int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu: ");
-            DrinkingWater drink = new()
+            Habit editedHabit = new()
             {
+                HabitName = habit,
                 Id = entryId,
                 Date = DateTime.ParseExact(date, "MM-dd-yy", new CultureInfo("en-US")),
                 Quantity = quantity
             };
 
-            SqlCommands.UpdateRecord(drink);
+            SqlCommands.UpdateRecord(editedHabit);
 
             Console.WriteLine($"\nEntry {entryId} updated successfully.\nHit Enter...\n");
             Console.ReadLine();
@@ -36,30 +76,30 @@ void EditEntry()
         {
             Console.WriteLine($"\nEntry {entryId} does not exist.\nHit Enter...\n");
             Console.ReadLine();
-            EditEntry();
+            EditEntry(habit);
         }
     }
     catch (Exception ex)
     {
         Console.WriteLine($"\nAn unexpected error has occured\n{ex}\nHit Enter...\n");
         Console.ReadLine();
-    } 
+    }
 }
 
-void DeleteEntry()
+void DeleteEntry(string habit)
 {
     Console.Clear();
-    DisplayEntries(GetEntries());
+    DisplayEntries(GetEntries(habit));
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
 
     try
     {
-        int rowsDeleted = SqlCommands.DeleteRecord(entryId);
+        int rowsDeleted = SqlCommands.DeleteRecord(entryId, habit);
         if (rowsDeleted == 0)
         {
             Console.WriteLine("\nEntry does not exist\nHit Enter...\n");
             Console.ReadLine();
-            DeleteEntry();
+            DeleteEntry(habit);
         }
         else
         {
@@ -74,10 +114,11 @@ void DeleteEntry()
     }
 }
 
-void DisplayEntries(List<DrinkingWater> drinks)
+void DisplayEntries(List<Habit> entries)
 {
     Console.Clear();
-    if (drinks.Count == 0)
+
+    if (entries.Count == 0)
     {
         Console.WriteLine("\nNo entries found.\nHit Enter...\n");
         Console.ReadLine();
@@ -85,25 +126,25 @@ void DisplayEntries(List<DrinkingWater> drinks)
     else
     {
         Console.WriteLine(divider);
-        foreach (var entry in drinks) 
+        foreach (var entry in entries)
         {
             Console.WriteLine($"{entry.Id}: {entry.Date:MMM dd, yyyy} - Qty: {entry.Quantity}");
         }
         Console.WriteLine();
         Console.WriteLine(divider);
-
     }
 }
 
-void AddNewEntry()
+void AddNewEntry(string habitName)
 {
     Console.Clear();
-    string date = GetDateInput();    
-    int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu: ");
-        
+
+    string date = GetDateInput();
+    int quantity = GetNumberInput("\nEnter amount (integer) or \"X\" to return to Main Menu: ");
+
     try
     {
-        SqlCommands.InsertRecord(date, quantity);
+        SqlCommands.InsertRecord(date, quantity, habitName);
         Console.WriteLine("\nEntry added\nHit Enter...\n");
         Console.ReadLine();
     }
@@ -119,13 +160,13 @@ int GetNumberInput(string prompt)
     Console.Write(prompt);
     string numberInput = Console.ReadLine()!;
     int output;
-   
+
     if (numberInput.ToLower() == "x")
     {
         Console.Clear();
         MainMenu();
     }
-    
+
     while (!int.TryParse(numberInput, out output) || output < 0)
     {
         Console.Write("Invalid number. Try again: ");
@@ -153,16 +194,27 @@ string GetDateInput()
     return dateInput;
 }
 
-void MainMenu()
+void OpenHabit(List<string> habits)
 {
-    bool closeApp = false;
-    while (!closeApp)
-    {
+    Console.WriteLine(divider);
+    DisplayHabits(habits);
+    Console.WriteLine();
+    Console.WriteLine(divider);
 
-        //Console.Clear();
-        Console.WriteLine($"{divider}MAIN MENU\n{divider}");
+    int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): "); ;
+    while (habitChoice < 0 || habitChoice > habits.Count - 2)
+    {
+        Console.WriteLine("Invalid selection, try again.");
+        habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
+    }
+
+    string habit = habits[habitChoice];
+    bool returnToMain = false;
+    while (!returnToMain)
+    {
+        Console.WriteLine();
         Console.WriteLine("What would you like to do?");
-        Console.WriteLine("\t0: Exit");
+        Console.WriteLine("\t0: Return");
         Console.WriteLine("\t1: View entries");
         Console.WriteLine("\t2: Add new entry");
         Console.WriteLine("\t3: Delete entry");
@@ -173,21 +225,19 @@ void MainMenu()
         switch (choice)
         {
             case "0":
-                Console.WriteLine($"{divider}Goodbye!\n{divider}");
-                closeApp = true;
-                Environment.Exit(0);
+                returnToMain = true;
                 break;
             case "1":
-                DisplayEntries(GetEntries());
+                DisplayEntries(GetEntries(habit));
                 break;
             case "2":
-                AddNewEntry();
+                AddNewEntry(habit);
                 break;
             case "3":
-                DeleteEntry();
+                DeleteEntry(habit);
                 break;
             case "4":
-                EditEntry();
+                EditEntry(habit);
                 break;
             default:
                 Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
@@ -197,17 +247,26 @@ void MainMenu()
     }
 }
 
-List<DrinkingWater> GetEntries()
+void CreateHabit()
 {
-    List<DrinkingWater> drinks = new();
+    Console.Clear();
+    Console.Write("Enter a habit name: ");
+    string habitName = Console.ReadLine()!;
+
+    SqlCommands.InitializeDB(DataConnection.ConnString, habitName);
+}
+
+List<Habit> GetEntries(string habitName)
+{
+    List<Habit> entries = new();
     try
     {
-       drinks = SqlCommands.GetAllRecords();
+        entries = SqlCommands.GetAllRecords(habitName);
     }
     catch (Exception)
     {
         Console.WriteLine("\nError retrieving records\nHit Enter...\n");
         Console.ReadLine();
     }
-    return drinks;
+    return entries;
 }
