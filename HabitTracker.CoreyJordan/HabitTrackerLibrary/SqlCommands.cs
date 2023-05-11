@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTrackerLibrary;
 public static class SqlCommands

@@ -45,14 +45,19 @@ void DisplayHabits(List<string> habits)
 {
     for (int i = 0; i < habits.Count; i++)
     {
-        Console.WriteLine($"{i}: {habits[i]}");
+        Console.WriteLine($"{i}: {habits[i].ToUpper()}");
     }
 }
 
 void EditEntry(string habit)
 {
     Console.Clear();
-    DisplayEntries(GetEntries(habit));
+    List<Habit> entries = GetEntries(habit);
+    DisplayEntries(entries);
+    if (entries.Count == 0)
+    {
+        return;
+    }
 
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
     if (entryId == -999)
@@ -110,7 +115,13 @@ void EditEntry(string habit)
 void DeleteEntry(string habit)
 {
     Console.Clear();
-    DisplayEntries(GetEntries(habit));
+    List<Habit> entries = GetEntries(habit);
+    DisplayEntries(entries);
+    if (entries.Count == 0)
+    {
+        return;
+    }
+
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
     if (entryId == -999)
     {
@@ -148,6 +159,7 @@ void DisplayEntries(List<Habit> entries)
     {
         Console.WriteLine("\nNo entries found.\nHit Enter...\n");
         Console.ReadLine();
+        Console.Clear();
     }
     else
     {
@@ -240,10 +252,9 @@ void OpenHabit(List<string> habits)
     }
 
     Console.Clear();
-    Console.WriteLine(divider);
+    Console.WriteLine($"{divider}\tHABITS\n{divider}");
     DisplayHabits(habits);
-    Console.WriteLine();
-    Console.WriteLine(divider);
+    Console.WriteLine($"\n{divider}");
 
     int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
     if (habitChoice == -999)
@@ -264,7 +275,7 @@ void OpenHabit(List<string> habits)
     bool returnToMain = false;
     while (!returnToMain)
     {
-        Console.WriteLine();
+        Console.WriteLine($"\n{divider}\t{habit.ToUpper()}\n{divider}");
         Console.WriteLine("What would you like to do?");
         Console.WriteLine("\t0: Return");
         Console.WriteLine("\t1: View entries");
