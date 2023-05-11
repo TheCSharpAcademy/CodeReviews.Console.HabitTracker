@@ -57,6 +57,7 @@ void EditEntry(string habit)
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
     if (entryId == -999)
     {
+        Console.Clear();
         return;
     }
     
@@ -68,12 +69,14 @@ void EditEntry(string habit)
             string date = GetDateInput();
             if (date == "-999")
             {
+                Console.Clear();
                 return;
             }
 
             int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu: ");
             if (quantity == -999)
             {
+                Console.Clear();
                 return;
             }
 
@@ -111,6 +114,7 @@ void DeleteEntry(string habit)
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
     if (entryId == -999)
     {
+        Console.Clear();
         return;
     }
 
@@ -164,12 +168,14 @@ void AddNewEntry(string habitName)
     string date = GetDateInput();
     if (date == "-999")
     {
+        Console.Clear();
         return;
     }
 
     int quantity = GetNumberInput("\nEnter amount (integer) or \"X\" to return to Main Menu: ");
     if (quantity == -999)
     {
+        Console.Clear();
         return;
     }
 
@@ -192,13 +198,13 @@ int GetNumberInput(string prompt)
     string numberInput = Console.ReadLine()!;
     int output;
 
-    if (numberInput.ToLower() == "x")
-    {
-        return -999;
-    }
 
     while (!int.TryParse(numberInput, out output) || output < 0)
     {
+        if (numberInput.ToLower() == "x")
+        {
+            return -999;
+        }
         Console.Write("Invalid number. Try again: ");
         numberInput = Console.ReadLine()!;
     }
@@ -210,13 +216,13 @@ string GetDateInput()
     Console.Write("Enter the date (mm-dd-yy) or \"X\" to return to Main Menu: ");
     string dateInput = Console.ReadLine()!;
 
-    if (dateInput.ToLower() == "x")
-    {
-        return "-999";
-    }
 
     while (!DateTime.TryParseExact(dateInput, "MM-dd-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
     {
+        if (dateInput.ToLower() == "x")
+        {
+            return "-999";
+        }
         Console.Write("Invalid format. Format: mm-dd-yy: ");
         dateInput = Console.ReadLine()!;
     }
@@ -229,9 +235,11 @@ void OpenHabit(List<string> habits)
     {
         Console.WriteLine("No habits found\nHit Enter...");
         Console.ReadLine();
+        Console.Clear();
         return;
     }
 
+    Console.Clear();
     Console.WriteLine(divider);
     DisplayHabits(habits);
     Console.WriteLine();
@@ -240,16 +248,19 @@ void OpenHabit(List<string> habits)
     int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
     if (habitChoice == -999)
     {
+        Console.Clear();
         return;
     }
 
     while (habitChoice < 0 || habitChoice > habits.Count - 1)
     {
         Console.WriteLine("Invalid selection, try again.");
-        habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
+        habitChoice = GetNumberInput("Select a habit (or enter x to return): ");
     }
 
     string habit = habits[habitChoice];
+    Console.Clear();
+
     bool returnToMain = false;
     while (!returnToMain)
     {
@@ -267,6 +278,7 @@ void OpenHabit(List<string> habits)
         {
             case "0":
                 returnToMain = true;
+                Console.Clear();
                 break;
             case "1":
                 DisplayEntries(GetEntries(habit));
@@ -283,6 +295,7 @@ void OpenHabit(List<string> habits)
             default:
                 Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
                 Console.ReadLine();
+                Console.Clear();
                 break;
         }
     }
@@ -323,7 +336,7 @@ string GetStringInput()
     string input = Console.ReadLine()!;
     while (input == string.Empty || input.Contains(' '))
     {
-        Console.WriteLine("Invalid input, try again");
+        Console.Write("Invalid input, try again: ");
         input = Console.ReadLine()!;
     }
     return input;
