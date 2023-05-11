@@ -2,6 +2,8 @@
 using System.Globalization;
 
 string divider = "----------------------------------\n";
+SqlCommands.InitializeUnitTable(DataConnection.ConnString, "unitsOfMeasure");
+
 bool closeApp = false;
 while (!closeApp)
 {
@@ -34,13 +36,14 @@ void MainMenu()
         default:
             Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
             Console.ReadLine();
+            Console.Clear();
             break;
     }
 }
 
 void DisplayHabits(List<string> habits)
 {
-    for (int i = 0; i < habits.Count - 1; i++)
+    for (int i = 0; i < habits.Count; i++)
     {
         Console.WriteLine($"{i}: {habits[i]}");
     }
@@ -52,13 +55,28 @@ void EditEntry(string habit)
     DisplayEntries(GetEntries(habit));
 
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
+    if (entryId == -999)
+    {
+        return;
+    }
+    
 
     try
     {
         if (SqlCommands.RecordExists(entryId, habit))
         {
             string date = GetDateInput();
+            if (date == "-999")
+            {
+                return;
+            }
+
             int quantity = GetNumberInput("\nEnter ounces (integer) or \"X\" to return to Main Menu: ");
+            if (quantity == -999)
+            {
+                return;
+            }
+
             Habit editedHabit = new()
             {
                 HabitName = habit,
@@ -81,7 +99,7 @@ void EditEntry(string habit)
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"\nAn unexpected error has occured\n{ex}\nHit Enter...\n");
+        Console.WriteLine($"\nAn unexpected error has occured\n{ex.Message}\nHit Enter...\n");
         Console.ReadLine();
     }
 }
@@ -91,6 +109,10 @@ void DeleteEntry(string habit)
     Console.Clear();
     DisplayEntries(GetEntries(habit));
     int entryId = GetNumberInput("Select the entry you wish to delete or \"X\" to return to Main Menu: ");
+    if (entryId == -999)
+    {
+        return;
+    }
 
     try
     {
@@ -128,7 +150,7 @@ void DisplayEntries(List<Habit> entries)
         Console.WriteLine(divider);
         foreach (var entry in entries)
         {
-            Console.WriteLine($"{entry.Id}: {entry.Date:MMM dd, yyyy} - Qty: {entry.Quantity}");
+            Console.WriteLine($"{entry.Id}: {entry.Date:MMM dd, yyyy} - Qty: {entry.Quantity} {entry.Unit}");
         }
         Console.WriteLine();
         Console.WriteLine(divider);
@@ -140,7 +162,16 @@ void AddNewEntry(string habitName)
     Console.Clear();
 
     string date = GetDateInput();
+    if (date == "-999")
+    {
+        return;
+    }
+
     int quantity = GetNumberInput("\nEnter amount (integer) or \"X\" to return to Main Menu: ");
+    if (quantity == -999)
+    {
+        return;
+    }
 
     try
     {
@@ -163,8 +194,7 @@ int GetNumberInput(string prompt)
 
     if (numberInput.ToLower() == "x")
     {
-        Console.Clear();
-        MainMenu();
+        return -999;
     }
 
     while (!int.TryParse(numberInput, out output) || output < 0)
@@ -182,8 +212,7 @@ string GetDateInput()
 
     if (dateInput.ToLower() == "x")
     {
-        Console.Clear();
-        MainMenu();
+        return "-999";
     }
 
     while (!DateTime.TryParseExact(dateInput, "MM-dd-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
@@ -196,13 +225,25 @@ string GetDateInput()
 
 void OpenHabit(List<string> habits)
 {
+    if (habits.Count == 0)
+    {
+        Console.WriteLine("No habits found\nHit Enter...");
+        Console.ReadLine();
+        return;
+    }
+
     Console.WriteLine(divider);
     DisplayHabits(habits);
     Console.WriteLine();
     Console.WriteLine(divider);
 
-    int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): "); ;
-    while (habitChoice < 0 || habitChoice > habits.Count - 2)
+    int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
+    if (habitChoice == -999)
+    {
+        return;
+    }
+
+    while (habitChoice < 0 || habitChoice > habits.Count - 1)
     {
         Console.WriteLine("Invalid selection, try again.");
         habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
@@ -222,7 +263,7 @@ void OpenHabit(List<string> habits)
         Console.WriteLine(divider);
 
         string choice = Console.ReadLine()!;
-        switch (choice)
+        switch (choice.ToLower())
         {
             case "0":
                 returnToMain = true;
@@ -250,10 +291,42 @@ void OpenHabit(List<string> habits)
 void CreateHabit()
 {
     Console.Clear();
-    Console.Write("Enter a habit name: ");
-    string habitName = Console.ReadLine()!;
 
-    SqlCommands.InitializeDB(DataConnection.ConnString, habitName);
+    Console.Write("Enter a habit name without spaces (or x to return to main menu): ");
+    string habitName = GetStringInput();
+    if (habitName.ToLower() == "x")
+    {
+        return;
+    }
+
+    Console.Write("Enter a unit of measurement for this habit (or x to return to main): ");
+    string unitOfMeasure = GetStringInput();
+    if (unitOfMeasure.ToLower() == "x")
+    {
+        return;
+    }
+
+    try
+    {
+        SqlCommands.InitializeDB(DataConnection.ConnString, habitName);
+        SqlCommands.InsertRecord(habitName, unitOfMeasure);
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("Habit could not be created\nHit Enter...");
+        Console.ReadLine();
+    }
+}
+
+string GetStringInput()
+{
+    string input = Console.ReadLine()!;
+    while (input == string.Empty || input.Contains(' '))
+    {
+        Console.WriteLine("Invalid input, try again");
+        input = Console.ReadLine()!;
+    }
+    return input;
 }
 
 List<Habit> GetEntries(string habitName)
@@ -263,9 +336,10 @@ List<Habit> GetEntries(string habitName)
     {
         entries = SqlCommands.GetAllRecords(habitName);
     }
-    catch (Exception)
+    catch (Exception ex)
     {
         Console.WriteLine("\nError retrieving records\nHit Enter...\n");
+        Console.WriteLine(ex.Message);
         Console.ReadLine();
     }
     return entries;

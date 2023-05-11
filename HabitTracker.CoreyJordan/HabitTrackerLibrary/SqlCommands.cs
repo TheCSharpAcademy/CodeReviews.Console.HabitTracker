@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTrackerLibrary;
 public static class SqlCommands
@@ -36,7 +37,19 @@ public static class SqlCommands
                     Id = reader.GetInt32(0),
                     Date = DateTime.ParseExact(reader.GetString(1), "MM-dd-yy", new CultureInfo("en-US")),
                     Quantity = reader.GetInt32(2)
-                });
+                }) ;
+            }
+
+            var unitCmd = conn.CreateCommand();
+            unitCmd.CommandText =
+                $"SELECT Unit FROM unitsOfMeasure WHERE TableId='{tableName}'";
+            var unitreader = unitCmd.ExecuteReader();
+            while (unitreader.Read())
+            {
+                foreach (Habit habit in habits)
+                {
+                    habit.Unit = unitreader.GetString(0);
+                }
             }
         }
         return habits;
@@ -50,7 +63,11 @@ public static class SqlCommands
             conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText =
-                $"SELECT name FROM sqlite_master WHERE type='table' ORDER BY name";
+                @$"SELECT name FROM sqlite_master WHERE type='table' 
+                    EXCEPT SELECT name FROM sqlite_master WHERE type='table' 
+                    AND name='unitsOfMeasure' 
+                    OR name='sqlite_sequence'
+                    ORDER BY name";
             SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -76,6 +93,21 @@ public static class SqlCommands
         }
     }
 
+    public static void InitializeUnitTable(string connString, string tableName)
+    {
+        using (var conn = new SqliteConnection(connString))
+        {
+            conn.Open();
+            var cmd = conn.CreateCommand();
+
+            cmd.CommandText = @$"CREATE TABLE IF NOT EXISTS {tableName}
+                (TableId TEXT,
+                Unit TEXT)";
+
+            cmd.ExecuteNonQuery();
+        }
+    }
+
     public static void InsertRecord(string date, int quantity, string tableName)
     {
         using (var conn = new SqliteConnection(DataConnection.ConnString))
@@ -84,6 +116,18 @@ public static class SqlCommands
             var cmd = conn.CreateCommand();
             cmd.CommandText =
                 $"INSERT INTO {tableName}(date, quantity) VALUES('{date}', {quantity})";
+            cmd.ExecuteNonQuery();
+        }
+    }
+
+    public static void InsertRecord(string tableName, string unit)
+    {
+        using (var conn = new SqliteConnection(DataConnection.ConnString))
+        {
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                $"INSERT INTO unitsOfMeasure(TableId, Unit) VALUES('{tableName}','{unit}')";
             cmd.ExecuteNonQuery();
         }
     }
