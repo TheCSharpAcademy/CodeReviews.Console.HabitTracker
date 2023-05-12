@@ -14,6 +14,7 @@ void MainMenu()
 {
     List<string> habits = SqlCommands.GetTables();
 
+    Console.Clear();
     Console.WriteLine("What would you like to do?");
     Console.WriteLine("\t0: Exit");
     Console.WriteLine("\t1: Open Habit");
@@ -36,8 +37,106 @@ void MainMenu()
         default:
             Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
             Console.ReadLine();
-            Console.Clear();
             break;
+    }
+}
+
+void OpenHabit(List<string> habits)
+{
+    Console.Clear();
+    if (habits.Count == 0)
+    {
+        Console.WriteLine("No habits found\nHit Enter...");
+        Console.ReadLine();
+        return;
+    }
+
+    Console.WriteLine($"{divider}\tHABITS\n{divider}");
+    DisplayHabits(habits);
+    Console.WriteLine($"\n{divider}");
+
+    int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
+    if (habitChoice == -999)
+    {
+        return;
+    }
+
+    while (habitChoice < 0 || habitChoice > habits.Count - 1)
+    {
+        Console.WriteLine("Invalid selection, try again.");
+        habitChoice = GetNumberInput("Select a habit (or enter x to return): ");
+    }
+
+    string habit = habits[habitChoice];
+    bool returnToMain = false;
+
+    Console.Clear();
+    while (!returnToMain)
+    {
+        Console.WriteLine($"\n{divider}\t{habit.ToUpper()}\n{divider}");
+        Console.WriteLine("What would you like to do?");
+        Console.WriteLine("\t0: Return");
+        Console.WriteLine("\t1: View entries");
+        Console.WriteLine("\t2: Add new entry");
+        Console.WriteLine("\t3: Delete entry");
+        Console.WriteLine("\t4: Edit entry");
+        Console.WriteLine("\t5: Get Report");
+        Console.WriteLine(divider);
+
+        string choice = Console.ReadLine()!;
+        switch (choice.ToLower())
+        {
+            case "0":
+                returnToMain = true;
+                break;
+            case "1":
+                DisplayEntries(GetEntries(habit));
+                break;
+            case "2":
+                AddNewEntry(habit);
+                break;
+            case "3":
+                DeleteEntry(habit);
+                break;
+            case "4":
+                EditEntry(habit);
+                break;
+            case "5":
+                GetHabitReport(habit);
+                break;
+            default:
+                Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
+                Console.ReadLine();
+                break;
+        }
+    }
+}
+
+void GetHabitReport(string habit)
+{
+    Console.Clear();
+    try
+    {
+        List<Habit> report = GetEntries(habit);
+        if (report.Count == 0)
+        {
+            return;
+        }
+
+        int total = 0;
+        for (int i = 0; i < report.Count; i++)
+        {
+            total += report[i].Quantity;
+            
+        }
+
+        Console.WriteLine($"Number of {habit} performed: {report.Count}");
+        Console.WriteLine($"Total {report[0].Unit}: {total}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"There was an error retrieving the report\n{ex.Message}\nHit Enter...");
+        Console.ReadLine();
     }
 }
 
@@ -119,6 +218,7 @@ void DeleteEntry(string habit)
     DisplayEntries(entries);
     if (entries.Count == 0)
     {
+        Console.Clear();
         return;
     }
 
@@ -196,11 +296,13 @@ void AddNewEntry(string habitName)
         SqlCommands.InsertRecord(date, quantity, habitName);
         Console.WriteLine("\nEntry added\nHit Enter...\n");
         Console.ReadLine();
+        Console.Clear();
     }
     catch (Exception ex)
     {
         Console.WriteLine($"\nEntry failed to insert\n{ex}\nHit Enter...\n");
         Console.ReadLine();
+        Console.Clear();
     }
 }
 
@@ -239,77 +341,6 @@ string GetDateInput()
         dateInput = Console.ReadLine()!;
     }
     return dateInput;
-}
-
-void OpenHabit(List<string> habits)
-{
-    if (habits.Count == 0)
-    {
-        Console.WriteLine("No habits found\nHit Enter...");
-        Console.ReadLine();
-        Console.Clear();
-        return;
-    }
-
-    Console.Clear();
-    Console.WriteLine($"{divider}\tHABITS\n{divider}");
-    DisplayHabits(habits);
-    Console.WriteLine($"\n{divider}");
-
-    int habitChoice = GetNumberInput("Select a habit (or enter x to return to main menu): ");
-    if (habitChoice == -999)
-    {
-        Console.Clear();
-        return;
-    }
-
-    while (habitChoice < 0 || habitChoice > habits.Count - 1)
-    {
-        Console.WriteLine("Invalid selection, try again.");
-        habitChoice = GetNumberInput("Select a habit (or enter x to return): ");
-    }
-
-    string habit = habits[habitChoice];
-    Console.Clear();
-
-    bool returnToMain = false;
-    while (!returnToMain)
-    {
-        Console.WriteLine($"\n{divider}\t{habit.ToUpper()}\n{divider}");
-        Console.WriteLine("What would you like to do?");
-        Console.WriteLine("\t0: Return");
-        Console.WriteLine("\t1: View entries");
-        Console.WriteLine("\t2: Add new entry");
-        Console.WriteLine("\t3: Delete entry");
-        Console.WriteLine("\t4: Edit entry");
-        Console.WriteLine(divider);
-
-        string choice = Console.ReadLine()!;
-        switch (choice.ToLower())
-        {
-            case "0":
-                returnToMain = true;
-                Console.Clear();
-                break;
-            case "1":
-                DisplayEntries(GetEntries(habit));
-                break;
-            case "2":
-                AddNewEntry(habit);
-                break;
-            case "3":
-                DeleteEntry(habit);
-                break;
-            case "4":
-                EditEntry(habit);
-                break;
-            default:
-                Console.WriteLine("\nInvalid Command. Please try again.\nHit Enter");
-                Console.ReadLine();
-                Console.Clear();
-                break;
-        }
-    }
 }
 
 void CreateHabit()
