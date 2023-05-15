@@ -86,7 +86,7 @@
 
             habitTable.GetAllRecords().ForEach((record) =>
             {
-                allRecords.AddOption((num++).ToString(), record.Date.Date.ToString("yyyy-MM-dd"), () => { HabitRecordMenu(habitTable, record); });
+                allRecords.AddOption((num++).ToString(), $"{record.Date.Date.ToString("yyyy-MM-dd")} - {record.Value} {habitTable.TableUnit}", () => { HabitRecordMenu(habitTable, record); });
             });
 
             allRecords.AddOption("B", "Go Back This Habits Menu...", () => { HabitMenu(habitTable); });
