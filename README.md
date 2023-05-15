@@ -1,38 +1,28 @@
-README for habit_tracker Github repository
-
-## Introduction
-
-This repository contains a simple console application that allows the user to track their beer consumption. The application is written in C# and uses Microsoft.Data.Sqlite library for data storage. 
-
-
-## Usage
-
-The application will display a menu with the following options:
-
-- View all records
-- Insert a record
-- Delete a record
-- Update a record
-- Total beers drank
-
-To select an option, type the corresponding number and press Enter.
-
-### View all records
-
-This option displays all the records of beer consumption in the database. The records include the date and the quantity of beer consumed.
-
-### Insert a record
-
-This option allows the user to add a new record to the database. The user is prompted to enter the date and the quantity of beer consumed.
-
-### Delete a record
-
-This option allows the user to delete a record from the database. The user is prompted to enter the ID of the record to be deleted.
-
-### Update a record
-
-This option allows the user to update a record in the database. The user is prompted to enter the ID of the record to be updated, as well as the new date and quantity of beer consumed.
-
-### Total beers drank
-
-This option displays the total quantity of beer consumed by the user.
+<h1>Habit Tracker Console Application</h1>
+<h3>Authored by Corey Jordan</h3>
+<h3>May 12th, 2023</h3>
+<hr>
+<p>
+  This a C# Console Application designed to store and track habits on a very basic level.<br>
+  This application makes use of Sqlite and CRUD operations.
+</p>
+<h1>Requirements</h1>
+<ul>
+  <li>Application must store and retrieve data from a database</li>
+  <li>Application must create a db if one does not exist</li>
+  <li>The app must create a table in the db where the habit will be stored</li>
+  <li>The app must be able to perform CRUD operations</li>
+  <li>The application must exit only upon user request</li>
+  <li>Cannot use data mappers, raw SQL only</li>
+  <li>Project must contain a ReadMe file</li>
+</ul>
+<h1>Challenges</h1>
+<ul>
+  <li>User can create custom habits and units of measurement</li>
+  <li>App to have report functionality</li>
+</ul>
+<h1>Thoughts</h1>
+<ol>
+  <li>My knowledge of SQL is limited. Basic crud ops are simple. I ran into trouble creating a table to store units of measurement. In the end, I used the habit's tabe name as a key for the unit table but this feels incorrect. I also was unsure how to combine the queries into some sort of joiner and ended up performing 2 queries for the report function.</li>
+  <li>A lot of the program code is UI specific but feels a bit long and jumbled. In the future I might look for a better way to further seperate the program responsibilities. I do feel as though I seperated data logic and UI logic fairly well.</li>
+  <li>I need to improve writing my commits. I do well enough to keep the commit message concise but I seldom explain in more detail afterwards.</li>
