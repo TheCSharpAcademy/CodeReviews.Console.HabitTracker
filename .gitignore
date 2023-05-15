@@ -404,3 +404,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
 /.vs/Console.HabitTracker/v17/.wsuo
+/HabitTracker.barakisbrown/HabitTracker.barakisbrown/old_readings.db
