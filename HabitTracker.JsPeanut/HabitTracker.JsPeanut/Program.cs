@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using System.Globalization;
 namespace HabitTracker.JsPeanut
 {
@@ -306,13 +306,13 @@ namespace HabitTracker.JsPeanut
                             Habits.Add(new Habit
                             {
                                 HabitName = reader.GetString(0),
-                                Countt = reader.GetInt32(1)
+                                Count = reader.GetInt32(1)
                             });
                         }
                     }
-                    var consistentHabits_ = Habits.Max(h => h.Countt);
+                    var consistentHabits_ = Habits.Max(h => h.Count);
 
-                    IEnumerable<String> ConsistentHabits = Habits.Where(h => h.Countt == consistentHabits_).Select(h => h.HabitName);
+                    IEnumerable<String> ConsistentHabits = Habits.Where(h => h.Count == consistentHabits_).Select(h => h.HabitName);
 
                     if (ConsistentHabits.Count() == 1)
                     {
@@ -353,13 +353,13 @@ namespace HabitTracker.JsPeanut
                             Habits.Add(new Habit
                             {
                                 HabitName = reader.GetString(0),
-                                Countt = reader.GetInt32(1)
+                                Count = reader.GetInt32(1)
                             });
                         }
                     }
-                    var leastConsistentHabits_ = Habits.Min(h => h.Countt);
+                    var leastConsistentHabits_ = Habits.Min(h => h.Count);
 
-                    IEnumerable<String> leastConsistentHabits = Habits.Where(h => h.Countt == leastConsistentHabits_).Select(h => h.HabitName);
+                    IEnumerable<String> leastConsistentHabits = Habits.Where(h => h.Count == leastConsistentHabits_).Select(h => h.HabitName);
 
                     if (leastConsistentHabits.Count() == 1)
                     {
@@ -387,7 +387,7 @@ namespace HabitTracker.JsPeanut
 
             public int Quantity { get; set; }
 
-            public int Countt { get; set; }
+            public int Count { get; set; }
 
         }
     }
