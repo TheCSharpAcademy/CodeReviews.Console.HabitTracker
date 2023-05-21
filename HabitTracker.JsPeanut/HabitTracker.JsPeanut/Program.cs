@@ -1,7 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
-using System.Text.RegularExpressions;
-
 namespace HabitTracker.JsPeanut
 {
     class Program
@@ -21,11 +19,8 @@ namespace HabitTracker.JsPeanut
 
                 connection.Close();
             }
-
             GetUserInput();
         }
-
-
         static void GetUserInput()
         {
             bool exit = false;
@@ -207,10 +202,7 @@ namespace HabitTracker.JsPeanut
                 foreach (var habit in Habits)
                 {
                     Console.WriteLine($"{habit.Id} - {habit.HabitName} - {habit.Date.ToString("dd-MMM-yyyy")} - {habit.Quantity} {habit.MeasurementUnit}");
-
                 }
-
-
             }
         }
         private static void Delete()
@@ -282,7 +274,6 @@ namespace HabitTracker.JsPeanut
                 connection.Close();
 
                 GetUserInput();
-
             }
         }
 
@@ -383,10 +374,8 @@ namespace HabitTracker.JsPeanut
 
                     GetUserInput();
                 }
-
             }
         }
-
         class Habit
         {
             public int Id { get; set; }
