@@ -2,6 +2,13 @@
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 
+
+Console.Write("Wich habit would you like to track : ");
+string habit = Console.ReadLine();
+Console.Title = habit;
+Console.Write("Which measurement unit should be used ?: ");
+string measurement = Console.ReadLine();
+
 string connectionString = @"Data Source=habitTracker.db";
 
 //create db if it doesnt exist yet
@@ -11,7 +18,7 @@ using (var connection = new SqliteConnection(connectionString))
 	var command = connection.CreateCommand();
 
 	command.CommandText = 
-		@"CREATE TABLE IF NOT EXISTS drinking(
+		@"CREATE TABLE IF NOT EXISTS habit(
 		Id INTEGER PRIMARY KEY AUTOINCREMENT,
 		Date TEXT,
 		Quantity INTEGER)";
@@ -29,7 +36,7 @@ void GetInput()
 	while (closeApp == false)
 	{
 		
-		Console.WriteLine("Welcome to this habit tracker");
+		Console.WriteLine($"Welcome to the {habit} tracker");
 		Console.WriteLine("---------------------------------");
 		Console.WriteLine("Please make a selection:");
 		Console.WriteLine("Type 1 to View All Records");
@@ -44,16 +51,16 @@ void GetInput()
 		{
 			case "0": Environment.Exit(0);
 				break;
-			case "1": ViewRecords();
+			case "1": ViewRecords(); Console.ReadLine(); Console.Clear();
 				break;
-			case "2": InsertRecord();
+			case "2": InsertRecord(); Console.Clear();
 				break;
-			case "3": DeleteRecord();
+			case "3": DeleteRecord(); Console.Clear();
 				break;
-			case "4": UpdateRecord();
+			case "4": UpdateRecord(); Console.Clear();
 				break;
 			default:
-                Console.WriteLine("Invalid input, please enter a correct number");
+                Console.WriteLine("Invalid input, please enter a correct number"); Console.Clear();
                 break;
 		}
 	}
@@ -66,7 +73,7 @@ void ViewRecords()
 	{
 		connection.Open();
 		var command = connection.CreateCommand();
-		command.CommandText = "SELECT * FROM drinking";
+		command.CommandText = "SELECT * FROM habit";
 		List<DrinkWater> records = new();
 		SqliteDataReader reader = command.ExecuteReader();
 		if (reader.HasRows)
@@ -84,7 +91,7 @@ void ViewRecords()
 		else
 		{
 			Console.Clear();
-			Console.WriteLine("No data found");
+			Console.WriteLine("No data found in database");
 			Console.ReadLine();
 			GetInput();
 		}
@@ -92,12 +99,12 @@ void ViewRecords()
         connection.Close();
 
 		Console.Clear();
+		Console.WriteLine("***********************************************");
 		foreach (var record in records)
 		{
-            Console.WriteLine($"{record.Id} - {record.Date.ToString("dd/MM/yyyy")} - {record.Quantity}");
+            Console.WriteLine($"{record.Id} - {record.Date.ToString("dd/MM/yyyy")} - {record.Quantity} {measurement}");
         }
-		Console.ReadLine();
-		Console.Clear();
+		Console.WriteLine("***********************************************");
 	}
 }
 void UpdateRecord()
@@ -108,25 +115,37 @@ void UpdateRecord()
 	string newDate = GetDate("Enter a new value for date: ");
 	int newQuantity = GetQuantity("Enter a new value for quantity: ");
 
-    using (var connection = new SqliteConnection(connectionString))
+	using (var connection = new SqliteConnection(connectionString))
 	{
 		connection.Open();
 		var command = connection.CreateCommand();
+		command.CommandText = $"SELECT 1 FROM habit WHERE Id ={idToUpdate}";
+
+
+
 
 		command.CommandText =
-			@$"UPDATE drinking SET Date = '{newDate}', Quantity = '{newQuantity}' WHERE Id ='{idToUpdate}'";
-		command.ExecuteNonQuery();
+			@$"UPDATE habit SET Date = '{newDate}', Quantity = '{newQuantity}' WHERE Id ='{idToUpdate}'";
+		int rowCount = command.ExecuteNonQuery();
+		if (rowCount == 0) 
+		{
+			Console.WriteLine($"Record nr {idToUpdate} doesn't exists, please enter an existing recordid");
+			Console.ReadLine();
+			connection.Close();
+			UpdateRecord();
+		}
 		connection.Close();
 	}
-	Console.WriteLine($"record nr {idToUpdate} succesfully updated.");
+	Console.WriteLine($"Record nr {idToUpdate} succesfully updated.");
 	Console.ReadLine();
-	Console.Clear();
 
 }
 
 void DeleteRecord()
 {
 	Console.Clear();
+	ViewRecords();
+	
 	Console.Write("Enter the id of the record you want to delete: ");
 	int idToDelete = Convert.ToInt32(Console.ReadLine());
 
@@ -135,30 +154,36 @@ void DeleteRecord()
 		connection.Open();
 		var command = connection.CreateCommand();
 
-		command.CommandText =
-			@$"DELETE FROM drinking WHERE Id ='{idToDelete}'";
-		command.ExecuteNonQuery();
+		command.CommandText = $"DELETE FROM habit WHERE id = '{idToDelete}'";
+		int rowCount = command.ExecuteNonQuery();
+		
+		if (rowCount == 0)
+		{
+			Console.WriteLine($"Record nr {idToDelete} doesn't exists, please enter an existing recordid");
+			Console.ReadLine();
+			connection.Close();
+			DeleteRecord();
+		}
+
 		connection.Close();
 	}
-    Console.WriteLine($"record nr {idToDelete} succesfully deleted.");
+    Console.WriteLine($"Record nr {idToDelete} succesfully deleted.");
 	Console.ReadLine ();
-	Console.Clear();
 }
 
 void InsertRecord()
 {
 	string date = GetDate("Enter the date (dd/mm/yy), type 0 to return to main menu");
-	int quantity = GetQuantity("How many water did you drink (in centiliters)");
+	int quantity = GetQuantity($"How many {measurement} ?");
 
 	using (var connection = new SqliteConnection(connectionString))
 	{
 		connection.Open();
 		var command = connection.CreateCommand();
-		command.CommandText = $"INSERT INTO drinking(date, quantity) VALUES ('{date}','{quantity}')";
+		command.CommandText = $"INSERT INTO habit(date, quantity) VALUES ('{date}','{quantity}')";
 		command.ExecuteNonQuery();
 		connection.Close();
 	}
-	Console.Clear();
 }
 
 int GetQuantity(string question)
