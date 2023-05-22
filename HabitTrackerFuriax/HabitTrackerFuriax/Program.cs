@@ -71,7 +71,7 @@ void ViewRecords()
 		SqliteDataReader reader = command.ExecuteReader();
 		if (reader.HasRows)
 		{
-			while(reader.Read())
+			while (reader.Read())
 			{
 				records.Add(new DrinkWater
 				{
@@ -81,8 +81,13 @@ void ViewRecords()
 				}); ;
 			}
 		}
-        else
-            Console.WriteLine("No data found");
+		else
+		{
+			Console.Clear();
+			Console.WriteLine("No data found");
+			Console.ReadLine();
+			GetInput();
+		}
 
         connection.Close();
 
@@ -97,18 +102,53 @@ void ViewRecords()
 }
 void UpdateRecord()
 {
-	throw new NotImplementedException();
+	Console.Clear();
+	Console.Write("Enter the id of the record you want to update: ");
+	int idToUpdate = Convert.ToInt32(Console.ReadLine());
+	string newDate = GetDate("Enter a new value for date: ");
+	int newQuantity = GetQuantity("Enter a new value for quantity: ");
+
+    using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var command = connection.CreateCommand();
+
+		command.CommandText =
+			@$"UPDATE drinking SET Date = '{newDate}', Quantity = '{newQuantity}' WHERE Id ='{idToUpdate}'";
+		command.ExecuteNonQuery();
+		connection.Close();
+	}
+	Console.WriteLine($"record nr {idToUpdate} succesfully updated.");
+	Console.ReadLine();
+	Console.Clear();
+
 }
 
 void DeleteRecord()
 {
-	throw new NotImplementedException();
+	Console.Clear();
+	Console.Write("Enter the id of the record you want to delete: ");
+	int idToDelete = Convert.ToInt32(Console.ReadLine());
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var command = connection.CreateCommand();
+
+		command.CommandText =
+			@$"DELETE FROM drinking WHERE Id ='{idToDelete}'";
+		command.ExecuteNonQuery();
+		connection.Close();
+	}
+    Console.WriteLine($"record nr {idToDelete} succesfully deleted.");
+	Console.ReadLine ();
+	Console.Clear();
 }
 
 void InsertRecord()
 {
-	string date = GetDate();
-	int quantity = GetNumber("How many water did you drink (in centiliters)");
+	string date = GetDate("Enter the date (dd/mm/yy), type 0 to return to main menu");
+	int quantity = GetQuantity("How many water did you drink (in centiliters)");
 
 	using (var connection = new SqliteConnection(connectionString))
 	{
@@ -121,7 +161,7 @@ void InsertRecord()
 	Console.Clear();
 }
 
-int GetNumber(string question)
+int GetQuantity(string question)
 {
     Console.WriteLine(question);
 	int input = Convert.ToInt32(Console.ReadLine());
@@ -130,9 +170,9 @@ int GetNumber(string question)
 	return input;
 }
 
-string GetDate()
+string GetDate(string question)
 {
-    Console.WriteLine("Enter the date (dd/mm/yy), type 0 to return to main menu");
+    Console.WriteLine(question);
 	string input = Console.ReadLine();
 	if (input == "0")
 		GetInput();
