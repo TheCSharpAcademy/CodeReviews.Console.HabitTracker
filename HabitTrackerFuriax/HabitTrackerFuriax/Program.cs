@@ -1,6 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
-using System.Threading.Channels;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using HabitTrackerFuriax.Models;
+using Microsoft.Data.Sqlite;
+using System.Globalization;
 
 string connectionString = @"Data Source=habitTracker.db";
 
@@ -24,11 +24,11 @@ GetInput();
 
 void GetInput()
 {
-	
+	Console.Clear();
 	bool closeApp = false;
 	while (closeApp == false)
 	{
-		Console.Clear();
+		
 		Console.WriteLine("Welcome to this habit tracker");
 		Console.WriteLine("---------------------------------");
 		Console.WriteLine("Please make a selection:");
@@ -59,6 +59,42 @@ void GetInput()
 	}
 }
 
+void ViewRecords()
+{
+	
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var command = connection.CreateCommand();
+		command.CommandText = "SELECT * FROM drinking";
+		List<DrinkWater> records = new();
+		SqliteDataReader reader = command.ExecuteReader();
+		if (reader.HasRows)
+		{
+			while(reader.Read())
+			{
+				records.Add(new DrinkWater
+				{
+					Id = reader.GetInt32(0),
+					Date = DateTime.ParseExact(reader.GetString(1), "dd/MM/yy", new CultureInfo("nl-BE")),
+					Quantity = reader.GetInt32(2)
+				}); ;
+			}
+		}
+        else
+            Console.WriteLine("No data found");
+
+        connection.Close();
+
+		Console.Clear();
+		foreach (var record in records)
+		{
+            Console.WriteLine($"{record.Id} - {record.Date.ToString("dd/MM/yyyy")} - {record.Quantity}");
+        }
+		Console.ReadLine();
+		Console.Clear();
+	}
+}
 void UpdateRecord()
 {
 	throw new NotImplementedException();
@@ -82,6 +118,7 @@ void InsertRecord()
 		command.ExecuteNonQuery();
 		connection.Close();
 	}
+	Console.Clear();
 }
 
 int GetNumber(string question)
@@ -95,21 +132,10 @@ int GetNumber(string question)
 
 string GetDate()
 {
-    Console.WriteLine("Enter the date (dd-mm-yy), type 0 to return to main menu");
+    Console.WriteLine("Enter the date (dd/mm/yy), type 0 to return to main menu");
 	string input = Console.ReadLine();
 	if (input == "0")
 		GetInput();
 	return input;
 }
 
-void ViewRecords()
-{
-	using (var connection = new SqliteConnection(connectionString))
-	{
-		connection.Open();
-		var command = connection.CreateCommand();
-		command.CommandText = "SELECT * FROM drinking";
-		command.ExecuteNonQuery();
-		connection.Close();
-	}
-}
