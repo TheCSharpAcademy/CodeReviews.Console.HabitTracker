@@ -5,7 +5,7 @@ using System.Globalization;
 
 Console.Write("Wich habit would you like to track : ");
 string habit = Console.ReadLine();
-Console.Title = habit;
+Console.Title = $"{habit} tracker";
 Console.Write("Which measurement unit should be used ?: ");
 string measurement = Console.ReadLine();
 
@@ -49,7 +49,7 @@ void GetInput()
 
 		switch (input)
 		{
-			case "0": Environment.Exit(0);
+			case "0": closeApp = true;  Environment.Exit(0);
 				break;
 			case "1": ViewRecords(); Console.ReadLine(); Console.Clear();
 				break;
@@ -110,31 +110,36 @@ void ViewRecords()
 void UpdateRecord()
 {
 	Console.Clear();
+	ViewRecords();
 	Console.Write("Enter the id of the record you want to update: ");
 	int idToUpdate = Convert.ToInt32(Console.ReadLine());
-	string newDate = GetDate("Enter a new value for date: ");
-	int newQuantity = GetQuantity("Enter a new value for quantity: ");
 
 	using (var connection = new SqliteConnection(connectionString))
 	{
+		int checkQuery = 0;
+		
+		while (checkQuery == 0)
+		{
+			connection.Open();
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit WHERE Id ={idToUpdate})";
+			checkQuery = Convert.ToInt32(cmd.ExecuteScalar());
+
+			if (checkQuery == 0)
+			{
+				Console.WriteLine($"Record nr {idToUpdate} doesn't exists, please enter an existing recordid or enter 0 to return to main menu");
+				idToUpdate = Convert.ToInt32(Console.ReadLine());
+				if (idToUpdate == 0)
+					GetInput();
+			}		
+			connection.Close();
+		}
 		connection.Open();
 		var command = connection.CreateCommand();
-		command.CommandText = $"SELECT 1 FROM habit WHERE Id ={idToUpdate}";
-
-
-
-
-		command.CommandText =
-			@$"UPDATE habit SET Date = '{newDate}', Quantity = '{newQuantity}' WHERE Id ='{idToUpdate}'";
-		int rowCount = command.ExecuteNonQuery();
-		if (rowCount == 0) 
-		{
-			Console.WriteLine($"Record nr {idToUpdate} doesn't exists, please enter an existing recordid");
-			Console.ReadLine();
-			connection.Close();
-			UpdateRecord();
-		}
-		connection.Close();
+		string newDate = GetDate("Enter a new value for date: ");
+		int newQuantity = GetQuantity("Enter a new value for quantity: ");
+		command.CommandText = @$"UPDATE habit SET Date = '{newDate}', Quantity = '{newQuantity}' WHERE Id ='{idToUpdate}'";
+		connection.Close() ;
 	}
 	Console.WriteLine($"Record nr {idToUpdate} succesfully updated.");
 	Console.ReadLine();
@@ -151,21 +156,24 @@ void DeleteRecord()
 
 	using (var connection = new SqliteConnection(connectionString))
 	{
-		connection.Open();
-		var command = connection.CreateCommand();
-
-		command.CommandText = $"DELETE FROM habit WHERE id = '{idToDelete}'";
-		int rowCount = command.ExecuteNonQuery();
+		int row = 0;
 		
-		if (rowCount == 0)
+		
+		while (row == 0)
 		{
-			Console.WriteLine($"Record nr {idToDelete} doesn't exists, please enter an existing recordid");
-			Console.ReadLine();
+			connection.Open();
+			var command = connection.CreateCommand();
+			command.CommandText = $"DELETE FROM habit WHERE id = '{idToDelete}'";
+			row = command.ExecuteNonQuery();
+			if (row == 0)
+			{
+				Console.Write($"Record nr {idToDelete} doesn't exists, enter an existing record id or 0 to return to main menu : ");
+				idToDelete = Convert.ToInt32(Console.ReadLine());
+				if (idToDelete == 0)
+					GetInput();
+			}
 			connection.Close();
-			DeleteRecord();
 		}
-
-		connection.Close();
 	}
     Console.WriteLine($"Record nr {idToDelete} succesfully deleted.");
 	Console.ReadLine ();
@@ -173,6 +181,7 @@ void DeleteRecord()
 
 void InsertRecord()
 {
+	Console.Clear();
 	string date = GetDate("Enter the date (dd/mm/yy), type 0 to return to main menu");
 	int quantity = GetQuantity($"How many {measurement} ?");
 
@@ -189,10 +198,16 @@ void InsertRecord()
 int GetQuantity(string question)
 {
     Console.WriteLine(question);
-	int input = Convert.ToInt32(Console.ReadLine());
-	if (input == 0)
+	string input = Console.ReadLine();
+	if (input == "0")
 		GetInput();
-	return input;
+	while (!Int32.TryParse(input, out _) || Convert.ToInt32(input) < 0)
+	{
+		Console.Write("Invalid number, please enter a valid integer: ");
+		input = Console.ReadLine();
+	}
+	int output = Convert.ToInt32(input);
+	return output;
 }
 
 string GetDate(string question)
@@ -201,6 +216,11 @@ string GetDate(string question)
 	string input = Console.ReadLine();
 	if (input == "0")
 		GetInput();
+	while (!DateTime.TryParseExact(input, "dd/MM/yy", new CultureInfo("nl-BE"), DateTimeStyles.None, out _))
+	{
+		Console.Write("Invalid date, format need to be dd/mm/yy, please enter a valid date: ");
+		input = Console.ReadLine();
+	}
 	return input;
 }
 
