@@ -2,14 +2,11 @@
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 
-
-Console.Write("Wich habit would you like to track : ");
-string habit = Console.ReadLine();
-Console.Title = $"{habit} tracker";
-Console.Write("Which measurement unit should be used ?: ");
-string measurement = Console.ReadLine();
-
 string connectionString = @"Data Source=habitTracker.db";
+string habit = "drink water";
+string measurement = "cl";
+
+//GetHabit();
 
 //create db if it doesnt exist yet
 using (var connection = new SqliteConnection(connectionString))
@@ -112,7 +109,8 @@ void UpdateRecord()
 	Console.Clear();
 	ViewRecords();
 	Console.Write("Enter the id of the record you want to update: ");
-	int idToUpdate = Convert.ToInt32(Console.ReadLine());
+	string input = CheckForValidNumber( Console.ReadLine());
+	int idToUpdate = Convert.ToInt32(input);
 
 	using (var connection = new SqliteConnection(connectionString))
 	{
@@ -127,8 +125,9 @@ void UpdateRecord()
 
 			if (checkQuery == 0)
 			{
-				Console.WriteLine($"Record nr {idToUpdate} doesn't exists, please enter an existing recordid or enter 0 to return to main menu");
-				idToUpdate = Convert.ToInt32(Console.ReadLine());
+				Console.WriteLine($"Record nr {idToUpdate} doesn't exists, please enter an existing recordid or enter 0 to return to main menu: ");
+				input = CheckForValidNumber(Console.ReadLine());
+				idToUpdate = Convert.ToInt32(input);
 				if (idToUpdate == 0)
 					GetInput();
 			}		
@@ -146,13 +145,16 @@ void UpdateRecord()
 
 }
 
+
+
 void DeleteRecord()
 {
 	Console.Clear();
 	ViewRecords();
 	
 	Console.Write("Enter the id of the record you want to delete: ");
-	int idToDelete = Convert.ToInt32(Console.ReadLine());
+	string input = CheckForValidNumber(Console.ReadLine());
+	int idToDelete = Convert.ToInt32(input);
 
 	using (var connection = new SqliteConnection(connectionString))
 	{
@@ -168,7 +170,8 @@ void DeleteRecord()
 			if (row == 0)
 			{
 				Console.Write($"Record nr {idToDelete} doesn't exists, enter an existing record id or 0 to return to main menu : ");
-				idToDelete = Convert.ToInt32(Console.ReadLine());
+				input = CheckForValidNumber(Console.ReadLine());
+				idToDelete = Convert.ToInt32(input);
 				if (idToDelete == 0)
 					GetInput();
 			}
@@ -224,3 +227,31 @@ string GetDate(string question)
 	return input;
 }
 
+void GetHabit()
+{
+	Console.Write("Wich habit would you like to track : ");
+	habit = Console.ReadLine();
+	while (string.IsNullOrEmpty(habit))
+	{
+		Console.Write("This can't be empty, please enter a habit: ");
+		habit = Console.ReadLine();
+	}
+	Console.Title = $"{habit} tracker";
+
+	Console.Write("Which measurement unit should be used ?: ");
+	measurement = Console.ReadLine();
+	while (string.IsNullOrEmpty(measurement))
+	{
+		Console.Write("This can't be empty, please enter a measurement unit: ");
+		measurement = Console.ReadLine();
+	}
+}
+string CheckForValidNumber(string? input)
+{
+	while (string.IsNullOrEmpty(input) || Int32.TryParse(input, out _) == false)
+	{
+		Console.Write("Not a valid value, try again: ");
+		input = Console.ReadLine();
+	}
+	return input;
+}
