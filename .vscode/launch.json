@@ -10,11 +10,11 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/ConsoleHabitTracker/bin/Debug/net7.0/ConsoleHabitTracker.dll",
+            "program": "${workspaceFolder}/chernoAlieu.HabitTracker/Habit-Tracker/bin/Debug/net7.0/Habit-Tracker.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/ConsoleHabitTracker",
+            "cwd": "${workspaceFolder}/chernoAlieu.HabitTracker/Habit-Tracker",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "externalTerminal",
+            "console": "internalConsole",
             "stopAtEntry": false
         },
         {

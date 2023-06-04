@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ConsoleHabitTracker/ConsoleHabitTracker.csproj",
+                "${workspaceFolder}/chernoAlieu.HabitTracker/Habit-Tracker/Habit-Tracker.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/ConsoleHabitTracker/ConsoleHabitTracker.csproj",
+                "${workspaceFolder}/chernoAlieu.HabitTracker/Habit-Tracker/Habit-Tracker.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/ConsoleHabitTracker/ConsoleHabitTracker.csproj"
+                "${workspaceFolder}/chernoAlieu.HabitTracker/Habit-Tracker/Habit-Tracker.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
