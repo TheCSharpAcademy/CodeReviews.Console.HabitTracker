@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using ConsoleHabitTracker;
+
 class Unit
 {
     public static void DisplayUnits()
@@ -37,7 +38,7 @@ class Unit
             connection.Close();
         }
     }
-
+    
     public static Boolean AddUnit(string newName, string newUnitSymbol)
     {
         try
@@ -58,7 +59,7 @@ class Unit
             return false;
         }
     }
-
+    
     public static Boolean UpdateUnit(int unitId, string newName, string newSymbol)
     {
         try
@@ -80,7 +81,7 @@ class Unit
             return false;
         }
     }
-
+    
     public static Boolean DeleteUnit(int unitId)
     {
         try
@@ -102,7 +103,7 @@ class Unit
             return true;
         }
     }
-
+    
     public static Boolean IsUnitUsed(int unitID)
     {
         int counter = 0;
@@ -127,7 +128,7 @@ class Unit
         }
         else { return false; }
     }
-
+    
     public static Boolean UnitExist(int unitId)
     {
         int counter = 0;

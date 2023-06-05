@@ -7,7 +7,7 @@ class Menu
         Console.ReadLine();
         Console.Clear();
     }
-
+    
     public static void showMainMenu()
     {
         string choice = "";
@@ -44,7 +44,7 @@ Press X to Exit.");
             }
         }
     }
-
+    
     public static void showHabitMenu()
     {
         string choice = "";
@@ -81,7 +81,6 @@ Press X to go back to the main menu.");
                         Console.WriteLine("No Unit with the chosen ID. Choose again.");
                         habitUnit = Convert.ToInt32(Console.ReadLine());
                     }
-
                     if (Habit.AddHabit(habitName, habitUnit))
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -131,7 +130,6 @@ Press X to go back to the main menu.");
                         Console.WriteLine("Something went wrong while updating the Habit.");
                         Console.ResetColor();
                     }
-
                     Console.WriteLine("Press any key to go back.");
                     Console.ReadLine();
                     break;
@@ -166,7 +164,6 @@ Press X to go back to the main menu.");
                             Console.ResetColor();
                         }
                     }
-
                     Console.WriteLine("Press any key to go back.");
                     Console.ReadLine();
                     break;
@@ -183,7 +180,7 @@ Press X to go back to the main menu.");
         Console.Clear();
         Menu.showMainMenu();
     }
-
+    
     public static void showUnitMenu()
     {
         int unitId;
@@ -215,7 +212,6 @@ Press X to go back to the main menu.");
                     string UnitName = Helpers.ValidateStringInput();
                     Console.WriteLine("Choose the symbol of your unit:");
                     string UnitSymbol = Helpers.ValidateStringInput();
-
                     if (Unit.AddUnit(UnitName, UnitSymbol))
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -292,7 +288,6 @@ Press X to go back to the main menu.");
                             Console.ResetColor();
                         }
                     }
-
                     Console.WriteLine("Press any key to go back.");
                     Console.ReadLine();
                     break;
@@ -309,7 +304,7 @@ Press X to go back to the main menu.");
         Console.Clear();
         Menu.showMainMenu();
     }
-
+    
     public static void ShowEntryMenu()
     {
         string choice = "";
@@ -382,7 +377,6 @@ Press X to go back to the main menu.");
                         Console.WriteLine("Something went wrong while inserting data");
                         Console.ResetColor();
                     }
-
                     Console.WriteLine("Press any key to go back.");
                     Console.ReadLine();
                     break;
@@ -397,7 +391,6 @@ Press X to go back to the main menu.");
                         habitId = Helpers.ValidateIntegerInput();
                     }
                     Console.WriteLine("choose the entry you want to update (choose entry ID)");
-
                     Entry.DisplayEntriesDetailed(habitId);
                     entryId = Helpers.ValidateIntegerInput();
                     while (!Entry.EntryExist(entryId))

@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using ConsoleHabitTracker;
+
 class Entry
 {
     public static void DisplayEntries(int habitId)
@@ -41,7 +42,7 @@ AND h.ID = {habitId}";
             connection.Close();
         }
     }
-
+    
     public static void DisplayReportPerYear()
     {
         var tableData = new List<List<object>>();
@@ -83,7 +84,7 @@ group by year";
             connection.Close();
         }
     }
-
+    
     public static void DisplayReportPerMonth()
     {
         var tableData = new List<List<object>>();
@@ -127,7 +128,7 @@ group by year,month";
             connection.Close();
         }
     }
-
+    
     public static void DisplayEntriesDetailed(int habitId)
     {
         using (var connection = new SqliteConnection(Database.connectionString))
@@ -157,7 +158,7 @@ AND h.ID = {habitId}";
             connection.Close();
         }
     }
-
+    
     public static void DisplayEntriesSummary()
     {
         var tableData = new List<List<object>>();
@@ -197,7 +198,7 @@ group by Habit";
             connection.Close();
         }
     }
-
+    
     public static Boolean AddEntry(int habitId, int quantity)
     {
         try
@@ -218,7 +219,7 @@ group by Habit";
             return false;
         }
     }
-
+    
     public static Boolean UpdateEntry(int entryId, int quantity)
     {
         try
@@ -240,7 +241,7 @@ group by Habit";
             return false;
         }
     }
-
+    
     public static Boolean DeleteEntry(int entryId)
     {
         try
@@ -262,7 +263,7 @@ group by Habit";
             return true;
         }
     }
-
+    
     public static Boolean EntryExist(int entryId)
     {
         int counter = 0;

@@ -1,5 +1,7 @@
 using Microsoft.Data.Sqlite;
+
 namespace ConsoleHabitTracker;
+
 static class Database
 {
     public static string connectionString = @"Data Source=HabitTracker.db";
@@ -15,6 +17,7 @@ static class Database
             return false;
         }
     }
+    
     public static void prepareDatabase()
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -47,6 +50,7 @@ static class Database
             connection.Close();
         }
     }
+    
     public static void setDefaults()
     {
         using (var connection = new SqliteConnection(connectionString))

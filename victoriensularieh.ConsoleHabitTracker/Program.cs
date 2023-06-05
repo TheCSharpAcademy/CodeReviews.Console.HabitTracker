@@ -6,5 +6,4 @@ if (!Database.DatabaseExists())
     Database.setDefaults();
 }
 Menu.showGreeting();
-
 Menu.showMainMenu();

@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using ConsoleHabitTracker;
+
 class Habit
 {
     public static void DisplayHabits()
@@ -39,7 +40,7 @@ class Habit
             connection.Close();
         }
     }
-
+    
     public static void DisplaySingleHabit(int habitId)
     {
         var tableData = new List<List<object>>();
@@ -78,7 +79,7 @@ class Habit
             connection.Close();
         }
     }
-
+    
     public static Boolean AddHabit(string newName, int newUnitId)
     {
         try
@@ -99,7 +100,7 @@ class Habit
             return false;
         }
     }
-
+    
     public static Boolean UpdateHabit(int habitId, string newName, int newUnitId)
     {
         try
@@ -121,7 +122,7 @@ class Habit
             return false;
         }
     }
-
+    
     public static Boolean DeleteHabit(int habitId)
     {
         try
@@ -143,7 +144,7 @@ class Habit
             return true;
         }
     }
-
+    
     public static Boolean IsHabitTracked(int habitId)
     {
         int counter = 0;
@@ -168,7 +169,7 @@ class Habit
         }
         else { return false; }
     }
-
+    
     public static Boolean HabitExist(int habitId)
     {
         int counter = 0;
