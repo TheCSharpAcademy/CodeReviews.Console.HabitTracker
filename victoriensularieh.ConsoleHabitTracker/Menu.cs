@@ -24,11 +24,11 @@ Press X to Exit.");
             switch (choice.ToUpper())
             {
                 case "A":
-                    showHabitMenu();
+                    ShowHabitMenu();
                     rightChoice = true;
                     break;
                 case "B":
-                    showUnitMenu();
+                    ShowUnitMenu();
                     rightChoice = true;
                     break;
                 case "C":
@@ -178,7 +178,7 @@ Press X to go back to the main menu.");
             }
         }
         Console.Clear();
-        Menu.showMainMenu();
+        Menu.ShowMainMenu();
     }
 
     public static void ShowUnitMenu()
@@ -302,7 +302,7 @@ Press X to go back to the main menu.");
             }
         }
         Console.Clear();
-        Menu.showMainMenu();
+        Menu.ShowMainMenu();
     }
 
     public static void ShowEntryMenu()
@@ -459,6 +459,6 @@ Press X to go back to the main menu.");
             }
         }
         Console.Clear();
-        Menu.showMainMenu();
+        Menu.ShowMainMenu();
     }
 }
