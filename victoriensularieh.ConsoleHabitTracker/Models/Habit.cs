@@ -26,7 +26,7 @@ class Habit
             {
                 while (reader.Read())
                 {
-                    var obj = new List<String>();
+                    ;
                     tableData.Add(
                         new List<object> { reader.GetInt32(0), reader.GetString(1), reader.GetString(4) }
                     );
@@ -40,7 +40,7 @@ class Habit
             connection.Close();
         }
     }
-    
+
     public static void DisplaySingleHabit(int habitId)
     {
         var tableData = new List<List<object>>();
@@ -65,10 +65,10 @@ class Habit
             {
                 while (reader.Read())
                 {
-                     var obj = new List<String>();
+                    var obj = new List<String>();
                     tableData.Add(
                         new List<object> { reader.GetInt32(0), reader.GetString(1), reader.GetString(4) }
-                    );                    
+                    );
                 }
                 Helpers.PrintTable(tableData, headerData);
             }
@@ -79,7 +79,7 @@ class Habit
             connection.Close();
         }
     }
-    
+
     public static Boolean AddHabit(string newName, int newUnitId)
     {
         try
@@ -100,7 +100,7 @@ class Habit
             return false;
         }
     }
-    
+
     public static Boolean UpdateHabit(int habitId, string newName, int newUnitId)
     {
         try
@@ -111,7 +111,7 @@ class Habit
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText = $"UPDATE Habit SET Name='{newName}',UnitID='{newUnitId}' WHERE ID = {habitId}";
-                
+
                 tableCmd.ExecuteNonQuery();
                 connection.Close();
             }
@@ -122,7 +122,7 @@ class Habit
             return false;
         }
     }
-    
+
     public static Boolean DeleteHabit(int habitId)
     {
         try
@@ -135,7 +135,7 @@ class Habit
                 tableCmd.CommandText = $"DELETE FROM Habit WHERE ID = {habitId}";
 
                 tableCmd.ExecuteNonQuery();
-                
+
                 return true;
             }
         }
@@ -144,7 +144,7 @@ class Habit
             return true;
         }
     }
-    
+
     public static Boolean IsHabitTracked(int habitId)
     {
         int counter = 0;
@@ -169,7 +169,7 @@ class Habit
         }
         else { return false; }
     }
-    
+
     public static Boolean HabitExist(int habitId)
     {
         int counter = 0;

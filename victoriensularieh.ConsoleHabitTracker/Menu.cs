@@ -1,14 +1,14 @@
 class Menu
 {
-    public static void showGreeting()
+    public static void ShowGreeting()
     {
         Console.WriteLine("Hello there User!\nHow can i be of assisstance?\n");
         Console.WriteLine("Press any key to access the Main menu.\n");
         Console.ReadLine();
         Console.Clear();
     }
-    
-    public static void showMainMenu()
+
+    public static void ShowMainMenu()
     {
         string choice = "";
         bool rightChoice = false;
@@ -44,8 +44,8 @@ Press X to Exit.");
             }
         }
     }
-    
-    public static void showHabitMenu()
+
+    public static void ShowHabitMenu()
     {
         string choice = "";
         bool rightChoice = false;
@@ -180,8 +180,8 @@ Press X to go back to the main menu.");
         Console.Clear();
         Menu.showMainMenu();
     }
-    
-    public static void showUnitMenu()
+
+    public static void ShowUnitMenu()
     {
         int unitId;
 
@@ -304,7 +304,7 @@ Press X to go back to the main menu.");
         Console.Clear();
         Menu.showMainMenu();
     }
-    
+
     public static void ShowEntryMenu()
     {
         string choice = "";

@@ -24,10 +24,9 @@ class Unit
             {
                 while (reader.Read())
                 {
-                    var obj = new List<String>();
                     tableData.Add(
-                        new List<object> { reader.GetInt32(0), reader.GetString(1), reader.GetString(2) }
-                    );
+    new List<object> { reader.GetInt32(0), reader.GetString(1), reader.GetString(2) }
+);
                 }
                 Helpers.PrintTable(tableData, headerData);
             }
@@ -38,7 +37,7 @@ class Unit
             connection.Close();
         }
     }
-    
+
     public static Boolean AddUnit(string newName, string newUnitSymbol)
     {
         try
@@ -59,7 +58,7 @@ class Unit
             return false;
         }
     }
-    
+
     public static Boolean UpdateUnit(int unitId, string newName, string newSymbol)
     {
         try
@@ -81,7 +80,7 @@ class Unit
             return false;
         }
     }
-    
+
     public static Boolean DeleteUnit(int unitId)
     {
         try
@@ -103,7 +102,7 @@ class Unit
             return true;
         }
     }
-    
+
     public static Boolean IsUnitUsed(int unitID)
     {
         int counter = 0;
@@ -128,7 +127,7 @@ class Unit
         }
         else { return false; }
     }
-    
+
     public static Boolean UnitExist(int unitId)
     {
         int counter = 0;
@@ -138,7 +137,7 @@ class Unit
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText = $"SELECT * FROM Unit where ID = {unitId}";
-            
+
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
             if (reader.HasRows)

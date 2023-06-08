@@ -12,7 +12,7 @@ class Helpers
         }
         return Convert.ToInt32(input);
     }
-    
+
     public static string ValidateStringInput()
     {
         string input = Console.ReadLine();
@@ -23,7 +23,7 @@ class Helpers
         }
         return input;
     }
-    
+
     public static void PrintTable(List<List<object>> tableData, List<String> header)
     {
         Console.WriteLine();
