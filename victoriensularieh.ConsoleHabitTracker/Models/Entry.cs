@@ -69,7 +69,6 @@ group by year";
             {
                 while (reader.Read())
                 {
-                    var obj = new List<String>();
                     tableData.Add(
                         new List<object> { reader.GetString(0), reader.GetString(1), reader.GetString(2) }
                     );
@@ -113,7 +112,6 @@ group by year,month";
             {
                 while (reader.Read())
                 {
-                    var obj = new List<String>();
                     tableData.Add(
                         new List<object> { reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3) }
                     );
@@ -183,7 +181,6 @@ group by Habit";
             {
                 while (reader.Read())
                 {
-                    var obj = new List<String>();
                     tableData.Add(
                         new List<object> { reader.GetString(0), reader.GetString(1) }
                     );
