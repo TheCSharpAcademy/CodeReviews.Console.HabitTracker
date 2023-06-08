@@ -2,8 +2,8 @@
 
 if (!Database.DatabaseExists())
 {
-    Database.PrepareDatabase();
-    Database.SetDefaults();
+    Database.prepareDatabase();
+    Database.setDefaults();
 }
-Menu.ShowGreeting();
-Menu.ShowMainMenu();
+Menu.showGreeting();
+Menu.showMainMenu();
