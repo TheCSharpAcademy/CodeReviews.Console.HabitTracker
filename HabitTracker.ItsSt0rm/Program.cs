@@ -1,6 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.VisualBasic.FileIO;
-using System.Data;
 
 string connectionString = @"Data Source=habit-Tracker.db";
 
@@ -40,25 +38,70 @@ static void GetUserInput()
 
         switch (commandInput)
         {
-            case 0:
+            case "0":
                 Console.WriteLine("\nGoodbye!\n");
                 closeApp = true;
                 break;
-            case 1:
-                GetAllRecords();
-                break;
-            case 2:
+            //case 1:
+            //    GetAllRecords();
+            //    break;
+            case "2":
                 Insert();
                 break;
-            case 3:
-                Delete();
-                break;
-            case 4:
-                Update();
-                break;
+            //case 3:
+            //    Delete();
+            //    break;
+            //case 4:
+            //    Update();
+            //    break;
             default:
                 Console.WriteLine("\nInvalid command. Please type a number from 0 to 4.\n");
                 break;
         }
     }
+}
+
+static void Insert()
+{
+    string date = GetDateInput();
+
+    int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice." +
+        "(Decimals allowed)\n\n");
+
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText =
+            $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+
+        tableCmd.ExecuteNonQuery();
+
+        connection.Close();
+    }
+}
+
+static string GetDateInput()
+{
+    Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy. Type 0 to return to main menu");
+
+    string dateInput = Console.ReadLine();
+
+    if (dateInput == "0") GetUserInput();
+
+    return dateInput;
+}
+
+static int GetNumberInput(string message)
+{
+    Console.WriteLine(message);
+
+    string numberInput = Console.ReadLine();
+
+    if (numberInput == "0") GetUserInput();
+
+    int finalInput = Convert.ToInt32(numberInput);
+
+    return finalInput;
 }
