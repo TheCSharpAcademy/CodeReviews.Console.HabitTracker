@@ -19,7 +19,7 @@ class Habit : IHabit
 	{
 		using (var connection = new SqliteConnection(m_connectionString))
 		{
-			DateTime time = DateTime.Now;
+			
 			connection.Open();
 
 			SqliteCommand tableCommand = connection.CreateCommand();
@@ -36,15 +36,15 @@ class Habit : IHabit
 
 		return ExecuteCommand(@$"SELECT * FROM {m_habitTable} WHERE Date = '{date}' ");
 	}
-	public string getConnectionString()
+	public string GetConnectionString()
 	{
 		return m_connectionString;
 	}
-	public string getTable()
+	public string GetTable()
 	{
 		return m_habitTable;
 	}
-	public string getMeasureUnit()
+	public string GetMeasureUnit()
 	{
 		return m_habitUnit;
 	}

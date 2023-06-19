@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace habit_tracker;
+﻿namespace habit_tracker;
 internal class HabitMenu
 {
 	enum Options
@@ -72,7 +70,7 @@ internal class HabitMenu
 
 		do
 		{
-			Console.WriteLine($"Enter a new record. Enter number of {m_habit.getMeasureUnit()}: ");
+			Console.WriteLine($"Enter a new record. Enter number of {m_habit.GetMeasureUnit()}: ");
 		}
 		while (!m_habit.Insert(InputValidation.GetUserInputAsInt(), InputValidation.GetUserInputAsDate()));
 

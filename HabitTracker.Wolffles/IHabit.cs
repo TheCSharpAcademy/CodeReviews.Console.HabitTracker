@@ -5,5 +5,5 @@
 	void Delete(string index);
 	void Read();
 	void DeleteAll();
-	string getMeasureUnit();
+	string GetMeasureUnit();
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Globalization;
+
 
 namespace habit_tracker;
 class Program
@@ -9,7 +9,13 @@ class Program
 		IHabit caloriesLog = new Habit(@"Data Source=Habit_Tracker.db", "Calories", "calories");
 		HabitMenu menu = new HabitMenu(caloriesLog);
 
-		while (menu.MainMenu()) ;
+		bool runMenu = menu.MainMenu();
+
+		while (runMenu)
+		{ 
+			runMenu = menu.MainMenu(); 
+		}
+		
 
 		return;
 	}
