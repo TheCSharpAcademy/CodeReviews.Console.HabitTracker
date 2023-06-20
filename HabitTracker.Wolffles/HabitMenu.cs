@@ -86,7 +86,7 @@ internal class HabitMenu
 		string date = InputValidation.GetUserInputAsDate();
 
 		Console.WriteLine($"{date} selected. Enter value:");
-		int value = InputValidation.GetUserInputAsInt();
+	
 
 		m_habit.Read();
 		Console.ReadKey();
