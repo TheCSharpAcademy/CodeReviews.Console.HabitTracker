@@ -1,22 +1,21 @@
 ﻿using System.Data.SQLite;
-using System.Globalization;
 
 namespace HabitTracker.kmakai;
 
 public class Tracker
 {
-    private List<Habit> _habitsList { get; set; } = new List<Habit>();
-    private string? _connectionString { get; set; } = @"Data Source=Habit_Tracker.db";
+    private List<Habit> HabitsList { get; set; } = new List<Habit>();
+    private string? ConnectionString { get; set; } = @"Data Source=Habit_Tracker.db";
 
     public Tracker()
     {
         CreatedHabitsTable();
-        _habitsList = this.GetListFromDb();
+        HabitsList = this.GetListFromDb();
     }
 
     public void CreatedHabitsTable()
     {
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -35,7 +34,7 @@ public class Tracker
 
     public void InsertToHabitsListTable(string habit, string unitOfMeasurement)
     {
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -48,7 +47,7 @@ public class Tracker
         }
     }
 
-    public void start()
+    public void Start()
     {
         CreatedHabitsTable();
         while (true)
@@ -83,16 +82,16 @@ public class Tracker
 
     private void ViewHabitsList()
     {
-        if (_habitsList.Count == 0)
+        if (HabitsList.Count == 0)
         {
             Console.WriteLine("No habits to show!");
             return;
         }
         Console.Clear();
         Console.WriteLine("Habits List:");
-        for (int i = 0; i < _habitsList.Count; i++)
+        for (int i = 0; i < HabitsList.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {_habitsList[i].Name}");
+            Console.WriteLine($"{i + 1}. {HabitsList[i].Name}");
         }
         Console.WriteLine("------------------------------------");
         Console.WriteLine("Press any key to continue...");
@@ -103,7 +102,7 @@ public class Tracker
     {
         List<Habit> list = new List<Habit>();
 
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -131,7 +130,7 @@ public class Tracker
         string UnitOfMeasurement = TrackerMenu.GetOption("Please enter the unit of measurement all will: ");
 
 
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -149,20 +148,20 @@ public class Tracker
 
         InsertToHabitsListTable(habit, UnitOfMeasurement);
 
-        _habitsList.Add(new Habit(habit, UnitOfMeasurement));
+        HabitsList.Add(new Habit(habit, UnitOfMeasurement));
 
         Console.WriteLine($"Habit {habit} added successfully!");
     }
 
     public void RemoveHabit()
     {
-        TrackerMenu.ManageHabitsMenu(_habitsList);
+        TrackerMenu.ManageHabitsMenu(HabitsList);
 
         int index = int.Parse(TrackerMenu.GetOption()) - 1;
 
-        Habit habit = _habitsList[index];
+        Habit habit = HabitsList[index];
 
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -174,7 +173,7 @@ public class Tracker
             connection.Close();
         }
 
-        _habitsList.RemoveAt(index);
+        HabitsList.RemoveAt(index);
 
         Console.WriteLine($"Habit {habit} removed successfully!");
     }
@@ -182,16 +181,16 @@ public class Tracker
     public void ManageHabits()
     {
 
-        Console.WriteLine(_habitsList.Count);
-        int index = int.Parse(TrackerMenu.ManageHabitsMenu(_habitsList)) - 1;
+        Console.WriteLine(HabitsList.Count);
+        int index = int.Parse(TrackerMenu.ManageHabitsMenu(HabitsList)) - 1;
         if (index < 0) return;
-        while (index > _habitsList.Count - 1)
+        while (index > HabitsList.Count - 1)
         {
             Console.WriteLine("Please enter a valid input!");
-            index = int.Parse(TrackerMenu.ManageHabitsMenu(_habitsList)) - 1;
+            index = int.Parse(TrackerMenu.ManageHabitsMenu(HabitsList)) - 1;
         }
 
-        Habit habit = _habitsList[index];
+        Habit habit = HabitsList[index];
         while (true)
         {
             string option = TrackerMenu.HabitMenu(habit);
@@ -210,7 +209,7 @@ public class Tracker
                     ViewAllEntries(habit);
                     break;
                 case "0":
-                    TrackerMenu.ManageHabitsMenu(_habitsList);
+                    TrackerMenu.ManageHabitsMenu(HabitsList);
                     return;
                 default:
                     Console.WriteLine("Please enter a valid input!");
@@ -224,7 +223,7 @@ public class Tracker
     {
         Console.Clear();
         Console.WriteLine($"All {habit.Name} entries:");
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -262,7 +261,7 @@ public class Tracker
 
         if (option == "n") TrackerMenu.HabitMenu(habit);
 
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -287,7 +286,7 @@ public class Tracker
         string date = GetDateInput();
         double measurement = GetMeasurementInput(habit.UnitOfMeasurement);
 
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
@@ -309,7 +308,7 @@ public class Tracker
         string entryDate = GetDateInput();
         double entryMeasurement = GetMeasurementInput(habit.UnitOfMeasurement);
 
-        using (var connection = new SQLiteConnection(_connectionString))
+        using (var connection = new SQLiteConnection(ConnectionString))
         {
             connection.Open();
             var tableCommand = connection.CreateCommand();
