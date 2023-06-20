@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTracker.kmakai", "HabitTracker.kmakai\HabitTracker.kmakai.csproj", "{303D1BA3-D102-4AC3-90E2-E0E032F3A058}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{303D1BA3-D102-4AC3-90E2-E0E032F3A058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{303D1BA3-D102-4AC3-90E2-E0E032F3A058}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{303D1BA3-D102-4AC3-90E2-E0E032F3A058}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{303D1BA3-D102-4AC3-90E2-E0E032F3A058}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F3C34C1E-705D-4393-BBB8-D6C8F8327CCF}
+	EndGlobalSection
+EndGlobal
