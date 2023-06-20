@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ohshie.HabitTracker
-build_property.ProjectDir = /Users/stas/RiderProjects/ohshie.HabitTracker/
+build_property.ProjectDir = C:\Users\afkenji\Source\Repos\kmakai\CodeReviews.Console.HabitTracker\ohshie.HabitTracker\
