@@ -1,7 +1,7 @@
 ﻿interface IHabit
 {
-	bool Insert(int value, string time);
-	void Update(string index, int value);
+	bool Insert(string time, int value);
+	bool Update(string time, int value);
 	void Delete(string index);
 	void Read();
 	void DeleteAll();

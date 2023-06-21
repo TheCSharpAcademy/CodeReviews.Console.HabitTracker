@@ -3,10 +3,10 @@
 namespace habit_tracker;
 class Habit : IHabit
 {
-	private string m_connectionString = "";
-	private string m_habitName = "";
-	private string m_habitTable = "";
-	private string m_habitUnit = "";
+	public string m_connectionString { get; set; }
+	public string m_habitName  { get; set; }
+	public string m_habitTable { get; set; }
+	public string m_habitUnit {get; set;}
 	public Habit(string connectionString, string habitName, string measuringUnit)
 	{
 		m_connectionString = connectionString;
@@ -33,8 +33,9 @@ class Habit : IHabit
 	}
 	private bool CheckIfExists(string date)
 	{
+		bool commandCheck = ExecuteCommand(@$"SELECT * FROM {m_habitTable} WHERE Date = '{date}' ");
 
-		return ExecuteCommand(@$"SELECT * FROM {m_habitTable} WHERE Date = '{date}' ");
+		return commandCheck;
 	}
 	public string GetConnectionString()
 	{
@@ -48,7 +49,7 @@ class Habit : IHabit
 	{
 		return m_habitUnit;
 	}
-	public bool Insert(int value, string time)
+	public bool Insert(string time, int value)
 	{
 		if (CheckIfExists(time))
 		{
@@ -57,9 +58,15 @@ class Habit : IHabit
 		ExecuteCommand(@$"INSERT INTO {m_habitTable} (Date,{m_habitName}) VALUES ('{time}','{value}')");
 		return true;
 	}
-	public void Update(string index, int value)
+	public bool Update(string time, int value)
 	{
-		ExecuteCommand(@$"UPDATE {m_habitTable} SET {m_habitName} = '{value}' WHERE Date = '{index}'");
+		if (!CheckIfExists(time))
+		{
+			return false;
+		}
+
+		ExecuteCommand(@$"UPDATE {m_habitTable} SET {m_habitName} = '{value}' WHERE Date = '{time}'");
+		return true;
 	}
 	public void Delete(string index)
 	{

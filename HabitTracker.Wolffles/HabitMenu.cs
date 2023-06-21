@@ -70,10 +70,11 @@ internal class HabitMenu
 
 		do
 		{
-			Console.WriteLine($"Enter a new record. Enter number of {m_habit.GetMeasureUnit()}: ");
+			Console.WriteLine($"Enter a new record. Enter number of {m_habit}: ");
 		}
-		while (!m_habit.Insert(InputValidation.GetUserInputAsInt(), InputValidation.GetUserInputAsDate()));
+		while (!m_habit.Insert(InputValidation.GetUserInputAsDate(), InputValidation.GetUserInputAsInt()));
 
+		Console.WriteLine("Press any key to continue");
 		Console.ReadKey();
 		m_habit.Read();
 	}
@@ -82,12 +83,13 @@ internal class HabitMenu
 		Console.Clear();
 		m_habit.Read();
 
-		Console.WriteLine("Select a record to update by typing it's DATE");
-		string date = InputValidation.GetUserInputAsDate();
+		do
+		{
+			Console.WriteLine($"Enter a new record. Enter number of {m_habit}: ");
+		}
+		while (!m_habit.Update(InputValidation.GetUserInputAsDate(), InputValidation.GetUserInputAsInt()));
 
-		Console.WriteLine($"{date} selected. Enter value:");
-	
-
+		Console.WriteLine("Record Updated. Press any key to continue.");
 		m_habit.Read();
 		Console.ReadKey();
 
