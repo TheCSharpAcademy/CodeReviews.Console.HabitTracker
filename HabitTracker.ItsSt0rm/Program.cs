@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Globalization;
 
 namespace HabitTracker.ItsSt0rm
 {
@@ -53,9 +54,9 @@ namespace HabitTracker.ItsSt0rm
                         Console.WriteLine("\nGoodbye!\n");
                         closeApp = true;
                         break;
-                    //case 1:
-                    //    GetAllRecords();
-                    //    break;
+                    case "1":
+                        GetAllRecords();
+                        break;
                     case "2":
                         Insert();
                         break;
@@ -71,6 +72,50 @@ namespace HabitTracker.ItsSt0rm
                 }
             }
         }
+
+        private static void GetAllRecords()
+        {
+            Console.Clear();
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText =
+                    $"SELECT * FROM drinking_water ";
+
+                List<DrinkingWater> tableData = new();
+
+                SqliteDataReader reader = tableCmd.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        tableData.Add(
+                            new DrinkingWater
+                            {
+                                Id = reader.GetInt32(0),
+                                Date = DateTime.ParseExact(reader.GetString(1),"dd-MM-yy", new CultureInfo("en-US")),
+                                Quantity = reader.GetInt32(2)
+                            });
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No rows found");
+                }
+
+                connection.Close();
+
+                Console.WriteLine("------------------------------------\n");
+                foreach (var drinkingWater in tableData)
+                {
+                    Console.WriteLine($"{drinkingWater.Id} - {drinkingWater.Date.ToString("dd-MMM-yyyy")} - Quantity: {drinkingWater.Quantity}");
+                }
+                Console.WriteLine("------------------------------------\n");
+            }
+        }
+
 
         private static void Insert()
         {
@@ -115,6 +160,13 @@ namespace HabitTracker.ItsSt0rm
             int finalInput = Convert.ToInt32(numberInput);
 
             return finalInput;
-        }   
+        }
+    }
+
+    public class DrinkingWater
+    {
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public int Quantity { get; set; }
     }
 }
