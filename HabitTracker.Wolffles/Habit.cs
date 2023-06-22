@@ -3,21 +3,21 @@
 namespace habit_tracker;
 class Habit : IHabit
 {
-	public string m_connectionString { get; set; }
-	public string m_habitName  { get; set; }
-	public string m_habitTable { get; set; }
-	public string m_habitUnit {get; set;}
+	public string ConnectionString {get;}
+	public string HabitName  {get;}
+	public string HabitTable {get;}
+	public string HabitUnit {get;}
 	public Habit(string connectionString, string habitName, string measuringUnit)
 	{
-		m_connectionString = connectionString;
-		m_habitName = habitName;
-		m_habitTable = habitName.ToLower() + "_table";
-		m_habitUnit = measuringUnit;
-		ExecuteCommand(@$"CREATE TABLE IF NOT EXISTS {m_habitTable}(Id INTEGER PRIMARY KEY AUTOINCREMENT,Date TEXT,{m_habitName} INTEGER)");
+		ConnectionString = connectionString;
+		HabitName = habitName;
+		HabitTable = habitName.ToLower() + "_table";
+		HabitUnit = measuringUnit;
+		ExecuteCommand(@$"CREATE TABLE IF NOT EXISTS {HabitTable}(Id INTEGER PRIMARY KEY AUTOINCREMENT,Date TEXT,{HabitName} INTEGER)");
 	}
 	private bool ExecuteCommand(string command)
 	{
-		using (var connection = new SqliteConnection(m_connectionString))
+		using (var connection = new SqliteConnection(ConnectionString))
 		{
 			
 			connection.Open();
@@ -33,21 +33,9 @@ class Habit : IHabit
 	}
 	private bool CheckIfExists(string date)
 	{
-		bool commandCheck = ExecuteCommand(@$"SELECT * FROM {m_habitTable} WHERE Date = '{date}' ");
+		bool commandCheck = ExecuteCommand(@$"SELECT * FROM {HabitTable} WHERE Date = '{date}' ");
 
 		return commandCheck;
-	}
-	public string GetConnectionString()
-	{
-		return m_connectionString;
-	}
-	public string GetTable()
-	{
-		return m_habitTable;
-	}
-	public string GetMeasureUnit()
-	{
-		return m_habitUnit;
 	}
 	public bool Insert(string time, int value)
 	{
@@ -55,7 +43,7 @@ class Habit : IHabit
 		{
 			return false;
 		}
-		ExecuteCommand(@$"INSERT INTO {m_habitTable} (Date,{m_habitName}) VALUES ('{time}','{value}')");
+		ExecuteCommand(@$"INSERT INTO {HabitTable} (Date,{HabitName}) VALUES ('{time}','{value}')");
 		return true;
 	}
 	public bool Update(string time, int value)
@@ -65,24 +53,24 @@ class Habit : IHabit
 			return false;
 		}
 
-		ExecuteCommand(@$"UPDATE {m_habitTable} SET {m_habitName} = '{value}' WHERE Date = '{time}'");
+		ExecuteCommand(@$"UPDATE {HabitTable}  SET  {HabitName} = '{value}' WHERE Date = '{time}'");
 		return true;
 	}
 	public void Delete(string index)
 	{
-		ExecuteCommand(@$"DELETE FROM {m_habitTable} WHERE Date = '{index}'");
+		ExecuteCommand(@$"DELETE FROM {HabitTable} WHERE Date = '{index}'");
 	}
 	public void DeleteAll()
 	{
-		ExecuteCommand(@$"DELETE FROM {m_habitTable}");
+		ExecuteCommand(@$"DELETE FROM {HabitTable}");
 	}
 	public void Read()
 	{
-		using (var connection = new SqliteConnection(m_connectionString))
+		using (var connection = new SqliteConnection(ConnectionString))
 		{
 			connection.Open();
 			SqliteCommand tableCommand = connection.CreateCommand();
-			tableCommand.CommandText = @$"SELECT * FROM {m_habitTable} ORDER BY Date";
+			tableCommand.CommandText = @$"SELECT * FROM {HabitTable} ORDER BY Date";
 			SqliteDataReader dataReader = tableCommand.ExecuteReader();
 
 			while (dataReader.Read())
