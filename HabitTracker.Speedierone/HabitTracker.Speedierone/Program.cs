@@ -96,7 +96,7 @@ class Program
 
         if (dateInput == "0") GetUserInput();
 
-        while(!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+        while(!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
         {
             Console.WriteLine("\nInvalid date (Format: dd-mm-yy).");
             GetDateInput();
