@@ -6,7 +6,8 @@ Console.WriteLine("Here you will be able to track habits");
 string connectionAdress = @"Data Source=habits.db";
 
 
-using (var connection = new SqliteConnection(connectionAdress)) {
+using (var connection = new SqliteConnection(connectionAdress))
+{
     connection.Open();
 
     var command = connection.CreateCommand();
@@ -24,12 +25,14 @@ using (var connection = new SqliteConnection(connectionAdress)) {
 
 GetMainInput();
 
-void DeleteAHabit() {
+void DeleteAHabit()
+{
 
     Console.WriteLine("Type the name of the habit you want to delete");
     string habit = Console.ReadLine();
 
-    using (var connection = new SqliteConnection("Data Source=habits.db")) {
+    using (var connection = new SqliteConnection("Data Source=habits.db"))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -43,11 +46,13 @@ void DeleteAHabit() {
 
 }
 
-void InsertNewHabit() {
+void InsertNewHabit()
+{
     Console.WriteLine("Type the name of the habit you want to create");
     string habit = Console.ReadLine();
 
-    using (var connection = new SqliteConnection(connectionAdress)) {
+    using (var connection = new SqliteConnection(connectionAdress))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -64,8 +69,10 @@ void InsertNewHabit() {
     }
 }
 
-void ListHabits() {
-    using (var connection = new SqliteConnection(connectionAdress)) {
+void ListHabits()
+{
+    using (var connection = new SqliteConnection(connectionAdress))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -73,8 +80,10 @@ void ListHabits() {
             @"
             SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence'";
 
-        using (var reader = command.ExecuteReader()) {
-            while (reader.Read()) {
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read())
+            {
                 Console.WriteLine("----------------");
 
                 Console.WriteLine(
@@ -85,21 +94,25 @@ void ListHabits() {
     }
 }
 
-void ViewHabitEntries() {
+void ViewHabitEntries()
+{
 
     Console.WriteLine("Type the name of the habit you want to check");
     string habit = Console.ReadLine();
 
 
-    using (var connection = new SqliteConnection(connectionAdress)) {
+    using (var connection = new SqliteConnection(connectionAdress))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
         command.CommandText =
             $"SELECT * FROM {habit}";
 
-        using (var reader = command.ExecuteReader()) {
-            while (reader.Read()) {
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read())
+            {
                 var date = reader.GetString(1);
                 var timesDone = reader.GetString(2);
                 Console.WriteLine("----------------");
@@ -116,7 +129,8 @@ Date done: {date}");
 }
 
 
-void InsertHabitEntry() {
+void InsertHabitEntry()
+{
 
     Console.WriteLine("What habit you want to edit?");
     string habit = Console.ReadLine();
@@ -127,7 +141,8 @@ void InsertHabitEntry() {
     string date = GetDateInput();
 
 
-    using (var connection = new SqliteConnection(connectionAdress)) {
+    using (var connection = new SqliteConnection(connectionAdress))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -140,7 +155,8 @@ void InsertHabitEntry() {
     }
 }
 
-void UpdateHabitEntry() {
+void UpdateHabitEntry()
+{
 
     Console.WriteLine("What habit you want to edit?");
     string habit = Console.ReadLine();
@@ -154,7 +170,8 @@ void UpdateHabitEntry() {
     Console.WriteLine("Do you want to edit the date? y/n");
     string sql = GenerateUpdateSql(Console.ReadLine(), habit, id, numberOfTimes);
 
-    using (var connection = new SqliteConnection("Data Source=habits.db")) {
+    using (var connection = new SqliteConnection("Data Source=habits.db"))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -162,31 +179,38 @@ void UpdateHabitEntry() {
             sql;
 
         command.ExecuteNonQuery();
+        Console.Clear();
         Console.WriteLine("Command Executed");
         connection.Close();
     }
+
 }
 
-string GenerateUpdateSql( string response, string habit, string id, string numberOfTimes ) {
-    if (response == "y") {
+string GenerateUpdateSql( string response, string habit, string id, string numberOfTimes )
+{
+    if (response == "y")
+    {
 
         string date = GetDateInput();
 
         return @$"
             UPDATE {habit}
             SET timesDone = {numberOfTimes},
-            lastTime = '{date}'
+            Date = '{date}'
             WHERE id = {id}";
 
-    } else {
+    }
+    else
+    {
         return @$"
             UPDATE {habit}
-            SET timesDone = {numberOfTimes},
+            SET timesDone = {numberOfTimes}
             WHERE id = {id}";
     }
 }
 
-void DeleteHabitEntry() {
+void DeleteHabitEntry()
+{
 
     Console.WriteLine("What habit you want to edit?");
     string habit = Console.ReadLine();
@@ -194,7 +218,8 @@ void DeleteHabitEntry() {
     Console.WriteLine("Whats the id of the entry you want to delete?");
     string id = Console.ReadLine();
 
-    using (var connection = new SqliteConnection(connectionAdress)) {
+    using (var connection = new SqliteConnection(connectionAdress))
+    {
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -203,22 +228,26 @@ void DeleteHabitEntry() {
             DELETE from {habit} WHERE id = {id}
         ";
         command.ExecuteNonQuery();
+        Console.Clear();
         Console.WriteLine("Command Executed");
         connection.Close();
     }
 
 }
 
-string GetDateInput() {
+string GetDateInput()
+{
     Console.WriteLine("\nPlease insert the date in the format dd-mm-yyyy. Type 0 to return to the main menu");
 
     string dateInput = Console.ReadLine();
 
-    if (dateInput == "0") {
+    if (dateInput == "0")
+    {
         GetMainInput();
     }
 
-    while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out _)) {
+    while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+    {
         Console.WriteLine("\nInvalid date. Type 0 to return to the main menu or try again:\n");
         dateInput = Console.ReadLine();
     }
@@ -226,11 +255,13 @@ string GetDateInput() {
     return dateInput;
 }
 
-void GetMainInput() {
+void GetMainInput()
+{
 
     Console.Clear();
     bool isRunning = true;
-    while (isRunning) {
+    while (isRunning)
+    {
 
         Console.WriteLine($@"What would you like to do:
     1 - Insert a new habit
@@ -244,53 +275,76 @@ void GetMainInput() {
 
         string op = Console.ReadLine();
 
-        switch (op) {
+        switch (op)
+        {
             case "1":
-                try {
+                try
+                {
                     InsertNewHabit();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     DealWithError();
                 }
                 break;
             case "2":
-                try {
+                try
+                {
                     InsertHabitEntry();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     DealWithError();
                 }
                 break;
             case "3":
-                try {
+                try
+                {
                     UpdateHabitEntry();
-                } catch (Exception) {
+                }
+                catch (Exception e)
+                {
                     DealWithError();
                 }
                 break;
             case "4":
-                try {
+                try
+                {
                     DeleteHabitEntry();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     DealWithError();
                 }
                 break;
             case "5":
-                try {
+                try
+                {
                     DeleteAHabit();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     DealWithError();
                 }
                 break;
             case "6":
-                try {
+                try
+                {
                     ViewHabitEntries();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     DealWithError();
                 }
                 break;
             case "7":
-                try {
+                try
+                {
                     ListHabits();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
+
                     DealWithError();
                 }
                 break;
@@ -308,6 +362,7 @@ void GetMainInput() {
     }
 }
 
-void DealWithError() {
+void DealWithError()
+{
     Console.WriteLine("Something Went wrong! Check what you typed, you might have typed the name of the habit incorrectly!");
 }
