@@ -1,4 +1,5 @@
 ﻿using System.Data.SQLite;
+using System.Text.RegularExpressions;
 
 namespace HabitTracker.kmakai;
 
@@ -127,6 +128,22 @@ public class Tracker
     public void AddHabit()
     {
         string habit = TrackerMenu.GetOption("Please enter the habit you want to add use underscore ( _ ) for spaces: ");
+
+        while (habit.Trim().Contains(' '))
+        {
+            habit = TrackerMenu.GetOption("Please enter the habit you want to add use underscore ( _ ) for spaces: ");
+        }
+
+        if (HabitsList.Any(h => h.Name == habit))
+        {
+            Console.WriteLine("Habit already exists!");
+            return;
+        }
+
+
+
+
+
         string UnitOfMeasurement = TrackerMenu.GetOption("Please enter the unit of measurement all will: ");
 
 
@@ -275,7 +292,9 @@ public class Tracker
 
         Console.WriteLine($"Entry {id} deleted successfully!");
 
-        TrackerMenu.HabitMenu(habit);
+        Console.WriteLine("-------------------------------------------\n");
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
     }
 
     private void EditEntry(Habit habit)
@@ -300,7 +319,9 @@ public class Tracker
 
         Console.WriteLine($"Entry {id} edited successfully!");
 
-        TrackerMenu.HabitMenu(habit);
+        Console.WriteLine("-------------------------------------------\n");
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
     }
 
     private void AddEntry(Habit habit)
@@ -321,18 +342,34 @@ public class Tracker
         }
 
         Console.WriteLine($"Entry added successfully!");
-        TrackerMenu.HabitMenu(habit);
+
+        Console.WriteLine("-------------------------------------------\n");
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
     }
 
     private string GetDateInput()
     {
         string? date = null;
 
-        while (date == null || !DateTime.TryParse(date, out _))
+
+        Console.WriteLine("Please enter the date in formet dd-mm-yyyy: ");
+        date = Console.ReadLine();
+
+        while (date == null || !Regex.IsMatch(date, @"^([0-9]{2})-([0-9]{2})-([0-9]{4})$"))
         {
-            Console.WriteLine("Please enter the date in formet dd-mm-yyyy: ");
+            Console.WriteLine("Please enter a valid date in formet dd-mm-yyyy: ");
             date = Console.ReadLine();
+
+            var month = Convert.ToInt32(date.Split('-')[1]);
+
+            while(month > 12 || month < 1)
+            {
+                Console.WriteLine("Please enter a valid date in formet dd-mm-yyyy: ");
+                date = Console.ReadLine();
+            }
         }
+
 
         return date;
     }
