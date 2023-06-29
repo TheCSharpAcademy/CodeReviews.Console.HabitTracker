@@ -63,9 +63,9 @@ namespace HabitTracker.ItsSt0rm
                     case "3":
                         Delete();
                         break;
-                    //case 4:
-                    //    Update();
-                    //    break;
+                    case "4":
+                        Update();
+                        break;
                     default:
                         Console.WriteLine("\nInvalid command. Please type a number from 0 to 4.\n");
                         break;
@@ -95,7 +95,7 @@ namespace HabitTracker.ItsSt0rm
                             new DrinkingWater
                             {
                                 Id = reader.GetInt32(0),
-                                Date = DateTime.ParseExact(reader.GetString(1),"dd-MM-yy", new CultureInfo("en-US")),
+                                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                                 Quantity = reader.GetInt32(2)
                             });
                     }
@@ -145,7 +145,7 @@ namespace HabitTracker.ItsSt0rm
 
             var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to return to main menu");
 
-            using ( var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -164,6 +164,37 @@ namespace HabitTracker.ItsSt0rm
             Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
 
             GetUserInput();
+        }
+
+        private static void Update()
+        {
+            Console.Clear();
+            GetAllRecords();
+
+            var recordId = GetNumberInput("\n\nPlease type Id of the record that you would like to update. Type 0 to return to main menu.\n\n");
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var checkCmd = connection.CreateCommand();
+                checkCmd.CommandText = $"SELECT EXISTS (SELECT 1 FROM drinking_water WHERE Id = {recordId})";
+                int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                if (checkQuery == 0)
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+                    connection.Close();
+                    Update();
+                }
+
+                string date = GetDateInput();
+
+                int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+            }
         }
 
         internal static string GetDateInput()
