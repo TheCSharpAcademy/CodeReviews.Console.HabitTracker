@@ -3,7 +3,7 @@
     internal class Move
     {
         public int Id { get; set; }
-        public int numOfMoves { get; set; }
-        public string? timeRecorded { get; set; }
+        public int NumOfMoves { get; set; }
+        public string? TimeRecorded { get; set; }
     }
 }

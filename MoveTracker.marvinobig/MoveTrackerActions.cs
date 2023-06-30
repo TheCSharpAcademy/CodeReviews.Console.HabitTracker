@@ -65,8 +65,8 @@ namespace MoveTracker
             foreach (Move move in repository.GetAllMove())
             {
                 Console.WriteLine($"ID: {move.Id}");
-                Console.WriteLine($"Moves: {move.numOfMoves}");
-                Console.WriteLine($"Date Recorded: {move.timeRecorded}");
+                Console.WriteLine($"Moves: {move.NumOfMoves}");
+                Console.WriteLine($"Date Recorded: {move.TimeRecorded}");
                 Console.WriteLine("");
             }
 
