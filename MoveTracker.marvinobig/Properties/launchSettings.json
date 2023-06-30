@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MoveTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\obigm\\source\\repos\\MoveTracker"
+    }
+  }
+}
