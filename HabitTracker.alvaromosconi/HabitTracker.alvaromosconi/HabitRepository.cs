@@ -1,30 +1,24 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.PortableExecutable;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace HabitTracker.alvaromosconi
 {
     internal class HabitRepository
     {
         private const string TABLE_NAME = "habits";
+        private const string CONNECTION_STRING = @"Data Source=habit_tracker.db";
         private List<Habit> tableData = new();
 
-        public HabitRepository() 
+        public HabitRepository()
         {
+            CreateTable();
             SaveAllRecordsInCache();
         }
 
         internal void CreateTable()
         {
-            using (var connection = new SqliteConnection(@"Data Source=habit-tracker.db"))
+            using (var connection = new SqliteConnection(CONNECTION_STRING))
             {
                 connection.Open();
 
@@ -44,8 +38,37 @@ namespace HabitTracker.alvaromosconi
             }
         }
 
-        internal void UpdateCache()
+        private void SaveAllRecordsInCache()
         {
+            Console.Clear();
+
+
+            using (var connection = new SqliteConnection(CONNECTION_STRING))
+            {
+                connection.Open();
+
+                var command = connection.CreateCommand();
+                command.CommandText =
+                    $@"
+                            SELECT * FROM {TABLE_NAME}
+                        ";
+
+                SqliteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    tableData.Add(
+                        new Habit
+                        {
+                            Id = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
+                            Quantity = reader.GetInt32(3),
+                        }); ;
+                }
+
+                connection.Close();
+            }
 
         }
 
@@ -72,69 +95,32 @@ namespace HabitTracker.alvaromosconi
 
         private void PrintBackOption()
         {
-            
+
             Console.WriteLine("\nPress any key to continue");
             Console.ReadKey();
-        }
-        private void SaveAllRecordsInCache()
-        {
-            Console.Clear();
-
-          
-                using (var connection = new SqliteConnection(@"Data Source=habit-tracker.db"))
-                {
-                    connection.Open();
-
-                    var command = connection.CreateCommand();
-                    command.CommandText =
-                        $@"
-                            SELECT * FROM {TABLE_NAME}
-                        ";
-
-                    SqliteDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        tableData.Add(
-                            new Habit
-                            {
-                                Name = reader.GetString(1),
-                                Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
-                                Quantity = reader.GetInt32(3),
-                            });
-                    }
-
-                    connection.Close();
-                }
-            
         }
 
         private void PrintAllRecords()
         {
-            Console.WriteLine("\nDate           Name         Quantity");
-            Console.WriteLine("---------------------------------------");
 
             var groupedHabits = tableData.GroupBy(habit => habit.Name);
 
             foreach (var group in groupedHabits)
             {
+                Console.ForegroundColor = Console.ForegroundColor = ConsoleColor.DarkBlue; 
+                Console.WriteLine($"\nGroup: {group.Key}\n");
+                Console.ResetColor();
+                Console.WriteLine("\nId     Date        Quantity");
+                Console.WriteLine("---------------------------");
                 foreach (Habit habit in group)
                 {
-                    Console.WriteLine($"{habit.Date,-15:dd-MM-yy}{habit.Name,-12}{habit.Quantity,10}");
+                    Console.WriteLine($"{habit.Id,-4} {habit.Date,-15:dd-MM-yy} {habit.Quantity}");
                 }
+
+                Console.WriteLine();
             }
-
         }
 
-        internal void DeleteAnExistingRecord()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void UpdateAnExistingRecord()
-        {
-            throw new NotImplementedException();
-        }
 
         internal void InsertNewRecord()
         {
@@ -146,10 +132,12 @@ namespace HabitTracker.alvaromosconi
             }
             else
             {
-                Console.WriteLine("\nPlease type\n 1. For creating a new habit. \n 2. For choose an existing habit.");
+                Console.WriteLine("\n 0. To back. \n 1. To creating a new habit. \n 2. To register a new record in an existing habit.");
                 string userChoice = Console.ReadLine();
                 switch (userChoice)
                 {
+                    case "0":
+                        break;
                     case "1":
                         Console.Clear();
                         Insert(null);
@@ -158,15 +146,26 @@ namespace HabitTracker.alvaromosconi
                         Console.Clear();
                         PrintAllExistingHabitNames(existingHabitNames);
                         string habitName = String.Empty;
-
+                        bool exists = false;
                         do
                         {
-                            habitName = Console.ReadLine();
-                           
+                            habitName = GetNameInput("\nInsert the name of an existing habit. Type 0 to back.");
 
-                        } while (!existingHabitNames.Contains(habitName));
+                            if (habitName == "0")
+                                break;
 
-                        Insert(habitName);
+                            exists = existingHabitNames.Contains(habitName);
+
+                            if (!exists)
+                            {
+                                Console.WriteLine("\n That name doesn't match with any record!");
+                            }
+                            else
+                                Insert(habitName);
+
+                        } while (!exists);
+
+
                         break;
                     default:
                         break;
@@ -175,58 +174,66 @@ namespace HabitTracker.alvaromosconi
             }
         }
 
+        private List<string> GetExistingHabitNames()
+        {
+            Console.Clear();
+            List<string> existingHabitNames = new List<string>();
+
+            foreach (Habit habit in tableData)
+            {
+                existingHabitNames.Add(habit.Name);
+            }
+
+            return existingHabitNames;
+        }
+
         private void Insert(string? name)
         {
 
             if (name == null)
             {
-                name = GetNameInput();
+                name = GetNameInput(null);
             }
 
-            string dateInput = GetDateInput();
-            int quantityInput = GetQuantityInput();
+            string dateInput = GetDateInput(null);
+            int quantityInput = GetQuantityInput(null);
 
-            using (var connection = new SqliteConnection(@"Data Source=habit-tracker.db"))
+            using (var connection = new SqliteConnection(CONNECTION_STRING))
             {
                 connection.Open();
                 var command = connection.CreateCommand();
                 command.CommandText =
-                    $"INSERT INTO {TABLE_NAME}(name, date, quantity) VALUES('{name}', '{dateInput}', {quantityInput})";
+                    $@"
+                        INSERT INTO {TABLE_NAME}(name, date, quantity) 
+                        VALUES('{name}', '{dateInput}', {quantityInput});
+                        SELECT last_insert_rowid();
+                    ";
 
+                int newRecordId = Convert.ToInt32(command.ExecuteScalar());
                 command.ExecuteNonQuery();
 
                 tableData.Add(
-                new Habit {
-                    Name = name,
-                    Date = DateTime.ParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US")),
-                    Quantity = quantityInput
-                });
+                new Habit
+                    {
+                        Id = newRecordId,
+                        Name = name,
+                        Date = DateTime.ParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US")),
+                        Quantity = quantityInput
+                    }
+                );
 
                 connection.Close();
             }
         }
 
-        private int GetQuantityInput()
+        private string GetNameInput(string? message)
         {
             string userInput = String.Empty;
-            int quantity;
-            do
-            {
-                Console.WriteLine("\nPlease enter the quantity for this record.");
-                userInput = Console.ReadLine();
-                
-            } while (!Int32.TryParse(userInput, out quantity));
-        
-            return quantity;
-        }
-
-        private string GetNameInput()
-        {
-            string userInput = String.Empty;
+            string messageToPrint = message != null ? message : "\nPlease enter the name for the new record.";
 
             do
             {
-                Console.WriteLine("Please enter the name of the new habit.");
+                Console.WriteLine(messageToPrint);
                 userInput = Console.ReadLine();
 
             } while (String.IsNullOrEmpty(userInput));
@@ -234,14 +241,15 @@ namespace HabitTracker.alvaromosconi
             return userInput;
         }
 
-        private string GetDateInput()
+        private string GetDateInput(string? message)
         {
             string userInput = string.Empty;
             bool isValidFormat = false;
+            string messageToPrint = message != null ? message : "\nPlease enter the date: (Format: dd-mm-yy) for the new record. Type 0 to return to the main menu.";
 
             do
             {
-                Console.WriteLine("\nPlease enter the date: (Format: dd-mm-yy). Type 0 to return to the main menu.");
+                Console.WriteLine(messageToPrint);
                 userInput = Console.ReadLine();
 
                 if (userInput == "0")
@@ -265,29 +273,126 @@ namespace HabitTracker.alvaromosconi
             return userInput;
         }
 
-
-
-        private List<string> GetExistingHabitNames()
+        private int GetQuantityInput(string? message)
         {
-            Console.Clear();
-            List<string> existingHabitNames = new List<string>();
+            string userInput = String.Empty;
+            int quantity;
+            string messageToPrint = message != null ? message : "\nPlease enter the quantity for the new record.";
+            do
+            {
+                Console.WriteLine(messageToPrint);
+                userInput = Console.ReadLine();
 
-            foreach (Habit habit in tableData)
-            { 
-                existingHabitNames.Add( habit.Name );
-            }
+            } while (!Int32.TryParse(userInput, out quantity));
 
-            return existingHabitNames;
+            return quantity;
         }
 
         private void PrintAllExistingHabitNames(List<string> habits)
         {
+            Console.ForegroundColor = Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("\nExisting Habit Names:\n");
             int counter = 0;
             foreach (Habit habit in tableData)
             {
                 counter++;
                 Console.WriteLine($"{counter}. {habit.Name}");
             }
+            Console.ResetColor();
         }
+
+        internal void DeleteAnExistingRecord()
+        {
+            int recordId = GetIdInput("\nPlease type the Id of the record that you want to delete or type 0 to go back to Main Menu\n");
+
+            if (recordId != 0)
+            {
+                using (var connection = new SqliteConnection(@"Data Source=habit_tracker.db"))
+                {
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    command.CommandText =
+                        $@"
+                            DELETE from {TABLE_NAME} WHERE id = {recordId};       
+                        ";
+
+                    int rowCount = command.ExecuteNonQuery();
+
+                    if (rowCount == 0)
+                    {
+                        Console.WriteLine($"\nRecord with Id {recordId} doesn't exist. \n ");
+                        DeleteAnExistingRecord();
+                    }
+                }
+
+                tableData.RemoveAll(habit => habit.Id == recordId);
+                Console.WriteLine($"\n Record with Id {recordId} was deleted. \n");
+            }
+        }
+
+        private int GetIdInput(string message)
+        {
+            string userInput = String.Empty;
+            int quantity;
+
+            do
+            {
+                Console.WriteLine(message);
+                userInput = Console.ReadLine();
+
+            } while (!Int32.TryParse(userInput, out quantity));
+
+            return quantity;
+        }
+
+        internal void UpdateAnExistingRecord()
+        {
+            int recordId = GetIdInput("\nPlease type the Id of the record that you want to update or type 0 to go back to Main Menu\n");
+
+            if (recordId != 0)
+            {
+                using (var connection = new SqliteConnection(CONNECTION_STRING))
+                {
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = $"SELECT EXISTS(SELECT 1 FROM {TABLE_NAME} WHERE id = {recordId})";
+                    int checkQuery = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (checkQuery == 0)
+                    {
+                        Console.WriteLine($"\n Record with Id {recordId} doesn't exist.\n");
+                        connection.Close();
+                        UpdateAnExistingRecord();
+                    }
+
+                    string dateInput = GetDateInput("\nPlease type the new date\n");
+                    int quantityInput = GetQuantityInput("\nPlease type the new quantity for this record");
+
+                    command = connection.CreateCommand();
+                    command.CommandText = $"UPDATE {TABLE_NAME} SET date = '{dateInput}', quantity = {quantityInput} WHERE id = {recordId}";
+                    command.ExecuteNonQuery();
+                    Habit habitToUpdate = tableData.FirstOrDefault(habit => habit.Id == recordId);
+                    if (habitToUpdate != null)
+                    {
+                        habitToUpdate.Date = DateTime.ParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"));
+                        habitToUpdate.Quantity = quantityInput;
+                    }
+
+                    connection.Close();
+                }
+            }
+        }
+
+
+
+
+
+
+       
+
+
+
     }
 }

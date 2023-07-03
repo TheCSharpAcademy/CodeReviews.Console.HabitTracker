@@ -14,7 +14,6 @@ namespace HabitTracker.alvaromosconi
         static void InitializeApplication()
         {  
             HabitRepository habitRepository = new HabitRepository();
-            habitRepository.CreateTable();
             string userInput = String.Empty;
             do
             {
@@ -37,7 +36,7 @@ namespace HabitTracker.alvaromosconi
                 Console.WriteLine("What would you like to do?\n");
                 Console.WriteLine("0. Close App.\n");
                 Console.WriteLine("1. View All Records.");
-                Console.WriteLine("2. Insert A New Record.");
+                Console.WriteLine("2. Insert A New Habit or Record.");
                 Console.WriteLine("3. Update An Existing Record.");
                 Console.WriteLine("4. Delete An Existing Record.");
                 userInput = Console.ReadLine();
@@ -68,7 +67,7 @@ namespace HabitTracker.alvaromosconi
 
         private static bool IsChoiceInRange(int choice)
         {
-            return choice >= 1 && choice <= 5;
+            return choice >= 0 && choice <= 5;
         }
 
     }
