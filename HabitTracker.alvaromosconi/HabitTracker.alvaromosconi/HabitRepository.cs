@@ -132,7 +132,8 @@ namespace HabitTracker.alvaromosconi
             }
             else
             {
-                Console.WriteLine("\n 0. To back. \n 1. To creating a new habit. \n 2. To register a new record in an existing habit.");
+                Console.WriteLine("Please type:");
+                Console.WriteLine("\n 0. To back. \n 1. To create a new habit. \n 2. To register a new record in an existing habit.");
                 string userChoice = Console.ReadLine();
                 switch (userChoice)
                 {
@@ -158,6 +159,8 @@ namespace HabitTracker.alvaromosconi
 
                             if (!exists)
                             {
+                                Console.Clear();
+                                PrintAllExistingHabitNames(existingHabitNames);
                                 Console.WriteLine("\n That name doesn't match with any record!");
                             }
                             else
@@ -229,7 +232,7 @@ namespace HabitTracker.alvaromosconi
         private string GetNameInput(string? message)
         {
             string userInput = String.Empty;
-            string messageToPrint = message != null ? message : "\nPlease enter the name for the new record.";
+            string messageToPrint = message != null ? message : "\nPlease enter the name of the new habit.";
 
             do
             {
@@ -265,6 +268,7 @@ namespace HabitTracker.alvaromosconi
                 }
                 else
                 {
+                    Console.Clear();
                     Console.WriteLine("Invalid date format. Please try again.");
                 }
             }
@@ -321,13 +325,17 @@ namespace HabitTracker.alvaromosconi
 
                     if (rowCount == 0)
                     {
+                        Console.Clear();
                         Console.WriteLine($"\nRecord with Id {recordId} doesn't exist. \n ");
                         DeleteAnExistingRecord();
                     }
+                    else
+                    { 
+                        tableData.RemoveAll(habit => habit.Id == recordId);
+                        Console.WriteLine($"\n Record with Id {recordId} was deleted. \n");
+                    }
                 }
 
-                tableData.RemoveAll(habit => habit.Id == recordId);
-                Console.WriteLine($"\n Record with Id {recordId} was deleted. \n");
             }
         }
 
