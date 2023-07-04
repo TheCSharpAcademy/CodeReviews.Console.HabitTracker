@@ -40,7 +40,6 @@ Current habit selected {dataHelpers.TableName}!
             break;
 
         case "o":
-            string userINput;
             Console.WriteLine("Habits list:");
             foreach (string tableName in tableNames)
             {

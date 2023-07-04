@@ -123,7 +123,7 @@ public void UpdateInfo(int id, DateTime date, int quantity)
                 Console.WriteLine("The ID does not exist on record");
                 Console.ReadLine();
                 idExists = false;
-;
+
             }
             else { idExists = true; }
             connection.Close();
