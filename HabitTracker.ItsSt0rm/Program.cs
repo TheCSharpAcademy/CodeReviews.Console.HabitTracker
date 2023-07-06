@@ -194,6 +194,10 @@ namespace HabitTracker.ItsSt0rm
 
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+
+                tableCmd.ExecuteNonQuery();
+
+                connection.Close();
             }
         }
 
