@@ -167,8 +167,7 @@ namespace HabitTracker.ItsSt0rm
         }
 
         private static void Update()
-        {
-            Console.Clear();
+        {        
             GetAllRecords();
 
             var recordId = GetNumberInput("\n\nPlease type Id of the record that you would like to update. Type 0 to return to main menu.\n\n");
