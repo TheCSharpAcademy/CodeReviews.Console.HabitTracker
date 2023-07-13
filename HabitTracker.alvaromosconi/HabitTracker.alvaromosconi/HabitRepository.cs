@@ -145,36 +145,40 @@ internal class HabitRepository
                     break;
                 case "2":
                     Console.Clear();
-                    PrintAllExistingHabitNames(existingHabitNames);
-                    string habitName = String.Empty;
-                    bool exists = false;
-                    do
-                    {
-                        habitName = GetNameInput("\nInsert the name of an existing habit. Type 0 to back.");
-
-                        if (habitName == "0")
-                            break;
-
-                        exists = existingHabitNames.Contains(habitName);
-
-                        if (!exists)
-                        {
-                            Console.Clear();
-                            PrintAllExistingHabitNames(existingHabitNames);
-                            Console.WriteLine("\n That name doesn't match with any record!");
-                        }
-                        else
-                            Insert(habitName);
-
-                    } while (!exists);
-
-
+                    PrintAllExistingHabitNames();
+                    SelectExistingHabitNameAndInsert(existingHabitNames);
                     break;
                 default:
                     break;
             }
 
         }
+    }
+
+    private void SelectExistingHabitNameAndInsert(List<string> existingHabitNames)
+    {
+        
+        string habitName = String.Empty;
+        bool exists = false;
+        do
+        {
+            habitName = GetNameInput("\nInsert the name of an existing habit. Type 0 to back.");
+
+            if (habitName == "0")
+                break;
+
+            exists = existingHabitNames.Contains(habitName);
+
+            if (!exists)
+            {
+                Console.Clear();
+                PrintAllExistingHabitNames();
+                Console.WriteLine("\n That name doesn't match with any record!");
+            }
+            else
+                Insert(habitName);
+
+        } while (!exists);
     }
 
     private List<string> GetExistingHabitNames()
