@@ -28,8 +28,62 @@ If that’s the case, watch the video tutorial for this project and then come ba
  -  [x] You should handle all possible errors so that the application never crashes.
  -  [x] The application should only be terminated when the user inserts 0.
  -  [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
- -  [ ] Your project needs to contain a Read Me file where you'll explain how your app works.
+ -  [x] Your project needs to contain a Read Me file where you'll explain how your app works.
  
 ## Challenges
  -  [x] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
  -  [x] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
+
+# Features
+
+* SQLite database connection
+
+	- The program uses a SQLite db connection to store and read information. 
+	- If no database exists, or the correct table does not exist they will be created on program start.
+
+* A console based UI where users can navigate by key presses
+ 
+ 	 ![1](https://github.com/Mo3ses/CodeReviews.Console.HabitTracker/assets/70375664/ab8b8497-59e4-4059-b21d-8dbcccc74fa4)
+
+
+* CRUD DB functions
+
+	- From the main menu users can Create, Read, Update or Delete.
+	- Values, Time and Dates inputted are checked to make sure they are in the correct and realistic format.
+ - DB Model
+   
+   <img src="https://github.com/Mo3ses/CodeReviews.Console.HabitTracker/assets/70375664/11525669-3afb-4bd3-bfb6-6cc6da1f098e" width="50%">
+
+* Report Menu
+
+  ![2](https://github.com/Mo3ses/CodeReviews.Console.HabitTracker/assets/70375664/592f8d2b-1666-4e50-8305-297dc788fd6b)
+	 
+* Reporting and other data output uses ConsoleTableExt library to output in a more pleasant way (Use a NerdFont to get the same visual)
+
+	 ![3](https://github.com/Mo3ses/CodeReviews.Console.HabitTracker/assets/70375664/d28c8a04-3bd6-4814-a3a3-bb58068dc012)
+	 - [GitHub for ConsoleTableExt Library](https://github.com/minhhungit/ConsoleTableExt)
+  - [GitHub for FiraCode Nerd Font](https://github.com/tonsky/FiraCode)
+
+* ConsoleTableExt Used on all my code to have a beautiful output in my program
+	- Thanks to minhungit
+	- [GitHub for ConsoleTableExt Library](https://github.com/minhhungit/ConsoleTableExt)
+# Challenges
+	
+- It was my first time using SQLite. I had to learn from the beginning in order to complete this project. 
+- DateTime was a hurdle to get over. I had to learn how to parse into and from DateTime into either more storable or human readable formats.
+- There was also a issue with DateTime.I had an issue inputting Dates in the format my program wanted because SQLite dont accept string as Date.I was able to resolve this adding a try catch to force the user input the format that the system expects.
+- SQLite. I already used normal SQL but SQLite is different I had a difficulty related to data types and conversions that I could do. 
+	
+# Lessons Learned
+- How to read a Documentation, never used ConsoleTableExt Library and loved it for console projects, I'm thinking of re-doing the previous ones with this Library.
+- The difficulty of making the system work without returning any problems and informing the user where the error is and what the application expects.
+
+# Areas to Improve
+- I want to learn more about github branch, start using github conventional commits and some other things on branch control.
+- Still have issues with spaghetti-code. 
+
+# Resources Used
+- [ConsoleTableExt Library](https://github.com/minhhungit/ConsoleTableExt)
+- [MS docs for setting up SQLite with C#](https://docs.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=netcore-cli)
+- [MS docs for DateTime](https://docs.microsoft.com/en-us/dotnet/api/system.datetime?view=net-5.0)
+- CodeCademy C# course to get some basic practice with C# variables, methods and classes.
