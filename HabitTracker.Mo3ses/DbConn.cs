@@ -186,10 +186,9 @@ namespace HabitTracker.Mo3ses
         {
             try
             {
-                var date1 = DateTime.ParseExact(dateStart.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                var date2 = DateTime.ParseExact(dateEnd.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var date1 = DateTime.ParseExact(dateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var date2 = DateTime.ParseExact(dateEnd, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 DataTable reportTab = new DataTable();
-                Console.WriteLine(dateStart.ToString());
                 cmd = new SQLiteCommand();
                 conn.Open();
                 cmd.Connection = conn;
@@ -208,8 +207,8 @@ namespace HabitTracker.Mo3ses
 									JOIN HABIT H ON H.ID = @id
                                     ";
                 cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@dateStart", dateStart.ToString());
-                cmd.Parameters.AddWithValue("@dateEnd", dateEnd.ToString());
+                cmd.Parameters.AddWithValue("@dateStart", dateStart);
+                cmd.Parameters.AddWithValue("@dateEnd", dateEnd);
                 reportTab.Load(cmd.ExecuteReader());
                 conn.Close();
                 if (reportTab.Rows.Count > 0)
