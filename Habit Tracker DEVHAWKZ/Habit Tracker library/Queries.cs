@@ -1,7 +1,7 @@
 ﻿using Habit_Tracker_library.Model;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
-using static Habit_Tracker_library.CRUD;
+using static Habit_Tracker_library.Crud;
 
 namespace Habit_Tracker_library;
 
@@ -154,14 +154,14 @@ internal class Queries
 
     internal static void YearlyReportQuery(string year)
     {
-        using (var connection = new SqliteConnection(CRUD.ConnectionString))
+        using (var connection = new SqliteConnection(Crud.ConnectionString))
         {
             connection.Open();
             var tableCheck = connection.CreateCommand();
 
 
             //proverava da li u tabeli postoji bar 1 red sa datom godinom
-            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{CRUD.Habit}' WHERE Date Like '%{year}')";
+            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{Crud.Habit}' WHERE Date Like '%{year}')";
 
             // vraca 1. kolonu 1. reda dobijenog iz prethodnog upita, ako takav red ne postoji vraca null
             int checkQuery = Convert.ToInt32(tableCheck.ExecuteScalar());
@@ -177,13 +177,13 @@ internal class Queries
 
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM '{CRUD.Habit}' WHERE Date Like '%{year}' ";
+            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM '{Crud.Habit}' WHERE Date Like '%{year}' ";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
             if (reader.Read())
                 
-                Console.WriteLine($"\nYou have done {CRUD.Habit} in {year} for {reader.GetInt32(0)} {CRUD.Measure}");
+                Console.WriteLine($"\nYou have done {Crud.Habit} in {year} for {reader.GetInt32(0)} {Crud.Measure}");
 
             connection.Close();
         }
@@ -193,14 +193,14 @@ internal class Queries
 
     internal static void MonthlyReportQuery(string month)
     {
-        using (var connection = new SqliteConnection(CRUD.ConnectionString))
+        using (var connection = new SqliteConnection(Crud.ConnectionString))
         {
             connection.Open();
             var tableCheck = connection.CreateCommand();
 
 
             //proverava da li u tabeli postoji bar 1 red sa datom godinom
-            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{CRUD.Habit}' WHERE Date Like '%{month}%')";
+            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{Crud.Habit}' WHERE Date Like '%{month}%')";
 
             // vraca 1. kolonu 1. reda dobijenog iz prethodnog upita, ako takav red ne postoji vraca null
             int checkQuery = Convert.ToInt32(tableCheck.ExecuteScalar());
@@ -216,7 +216,7 @@ internal class Queries
 
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM '{CRUD.Habit}' WHERE Date Like '%{month}%' ";
+            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM '{Crud.Habit}' WHERE Date Like '%{month}%' ";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -226,7 +226,7 @@ internal class Queries
                 int sum = reader.GetInt32(0);
                 string mesec = Helpers.GetMonthName(month);
                 
-                Console.WriteLine($"\nIn {mesec} you have done total of {sum} {CRUD.Measure} {CRUD.Habit}");
+                Console.WriteLine($"\nIn {mesec} you have done total of {sum} {Crud.Measure} {Crud.Habit}");
             }
 
             else Console.WriteLine("\nNo rows with specified year has been found!");

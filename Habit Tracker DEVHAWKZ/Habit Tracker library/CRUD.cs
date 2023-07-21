@@ -3,7 +3,7 @@ using static Habit_Tracker_library.Queries;
 
 namespace Habit_Tracker_library
 {
-    internal static class CRUD
+    internal static class Crud
     {
         private static string _connectionString = @"Data Source=habit-tracker.db";
         private static string _habit;

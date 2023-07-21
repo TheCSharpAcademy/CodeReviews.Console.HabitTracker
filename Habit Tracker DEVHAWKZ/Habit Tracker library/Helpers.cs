@@ -48,9 +48,9 @@ internal static class Helpers
     internal static void GetDetails()
     {
         var (habit, measure) = Helpers.GetHabit();
-        CRUD.Habit = habit;
-        CRUD.Measure = measure;
-        CRUD.CreateTable();
+        Crud.Habit = habit;
+        Crud.Measure = measure;
+        Crud.CreateTable();
     }
 
     internal static string GetReportType(string record)
@@ -66,13 +66,13 @@ internal static class Helpers
 
     internal static int PossibleUpdate(int recordId)
     {
-        using (var connection = new SqliteConnection(CRUD.ConnectionString))
+        using (var connection = new SqliteConnection(Crud.ConnectionString))
         {
             connection.Open();
             var tableCheck = connection.CreateCommand();
 
             //proverava da li u tabeli postoji red sa datim id-em ako postoji vraca taj red EXISTS u SQL proverava da li podupit vraca neku vrednost (vraca 1 ako podupit vraca neku vrednost 
-            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{CRUD.Habit}' WHERE Id = {recordId})";
+            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{Crud.Habit}' WHERE Id = {recordId})";
 
             // vraca 1. kolonu 1. reda dobijenog iz prethodnog upita, ako takav red ne postoji vraca null
             int checkQuery = Convert.ToInt32(tableCheck.ExecuteScalar());
