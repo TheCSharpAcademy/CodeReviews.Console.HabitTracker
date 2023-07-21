@@ -14,7 +14,7 @@ internal class Queries
             connection.Open(); // povezivanje sa bazom
             var tableCmd = connection.CreateCommand(); // kreira komandu
 
-            tableCmd.CommandText = @$"CREATE TABLE IF NOT EXISTS '{Habit}' 
+            tableCmd.CommandText = @$"CREATE TABLE IF NOT EXISTS habits 
                                     (
                                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         Date TEXT,
@@ -34,7 +34,7 @@ internal class Queries
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"INSERT INTO '{Habit}'(date,quantity) VALUES ('{date}', {quantity})";
+            tableCmd.CommandText = $"INSERT INTO habits(date,quantity) VALUES ('{date}', {quantity})";
 
             tableCmd.ExecuteNonQuery();
             connection.Close();
@@ -51,7 +51,7 @@ internal class Queries
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = @$"SELECT * FROM '{Habit}'";
+            tableCmd.CommandText = @$"SELECT * FROM 'habits'";
 
             List<HabitInfo> tableData = new(); // lista u kojoj ce da se nalazi svi objekti (redovi) iz tabele 
             SqliteDataReader reader = tableCmd.ExecuteReader(); // cita podatke iz baze i vraca datareader objekat
@@ -101,7 +101,7 @@ internal class Queries
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"DELETE FROM '{Habit}' WHERE Id = {recordID}";
+            tableCmd.CommandText = $"DELETE FROM 'habits' WHERE Id = {recordID}";
 
             int rowCount = tableCmd.ExecuteNonQuery(); // vraca broj kreiranih, updejtovanih ili obrisanih redova
 
@@ -141,7 +141,7 @@ internal class Queries
             int quantity = Helpers.GetNumberInput($"\nPlease enter quantity in {Measure} (no decimals allowed)");
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"UPDATE '{Habit}' SET Date = '{date}', Quantity = {quantity} WHERE Id = {recordId}";
+            tableCmd.CommandText = $"UPDATE habits SET Date = '{date}', Quantity = {quantity} WHERE Id = {recordId}";
 
             tableCmd.ExecuteNonQuery();
 
@@ -161,7 +161,7 @@ internal class Queries
 
 
             //proverava da li u tabeli postoji bar 1 red sa datom godinom
-            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{Crud.Habit}' WHERE Date Like '%{year}')";
+            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM habits WHERE Date Like '%{year}')";
 
             // vraca 1. kolonu 1. reda dobijenog iz prethodnog upita, ako takav red ne postoji vraca null
             int checkQuery = Convert.ToInt32(tableCheck.ExecuteScalar());
@@ -177,13 +177,13 @@ internal class Queries
 
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM '{Crud.Habit}' WHERE Date Like '%{year}' ";
+            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM habits WHERE Date Like '%{year}' ";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
             if (reader.Read())
                 
-                Console.WriteLine($"\nYou have done {Crud.Habit} in {year} for {reader.GetInt32(0)} {Crud.Measure}");
+                Console.WriteLine($"\nYou have done habits in {year} for {reader.GetInt32(0)} {Crud.Measure}");
 
             connection.Close();
         }
@@ -200,7 +200,7 @@ internal class Queries
 
 
             //proverava da li u tabeli postoji bar 1 red sa datom godinom
-            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{Crud.Habit}' WHERE Date Like '%{month}%')";
+            tableCheck.CommandText = $"SELECT EXISTS(SELECT 1 FROM habits WHERE Date Like '%{month}%')";
 
             // vraca 1. kolonu 1. reda dobijenog iz prethodnog upita, ako takav red ne postoji vraca null
             int checkQuery = Convert.ToInt32(tableCheck.ExecuteScalar());
@@ -216,7 +216,7 @@ internal class Queries
 
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM '{Crud.Habit}' WHERE Date Like '%{month}%' ";
+            tableCmd.CommandText = $"SELECT SUM(Quantity) FROM habits WHERE Date Like '%{month}%' ";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 

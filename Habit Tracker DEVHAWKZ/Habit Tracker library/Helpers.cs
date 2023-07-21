@@ -48,7 +48,7 @@ internal static class Helpers
     internal static void GetDetails()
     {
         var (habit, measure) = Helpers.GetHabit();
-        Crud.Habit = habit;
+        
         Crud.Measure = measure;
         Crud.CreateTable();
     }

@@ -6,7 +6,7 @@ namespace Habit_Tracker_library
     internal static class Crud
     {
         private static string _connectionString = @"Data Source=habit-tracker.db";
-        private static string _habit;
+        //private static string _habit;
         private static string _measure;
 
         internal static string ConnectionString
@@ -15,11 +15,11 @@ namespace Habit_Tracker_library
             private set { _connectionString = value; }
         }
 
-        internal static string Habit {
+       /* internal static string Habit {
             get { return _habit; }
             set { _habit = value; }
         }
-
+       */
         internal static string Measure
         {
             get { return _measure; }
