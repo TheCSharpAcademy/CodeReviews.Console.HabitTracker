@@ -6,7 +6,7 @@ namespace Habit_Tracker_library
     internal static class Crud
     {
         private static string _connectionString = @"Data Source=habit-tracker.db";
-        //private static string _habit;
+        private static string _habit;
         private static string _measure;
 
         internal static string ConnectionString
@@ -15,11 +15,12 @@ namespace Habit_Tracker_library
             private set { _connectionString = value; }
         }
 
-       /* internal static string Habit {
+        internal static string Habit
+        {
             get { return _habit; }
             set { _habit = value; }
         }
-       */
+
         internal static string Measure
         {
             get { return _measure; }
@@ -47,30 +48,30 @@ namespace Habit_Tracker_library
             int quantity = GetNumberInput($"\nPlease enter quantity in {Measure} (no decimals allowed)\nType 0 to return to Main Menu");
 
             if (date != "0" && quantity != 0) InsertRecordQuery(date, quantity);
-            
-            else Menu.MainMenu();    
+
+            else Menu.MainMenu();
         }
 
         internal static void DeleteRecord()
         {
             Console.Clear();
             Console.WriteLine("Delete Record");
-            
-            int rows =  ViewAllRecords();
 
-            if(rows == 0)
+            int rows = ViewAllRecords();
+
+            if (rows == 0)
             {
                 Console.WriteLine("\n\nPress any key to insert records...");
                 Console.ReadKey();
                 InsertRecord();
             }
-    
-            else 
+
+            else
             {
                 var recordID = GetNumberInput("\nPlease enter id of the record you want to delete\nType 0 to get back to Main Menu");
 
-                if(recordID > 0) DeleteRecordQuery(recordID);
-                
+                if (recordID > 0) DeleteRecordQuery(recordID);
+
                 else Menu.MainMenu();
             }
         }
@@ -82,19 +83,19 @@ namespace Habit_Tracker_library
 
             int rows = ViewAllRecords();
 
-           if(rows == 0)
+            if (rows == 0)
             {
                 Console.WriteLine("\n\nPress any key to insert records...");
                 Console.ReadKey();
                 InsertRecord();
             }
 
-           else
+            else
             {
                 var recordId = GetNumberInput("\nPlease enter id of the record you want to update\nType 0 to get back to Main Menu");
 
                 if (recordId > 0) UpdateRecordQuery(recordId);
-             
+
                 else Menu.MainMenu();
             }
         }

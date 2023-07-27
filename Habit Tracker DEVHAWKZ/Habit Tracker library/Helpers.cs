@@ -4,13 +4,13 @@ namespace Habit_Tracker_library;
 
 internal static class Helpers
 {
-    
+
     internal static string GetDateInput(string message = "")
     {
         Console.WriteLine($"Please insert the date in specified format dd-MM-yyyy\n{message}");
         string dateInput = Validations.GetDate(Console.ReadLine());
 
-        if(dateInput == "0") Menu.MainMenu();
+        if (dateInput == "0") Menu.MainMenu();
 
         return dateInput;
     }
@@ -27,7 +27,7 @@ internal static class Helpers
         Console.WriteLine("\nWhat habit do you want to track?");
         string habit = Console.ReadLine();
 
-        while(string.IsNullOrEmpty(habit)) 
+        while (string.IsNullOrEmpty(habit))
         {
             Console.WriteLine("\nYou have to enter some habit: ");
             habit = Console.ReadLine();
@@ -48,7 +48,7 @@ internal static class Helpers
     internal static void GetDetails()
     {
         var (habit, measure) = Helpers.GetHabit();
-        
+        Crud.Habit = habit;
         Crud.Measure = measure;
         Crud.CreateTable();
     }
@@ -86,7 +86,7 @@ internal static class Helpers
         switch (Convert.ToInt32(month))
         {
             case 1:
-               return Months.January.ToString();
+                return Months.January.ToString();
 
             case 2:
                 return Months.February.ToString();
@@ -126,5 +126,5 @@ internal static class Helpers
         }
     }
 
-    
+
 }
