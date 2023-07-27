@@ -16,9 +16,10 @@ namespace HabitTracker.ItsSt0rm
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    @"CREATE TABLE IF NOT EXISTS drinking_water (
+                    @"CREATE TABLE IF NOT EXISTS habit_tracker (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Date TEXT,
+            Measure TEXT,
             Quantity INTEGER
             )";
 
@@ -82,9 +83,9 @@ namespace HabitTracker.ItsSt0rm
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText =
-                    $"SELECT * FROM drinking_water ";
+                    $"SELECT * FROM habit_tracker ";
 
-                List<DrinkingWater> tableData = new();
+                List<HabitTracker> tableData = new();
 
                 SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -93,11 +94,12 @@ namespace HabitTracker.ItsSt0rm
                     while (reader.Read())
                     {
                         tableData.Add(
-                            new DrinkingWater
+                            new HabitTracker
                             {
                                 Id = reader.GetInt32(0),
                                 Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                                Quantity = reader.GetInt32(2)
+                                Measure = reader.GetString(2),
+                                Quantity = reader.GetInt32(3)
                             });
                     }
                 }
@@ -109,9 +111,9 @@ namespace HabitTracker.ItsSt0rm
                 connection.Close();
 
                 Console.WriteLine("------------------------------------\n");
-                foreach (var drinkingWater in tableData)
+                foreach (var habitTracker in tableData)
                 {
-                    Console.WriteLine($"{drinkingWater.Id} - {drinkingWater.Date.ToString("dd-MMM-yyyy")} - Quantity: {drinkingWater.Quantity}");
+                    Console.WriteLine($"{habitTracker.Id} - {habitTracker.Date.ToString("dd-MMM-yyyy")} - Measure: {habitTracker.Measure} - Quantity: {habitTracker.Quantity}");
                 }
                 Console.WriteLine("------------------------------------\n");
             }
@@ -122,8 +124,11 @@ namespace HabitTracker.ItsSt0rm
         {
             string date = GetDateInput();
 
-            int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice." +
-                "(Decimals allowed)\n\n");
+            Console.WriteLine("Please insert the measure of your habit.");
+            string measure = Console.ReadLine();
+
+            int quantity = GetNumberInput($"\n\nPlease insert number of {measure}." +
+                "(No decimals allowed)\n\n");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -131,7 +136,7 @@ namespace HabitTracker.ItsSt0rm
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+                    $"INSERT INTO habit_tracker(date, measure, quantity) VALUES('{date}','{measure}', {quantity})";
 
                 tableCmd.ExecuteNonQuery();
 
@@ -238,10 +243,11 @@ namespace HabitTracker.ItsSt0rm
         }
     }
 
-    public class DrinkingWater
+    public class HabitTracker
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public string Measure { get; set; }
         public int Quantity { get; set; }
     }
 }
