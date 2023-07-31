@@ -39,11 +39,9 @@ public class Program
                     Console.Write("CHOOSE HABIT NAME: ");
                     string habitName = Console.ReadLine();
                     Console.Write("CHOOSE THE MEASURE NAME(METERS, POUNDS, KILOMETERS, KILOGRAMS): ");
-                    string habitMeasure = Console.ReadLine();
-                    Console.Write("CHOOSE THE VALUE PER TRACK: ");
-                    string habitValue = Console.ReadLine();    
-                    if (!string.IsNullOrEmpty(habitName) && !string.IsNullOrEmpty(habitMeasure) && !(ProgramHelpers.ValidateInputs(habitValue) == 0)){
-                        conn.CreateHabit(habitName, habitMeasure, ProgramHelpers.ValidateInputs(habitValue));
+                    string habitMeasure = Console.ReadLine();  
+                    if (!string.IsNullOrEmpty(habitName) && !string.IsNullOrEmpty(habitMeasure)){
+                        conn.CreateHabit(habitName, habitMeasure);
                     }
                     else
                     {
@@ -65,11 +63,9 @@ public class Program
                             string newHabitName = Console.ReadLine();
                             Console.Write("CHOOSE THE NEW HABIT MEASURE: ");
                             string newHabitMeasure = Console.ReadLine();
-                            Console.Write("CHOOSE THE  NEW VALUE PER TRACK:");
-                            string newHabitValue = Console.ReadLine();
-                            if (!string.IsNullOrEmpty(newHabitName) && !string.IsNullOrEmpty(newHabitMeasure) && !(ProgramHelpers.ValidateInputs(newHabitValue) == 0))
+                            if (!string.IsNullOrEmpty(newHabitName) && !string.IsNullOrEmpty(newHabitMeasure) )
                             {
-                                conn.UpdateHabit(updateId, newHabitName, newHabitMeasure, ProgramHelpers.ValidateInputs(newHabitValue));
+                                conn.UpdateHabit(updateId, newHabitName, newHabitMeasure);
                             }
                             else
                             {

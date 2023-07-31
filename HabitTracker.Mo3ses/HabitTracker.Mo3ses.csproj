@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HabitTracker.db" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ConsoleTableExt" Version="3.2.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
   </ItemGroup>

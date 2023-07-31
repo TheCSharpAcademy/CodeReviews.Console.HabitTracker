@@ -23,7 +23,6 @@ namespace HabitTracker.Mo3ses
                                ID INTEGER NOT NULL,
                                HABITNAME TEXT NOT NULL,
                                HABITMEASURE TEXT NOT NULL,
-                               HABITVALUE INTEGER NOT NULL,
                                PRIMARY KEY(ID AUTOINCREMENT)
                                );
                                 CREATE TABLE HABITTRACKER (
@@ -48,15 +47,14 @@ namespace HabitTracker.Mo3ses
             }
         }
 
-        public void CreateHabit(string habitName, string habitMeasure, int habitValue)
+        public void CreateHabit(string habitName, string habitMeasure)
         {
             cmd = new SQLiteCommand();
             conn.Open();
             cmd.Connection = conn;
-            cmd.CommandText = $"INSERT INTO HABIT(HABITNAME, HABITMEASURE, HABITVALUE) VALUES(@habitName, @habitMeasure, @habitValue)";
+            cmd.CommandText = $"INSERT INTO HABIT(HABITNAME, HABITMEASURE) VALUES(@habitName, @habitMeasure)";
             cmd.Parameters.AddWithValue("@habitName", habitName);
             cmd.Parameters.AddWithValue("@habitMeasure", habitMeasure);
-            cmd.Parameters.AddWithValue("@habitValue", habitValue);
             cmd.ExecuteNonQuery();
             conn.Close();
         }
@@ -112,15 +110,14 @@ namespace HabitTracker.Mo3ses
             conn.Close();
         }
 
-        public void UpdateHabit(int id, string newHabitName, string newHabitMeasure, int newHabitValue)
+        public void UpdateHabit(int id, string newHabitName, string newHabitMeasure)
         {
             cmd = new SQLiteCommand();
             conn.Open();
             cmd.Connection = conn;
-            cmd.CommandText = "UPDATE HABIT SET HABITNAME = @newHabitName, HABITMEASURE = @newHabitMeasure, HABITVALUE = @newHabitValue WHERE ID = @id";
+            cmd.CommandText = "UPDATE HABIT SET HABITNAME = @newHabitName, HABITMEASURE = @newHabitMeasure WHERE ID = @id";
             cmd.Parameters.AddWithValue("@newHabitName", newHabitName);
             cmd.Parameters.AddWithValue("@newHabitMeasure", newHabitMeasure);
-            cmd.Parameters.AddWithValue("@newHabitValue", newHabitValue);
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
             conn.Close();
@@ -198,12 +195,11 @@ namespace HabitTracker.Mo3ses
                                   T.TOTALMEASURE,
                                     H.HABITMEASURE
                                 FROM
-                                  (	SELECT COUNT(HT.HABITID) TIMESTRACKED, (SUM(HT.QUANTITY) * H.HABITVALUE) AS TOTALMEASURE
+                                  (	SELECT COUNT(HT.HABITID) TIMESTRACKED, (SUM(HT.QUANTITY)) AS TOTALMEASURE
                                 	FROM HABITTRACKER HT
                                 	JOIN HABIT H ON H.ID = HT.HABITID
                                 	WHERE HT.HABITID = @id
-									AND DATESTART >= @dateStart AND DATEEND <= @dateEnd
-                                	GROUP BY H.HABITVALUE ) AS T
+									AND DATESTART >= @dateStart AND DATEEND <= @dateEnd ) AS T
 									JOIN HABIT H ON H.ID = @id
                                     ";
                 cmd.Parameters.AddWithValue("@id", id);
@@ -256,11 +252,10 @@ namespace HabitTracker.Mo3ses
                                   T.TOTALMEASURE,
                                     H.HABITMEASURE
                                 FROM
-                                  (	SELECT COUNT(HT.HABITID) TIMESTRACKED, (SUM(HT.QUANTITY) * H.HABITVALUE) AS TOTALMEASURE
+                                  (	SELECT COUNT(HT.HABITID) TIMESTRACKED, (SUM(HT.QUANTITY)) AS TOTALMEASURE
                                 	FROM HABITTRACKER HT
                                 	JOIN HABIT H ON H.ID = HT.HABITID
-                                	WHERE HT.HABITID = @id
-                                	GROUP BY H.HABITVALUE ) AS T
+                                	WHERE HT.HABITID = @id ) AS T
                                   JOIN HABIT H ON H.ID = @id";
             cmd.Parameters.AddWithValue("@id", id);
             reportTab.Load(cmd.ExecuteReader());
