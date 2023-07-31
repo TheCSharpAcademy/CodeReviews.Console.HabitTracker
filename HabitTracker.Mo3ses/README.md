@@ -52,7 +52,7 @@ If that’s the case, watch the video tutorial for this project and then come ba
 	- Values, Time and Dates inputted are checked to make sure they are in the correct and realistic format.
  - DB Model
    
-   <img src="https://github.com/Mo3ses/CodeReviews.Console.HabitTracker/assets/70375664/11525669-3afb-4bd3-bfb6-6cc6da1f098e" width="50%">
+   <img src="https://github.com/Mo3ses/CodeReviews.Console.HabitTracker/assets/70375664/8528d53c-33d8-4220-93d7-6d408861a943" width="50%">
 
 * Report Menu
 
