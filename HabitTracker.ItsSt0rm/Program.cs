@@ -183,7 +183,7 @@ namespace HabitTracker.ItsSt0rm
                 connection.Open();
 
                 var checkCmd = connection.CreateCommand();
-                checkCmd.CommandText = $"SELECT EXISTS (SELECT 1 FROM drinking_water WHERE Id = {recordId})";
+                checkCmd.CommandText = $"SELECT EXISTS (SELECT 1 FROM habit_tracker WHERE Id = {recordId})";
                 int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
                 if (checkQuery == 0)
@@ -195,10 +195,14 @@ namespace HabitTracker.ItsSt0rm
 
                 string date = GetDateInput();
 
-                int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+                Console.WriteLine("Please insert the measure of your habit. \n\n");
+                string measure = Console.ReadLine();
+
+                int quantity = GetNumberInput($"\n\nPlease insert number of {measure}." +
+                "(No decimals allowed)\n\n");
 
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+                tableCmd.CommandText = $"UPDATE habit_tracker SET date = '{date}', measure = '{measure}', quantity = {quantity} WHERE Id = {recordId}";
 
                 tableCmd.ExecuteNonQuery();
 
