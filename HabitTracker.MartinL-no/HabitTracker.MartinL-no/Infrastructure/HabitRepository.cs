@@ -48,7 +48,7 @@ internal class HabitRepository
             command.CommandText = """
                 SELECT H.Id, H.Name, HabitDate.Id as HabitDateId, HabitDate.Date, HabitDate.Count
                 FROM Habit AS H
-                INNER JOIN HabitDate ON H.Id = HabitDate.HabitId;
+                LEFT JOIN HabitDate ON H.Id = HabitDate.HabitId;
                 """;
 
             using (var reader = command.ExecuteReader())
@@ -68,16 +68,41 @@ internal class HabitRepository
 
                     id = reader.GetInt32(0);
                     name = reader.GetString(1);
-                    var habitDateId = reader.GetInt32(2);
-                    var date = DateOnly.Parse(reader.GetString(3));
-                    var count = reader.GetInt32(4);
 
-                    habitDates.Add(new HabitDate(habitDateId, date, count));
+                    try
+                    {
+                        var habitDateId = reader.GetInt32(2);
+                        var date = DateOnly.Parse(reader.GetString(3));
+                        var count = reader.GetInt32(4);
+                        habitDates.Add(new HabitDate(habitDateId, date, count));
+                    }
+                    catch
+                    {
+                        continue;
+                    }
                 }
 
                 habits.Add(new Habit(id, name, habitDates));
                 return habits;
             }
+        }
+    }
+
+    internal void AddHabit(string name)
+    {
+        using (var connection = new SqliteConnection(_connectionString))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+
+            command.CommandText = """
+                INSERT INTO Habit (Name)
+                VALUES (@name)
+                """;
+
+            command.Parameters.AddWithValue("@name", name);
+            command.ExecuteNonQuery();
         }
     }
 }

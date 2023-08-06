@@ -4,15 +4,22 @@ namespace HabitTracker.MartinL_no;
 
 internal class HabitService
 {
-    private HabitRepository _habitRepo;
+    private HabitRepository _repo;
 
-    public HabitService(HabitRepository habitRepo)
+    internal HabitService(HabitRepository habitRepo)
     {
-        _habitRepo = habitRepo;
+        _repo = habitRepo;
     }
 
-    internal List<Habit> GetAllHabits()
+    internal List<Habit> GetAll()
     {
-        return _habitRepo.GetHabits();
+        return _repo.GetHabits();
+    }
+
+    internal void Add(string? name)
+    {
+        if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException();
+
+        _repo.AddHabit(name);
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace HabitTracker.MartinL_no;
+﻿using HabitTracker.MartinL_no.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace HabitTracker.MartinL_no;
 
 internal class HabitTrackerApplication
 {
@@ -11,52 +14,95 @@ internal class HabitTrackerApplication
 
     internal void Execute()
     {
-        ShowMenuOptions();
-
-        Console.Write("Your choice: ");
-        var op = Console.ReadLine();
-
-        switch (op)
+        while (true)
         {
-            case "v":
-                ViewAllHabits();
-                break;
-            case "a":
-                AddHabit();
-                break;
-        }
-    }
+            ShowMenuOptions();
 
-    private void ViewAllHabits()
-    {
-        var habits = _service.GetAllHabits();
+            Console.Write("Your choice: ");
+            var op = Console.ReadLine();
 
-        Console.WriteLine("| Habit           | Date     | Count |");
-        foreach (var habit in habits)
-        {
-            foreach (var date in habit.Dates)
+            switch (op)
             {
-                Console.WriteLine($"  {habit.Name.PadRight(18)}{date.Date}{date.Count.ToString().PadLeft(4)}");
-
+                case "v":
+                    ViewAllHabits();
+                    break;
+                case "a":
+                    AddHabit();
+                    break;
             }
         }
     }
 
-    private void AddHabit()
-    {
-        throw new NotImplementedException();
-    }
-
     private void ShowMenuOptions()
     {
+        Console.Clear();
         Console.WriteLine("Welcome to the Habit Tracker app!");
         Console.WriteLine("---------------------------------\n");
 
         Console.WriteLine("""
             Select an option:
             v - View all habits
-            a - add habit
+            a - Add habit
 
             """);
     }
+
+    private void ViewAllHabits()
+    {
+        var habits = _service
+            .GetAll()
+            .OrderBy(h => h.Name)
+            .ThenBy(h => h.Dates);
+
+        Console.Clear();
+        Console.WriteLine("| Habit           | Date                | Count |");
+        foreach (var habit in habits)
+        {
+            PrintHabitTotal(habit);
+
+            foreach (var date in habit.Dates)
+            {
+                Console.WriteLine($"{date.Date.ToString().PadLeft(28)}{date.Count.ToString().PadLeft(15)}");
+
+            }
+        }
+        Thread.Sleep(3000);
+    }
+
+    private void PrintHabitTotal(Habit habit)
+    {
+        if (habit.Dates.Count == 0)
+        {
+            Console.WriteLine($"  {habit.Name.PadRight(17)} No dates registered");
+        }
+        else
+        {
+            Console.WriteLine($"  {habit.Name.PadRight(17)} All dates {habit.Dates.Sum(d => d.Count).ToString().PadLeft(13)}");
+        }
+    }
+
+    private void AddHabit()
+    {
+        Console.Clear();
+
+        while (true)
+        {
+            Console.Write("Enter your habit name: ");
+            var name = Console.ReadLine();
+
+            try
+            {
+                _service.Add(name);
+                Console.WriteLine($"{name} added as habit\n");
+                Thread.Sleep(3000);
+                break;
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine("Invalid entry please try again");
+            }
+        }
+    }
+
+    
 }

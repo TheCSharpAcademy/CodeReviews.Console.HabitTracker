@@ -6,8 +6,10 @@ internal class HabitDate
     internal DateOnly Date { get; }
     internal int Count { get; set; }
 
-    internal HabitDate(int id, DateOnly date, int count)
+    internal HabitDate(int id, DateOnly date, int count = 1)
     {
+        if (count == 0) throw new ArgumentException();
+
         Id = id;
         Date = date;
         Count = count;
