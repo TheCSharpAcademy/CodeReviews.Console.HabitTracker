@@ -1,5 +1,4 @@
 ﻿using HabitTracker.MartinL_no.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTracker.MartinL_no;
 
@@ -7,7 +6,7 @@ internal class HabitTrackerApplication
 {
     private readonly HabitService _service;
 
-    public HabitTrackerApplication(HabitService service)
+    internal HabitTrackerApplication(HabitService service)
     {
         _service = service;
     }
@@ -29,6 +28,12 @@ internal class HabitTrackerApplication
                 case "a":
                     AddHabit();
                     break;
+                case "0":
+                    break;
+                default:
+                    Console.WriteLine("Invalid option, please try again");
+                    Thread.Sleep(3000);
+                    break;
             }
         }
     }
@@ -43,6 +48,7 @@ internal class HabitTrackerApplication
             Select an option:
             v - View all habits
             a - Add habit
+            0 - Exit program
 
             """);
     }
@@ -97,9 +103,15 @@ internal class HabitTrackerApplication
                 Thread.Sleep(3000);
                 break;
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 Console.WriteLine("Invalid entry please try again");
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("Habit already entered");
+                Thread.Sleep(3000);
+                break;
             }
         }
     }

@@ -7,7 +7,7 @@ internal class HabitRepository
 {
     private readonly string _connectionString;
 
-    public HabitRepository()
+    internal HabitRepository()
     {
         _connectionString = "Data Source=habitTracker.db";
         CreateTable();
@@ -38,7 +38,7 @@ internal class HabitRepository
         }
     }
 
-    internal List<Habit> GetHabits()
+    internal List<Habit> GetAllHabits()
     {
         using (var connection = new SqliteConnection(_connectionString))
         {
@@ -88,6 +88,54 @@ internal class HabitRepository
         }
     }
 
+    internal Habit GetHabitByName(string name)
+    {
+        using (var connection = new SqliteConnection(_connectionString))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+
+            command.CommandText = """
+                SELECT H.Id, H.Name, HabitDate.Id as HabitDateId, HabitDate.Date, HabitDate.Count
+                FROM Habit as H
+                LEFT JOIN HabitDate ON H.Id = HabitDate.HabitId
+                WHERE H.Name = @name;
+                """;
+
+            command.Parameters.AddWithValue("@name", name);
+
+            using (var reader = command.ExecuteReader())
+            {
+                if (!reader.HasRows) throw new InvalidOperationException();
+
+                var id = -1;
+                var _name = "";
+                var habitDates = new List<HabitDate>();
+
+                while (reader.Read())
+                {
+                    id = reader.GetInt32(0);
+                    _name = reader.GetString(1);
+
+                    try
+                    {
+                        var habitDateId = reader.GetInt32(2);
+                        var date = DateOnly.Parse(reader.GetString(3));
+                        var count = reader.GetInt32(4);
+                        habitDates.Add(new HabitDate(habitDateId, date, count));
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+
+                return new Habit(id, name, habitDates);
+            }
+        }
+    }
+
     internal void AddHabit(string name)
     {
         using (var connection = new SqliteConnection(_connectionString))
@@ -105,5 +153,6 @@ internal class HabitRepository
             command.ExecuteNonQuery();
         }
     }
+
 }
 

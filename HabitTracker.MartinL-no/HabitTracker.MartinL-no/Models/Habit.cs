@@ -6,7 +6,7 @@ internal class Habit
     internal readonly string Name;
     internal List<HabitDate> Dates { get; private set; }
 
-    public Habit(int id, string name, List<HabitDate> dates)
+    internal Habit(int id, string name, List<HabitDate> dates)
     {
         _id = id;
         Name = name;

@@ -13,13 +13,31 @@ internal class HabitService
 
     internal List<Habit> GetAll()
     {
-        return _repo.GetHabits();
+        return _repo.GetAllHabits();
+    }
+
+    internal Habit Get(string name)
+    {
+        return _repo.GetHabitByName(name);
     }
 
     internal void Add(string? name)
     {
         if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException();
+        else if (HabitAlreadyExists(name)) throw new InvalidOperationException();
 
         _repo.AddHabit(name);
+    }
+
+    private bool HabitAlreadyExists(string? name)
+    {
+        try
+        {
+            return Get(name).Name == name;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
