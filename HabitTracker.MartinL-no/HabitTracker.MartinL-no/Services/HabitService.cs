@@ -11,33 +11,41 @@ internal class HabitService
         _repo = habitRepo;
     }
 
-    internal List<Habit> GetAll()
+    internal Habit Get()
     {
-        return _repo.GetAllHabits();
-    }
-
-    internal Habit Get(string name)
-    {
-        return _repo.GetHabitByName(name);
+        return _repo.GetHabit();
     }
 
     internal void Add(string? name)
     {
-        if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException();
-        else if (HabitAlreadyExists(name)) throw new InvalidOperationException();
+        if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid entry");
 
-        _repo.AddHabit(name);
-    }
-
-    private bool HabitAlreadyExists(string? name)
-    {
         try
         {
-            return Get(name).Name == name;
+            // If there is no habit in the database an InvalidOperationException is thrown
+            var currentHabit = Get();
         }
-        catch
+        // Add habit if there isn't one in the database
+        catch (InvalidOperationException)
         {
-            return false;
+           _repo.AddHabit(name);
+            return;
         }
+        // New exception thrown when there is already a habit in the database
+        throw new InvalidOperationException("Another habit is already stored in the system");
+    }
+
+    internal void Delete()
+    {
+        _repo.DeleteHabit();
+    }
+
+    internal void AddRecord(DateOnly date, int repetitionsCount)
+    {
+        if (repetitionsCount < 1) throw new ArgumentException();
+
+        var habit = Get();
+
+        _repo.AddHabitRecord(new HabitDate(date, repetitionsCount, habit.Id));
     }
 }

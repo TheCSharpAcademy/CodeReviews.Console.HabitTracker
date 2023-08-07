@@ -4,14 +4,20 @@ internal class HabitDate
 {
     internal int Id { get; }
     internal DateOnly Date { get; }
-    internal int Count { get; set; }
+    internal int Count { get; }
+    internal int HabitId { get; }
 
-    internal HabitDate(int id, DateOnly date, int count = 1)
+    internal HabitDate(DateOnly date, int count, int habitId)
     {
-        if (count == 0) throw new ArgumentException();
+        if (count < 1) throw new ArgumentException();
 
-        Id = id;
         Date = date;
         Count = count;
+        HabitId = habitId;
+    }
+
+    internal HabitDate(int id, DateOnly date, int count, int habitId) : this(date, count, habitId)
+    {
+        Id = id;
     }
 }

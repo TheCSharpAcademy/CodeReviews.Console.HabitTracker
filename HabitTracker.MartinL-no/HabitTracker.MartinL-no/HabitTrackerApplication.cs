@@ -23,13 +23,17 @@ internal class HabitTrackerApplication
             switch (op)
             {
                 case "v":
-                    ViewAllHabits();
+                    ViewHabit();
                     break;
-                case "a":
+                case "h":
                     AddHabit();
                     break;
-                case "0":
+                case "r":
+                    AddHabitRecord();
                     break;
+                case "0":
+                    Console.WriteLine("Program ended");
+                    return;
                 default:
                     Console.WriteLine("Invalid option, please try again");
                     Thread.Sleep(3000);
@@ -46,45 +50,34 @@ internal class HabitTrackerApplication
 
         Console.WriteLine("""
             Select an option:
-            v - View all habits
-            a - Add habit
+            v - View habit statistics
+            h - Add/ replace habit
+            r - Add habit record
             0 - Exit program
 
             """);
     }
 
-    private void ViewAllHabits()
+    private void ViewHabit()
     {
-        var habits = _service
-            .GetAll()
-            .OrderBy(h => h.Name)
-            .ThenBy(h => h.Dates);
-
-        Console.Clear();
-        Console.WriteLine("| Habit           | Date                | Count |");
-        foreach (var habit in habits)
+        try
         {
-            PrintHabitTotal(habit);
+            var habit = _service.Get();
+
+            Console.Clear();
+            Console.WriteLine($"{habit.Name} statistics");
+            Console.WriteLine("| Date                | Count |");
 
             foreach (var date in habit.Dates)
             {
-                Console.WriteLine($"{date.Date.ToString().PadLeft(28)}{date.Count.ToString().PadLeft(15)}");
-
+                Console.WriteLine($"{date.Date.ToString().PadLeft(10).PadRight(24)}{date.Count}");
             }
         }
+        catch (InvalidOperationException)
+        {
+            Console.WriteLine("No habit currently being recorded, add habit first");
+        }
         Thread.Sleep(3000);
-    }
-
-    private void PrintHabitTotal(Habit habit)
-    {
-        if (habit.Dates.Count == 0)
-        {
-            Console.WriteLine($"  {habit.Name.PadRight(17)} No dates registered");
-        }
-        else
-        {
-            Console.WriteLine($"  {habit.Name.PadRight(17)} All dates {habit.Dates.Sum(d => d.Count).ToString().PadLeft(13)}");
-        }
     }
 
     private void AddHabit()
@@ -99,22 +92,65 @@ internal class HabitTrackerApplication
             try
             {
                 _service.Add(name);
-                Console.WriteLine($"{name} added as habit\n");
-                Thread.Sleep(3000);
+                Console.WriteLine($"{name} added as habit");
+                Thread.Sleep(2000);
                 break;
             }
             catch (ArgumentException)
             {
-                Console.WriteLine("Invalid entry please try again");
+                Console.WriteLine($"Invalid entry please try again");
             }
             catch (InvalidOperationException)
             {
-                Console.WriteLine("Habit already entered");
-                Thread.Sleep(3000);
+                Console.Write($"Another habit is already stored in the system, do you want to replace it with {name} (Enter y/n)? ");
+                var op = Console.ReadLine();
+
+                if (op == "y") ReplaceHabit(name);
+
                 break;
             }
         }
     }
 
-    
+    private void ReplaceHabit(string? name)
+    {
+        _service.Delete();
+        _service.Add(name);
+        Console.WriteLine($"You have changed your habit to {name}");
+        Thread.Sleep(2000);
+    }
+
+    private void AddHabitRecord()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.Write("Which date would you like to add a record to? ");
+            var dateString = Console.ReadLine();
+            Console.Write("How many times did you repeat the habit that day? ");
+            var repetitionsString = Console.ReadLine();
+
+            try
+            {
+                var date = DateOnly.Parse(dateString);
+                var repetitions = Int32.Parse(repetitionsString);
+
+                _service.AddRecord(date, repetitions);
+                Console.WriteLine("Entry added!");
+                Thread.Sleep(3000);
+                break;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Invalid date or repetitions entry, please try again");
+                Thread.Sleep(3000);
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("No habit currently being recorded, add habit first");
+                Thread.Sleep(3000);
+                break;
+            }
+        }
+    }
 }
