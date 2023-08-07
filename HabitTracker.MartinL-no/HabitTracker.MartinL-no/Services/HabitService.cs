@@ -19,7 +19,7 @@ internal class HabitService
 
     internal HabitTotal GetTotal(int habitId)
     {
-        return _repo.GetTotalHabit(habitId);
+        return _repo.GetHabitTotal(habitId);
     }
 
     internal HabitTotal GetTotalSinceDate(int habitId, DateOnly date)
