@@ -1,6 +1,7 @@
 ﻿using HabitTracker.MartinL_no.Models;
+using HabitTracker.MartinL_no.DataAccessLayers;
 
-namespace HabitTracker.MartinL_no;
+namespace HabitTracker.MartinL_no.Services;
 
 internal class HabitService
 {
@@ -16,7 +17,17 @@ internal class HabitService
         return _repo.GetHabit();
     }
 
-    internal void Add(string? name)
+    internal HabitTotal GetTotal(int habitId)
+    {
+        return _repo.GetTotalHabit(habitId);
+    }
+
+    internal HabitTotal GetTotalSinceDate(int habitId, DateOnly date)
+    {
+        return _repo.GetHabitTotalSinceDate(habitId, date);
+    }
+
+    internal void Add(string name)
     {
         if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid entry");
 
@@ -25,10 +36,10 @@ internal class HabitService
             // If there is no habit in the database an InvalidOperationException is thrown
             var currentHabit = Get();
         }
-        // Add habit if there isn't one in the database
         catch (InvalidOperationException)
         {
-           _repo.AddHabit(name);
+            // Add habit if there isn't one already in the database
+           _repo.AddHabit(new Habit(name, new List<HabitDate>()));
             return;
         }
         // New exception thrown when there is already a habit in the database
@@ -40,12 +51,26 @@ internal class HabitService
         _repo.DeleteHabit();
     }
 
-    internal void AddRecord(DateOnly date, int repetitionsCount)
+    internal void AddDate(DateOnly date, int repetitions)
     {
-        if (repetitionsCount < 1) throw new ArgumentException();
+        if (repetitions < 1) throw new ArgumentException();
 
         var habit = Get();
 
-        _repo.AddHabitRecord(new HabitDate(date, repetitionsCount, habit.Id));
+        _repo.AddDate(new HabitDate(date, repetitions, habit.Id));
+    }
+
+    internal void UpdateDate(DateOnly date, int repetitions)
+    {
+        if (repetitions < 1) throw new ArgumentException();
+
+        var habit = Get();
+
+        _repo.UpdateDate(new HabitDate(date, repetitions, habit.Id));
+    }
+
+    internal void DeleteDate(DateOnly date)
+    {
+        _repo.DeleteDate(date);
     }
 }

@@ -1,4 +1,5 @@
-﻿using HabitTracker.MartinL_no.Models;
+﻿using ConsoleTableExt;
+using HabitTracker.MartinL_no.Services;
 
 namespace HabitTracker.MartinL_no;
 
@@ -15,142 +16,329 @@ internal class HabitTrackerApplication
     {
         while (true)
         {
-            ShowMenuOptions();
+            ShowMainMenuOptions();
+            var op = Ask("Your choice: ");
 
-            Console.Write("Your choice: ");
-            var op = Console.ReadLine();
-
-            switch (op)
+            switch (op.ToLower())
             {
-                case "v":
-                    ViewHabit();
-                    break;
                 case "h":
                     AddHabit();
                     break;
-                case "r":
-                    AddHabitRecord();
+                case "a":
+                    AddDate();
+                    break;
+                case "u":
+                    UpdateDate();
+                    break;
+                case "d":
+                    DeleteDate();
+                    break;
+                case "v":
+                    ViewRecords();
                     break;
                 case "0":
                     Console.WriteLine("Program ended");
                     return;
                 default:
-                    Console.WriteLine("Invalid option, please try again");
-                    Thread.Sleep(3000);
+                    ShowMessage("Invalid option, please try again");
                     break;
             }
         }
     }
 
-    private void ShowMenuOptions()
+    private void ShowMainMenuOptions()
     {
-        Console.Clear();
-        Console.WriteLine("Welcome to the Habit Tracker app!");
-        Console.WriteLine("---------------------------------\n");
+        ShowHeader("Welcome to the Habit Tracker app!");
 
         Console.WriteLine("""
+
             Select an option:
-            v - View habit statistics
-            h - Add/ replace habit
-            r - Add habit record
+            h - Add/replace habit
+            a - Add date
+            u - Update date
+            d - Delete date
+            v - View records
             0 - Exit program
 
             """);
-    }
 
-    private void ViewHabit()
-    {
-        try
-        {
-            var habit = _service.Get();
-
-            Console.Clear();
-            Console.WriteLine($"{habit.Name} statistics");
-            Console.WriteLine("| Date                | Count |");
-
-            foreach (var date in habit.Dates)
-            {
-                Console.WriteLine($"{date.Date.ToString().PadLeft(10).PadRight(24)}{date.Count}");
-            }
-        }
-        catch (InvalidOperationException)
-        {
-            Console.WriteLine("No habit currently being recorded, add habit first");
-        }
-        Thread.Sleep(3000);
+        Console.WriteLine("---------------------------------");
     }
 
     private void AddHabit()
     {
-        Console.Clear();
-
         while (true)
         {
-            Console.Write("Enter your habit name: ");
-            var name = Console.ReadLine();
+            ShowHeader("Add/replace habit");
+
+            var name = Ask("Enter your habit name: ");
 
             try
             {
                 _service.Add(name);
-                Console.WriteLine($"{name} added as habit");
-                Thread.Sleep(2000);
+                ShowMessage($"{name} added as habit");
                 break;
             }
             catch (ArgumentException)
             {
-                Console.WriteLine($"Invalid entry please try again");
+                ShowMessage($"Invalid entry please try again");
             }
             catch (InvalidOperationException)
             {
-                Console.Write($"Another habit is already stored in the system, do you want to replace it with {name} (Enter y/n)? ");
-                var op = Console.ReadLine();
+                var op = Ask($"Another habit is already stored in the system, do you want to replace it with {name} (Enter y)? ");
 
-                if (op == "y") ReplaceHabit(name);
+                if (op.ToLower() == "y") ReplaceHabit(name);
 
                 break;
             }
         }
     }
 
-    private void ReplaceHabit(string? name)
-    {
-        _service.Delete();
-        _service.Add(name);
-        Console.WriteLine($"You have changed your habit to {name}");
-        Thread.Sleep(2000);
-    }
-
-    private void AddHabitRecord()
+    private void AddDate()
     {
         while (true)
         {
-            Console.Clear();
-            Console.Write("Which date would you like to add a record to? ");
-            var dateString = Console.ReadLine();
-            Console.Write("How many times did you repeat the habit that day? ");
-            var repetitionsString = Console.ReadLine();
+            ShowHeader("Add date");
 
             try
             {
+                var habit = _service.Get();
+
+                var dateString = Ask("Which date would you like to add a record to (yyyy-MM-dd)? ");
                 var date = DateOnly.Parse(dateString);
+
+                if (habit.Dates.Exists(d => d.Date == date))
+                {
+                    ShowMessage("Record already exists for this date, if you wish to change it update it via the main menu");
+                    return;
+                }
+
+                var repetitionsString = Ask("How many times did you repeat the habit that day? ");
                 var repetitions = Int32.Parse(repetitionsString);
 
-                _service.AddRecord(date, repetitions);
-                Console.WriteLine("Entry added!");
-                Thread.Sleep(3000);
+                _service.AddDate(date, repetitions);
+                ShowMessage("Entry added!");
                 break;
             }
             catch (FormatException)
             {
-                Console.WriteLine("Invalid date or repetitions entry, please try again");
-                Thread.Sleep(3000);
+                ShowMessage("Invalid date or repetitions entry, please try again");
             }
             catch (InvalidOperationException)
             {
-                Console.WriteLine("No habit currently being recorded, add habit first");
-                Thread.Sleep(3000);
+                ShowMessage("No habit to add a record to, add habit first");
                 break;
             }
         }
+    }
+
+    private void UpdateDate()
+    {
+        while (true)
+        {
+            ShowHeader("Update date");
+
+            try
+            {
+                var habit = _service.Get();
+
+                var dateString = Ask("Which date would you like to update (yyyy-MM-dd)? ");
+                var date = DateOnly.Parse(dateString);
+
+                if (!habit.Dates.Exists(d => d.Date == date))
+                {
+                    ShowMessage("Record does not exist for this date, add it via the option in the main menu");
+                    return;
+                }
+
+                var repetitionsString = Ask("How many times did you repeat the habit that day? ");
+                var repetitions = Int32.Parse(repetitionsString);
+
+                _service.UpdateDate(date, repetitions);
+                ShowMessage("Entry updated!");
+                break;
+            }
+            catch (FormatException)
+            {
+                ShowMessage("Invalid date or repetitions entry, please try again");
+            }
+            catch (InvalidOperationException)
+            {
+                ShowMessage("No habit currently being recorded, add habit first");
+                break;
+            }
+        }
+    }
+
+    private void DeleteDate()
+    {
+        while (true)
+        {
+            ShowHeader("Delete date");
+
+            try
+            {
+                var dateString = Ask("Which date would you like to delete (yyyy-MM-dd)? ");
+                var date = DateOnly.Parse(dateString);
+
+                _service.DeleteDate(date);
+                ShowMessage("Entry deleted!");
+                break;
+            }
+            catch (FormatException)
+            {
+                ShowMessage("Invalid date or repetitions entry, please try again");
+            }
+        }
+    }
+
+    private void ViewRecords()
+    {
+        ShowHabitRecordsMenu();
+
+        var op = Ask("Your choice: ");
+
+        switch (op.ToLower())
+        {
+            case "a":
+                ViewAllRecords();
+                break;
+            case "t":
+                ViewTotal();
+                break;
+            case "d":
+                ViewTotalSinceSpecifiedDate();
+                break;
+        }
+    }
+
+    private void ViewAllRecords()
+    {
+        try
+        {
+            var habit = _service.Get();
+            if (habit.Dates.Count == 0) throw new InvalidOperationException();
+
+            var tableData = habit.Dates.Select(d => new List<object> { d.Date, d.Count }).ToList();
+            ShowRecordsTable($"All {habit.Name} habit records", tableData, "Date", "Count");
+        }
+        catch (InvalidOperationException)
+        {
+            ShowMessage("No habit currently being recorded, add habit and/or records first");
+        }
+    }
+
+    private void ViewTotal()
+    {
+        try
+        {
+            Console.Clear();
+
+            var habit = _service.Get();
+            var habitTotal = _service.GetTotal(habit.Id);
+            var tableData = new List<List<object>>
+            {
+                new List<object> { "All dates", habitTotal.Total }
+            };
+
+            ShowRecordsTable($"Total {habit.Name} habit repetitions", tableData, "From Date", "Total");
+        }
+        catch (InvalidOperationException)
+        {
+            ShowMessage("No matching records found");
+        }
+    }
+
+    private void ViewTotalSinceSpecifiedDate()
+    {
+        while (true)
+        {
+            try
+            {
+                Console.Clear();
+
+                var habit = _service.Get();
+
+                var dateString = Ask("From which date do you wish to see the total amount of records from  (yyyy-MM-dd)? ");
+
+                var date = DateOnly.Parse(dateString);
+                var habitTotal = _service.GetTotalSinceDate(habit.Id, date);
+                var tableData = new List<List<object>>
+                {
+                    new List<object> { date, habitTotal.Total }
+                };
+
+                ShowRecordsTable($"Total {habit.Name} habit repetitions", tableData, "From Date", "Total");
+                break;
+
+            }
+            catch (FormatException)
+            {
+                ShowMessage("Invalid date, please try again");
+
+            }
+            catch (InvalidOperationException)
+            {
+                ShowMessage("No matching records found");
+                break;
+            }
+        }
+    }
+
+    private void ShowHabitRecordsMenu()
+    {
+        ShowHeader("View habit records");
+
+        Console.WriteLine("""
+
+            Select an option:
+            a - View all records
+            t - Total from all time
+            d - Total since specified date
+
+            """);
+
+        Console.WriteLine("---------------------------------");
+    }
+
+    private void ShowRecordsTable(string pageTitle, List<List<object>> tableDate, string colOne, string colTwo)
+    {
+        Console.Clear();
+        Console.WriteLine($"{pageTitle}\n");
+
+        ConsoleTableBuilder
+            .From(tableDate)
+            .WithColumn(colOne, colTwo)
+            .ExportAndWriteLine();
+
+        Console.Write("\nPress any key to return to the main menu");
+        Console.ReadKey();
+    }
+
+    private void ReplaceHabit(string name)
+    {
+        _service.Delete();
+        _service.Add(name);
+        ShowMessage($"You have changed your habit to {name}");
+    }
+
+    private static void ShowHeader(string title)
+    {
+        Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine("---------------------------------");
+    }
+
+    private void ShowMessage(string message)
+    {
+        Console.Clear();
+        Console.WriteLine(message);
+        Thread.Sleep(2500);
+    }
+
+    private string Ask(string message)
+    {
+        Console.Write(message);
+        return Console.ReadLine();
     }
 }

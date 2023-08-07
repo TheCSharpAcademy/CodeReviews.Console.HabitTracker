@@ -1,4 +1,7 @@
-﻿namespace HabitTracker.MartinL_no;
+﻿using HabitTracker.MartinL_no.Services;
+using HabitTracker.MartinL_no.DataAccessLayers;
+
+namespace HabitTracker.MartinL_no;
 
 internal class Program
 {
