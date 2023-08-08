@@ -4,7 +4,6 @@ namespace HabitTracker.lordWalnuts
 {
     public static class Helpers
     {
-
         internal static string GetDateInput()
         {
             Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main manu.\n\n");
@@ -32,7 +31,6 @@ namespace HabitTracker.lordWalnuts
                 Console.WriteLine("\n\nPlease Enter a valid Habit name. Type 0 for main manu");
                 habitInput = Console.ReadLine();
                 if (habitInput == "0") Program.ShowMenu();
-
             }
             return habitInput;
         }
@@ -48,26 +46,23 @@ namespace HabitTracker.lordWalnuts
                 Console.WriteLine("\n\nPlease Enter a valid Unit of Measurement. Type 0 for main manu");
                 unitInput = Console.ReadLine();
                 if (unitInput == "0") Program.ShowMenu();
-
-
             }
             return unitInput;
         }
 
-        internal static string GetQuantityInput()
+        internal static string GetNumberInput(string message)
         {
-            Console.WriteLine("\n\nPlease enter the Quanity. Type 0 for main menu");
-            var quanityInput = Console.ReadLine();
-            if (quanityInput == "0") Program.ShowMenu();
+            Console.WriteLine(message);
+            var numberInput = Console.ReadLine();
+            if (numberInput == "0") Program.ShowMenu();
 
-            while (string.IsNullOrEmpty(quanityInput) || !Int32.TryParse(quanityInput, out _))
+            while (string.IsNullOrEmpty(numberInput) || !Int32.TryParse(numberInput, out _))
             {
                 Console.WriteLine("\n\nYour answer needs to be an integer.Try again or 0 for main menu");
-                quanityInput = Console.ReadLine();
-                if (quanityInput == "0") Program.ShowMenu();
+                numberInput = Console.ReadLine();
+                if (numberInput == "0") Program.ShowMenu();
             }
-
-            return quanityInput;
+            return numberInput;
         }
     }
 }

@@ -50,11 +50,16 @@ public class Program
             Console.WriteLine("Type 2 to Insert Record.");
             Console.WriteLine("Type 3 to Delete Record.");
             Console.WriteLine("Type 4 to Update Record.");
+            Console.WriteLine("Type 5 to Clear Screen");
             Console.WriteLine("------------------------------------------\n");
 
             string userChoice = Console.ReadLine();
 
-            //TODO: null check here
+            while (string.IsNullOrEmpty(userChoice))
+            {
+                Console.WriteLine("Enter right choice");
+                userChoice = Console.ReadLine();
+            }
 
             switch (int.Parse(userChoice))
             {
@@ -64,6 +69,7 @@ public class Program
                     Environment.Exit(0);
                     break;
                 case 1:
+                    Console.Clear();
                     Crud.GetAllHabits();
                     break;
                 case 2:
@@ -75,11 +81,14 @@ public class Program
                 case 4:
                     Crud.UpdateHabit();
                     break;
+                case 5:
+                    Console.Clear();
+                    Program.ShowMenu();
+                    break;
                 default:
                     Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
                     break;
             }
         }
     }
-
 }
