@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HabitTracker.lordWalnuts.Models
+﻿namespace HabitTracker.lordWalnuts.Models
 {
     internal class Habit
     {
+        public int Id { get; set; }
+        public string HabitName { get; set; }
+        public DateTime Date { get; set; }
+
+        public string Unit { get; set; }
+
+        public int Quantity { get; set; }
     }
 }
