@@ -67,7 +67,8 @@ class HabitTracker {
                     break;
 
                case 2://insert records
-
+                    Console.WriteLine("Inserting Racords");
+                    InsertRecord();
                     break;
 
                case 3://delete records
@@ -100,7 +101,8 @@ class HabitTracker {
                     using (SqliteDataReader reader = command.ExecuteReader()) {
                          while (reader.Read()) {
                               // Access the columns by index or name
-                              Console.WriteLine($"ID: {reader["Id"]}, Name: {reader["Name"]}");
+                              //Console.WriteLine($"ID: {reader["Id"]}, Name: {reader["Name"]}");
+                              Console.WriteLine($"Id: {reader["Id"]}, Date: {reader["Date"]}, Quantity: {reader["Quantity"]}");
                          }
                     }
                }
@@ -108,8 +110,19 @@ class HabitTracker {
      }
      //insert record
      void InsertRecord() {
+          Console.Clear();
 
+          string connectionString = @"Data Source=HabitTracker.db";
 
+          using (var connection = new SqliteConnection(connectionString)) {
+               connection.Open();
+
+               SqliteCommand command = new SqliteCommand("INSERT INTO drinking_water values(1,'08/08/2023',3);", connection);
+               command.ExecuteNonQuery();
+               Console.WriteLine("Data Successfully Insterted");
+               connection.Close();
+          }
+          
      }
      //Delete record
      void DeleteRecord() { 
