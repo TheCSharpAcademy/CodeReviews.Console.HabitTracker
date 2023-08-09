@@ -1,6 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Security.Cryptography.X509Certificates;
-
 class HabitTracker {
      private static void Main(string[] args) {
 
@@ -10,7 +8,6 @@ class HabitTracker {
           DrinkingWater.MainMenu();
 
      }
-     
      void InitiateDataBase() {
 
           string connectionString = @"Data Source=HabitTracker.db";
@@ -18,7 +15,6 @@ class HabitTracker {
           using (var connection = new SqliteConnection(connectionString)) {
 
                connection.Open();
-
                var tableCmd = connection.CreateCommand();
 
                tableCmd.CommandText =
@@ -27,19 +23,14 @@ class HabitTracker {
                          Date TEXT,
                          Quantity INTEGER
                          )";
-
                tableCmd.ExecuteNonQuery();
-
                connection.Close();
           }
      }
-
      void MainMenu() {
 
           Console.WriteLine("WELCOME TO HABIT TRACKER\n");
-
           Console.WriteLine("\tMAIN MENU\n");
-
           Console.WriteLine("Type 0 to Close Application.");
           Console.WriteLine("Type 1 to View All Records.");
           Console.WriteLine("Type 2 to Insert Record.");
@@ -49,10 +40,8 @@ class HabitTracker {
           string UserOption = Console.ReadLine();
 
           Console.Clear();
-
           InputCheck(UserOption);
      }
-
      void InputCheck(string UserOption) {
 
           if(string.IsNullOrEmpty(UserOption) || Convert.ToInt32(UserOption) < 0 || Convert.ToInt32(UserOption) > 4) {
@@ -63,7 +52,7 @@ class HabitTracker {
           switch (Convert.ToInt32(UserOption)) {
 
                case 0:
-                    Console.WriteLine("Good Bye");
+                    Console.WriteLine("GoodBye");
                     System.Environment.Exit(0);
                     break;
                case 1:
@@ -88,30 +77,21 @@ class HabitTracker {
                     break;
           }
      }
-
-
-     void ViewRecords(bool returnToMenu = true)
-     {
+     void ViewRecords(bool returnToMenu = true) {
           string connectionString = @"Data Source=HabitTracker.db";
 
-          using (var connection = new SqliteConnection(connectionString))
-          {
+          using (var connection = new SqliteConnection(connectionString)) {
                connection.Open();
-               using (SqliteCommand command = new SqliteCommand($"SELECT * FROM drinking_water", connection))
-               {
+               using (SqliteCommand command = new SqliteCommand($"SELECT * FROM drinking_water", connection)) {
                     // Execute the command and read til end of file
-                    using (SqliteDataReader reader = command.ExecuteReader())
-                    {
-                         while (reader.Read())
-                         {
+                    using (SqliteDataReader reader = command.ExecuteReader()) {
+                         while (reader.Read()) {
                               Console.WriteLine($"Id: {reader["Id"]}, Date: {reader["Date"]}, Quantity: {reader["Quantity"]}");
                          }
                     }
                }
           }
-
-          if (returnToMenu)
-          {
+          if (returnToMenu) {
                ReturnToMenu();
           }
      }
@@ -132,13 +112,11 @@ class HabitTracker {
 
                string query = "INSERT INTO drinking_water (Date, Quantity) VALUES (@Date, @Quantity)";
                using (SqliteCommand command = new SqliteCommand(query, connection)) {
-                    // Adding parameters for the date and quantity
                     command.Parameters.AddWithValue("@Date", Date);
                     command.Parameters.AddWithValue("@Quantity", NumCups);
 
                     command.ExecuteNonQuery();
                }
-
                connection.Close();
                Console.WriteLine("Data Successfully Inserted");
                ReturnToMenu();
@@ -153,27 +131,19 @@ class HabitTracker {
           string UserInput = Console.ReadLine();
 
           string connectionString = @"Data Source=HabitTracker.db";
-
-          //pull data from the database
-          using (var connection = new SqliteConnection(connectionString))
-          {
+          using (var connection = new SqliteConnection(connectionString)) {
                connection.Open();
-               using (var command = new SqliteCommand($"SELECT Id, Date, Quantity FROM drinking_water WHERE Id = @Id", connection))
-               {
+               using (var command = new SqliteCommand($"SELECT Id, Date, Quantity FROM drinking_water WHERE Id = @Id", connection)) {
                     command.Parameters.AddWithValue("@Id", UserInput);
 
-                    using (SqliteDataReader reader = command.ExecuteReader())
-                    {
-                         while (reader.Read())
-                         {
+                    using (SqliteDataReader reader = command.ExecuteReader()) {
+                         while (reader.Read()) {
                               Console.WriteLine($"Id: {reader["Id"]}, Date: {reader["Date"]}, Quantity: {reader["Quantity"]}");
                          }
                     }
                }
                connection.Close();
           }
-          //deletes row
-          
           using (var connection = new SqliteConnection(connectionString)) {
                     connection.Open();
                     using (var command = new SqliteCommand($"DELETE FROM drinking_water WHERE Id = @Id", connection)){
@@ -193,12 +163,11 @@ class HabitTracker {
      
      void UpdateRecord() {
 
-          //show the user the menu
-          ViewRecords(false);
-          //have them select the id of the row they want to update
+          ViewRecords(false);//will only display the db and wont go back to menu
+
           Console.WriteLine("Enter the Id you would like to Update");
           string UserInput = Console.ReadLine();
-          //ask for data of will be updated 
+          
           Console.WriteLine("Enter the new Date");
           string NewDate = Console.ReadLine();
           Console.WriteLine("Enter the new # of Cups of Water");
@@ -206,7 +175,6 @@ class HabitTracker {
 
           //update the database
           string connectionString = @"Data Source=HabitTracker.db";
-
           using (var connection = new SqliteConnection(connectionString)) {
                connection.Open();
 
@@ -221,16 +189,14 @@ class HabitTracker {
                }
                connection.Close();
           }
-          //return to main
+          Console.WriteLine("Data Successfully Updated");
           ReturnToMenu();
      }
-
      void ReturnToMenu() {
           Console.WriteLine("\nEnter Anything for Main Menu");
           string UserInput = Console.ReadLine();
           Console.Clear();
-          if (string.IsNullOrEmpty(UserInput) || !string.IsNullOrEmpty(UserInput))
-          {
+          if (string.IsNullOrEmpty(UserInput) || !string.IsNullOrEmpty(UserInput)) {
                MainMenu();
           }
      }
