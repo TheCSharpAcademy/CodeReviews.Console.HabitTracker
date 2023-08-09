@@ -123,7 +123,7 @@ class HabitTracker {
           Console.WriteLine("Please Enter Todays Date (MM/DD/YYYY)");
           string Date = Console.ReadLine();
           Console.WriteLine("Please Enter how many cups you drank today");
-          int Num_Cups = Convert.ToInt32(Console.ReadLine());
+          int NumCups = Convert.ToInt32(Console.ReadLine());
 
           string connectionString = @"Data Source=HabitTracker.db";
 
@@ -134,7 +134,7 @@ class HabitTracker {
                using (SqliteCommand command = new SqliteCommand(query, connection)) {
                     // Adding parameters for the date and quantity
                     command.Parameters.AddWithValue("@Date", Date);
-                    command.Parameters.AddWithValue("@Quantity", Num_Cups);
+                    command.Parameters.AddWithValue("@Quantity", NumCups);
 
                     command.ExecuteNonQuery();
                }
@@ -172,17 +172,9 @@ class HabitTracker {
                }
                connection.Close();
           }
-          string InputChoice = "";
-          do {
-               Console.WriteLine("Please make sure that this is the row you want to delete");
-               Console.WriteLine("y/n");
-               InputChoice = Console.ReadLine();
-
-          }while (InputChoice != "y" && InputChoice != "Y" && InputChoice != "n" && InputChoice != "N");
-
-          //delete the row
-          if (InputChoice == "y" || InputChoice == "Y") {
-               using (var connection = new SqliteConnection(connectionString)) {
+          //deletes row
+          
+          using (var connection = new SqliteConnection(connectionString)) {
                     connection.Open();
                     using (var command = new SqliteCommand($"DELETE FROM drinking_water WHERE Id = @Id", connection)){
                          command.Parameters.AddWithValue("@Id", UserInput);
@@ -195,20 +187,41 @@ class HabitTracker {
                          }
                     }
                     connection.Close();
-               }
           }
-          else {
-               Console.WriteLine("Deletion cancelled.");
-          }
-
-          //return to menu
           ReturnToMenu();
      }
      
      void UpdateRecord() {
 
+          //show the user the menu
+          ViewRecords(false);
+          //have them select the id of the row they want to update
+          Console.WriteLine("Enter the Id you would like to Update");
+          string UserInput = Console.ReadLine();
+          //ask for data of will be updated 
+          Console.WriteLine("Enter the new Date");
+          string NewDate = Console.ReadLine();
+          Console.WriteLine("Enter the new # of Cups of Water");
+          int NewNumCups = Convert.ToInt32(Console.ReadLine());
 
+          //update the database
+          string connectionString = @"Data Source=HabitTracker.db";
 
+          using (var connection = new SqliteConnection(connectionString)) {
+               connection.Open();
+
+               string query = $"UPDATE drinking_water SET Date = @Date, Quantity = @Quantity WHERE Id = @Id";
+               using (SqliteCommand command = new SqliteCommand(query, connection)) {
+                    // Adding parameters for the date and quantity
+                    command.Parameters.AddWithValue("@Id", UserInput);
+                    command.Parameters.AddWithValue("@Date", NewDate);
+                    command.Parameters.AddWithValue("@Quantity", NewNumCups);
+
+                    command.ExecuteNonQuery();
+               }
+               connection.Close();
+          }
+          //return to main
           ReturnToMenu();
      }
 
