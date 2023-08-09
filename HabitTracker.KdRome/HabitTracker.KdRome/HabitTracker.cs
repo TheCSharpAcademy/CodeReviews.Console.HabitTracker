@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Globalization;
+
 class HabitTracker {
      private static void Main(string[] args) {
 
@@ -77,6 +79,14 @@ class HabitTracker {
                     break;
           }
      }
+     void ReturnToMenu() {
+          Console.WriteLine("\nEnter Anything for Main Menu");
+          string UserInput = Console.ReadLine();
+          Console.Clear();
+          if (string.IsNullOrEmpty(UserInput) || !string.IsNullOrEmpty(UserInput)) {
+               MainMenu();
+          }
+     }
      void ViewRecords(bool returnToMenu = true) {
           string connectionString = @"Data Source=HabitTracker.db";
 
@@ -94,35 +104,7 @@ class HabitTracker {
           if (returnToMenu) {
                ReturnToMenu();
           }
-     }
-
-
-     void InsertRecord() {
-          Console.Clear();
-
-          Console.WriteLine("Please Enter Todays Date (MM/DD/YYYY)");
-          string Date = Console.ReadLine();
-          Console.WriteLine("Please Enter how many cups you drank today");
-          int NumCups = Convert.ToInt32(Console.ReadLine());
-
-          string connectionString = @"Data Source=HabitTracker.db";
-
-          using (var connection = new SqliteConnection(connectionString)) {
-               connection.Open();
-
-               string query = "INSERT INTO drinking_water (Date, Quantity) VALUES (@Date, @Quantity)";
-               using (SqliteCommand command = new SqliteCommand(query, connection)) {
-                    command.Parameters.AddWithValue("@Date", Date);
-                    command.Parameters.AddWithValue("@Quantity", NumCups);
-
-                    command.ExecuteNonQuery();
-               }
-               connection.Close();
-               Console.WriteLine("Data Successfully Inserted");
-               ReturnToMenu();
-          }
-     }
-     
+     } 
      void DeleteRecord() {
 
           ViewRecords(false);//will only display the db and wont go back to menu
@@ -171,7 +153,10 @@ class HabitTracker {
           Console.WriteLine("Enter the new Date");
           string NewDate = Console.ReadLine();
           Console.WriteLine("Enter the new # of Cups of Water");
-          int NewNumCups = Convert.ToInt32(Console.ReadLine());
+          string NewNumCups = Console.ReadLine();
+
+          NewDate = GetDateInput(NewDate);
+          int NumberInput = GetNumberInput(NewNumCups);
 
           //update the database
           string connectionString = @"Data Source=HabitTracker.db";
@@ -183,7 +168,7 @@ class HabitTracker {
                     // Adding parameters for the date and quantity
                     command.Parameters.AddWithValue("@Id", UserInput);
                     command.Parameters.AddWithValue("@Date", NewDate);
-                    command.Parameters.AddWithValue("@Quantity", NewNumCups);
+                    command.Parameters.AddWithValue("@Quantity", NumberInput);
 
                     command.ExecuteNonQuery();
                }
@@ -192,12 +177,52 @@ class HabitTracker {
           Console.WriteLine("Data Successfully Updated");
           ReturnToMenu();
      }
-     void ReturnToMenu() {
-          Console.WriteLine("\nEnter Anything for Main Menu");
-          string UserInput = Console.ReadLine();
+     void InsertRecord() {
           Console.Clear();
-          if (string.IsNullOrEmpty(UserInput) || !string.IsNullOrEmpty(UserInput)) {
-               MainMenu();
+
+          Console.WriteLine("Please Enter Todays Date (MM-DD-YYYY)");
+          string Date = Console.ReadLine();
+          Console.WriteLine("Please Enter how many cups you drank today");
+          string NumCups = Console.ReadLine();
+
+          Date = GetDateInput(Date);
+          int NumberInput = GetNumberInput(NumCups);
+
+          string connectionString = @"Data Source=HabitTracker.db";
+
+          using (var connection = new SqliteConnection(connectionString)) {
+               connection.Open();
+
+               string query = "INSERT INTO drinking_water (Date, Quantity) VALUES (@Date, @Quantity)";
+               using (SqliteCommand command = new SqliteCommand(query, connection)) {
+                    command.Parameters.AddWithValue("@Date", Date);
+                    command.Parameters.AddWithValue("@Quantity", NumberInput);
+
+                    command.ExecuteNonQuery();
+               }
+               connection.Close();
+               Console.WriteLine("Data Successfully Inserted");
+               ReturnToMenu();
           }
+     }
+     string GetDateInput(string DateInput) {
+          while (!DateTime.TryParseExact(DateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _)) {
+               Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy), Try Again.");
+               DateInput = Console.ReadLine();
+               GetDateInput(DateInput);
+          }
+          return DateInput;
+     }
+
+     int GetNumberInput(string NumCups) {
+          while (Convert.ToInt32(NumCups) < 0 || string.IsNullOrEmpty(NumCups)) {
+               Console.WriteLine("\n\nIncorrect Number input, lowest allowed is 0");
+               NumCups = Console.ReadLine();
+               GetNumberInput(NumCups);
+          }
+
+          int NumberInput = Convert.ToInt32(NumCups);
+
+          return NumberInput;
      }
 }
