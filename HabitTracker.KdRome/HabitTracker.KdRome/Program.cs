@@ -1,21 +1,25 @@
-﻿
-using Microsoft.Data.Sqlite;
-using System.Data.SqlTypes;
+﻿using Microsoft.Data.Sqlite;
+using SQLitePCL;
 
-Console.WriteLine("Hello, World!");
+internal class Program
+{
+     private static void Main(string[] args) {
 
-string connectionString = @"Data Source=HabitTracker.db";
+          
 
+          string connectionString = @"Data Source=HabitTracker.db";
 
-using (var connection = new SqliteConnection(connectionString)) {
-     //opens the connection
-     connection.Open();
-     //table command
-     var tableCmd = connection.CreateCommand();
+          using (var connection = new SqliteConnection(connectionString)) {
+               Console.Write("we got here\n");
+               connection.Open();
+               Console.Write("we got here too\n");
+               var tableCmd = connection.CreateCommand();
 
-     tableCmd.CommandText = "";
+               tableCmd.CommandText = "";
 
-     tableCmd.ExecuteNonQuery(); //means that the data base will not return any values
+               tableCmd.ExecuteNonQuery(); //means that the data base will not return any values
 
-     connection.Close();
+               connection.Close();
+          }
+     }
 }
