@@ -65,30 +65,26 @@ class HabitTracker {
                     Console.WriteLine("Gathering ALL Records");
                     ViewRecords();
                     break;
-
                case 2://insert records
-                    Console.WriteLine("Inserting Racords");
+                    Console.WriteLine("Inserting Racord");
                     InsertRecord();
                     break;
-
                case 3://delete records
-
+                    Console.WriteLine("Deleting Record");
+                    DeleteRecord();
                     break;
-
                case 4://update records
-
+                    Console.WriteLine("Updating Record");
+                    UpdateRecord();
                     break;
-
                default:
                     Console.WriteLine("Please select one of the options");
                     MainMenu();
                     break;
-
           }
-
      }
 
-     //view all records
+     
      void ViewRecords() {
 
           Console.Clear();
@@ -108,28 +104,39 @@ class HabitTracker {
                }
           }
      }
-     //insert record
+     
      void InsertRecord() {
           Console.Clear();
+
+          Console.WriteLine("Please Enter Todays Date (MM/DD/YYYY)");
+          string Date = Console.ReadLine();
+          Console.WriteLine("Please Enter how many cups you drank today");
+          int Num_Cups = Convert.ToInt32(Console.ReadLine());
 
           string connectionString = @"Data Source=HabitTracker.db";
 
           using (var connection = new SqliteConnection(connectionString)) {
                connection.Open();
 
-               SqliteCommand command = new SqliteCommand("INSERT INTO drinking_water values(1,'08/08/2023',3);", connection);
-               command.ExecuteNonQuery();
-               Console.WriteLine("Data Successfully Insterted");
+               string query = "INSERT INTO drinking_water (Date, Quantity) VALUES (@Date, @Quantity)";
+               using (SqliteCommand command = new SqliteCommand(query, connection)) {
+                    // Adding parameters for the date and quantity
+                    command.Parameters.AddWithValue("@Date", Date);
+                    command.Parameters.AddWithValue("@Quantity", Num_Cups);
+
+                    command.ExecuteNonQuery();
+               }
+               
+               Console.WriteLine("Data Successfully Inserted");
                connection.Close();
           }
-          
      }
-     //Delete record
+     
      void DeleteRecord() { 
           
 
      }
-     //Update record
+     
      void UpdateRecord() {
      
 
