@@ -27,7 +27,7 @@ class HabitTracker {
                          Quantity INTEGER
                          )";
 
-               tableCmd.ExecuteNonQuery(); //means that the data base will not return any values
+               tableCmd.ExecuteNonQuery();
 
                connection.Close();
           }
@@ -35,7 +35,9 @@ class HabitTracker {
 
      void MainMenu() {
 
-          Console.Clear();
+          Console.WriteLine("WELCOME TO HABIT TRACKER\n");
+
+          Console.WriteLine("\tMAIN MENU\n");
 
           Console.WriteLine("Type 0 to Close Application.");
           Console.WriteLine("Type 1 to View All Records.");
@@ -43,37 +45,39 @@ class HabitTracker {
           Console.WriteLine("Type 3 to Delete Record.");
           Console.WriteLine("Type 4 to Update Record.");
           
-          String UserOption = Console.ReadLine();
+          string UserOption = Console.ReadLine();
 
-          InputCheck(Convert.ToInt32(UserOption));
+          Console.Clear();
+
+          InputCheck(UserOption);
      }
 
-     void InputCheck(int UserOption) {
+     void InputCheck(string UserOption) {
 
-          if(UserOption < 0 || UserOption > 4) {
-               Console.WriteLine("Please select one of the options");
+          if(string.IsNullOrEmpty(UserOption) || Convert.ToInt32(UserOption) < 0 || Convert.ToInt32(UserOption) > 4) {
+               Console.WriteLine("Please select one of the options\n");
                MainMenu();
           }
-          
-          switch(UserOption) {
 
-               case 0://close application
+          switch (Convert.ToInt32(UserOption)) {
+
+               case 0:
                     Console.WriteLine("Good Bye");
                     System.Environment.Exit(0);
                     break;
-               case 1://view all records
+               case 1:
                     Console.WriteLine("Gathering ALL Records");
                     ViewRecords();
                     break;
-               case 2://insert records
+               case 2:
                     Console.WriteLine("Inserting Racord");
                     InsertRecord();
                     break;
-               case 3://delete records
+               case 3:
                     Console.WriteLine("Deleting Record");
                     DeleteRecord();
                     break;
-               case 4://update records
+               case 4:
                     Console.WriteLine("Updating Record");
                     UpdateRecord();
                     break;
@@ -87,7 +91,6 @@ class HabitTracker {
      
      void ViewRecords() {
 
-          Console.Clear();
           string connectionString = @"Data Source=HabitTracker.db";
 
           using (var connection = new SqliteConnection(connectionString)) {
@@ -96,13 +99,12 @@ class HabitTracker {
                     // Execute the command and read til end of file
                     using (SqliteDataReader reader = command.ExecuteReader()) {
                          while (reader.Read()) {
-                              // Access the columns by index or name
-                              //Console.WriteLine($"ID: {reader["Id"]}, Name: {reader["Name"]}");
                               Console.WriteLine($"Id: {reader["Id"]}, Date: {reader["Date"]}, Quantity: {reader["Quantity"]}");
                          }
                     }
                }
           }
+          ReturnToMenu();
      }
      
      void InsertRecord() {
@@ -126,19 +128,36 @@ class HabitTracker {
 
                     command.ExecuteNonQuery();
                }
-               
-               Console.WriteLine("Data Successfully Inserted");
+
                connection.Close();
+               Console.WriteLine("Data Successfully Inserted");
+               ReturnToMenu();
           }
      }
      
-     void DeleteRecord() { 
-          
+     void DeleteRecord() {
 
+
+
+
+
+          ReturnToMenu();
      }
      
      void UpdateRecord() {
-     
 
+
+
+          ReturnToMenu();
+     }
+
+     void ReturnToMenu() {
+          Console.WriteLine("\nEnter Anything for Main Menu");
+          string UserInput = Console.ReadLine();
+          Console.Clear();
+          if (string.IsNullOrEmpty(UserInput) || !string.IsNullOrEmpty(UserInput))
+          {
+               MainMenu();
+          }
      }
 }
