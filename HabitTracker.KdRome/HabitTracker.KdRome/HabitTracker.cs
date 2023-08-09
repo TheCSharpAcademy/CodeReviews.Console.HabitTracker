@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Security.Cryptography.X509Certificates;
 
 class HabitTracker {
      private static void Main(string[] args) {
@@ -88,25 +89,34 @@ class HabitTracker {
           }
      }
 
-     
-     void ViewRecords() {
 
+     void ViewRecords(bool returnToMenu = true)
+     {
           string connectionString = @"Data Source=HabitTracker.db";
 
-          using (var connection = new SqliteConnection(connectionString)) {
+          using (var connection = new SqliteConnection(connectionString))
+          {
                connection.Open();
-               using (SqliteCommand command = new SqliteCommand($"SELECT * FROM drinking_water", connection)) {
+               using (SqliteCommand command = new SqliteCommand($"SELECT * FROM drinking_water", connection))
+               {
                     // Execute the command and read til end of file
-                    using (SqliteDataReader reader = command.ExecuteReader()) {
-                         while (reader.Read()) {
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                         while (reader.Read())
+                         {
                               Console.WriteLine($"Id: {reader["Id"]}, Date: {reader["Date"]}, Quantity: {reader["Quantity"]}");
                          }
                     }
                }
           }
-          ReturnToMenu();
+
+          if (returnToMenu)
+          {
+               ReturnToMenu();
+          }
      }
-     
+
+
      void InsertRecord() {
           Console.Clear();
 
@@ -137,10 +147,61 @@ class HabitTracker {
      
      void DeleteRecord() {
 
+          ViewRecords(false);//will only display the db and wont go back to menu
 
+          Console.WriteLine("\nEnter the Id of row to be deleted");
+          string UserInput = Console.ReadLine();
 
+          string connectionString = @"Data Source=HabitTracker.db";
 
+          //pull data from the database
+          using (var connection = new SqliteConnection(connectionString))
+          {
+               connection.Open();
+               using (var command = new SqliteCommand($"SELECT Id, Date, Quantity FROM drinking_water WHERE Id = @Id", connection))
+               {
+                    command.Parameters.AddWithValue("@Id", UserInput);
 
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                         while (reader.Read())
+                         {
+                              Console.WriteLine($"Id: {reader["Id"]}, Date: {reader["Date"]}, Quantity: {reader["Quantity"]}");
+                         }
+                    }
+               }
+               connection.Close();
+          }
+          string InputChoice = "";
+          do {
+               Console.WriteLine("Please make sure that this is the row you want to delete");
+               Console.WriteLine("y/n");
+               InputChoice = Console.ReadLine();
+
+          }while (InputChoice != "y" && InputChoice != "Y" && InputChoice != "n" && InputChoice != "N");
+
+          //delete the row
+          if (InputChoice == "y" || InputChoice == "Y") {
+               using (var connection = new SqliteConnection(connectionString)) {
+                    connection.Open();
+                    using (var command = new SqliteCommand($"DELETE FROM drinking_water WHERE Id = @Id", connection)){
+                         command.Parameters.AddWithValue("@Id", UserInput);
+                         int rowsAffected = command.ExecuteNonQuery();
+                         if (rowsAffected > 0) {
+                              Console.WriteLine("Record deleted successfully.");
+                         }
+                         else {
+                              Console.WriteLine("No record found with the given ID.");
+                         }
+                    }
+                    connection.Close();
+               }
+          }
+          else {
+               Console.WriteLine("Deletion cancelled.");
+          }
+
+          //return to menu
           ReturnToMenu();
      }
      
