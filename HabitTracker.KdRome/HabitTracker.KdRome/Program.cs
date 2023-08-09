@@ -1,21 +1,31 @@
-﻿
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using System.Data.SqlTypes;
+using SQLitePCL;
 
-Console.WriteLine("Hello, World!");
+class Program {
+     private static void Main(string[] args) {
 
-string connectionString = @"Data Source=HabitTracker.db";
+          SQLitePCL.Batteries.Init();
 
+          string connectionString = @"Data Source=Habit-Tracker.db";
 
-using (var connection = new SqliteConnection(connectionString)) {
-     //opens the connection
-     connection.Open();
-     //table command
-     var tableCmd = connection.CreateCommand();
+          using (var connection = new SqliteConnection(connectionString)) {
+               
+               connection.Open();
+               
+               var tableCmd = connection.CreateCommand();
 
-     tableCmd.CommandText = "";
+               tableCmd.CommandText =
+                    @"CREATE TABLE IF NOT EXISTS drinking_water (
+                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         Date TEXT,
+                         Quantity INTEGER
+                         )";
 
-     tableCmd.ExecuteNonQuery(); //means that the data base will not return any values
+               tableCmd.ExecuteNonQuery(); //means that the data base will not return any values
 
-     connection.Close();
+               connection.Close();
+               
+          }
+     }
 }
