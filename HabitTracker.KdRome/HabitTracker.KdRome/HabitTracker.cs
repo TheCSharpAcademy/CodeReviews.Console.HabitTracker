@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Runtime.CompilerServices;
 
 class HabitTracker {
      private static void Main(string[] args) {
@@ -7,7 +6,7 @@ class HabitTracker {
           HabitTracker DrinkingWater = new HabitTracker();
 
           DrinkingWater.InitiateDataBase();
-
+          DrinkingWater.MainMenu();
 
      }
      
@@ -16,9 +15,9 @@ class HabitTracker {
           string connectionString = @"Data Source=HabitTracker.db";
 
           using (var connection = new SqliteConnection(connectionString)) {
-               Console.Write("we got here\n");
+
                connection.Open();
-               Console.Write("we got here too\n");
+
                var tableCmd = connection.CreateCommand();
 
                tableCmd.CommandText =
@@ -34,7 +33,9 @@ class HabitTracker {
           }
      }
 
-     int MainMenu() {
+     void MainMenu() {
+
+          Console.Clear();
 
           Console.WriteLine("Type 0 to Close Application.");
           Console.WriteLine("Type 1 to View All Records.");
@@ -44,9 +45,80 @@ class HabitTracker {
           
           String UserOption = Console.ReadLine();
 
-          return Convert.ToInt32(UserOption);
+          InputCheck(Convert.ToInt32(UserOption));
      }
 
-      
+     void InputCheck(int UserOption) {
 
+          if(UserOption < 0 || UserOption > 4) {
+               Console.WriteLine("Please select one of the options");
+               MainMenu();
+          }
+          
+          switch(UserOption) {
+
+               case 0://close application
+                    Console.WriteLine("Good Bye");
+                    System.Environment.Exit(0);
+                    break;
+               case 1://view all records
+                    Console.WriteLine("Gathering ALL Records");
+                    ViewRecords();
+                    break;
+
+               case 2://insert records
+
+                    break;
+
+               case 3://delete records
+
+                    break;
+
+               case 4://update records
+
+                    break;
+
+               default:
+                    Console.WriteLine("Please select one of the options");
+                    MainMenu();
+                    break;
+
+          }
+
+     }
+
+     //view all records
+     void ViewRecords() {
+
+          Console.Clear();
+          string connectionString = @"Data Source=HabitTracker.db";
+
+          using (var connection = new SqliteConnection(connectionString)) {
+               connection.Open();
+               using (SqliteCommand command = new SqliteCommand($"SELECT * FROM drinking_water", connection)) {
+                    // Execute the command and read til end of file
+                    using (SqliteDataReader reader = command.ExecuteReader()) {
+                         while (reader.Read()) {
+                              // Access the columns by index or name
+                              Console.WriteLine($"ID: {reader["Id"]}, Name: {reader["Name"]}");
+                         }
+                    }
+               }
+          }
+     }
+     //insert record
+     void InsertRecord() {
+
+
+     }
+     //Delete record
+     void DeleteRecord() { 
+          
+
+     }
+     //Update record
+     void UpdateRecord() {
+     
+
+     }
 }
