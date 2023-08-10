@@ -13,7 +13,6 @@ namespace HabitTracker
         static string connectionString = @"Data Source=habitTracker.db";
         static void Main(string[] args)
         {
-            //string connectionString = @"Data Source=habitTracker.db";
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
@@ -205,9 +204,14 @@ namespace HabitTracker
             Console.Write("\nPlease enter the Id of the record you want to edit or Enter 0 to return to main menu\n> ");
             Console.ResetColor();
             string idInput = Console.ReadLine();
-            if (idInput == "0") { UserInput(); }
+            if (idInput == "0") UserInput();
+            while(!Int32.TryParse(idInput, out _) || Convert.ToInt32(idInput) < 0)
+            {
+                Console.WriteLine("\n\nInvalid ID. Try again.\n\n");
+                idInput = Console.ReadLine();
+            }
 
-            return Int32.Parse(idInput);
+            return Convert.ToInt32(idInput);
         }
         // Date
         internal static string DateInput()
@@ -216,7 +220,7 @@ namespace HabitTracker
             Console.Write("\nPlease enter workout date (Format: MM-DD-YY): Enter 0 to return to main menu \n> ");
             Console.ResetColor();
             string dateInput = Console.ReadLine();
-            if (dateInput == "0") { UserInput(); }
+            if (dateInput == "0") UserInput();
             while(!DateTime.TryParseExact(dateInput, "MM-dd-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
                 Console.WriteLine("\n\nInvalid date: (Format: MM-DD-YY). Type 0 to return to main menu or try again:\n\n");
@@ -231,7 +235,7 @@ namespace HabitTracker
             Console.Write("\nPlease enter workout duration (Format: Integer only. Round up to nearest whole number): Enter 0 to return to main menu\n> ");
             Console.ResetColor();
             string hoursInput = Console.ReadLine();
-            if (hoursInput == "0") { UserInput(); }
+            if (hoursInput == "0") UserInput(); 
             return Int32.Parse(hoursInput);
         }
     }
