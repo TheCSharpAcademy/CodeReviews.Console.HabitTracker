@@ -128,6 +128,8 @@ namespace HabitTracker.ItsSt0rm
                     Console.WriteLine("No rows found");
                 }
 
+                connection.Close();
+
                 Console.WriteLine("---------------- Habits report --------------------\n");
                 Console.WriteLine("Total insights:");
                 foreach (var habitTrackerAll in tableAllData)
