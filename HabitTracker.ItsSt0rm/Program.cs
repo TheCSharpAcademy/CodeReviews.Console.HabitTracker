@@ -45,6 +45,7 @@ namespace HabitTracker.ItsSt0rm
                 Console.WriteLine("Type 2 to Insert record");
                 Console.WriteLine("Type 3 to Delete record");
                 Console.WriteLine("Type 4 to Update record");
+                Console.WriteLine("Type 5 to Show habits report");
                 Console.WriteLine("--------------------------------------------\n");
 
                 string commandInput = Console.ReadLine();
@@ -68,10 +69,78 @@ namespace HabitTracker.ItsSt0rm
                     case "4":
                         Update();
                         break;
+                    case "5":
+                        GenerateReport();
+                        break;
                     default:
-                        Console.WriteLine("\nInvalid command. Please type a number from 0 to 4.\n");
+                        Console.WriteLine("\nInvalid command. Please type a number from 0 to 5.\n");
                         break;
                 }
+            }
+        }
+
+        private static void GenerateReport()
+        {
+            Console.Clear();
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableAllCmd = connection.CreateCommand();
+                tableAllCmd.CommandText =
+                    $"SELECT Measure, sum(Quantity) FROM habit_tracker GROUP BY Measure";
+
+                var tableDetailedCmd = connection.CreateCommand();
+                tableDetailedCmd.CommandText =
+                    $"SELECT \r\n    strftime('%Y', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) AS Year,\r\n    CASE \r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '01' THEN 'January'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '02' THEN 'February'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '03' THEN 'March'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '04' THEN 'April'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '05' THEN 'May'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '06' THEN 'June'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '07' THEN 'July'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '08' THEN 'August'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '09' THEN 'September'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '10' THEN 'October'\r\n        WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '11' THEN 'November'\r\n        ELSE 'December' END AS Month,\r\n    Measure,\r\n    SUM(Quantity) AS Quantity\r\nFROM habit_tracker\r\nGROUP BY Year, Month, Measure\r\nORDER BY Year, Month, Measure;\r\n";
+
+                List<ReportAll> tableAllData = new();
+                List<ReportDetail> tableDetailData = new();
+
+                SqliteDataReader readerAll = tableAllCmd.ExecuteReader();
+                SqliteDataReader readerDetail = tableDetailedCmd.ExecuteReader();
+
+                if (readerAll.HasRows)
+                {
+                    while (readerAll.Read())
+                    {
+                        tableAllData.Add(
+                            new ReportAll
+                            {
+                                Measure = readerAll.GetString(0),
+                                Sum = readerAll.GetInt32(1)
+                            });
+                    }
+
+                    while (readerDetail.Read())
+                    {
+                        tableDetailData.Add(
+                            new ReportDetail
+                            { 
+                                Year = readerDetail.GetString(0),
+                                Month = readerDetail.GetString(1),
+                                Measure = readerDetail.GetString(2),
+                                Quantity = readerDetail.GetInt32(3)
+                            });
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No rows found");
+                }
+
+                Console.WriteLine("---------------- Habits report --------------------\n");
+                Console.WriteLine("Total insights:");
+                foreach (var habitTrackerAll in tableAllData)
+                {
+                    Console.WriteLine($"    Measure: {habitTrackerAll.Measure} - Total registered: {habitTrackerAll.Sum}");
+                }
+                
+                Console.WriteLine("\nMonthly insights:");
+                foreach (var habitTrackerDetailed in tableDetailData)
+                {
+                    Console.WriteLine($"    Year: {habitTrackerDetailed.Year} - Month: {habitTrackerDetailed.Month} - Measure: {habitTrackerDetailed.Measure} - Quantity: {habitTrackerDetailed.Quantity}");
+                }
+                Console.WriteLine("\n---------------------------------------------------\n");
             }
         }
 
@@ -97,7 +166,7 @@ namespace HabitTracker.ItsSt0rm
                             new HabitTracker
                             {
                                 Id = reader.GetInt32(0),
-                                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", new CultureInfo("en-US")),
                                 Measure = reader.GetString(2),
                                 Quantity = reader.GetInt32(3)
                             });
@@ -110,7 +179,7 @@ namespace HabitTracker.ItsSt0rm
 
                 connection.Close();
 
-                Console.WriteLine("------------------------------------\n");
+                Console.WriteLine("---------------- Habits list --------------------\n");
                 foreach (var habitTracker in tableData)
                 {
                     Console.WriteLine($"{habitTracker.Id} - {habitTracker.Date.ToString("dd-MMM-yyyy")} - Measure: {habitTracker.Measure} - Quantity: {habitTracker.Quantity}");
@@ -173,7 +242,7 @@ namespace HabitTracker.ItsSt0rm
         }
 
         private static void Update()
-        {        
+        {
             GetAllRecords();
 
             var recordId = GetNumberInput("\n\nPlease type Id of the record that you would like to update. Type 0 to return to main menu.\n\n");
@@ -212,15 +281,15 @@ namespace HabitTracker.ItsSt0rm
 
         internal static string GetDateInput()
         {
-            Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main menu");
+            Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yyyy). Type 0 to return to main menu");
 
             string dateInput = Console.ReadLine();
 
             if (dateInput == "0") GetUserInput();
 
-            while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+            while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
-                Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main menu or try again:\n\n");
+                Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yyyy). Type 0 to return to main menu or try again:\n\n");
                 dateInput = Console.ReadLine();
             }
 
@@ -251,6 +320,20 @@ namespace HabitTracker.ItsSt0rm
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public string Measure { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    public class ReportAll
+    {
+        public string Measure { get; set; }
+        public int Sum { get; set; }
+    }
+
+    public class ReportDetail
+    {
+        public string Year { get; set; }
+        public string Month { get; set; }
         public string Measure { get; set; }
         public int Quantity { get; set; }
     }
