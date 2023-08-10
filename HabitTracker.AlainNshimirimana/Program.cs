@@ -56,6 +56,7 @@ namespace HabitTracker
                     case "0":
                         Console.WriteLine("\nGoodbye");
                         closeApp = true;
+                        Environment.Exit(0);
                         break;
 
                     case "1":
@@ -212,10 +213,15 @@ namespace HabitTracker
         internal static string DateInput()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPlease enter workout date (Format: mm-dd-yy): Enter 0 to return to main menu \n> ");
+            Console.Write("\nPlease enter workout date (Format: MM-DD-YY): Enter 0 to return to main menu \n> ");
             Console.ResetColor();
             string dateInput = Console.ReadLine();
             if (dateInput == "0") { UserInput(); }
+            while(!DateTime.TryParseExact(dateInput, "MM-dd-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+            {
+                Console.WriteLine("\n\nInvalid date: (Format: MM-DD-YY). Type 0 to return to main menu or try again:\n\n");
+                dateInput = Console.ReadLine();
+            }
             return dateInput;
         }
         // Workout Duration
