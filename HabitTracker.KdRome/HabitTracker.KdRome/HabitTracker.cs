@@ -180,7 +180,7 @@ class HabitTracker {
      void InsertRecord() {
           Console.Clear();
 
-          Console.WriteLine("Please Enter Todays Date (MM-DD-YYYY)");
+          Console.WriteLine("Please Enter Todays Date (DD-MM-YY)");
           string Date = Console.ReadLine();
           Console.WriteLine("Please Enter how many cups you drank today");
           string NumCups = Console.ReadLine();
@@ -207,7 +207,7 @@ class HabitTracker {
      }
      string GetDateInput(string DateInput) {
           while (!DateTime.TryParseExact(DateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _)) {
-               Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy), Try Again.");
+               Console.WriteLine("\n\nInvalid date. (Format: DD-MM-YY), Try Again.");
                DateInput = Console.ReadLine();
                GetDateInput(DateInput);
           }
