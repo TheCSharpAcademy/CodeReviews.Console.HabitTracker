@@ -91,7 +91,27 @@ namespace HabitTracker.ItsSt0rm
 
                 var tableDetailedCmd = connection.CreateCommand();
                 tableDetailedCmd.CommandText =
-                    $"SELECT strftime('%Y', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) AS Year, CASE WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '01' THEN 'January' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '02' THEN 'February' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '03' THEN 'March' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '04' THEN 'April' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '05' THEN 'May' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '06' THEN 'June' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '07' THEN 'July' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '08' THEN 'August' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '09' THEN 'September' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '10' THEN 'October' WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '11' THEN 'November' ELSE 'December' END AS Month, Measure, SUM(Quantity) AS Quantity FROM habit_tracker GROUP BY Year, Month, Measure ORDER BY Year, Month, Measure;";
+                    @"SELECT 
+                        strftime('%Y', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) AS Year, 
+                        CASE 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '01' THEN 'January' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '02' THEN 'February' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '03' THEN 'March' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '04' THEN 'April' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '05' THEN 'May' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '06' THEN 'June' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '07' THEN 'July' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '08' THEN 'August' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '09' THEN 'September' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '10' THEN 'October' 
+                            WHEN strftime('%m', date(substr(Date, 7, 4) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2))) = '11' THEN 'November' 
+                            ELSE 'December' 
+                        END AS Month, 
+                        Measure, 
+                        SUM(Quantity) AS Quantity 
+                    FROM habit_tracker 
+                    GROUP BY Year, Month, Measure 
+                    ORDER BY Year, Month, Measure;";
 
                 List<ReportAll> tableAllData = new();
                 List<ReportDetail> tableDetailData = new();
@@ -227,7 +247,7 @@ namespace HabitTracker.ItsSt0rm
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
 
-                tableCmd.CommandText = $"DELETE FROM drinking_water WHERE Id = '{recordId}'";
+                tableCmd.CommandText = $"DELETE FROM habit_tracker WHERE Id = '{recordId}'";
 
                 int rowCount = tableCmd.ExecuteNonQuery();
 
