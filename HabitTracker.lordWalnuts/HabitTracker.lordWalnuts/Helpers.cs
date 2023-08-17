@@ -56,9 +56,9 @@ namespace HabitTracker.lordWalnuts
             var numberInput = Console.ReadLine();
             if (numberInput == "0") Program.ShowMenu();
 
-            while (string.IsNullOrEmpty(numberInput) || !Int32.TryParse(numberInput, out _))
+            while (string.IsNullOrEmpty(numberInput) || !Int32.TryParse(numberInput, out _) || int.Parse(numberInput) < 0)
             {
-                Console.WriteLine("\n\nYour answer needs to be an integer.Try again or 0 for main menu");
+                Console.WriteLine("\n\nYour answer needs to be an positive integer.Try again or 0 for main menu");
                 numberInput = Console.ReadLine();
                 if (numberInput == "0") Program.ShowMenu();
             }
