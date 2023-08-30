@@ -61,14 +61,11 @@
             var name = GetInput("Input the name of the habit.").str;
 
             SQL.CreateTable($"\"{name}\"");
-            WaitForInput("Register Completed.");
-            MainMenu();
+            GoToMainMenu("Register Completed.");
         }
         private void Insert()
         {
-            Console.Clear();
-            SQL.ViewTables();
-            Console.WriteLine("".PadRight(24, '='));
+            ViewTables();
 
             try
             {
@@ -83,14 +80,11 @@
                 Console.WriteLine("Invalid Input. Try again.");
             }
 
-            WaitForInput("Type any keys to continue.");
-            MainMenu();
+            GoToMainMenu("Type any keys to continue.");
         }
         private void Delete()
         {
-            Console.Clear();
-            SQL.ViewTables();
-            Console.WriteLine("".PadRight(24, '='));
+            ViewTables();
 
             try
             {
@@ -104,27 +98,21 @@
                 Console.WriteLine("Invalid Input. Try again.");
             }
 
-            WaitForInput("Type any keys to continue.");
-            MainMenu();
+            GoToMainMenu("Type any keys to continue.");
         }
 
         private void Drop()
         {
-            Console.Clear();
-            SQL.ViewTables();
-            Console.WriteLine("".PadRight(24, '='));
+            ViewTables();
 
             var table = GetInput("Input the name of the table to drop.").str;
             SQL.DropTable($"\"{table}\"");
-            WaitForInput();
-            MainMenu();
+            GoToMainMenu();
         }
 
         private void Update()
         {
-            Console.Clear();
-            SQL.ViewTables();
-            Console.WriteLine("".PadRight(24, '='));
+            ViewTables();
 
             try
             {
@@ -141,17 +129,25 @@
                 Console.WriteLine("Invalid Input. Try again.");
             }
 
-            WaitForInput("Type any keys to continue.");
-            MainMenu();
+            GoToMainMenu("Type any keys to continue.");
         }
         private void ViewTheHabits()
+        {
+            ViewTables();
+            GoToMainMenu("Type any keys to continue.");
+        }
+
+        private void GoToMainMenu(string message = "")
+        {
+            WaitForInput(message);
+            MainMenu();
+        }
+
+        private void ViewTables()
         {
             Console.Clear();
             SQL.ViewTables();
             Console.WriteLine("".PadRight(24, '='));
-
-            WaitForInput("Type any keys to continue.");
-            MainMenu();
         }
 
         private (bool res, string str, int val) GetInput(string message)
