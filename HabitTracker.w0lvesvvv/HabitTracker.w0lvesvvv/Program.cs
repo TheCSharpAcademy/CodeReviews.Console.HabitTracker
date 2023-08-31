@@ -1,7 +1,5 @@
 ﻿using HabitTracker.w0lvesvvv;
 using Microsoft.Data.Sqlite;
-using System;
-using System.Numerics;
 
 #region CreateDatabase
 string connectionString = @"Data Source=habit-tracker.db";
@@ -206,14 +204,14 @@ void GetRecords()
             {
                 HabitRecord record = new HabitRecord
                 {
-                    record_habit_name_nv = result.GetString(0),
-                    record_date_dt = result.GetDateTime(1),
-                    record_quantity_i = result.GetInt32(2)
+                    Record_habit_name_nv = result.GetString(0),
+                    Record_date_dt = result.GetDateTime(1),
+                    Record_quantity_i = result.GetInt32(2)
                 };
 
                 listHabitRecord.Add(record);
                 listRecords.Add(recordCount, record);
-                Console.WriteLine($"{recordCount} - {record.record_habit_name_nv} - {record.record_date_dt} - {record.record_quantity_i}");
+                Console.WriteLine($"{recordCount} - {record.Record_habit_name_nv} - {record.Record_date_dt} - {record.Record_quantity_i}");
                 recordCount++;
             }
 
@@ -268,7 +266,7 @@ void DeleteRecord()
 
         var query = connection.CreateCommand();
         //Not very good way to delete records but as it's impossible to have two records with same record_date_dt in this app i don't care
-        query.CommandText = $@"DELETE FROM habit_record WHERE record_date_dt = '{listRecords.Where(x => x.Key == recordNumber.Value).First().Value.record_date_dt.ToString("yyyy-MM-dd HH:mm:ss")}'";
+        query.CommandText = $@"DELETE FROM habit_record WHERE record_date_dt = '{listRecords.Where(x => x.Key == recordNumber.Value).First().Value.Record_date_dt.ToString("yyyy-MM-dd HH:mm:ss")}'";
         query.ExecuteNonQuery();
 
         connection.Close();
