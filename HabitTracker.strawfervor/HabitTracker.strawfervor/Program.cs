@@ -1,11 +1,18 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace habit_tracker
 {
     class Tracker
     {
+        public bool check_date(String input)
+        {
+            Regex regex = new Regex("^[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]$", RegexOptions.IgnoreCase);
+            return regex.IsMatch(input);
+        }
+
         string connectionString = @"Data Source=habit-Tracker.db";
 
         public void command_nonquery(string command)
@@ -62,6 +69,7 @@ namespace habit_tracker
                     case 0:
                         Console.WriteLine("\nClosing app\n");
                         menuLoop = false;
+                        Environment.Exit(0);
                         break;
                     case 1:
                         get_all_records();
@@ -88,6 +96,12 @@ namespace habit_tracker
             int water_ml = 0;
             Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
             string date = Console.ReadLine()!;
+            while (!check_date(date))
+            {
+                Console.WriteLine("Please use correct format dd-mm-yyyy (ex. 12-01-2023): ");
+                date = Console.ReadLine()!;
+            }
+            
             Console.WriteLine("Please enter amount of water drinked\n(just numbers in ml, 1 glass is about 250 ml):");
             while (true)
             {
@@ -195,6 +209,11 @@ namespace habit_tracker
             int water_ml = 0;
             Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
             string date = Console.ReadLine()!;
+            while (!check_date(date))
+            {
+                Console.WriteLine("Please use correct format dd-mm-yyyy (ex. 12-01-2023): ");
+                date = Console.ReadLine()!;
+            }
             Console.WriteLine("Please enter amount of water drinked\n(just numbers in ml, 1 glass is about 250 ml):");
             while (true)
             {
