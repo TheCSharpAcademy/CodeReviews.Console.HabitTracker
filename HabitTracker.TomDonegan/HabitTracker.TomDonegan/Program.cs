@@ -6,10 +6,11 @@ namespace HabitTracker.TomDonegan
     {
         internal static void Main(string[] args)
         {
-            Database.DatabaseCreation();
-            UserInterface.MainMenu();
-        }
-
-        
+            while (true)
+            {
+                Database.DatabaseCheck();
+                UserInterface.MainMenu();
+            }
+        }        
     }
 }
