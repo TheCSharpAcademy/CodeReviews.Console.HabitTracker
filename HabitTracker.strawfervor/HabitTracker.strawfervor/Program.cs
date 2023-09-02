@@ -7,7 +7,7 @@ namespace habit_tracker
 {
     class Tracker
     {
-        public bool check_date(String input)
+        public bool CheckDate(String input)
         {
             Regex regex = new Regex("^[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]$", RegexOptions.IgnoreCase);
             return regex.IsMatch(input);
@@ -15,7 +15,7 @@ namespace habit_tracker
 
         string connectionString = @"Data Source=habit-Tracker.db";
 
-        public void command_nonquery(string command)
+        public void CommandNonQuery(string command)
         {
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -24,9 +24,9 @@ namespace habit_tracker
 
                 tableCmd.CommandText = command;
 
-                int row_count = tableCmd.ExecuteNonQuery();//this is executing command without "output"
+                int rowCount = tableCmd.ExecuteNonQuery();//this is executing command without "output"
 
-                if (row_count > 0)
+                if (rowCount > 0)
                 { 
                     Console.Write($"Record updated!");
                 }
@@ -39,7 +39,7 @@ namespace habit_tracker
             }
         }
 
-        public void main_menu()
+        public void MainMenu()
         {
             bool menuLoop = true;
             while (menuLoop) 
@@ -72,16 +72,16 @@ namespace habit_tracker
                         Environment.Exit(0);
                         break;
                     case 1:
-                        get_all_records();
+                        GetAllRecords();
                         break;
                     case 2:
-                        insert_record();
+                        InsertRecord();
                         break;
                     case 3:
-                        delete();
+                        Delete();
                         break;
                     case 4:
-                        update();
+                        Update();
                         break;
                     default:
                         Console.WriteLine("Please choose correct option.");
@@ -90,13 +90,13 @@ namespace habit_tracker
 
             }
         }
-        public void insert_record()
+        public void InsertRecord()
         {
-            string current_query;
-            int water_ml = 0;
+            string currentQuery;
+            int waterMl = 0;
             Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
             string date = Console.ReadLine()!;
-            while (!check_date(date))
+            while (!CheckDate(date))
             {
                 Console.WriteLine("Please use correct format dd-mm-yyyy (ex. 12-01-2023): ");
                 date = Console.ReadLine()!;
@@ -107,7 +107,7 @@ namespace habit_tracker
             {
                 try
                 {
-                    water_ml = int.Parse(Console.ReadLine()!);
+                    waterMl = int.Parse(Console.ReadLine()!);
                     break;
                 }
                 catch (Exception ex) 
@@ -115,13 +115,13 @@ namespace habit_tracker
                     Console.WriteLine($"Please enter numbers only!");
                 }
             }
-            current_query = $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', '{water_ml}')";
+            currentQuery = $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', '{waterMl}')";
 
 
-            command_nonquery(current_query);
+            CommandNonQuery(currentQuery);
         }
 
-        public void get_all_records()
+        public void GetAllRecords()
         {
             List<DrinkingWater> tableData = new();
 
@@ -152,25 +152,25 @@ namespace habit_tracker
                 connection.Close();
             }
 
-            foreach (var drinking_water in tableData)
+            foreach (var drinkingWater in tableData)
             {
-                Console.WriteLine($"\t{drinking_water.Id}) {drinking_water.Quantity} ml of water has been drinked on {drinking_water.Date}");
+                Console.WriteLine($"\t{drinkingWater.Id}) {drinkingWater.Quantity} ml of water has been drinked on {drinkingWater.Date}");
             }
         }
 
-        public void delete()
+        public void Delete()
         {
             Console.Clear();
             Console.WriteLine("==============================\n");
-            get_all_records();
-            string current_query;
-            int record_to_delete = 0;
+            GetAllRecords();
+            string currentQuery;
+            int recordToDelete = 0;
             Console.WriteLine("Please type the Id of the record you want to delete (0 or number that is not Id returns to main menu):");
             while (true)
             {
                 try
                 {
-                    record_to_delete = int.Parse(Console.ReadLine()!);
+                    recordToDelete = int.Parse(Console.ReadLine()!);
                     break;
                 }
                 catch (Exception ex)
@@ -178,25 +178,25 @@ namespace habit_tracker
                     Console.WriteLine("Please use numbers only!");
                 }
             }
-            if ( record_to_delete > 0 )
+            if ( recordToDelete > 0 )
             {
-                current_query = $"DELETE FROM drinking_water WHERE Id = '{record_to_delete}'";
-                command_nonquery(current_query);
+                currentQuery = $"DELETE FROM drinking_water WHERE Id = '{recordToDelete}'";
+                CommandNonQuery(currentQuery);
             }
         }
 
-        public void update()
+        public void Update()
         {
             Console.Clear();
             Console.WriteLine("==============================\n");
-            get_all_records();
-            int record_to_update = 0;
+            GetAllRecords();
+            int recordToUpdate = 0;
             Console.WriteLine("Please type the Id of the record you want to delete (0 or number that is not Id returns to main menu):");
             while (true)
             {
                 try
                 {
-                    record_to_update = int.Parse(Console.ReadLine()!);
+                    recordToUpdate = int.Parse(Console.ReadLine()!);
                     break;
                 }
                 catch (Exception ex)
@@ -204,12 +204,12 @@ namespace habit_tracker
                     Console.WriteLine("Please use numbers only!");
                 }
             }
-
-            string current_query;
-            int water_ml = 0;
+            
+            string currentQuery;
+            int WaterMl = 0;
             Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
             string date = Console.ReadLine()!;
-            while (!check_date(date))
+            while (!CheckDate(date))
             {
                 Console.WriteLine("Please use correct format dd-mm-yyyy (ex. 12-01-2023): ");
                 date = Console.ReadLine()!;
@@ -219,7 +219,7 @@ namespace habit_tracker
             {
                 try
                 {
-                    water_ml = int.Parse(Console.ReadLine()!);
+                    WaterMl = int.Parse(Console.ReadLine()!);
                     break;
                 }
                 catch (Exception ex)
@@ -227,8 +227,8 @@ namespace habit_tracker
                     Console.WriteLine($"Please enter numbers only!");
                 }
             }
-            current_query = $"UPDATE drinking_water SET date = '{date}', quantity = '{water_ml}' WHERE Id = {record_to_update}";
-            command_nonquery(current_query);
+            currentQuery = $"UPDATE drinking_water SET date = '{date}', quantity = '{WaterMl}' WHERE Id = {recordToUpdate}";
+            CommandNonQuery(currentQuery);
         }
     }
 
@@ -250,9 +250,9 @@ namespace habit_tracker
                 Quantity INTEGER
                 )";
             Tracker tr = new Tracker();
-            tr.command_nonquery(create_table_command);
+            tr.CommandNonQuery(create_table_command);
 
-            tr.main_menu();
+            tr.MainMenu();
         }
     }
 }
