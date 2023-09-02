@@ -17,7 +17,16 @@ namespace habit_tracker
 
                 tableCmd.CommandText = command;
 
-                tableCmd.ExecuteNonQuery();//this is executing command without "output"
+                int row_count = tableCmd.ExecuteNonQuery();//this is executing command without "output"
+
+                if (row_count > 0)
+                { 
+                    Console.Write($"Record updated!");
+                }
+                else
+                {
+                    Console.Write("No records has been updated.");
+                }
 
                 connection.Close();
             }
@@ -25,8 +34,6 @@ namespace habit_tracker
 
         public void main_menu()
         {
-            Console.Clear();
-
             bool menuLoop = true;
             while (menuLoop) 
             {
@@ -57,16 +64,16 @@ namespace habit_tracker
                         menuLoop = false;
                         break;
                     case 1:
-                        Console.WriteLine("get_all_records");
+                        get_all_records();
                         break;
                     case 2:
-                        Console.WriteLine("insert_record");
+                        insert_record();
                         break;
                     case 3:
-                        Console.WriteLine("");
+                        delete();
                         break;
                     case 4:
-                        Console.WriteLine("");
+                        update();
                         break;
                     default:
                         Console.WriteLine("Please choose correct option.");
@@ -77,13 +84,140 @@ namespace habit_tracker
         }
         public void insert_record()
         {
-            string currentQuery;
+            string current_query;
+            int water_ml = 0;
             Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
-            string 
+            string date = Console.ReadLine()!;
+            Console.WriteLine("Please enter amount of water drinked\n(just numbers in ml, 1 glass is about 250 ml):");
+            while (true)
+            {
+                try
+                {
+                    water_ml = int.Parse(Console.ReadLine()!);
+                    break;
+                }
+                catch (Exception ex) 
+                {
+                    Console.WriteLine($"Please enter numbers only!");
+                }
+            }
+            current_query = $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', '{water_ml}')";
 
 
-            command_nonquery(currentQuery);
+            command_nonquery(current_query);
         }
+
+        public void get_all_records()
+        {
+            List<DrinkingWater> tableData = new();
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText = "SELECT * FROM drinking_water";
+
+                SqliteDataReader reader = tableCmd.ExecuteReader(); //we are using this reader instead of ExecuteNonQuery because we want to 'feed' reader with data from DB
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        tableData.Add(new DrinkingWater
+                        {
+                            Id = reader.GetInt32(0),//0 indicate number of collumn
+                            Date = reader.GetString(1),
+                            Quantity = reader.GetInt32(2),
+                        }) ;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No rows found!");
+                }
+                connection.Close();
+            }
+
+            foreach (var drinking_water in tableData)
+            {
+                Console.WriteLine($"\t{drinking_water.Id}) {drinking_water.Quantity} ml of water has been drinked on {drinking_water.Date}");
+            }
+        }
+
+        public void delete()
+        {
+            Console.Clear();
+            Console.WriteLine("==============================\n");
+            get_all_records();
+            string current_query;
+            int record_to_delete = 0;
+            Console.WriteLine("Please type the Id of the record you want to delete (0 or number that is not Id returns to main menu):");
+            while (true)
+            {
+                try
+                {
+                    record_to_delete = int.Parse(Console.ReadLine()!);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Please use numbers only!");
+                }
+            }
+            if ( record_to_delete > 0 )
+            {
+                current_query = $"DELETE FROM drinking_water WHERE Id = '{record_to_delete}'";
+                command_nonquery(current_query);
+            }
+        }
+
+        public void update()
+        {
+            Console.Clear();
+            Console.WriteLine("==============================\n");
+            get_all_records();
+            int record_to_update = 0;
+            Console.WriteLine("Please type the Id of the record you want to delete (0 or number that is not Id returns to main menu):");
+            while (true)
+            {
+                try
+                {
+                    record_to_update = int.Parse(Console.ReadLine()!);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Please use numbers only!");
+                }
+            }
+
+            string current_query;
+            int water_ml = 0;
+            Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
+            string date = Console.ReadLine()!;
+            Console.WriteLine("Please enter amount of water drinked\n(just numbers in ml, 1 glass is about 250 ml):");
+            while (true)
+            {
+                try
+                {
+                    water_ml = int.Parse(Console.ReadLine()!);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Please enter numbers only!");
+                }
+            }
+            current_query = $"UPDATE drinking_water SET date = '{date}', quantity = '{water_ml}' WHERE Id = {record_to_update}";
+            command_nonquery(current_query);
+        }
+    }
+
+    public class DrinkingWater
+    {
+        public int Id { get; set; }
+        public string Date { get; set; }
+        public int Quantity { get; set; }
     }
 
     class Program
