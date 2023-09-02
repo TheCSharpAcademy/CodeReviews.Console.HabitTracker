@@ -32,74 +32,52 @@ namespace HabitTracker.TomDonegan
             }
             catch (Exception e)
             {
-                Console.WriteLine($"The Database could not be created. Error: {e.ToString()}");
+                Console.WriteLine($"The Database could not be created. Error: {e}");
             }
         }
 
-        public static async Task AsyncDatabaseConnection(string queryType, string databaseCommand)
+        public static async Task<bool> AsyncDatabaseConnection(string databaseCommand)
         {
             string connectionString = @"Data Source=HabitTracker.db";
             string? returnData = null;
+
             try
             {
                 using (var connection = new SQLiteConnection(connectionString))
                 {
                     await connection.OpenAsync();
+
                     using (var tableCmd = connection.CreateCommand())
                     {
                         tableCmd.CommandText = databaseCommand;
 
-                        if (queryType == "read")
+                        using (var reader = await tableCmd.ExecuteReaderAsync())
                         {
-                            using (var reader = await tableCmd.ExecuteReaderAsync())
-                            {
-                                Console.WriteLine(" Record     Date       Quantity    ");
-                                while (await reader.ReadAsync())
-                                {
-                                    int record = reader.GetInt32(0);
-                                    string date = reader.GetString(1);
-                                    double quantity = reader.GetDouble(2);
-                                    Console.WriteLine(
-                                        "{0,4} {1,13} {2,10}",
-                                        record,
-                                        date,
-                                        quantity + "L"
-                                    );
-                                }
-                            };
-                        }
-                        else if (queryType == "delete") 
-                        {
-                            
+                            bool recordExists = false;                            
 
-                            using (var reader = await tableCmd.ExecuteReaderAsync())
+                            while (await reader.ReadAsync())
                             {
-                                int rowCount = Convert.ToInt32(tableCmd.ExecuteScalar());
-                                if (rowCount > 0) {
-                                    Console.WriteLine(" Record     Date       Quantity    ");
-                                    while (await reader.ReadAsync())
-                                    {
-                                        int record = reader.GetInt32(0);
-                                        string date = reader.GetString(1);
-                                        double quantity = reader.GetDouble(2);
-                                        Console.WriteLine(
-                                            "{0,4} {1,13} {2,10}",
-                                            record,
-                                            date,
-                                            quantity + "L"
-                                        );
-                                    }
-                                } else
+                                if (!recordExists)
                                 {
-                                    Console.WriteLine("This record does not exist. Please make sure you selection is coreect");
+                                    Console.WriteLine(" Record     Date       Quantity    ");
+                                    recordExists = true;
                                 }
-                            };
-                        }
-                        else
-                        {
-                            await tableCmd.ExecuteNonQueryAsync();
-                        }
-                    }
+
+                                int record = reader.GetInt32(0);
+                                string date = reader.GetString(1);
+                                double quantity = reader.GetDouble(2);
+                                Console.WriteLine(
+                                    "{0,4} {1,13} {2,10}",
+                                    record,
+                                    date,
+                                    quantity + "L"
+                                );
+
+                                recordExists = true;
+                            }
+                            return recordExists;
+                        };
+                    } 
                 }
             }
             catch (Exception e)
@@ -107,40 +85,8 @@ namespace HabitTracker.TomDonegan
                 Console.WriteLine(
                     $"It has not been possible to connect to the Database. Error: {e}"
                 );
+                return false;
             }
         }
-
-        public static void DatabaseConnection(string queryType, string databaseCommand)
-        {
-            string connectionString = @"Data Source=HabitTracker.db";
-            using (var connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
-                using (var tableCommand = connection.CreateCommand())
-                {
-                    tableCommand.CommandText = databaseCommand;
-
-                    if (queryType == "read")
-                    {
-                        using (SQLiteDataReader reader = tableCommand.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                // Process data from the reader synchronously
-                                Console.WriteLine(reader.GetString(0));
-                                //int age = reader.GetInt32(1);
-                                //Console.WriteLine($"Name: {name}, Age: {age}");
-                            }
-                        }
-                    }
-                    else if (queryType == "write")
-                    {
-                        tableCommand.ExecuteNonQuery();
-                    }
-                }
-            }
-        }
-
-        public static void ChecklatestHabitRecords() { }
     }
 }

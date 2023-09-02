@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text.RegularExpressions;
 
 namespace HabitTracker.TomDonegan
 {
@@ -33,13 +26,13 @@ namespace HabitTracker.TomDonegan
                 switch (menuSelection)
                 {
                     case "1":
-                        viewAllHabitData("");
+                        ViewAllHabitData();
                         break;
                     case "2":
                         InsertHabitData();
                         break;
                     case "3":
-                        UpdateHabitData();
+                        UpdateEntry();
                         break;
                     case "4":
                         DeleteEntry();
@@ -51,24 +44,17 @@ namespace HabitTracker.TomDonegan
             }
         }
 
-        internal static async void viewAllHabitData(string viewSelection)
+        internal static async void ViewAllHabitData()
         {
             Console.Clear();
             Console.WriteLine("---------------------------------");
             Console.WriteLine("        All Habit Records        ");
             Console.WriteLine("---------------------------------\n");
-            if (string.IsNullOrEmpty(viewSelection))
-            {
-                await Database.AsyncDatabaseConnection("read", $"SELECT * FROM drinking_water");
-            }
-            else
-            {
-                await Database.AsyncDatabaseConnection(
-                    "read",
-                    $"SELECT * FROM drinking_water WHERE Id = '{viewSelection}'"
-                );
-            }
-            Console.ReadLine(); // Need to bypass this for record deletion ???
+
+            await Database.AsyncDatabaseConnection($"SELECT * FROM drinking_water");
+
+            Console.WriteLine("\nPress 'Enter' to return to the main menu.");
+            Console.ReadLine();
         }
 
         internal static async void InsertHabitData()
@@ -77,11 +63,13 @@ namespace HabitTracker.TomDonegan
             double quantity = GetQuantityInput();
 
             Console.WriteLine($"Adding: Date: {date} Quantity: {quantity}L to the database.");
+
             await Database.AsyncDatabaseConnection(
-                "write",
                 $"INSERT INTO drinking_water (Date, Quantity) VALUES ('{date}', {quantity})"
             );
+
             Console.WriteLine("New habit data added successfully.");
+            Console.WriteLine("Press 'Enter' to return to the main menu.");
             Console.ReadLine();
         }
 
@@ -91,63 +79,109 @@ namespace HabitTracker.TomDonegan
 
             while (!runDelete)
             {
-                await Database.AsyncDatabaseConnection("read", $"SELECT * FROM drinking_water");
+                Console.Clear();
+
+                await Database.AsyncDatabaseConnection($"SELECT * FROM drinking_water");
 
                 Console.WriteLine("-----------------------------");
-                Console.WriteLine("Habit Record Deleter");
+                Console.WriteLine("     Habit Record Deleter    ");
                 Console.WriteLine("-----------------------------\n");
                 Console.WriteLine("Please type the Id of the record you want to delete.");
 
-                string deleteSelection = Console.ReadLine();
+                string deleteSelection = Console.ReadLine() ;
+
+                while (!int.TryParse(deleteSelection, out _)) {
+                    Console.WriteLine("Please enter a valid number.");
+                    deleteSelection = Console.ReadLine();
+                }
+
                 Console.Clear();
 
-                await Database.AsyncDatabaseConnection("delete", $"SELECT COUNT(*) FROM drinking_water WHERE Id = '{deleteSelection}'");
+                bool recordExists = await Database.AsyncDatabaseConnection(
+                    $"SELECT * FROM drinking_water WHERE Id = '{deleteSelection}'"
+                );
+
+                if (recordExists)
+                {
+                    Console.WriteLine("-----------------------------");
+                    Console.WriteLine("     Habit Record Deleter    ");
+                    Console.WriteLine("-----------------------------\n");
+                    Console.WriteLine("Are you sure you want the delete the above record? (y/n)");
+
+                    string confirmDelete = Console.ReadLine();
+
+                    switch (confirmDelete.ToLower())
+                    {
+                        case "y":
+                            await Database.AsyncDatabaseConnection(
+                                $"DELETE FROM drinking_water WHERE Id = '{deleteSelection}'");
+                            Console.WriteLine("Record deleted.");
+                            runDelete = true;
+                            break;
+                        case "n":
+                            Console.Clear();
+                            break;
+                    }
+                } else
+                {
+                    Console.WriteLine("-----------------------------");
+                    Console.WriteLine("     Habit Record Deleter    ");
+                    Console.WriteLine("-----------------------------\n");
+                    Console.WriteLine($"Record {deleteSelection} does not exist in the database. Please check your selection.");
+                    Console.WriteLine($"Press 'Enter' to try again.");
+                    Console.ReadLine();
+                }
+            }
+
+            MainMenu();
+        }
+
+        internal static async void UpdateEntry()
+        {
+            bool runUpdate = false;
+
+            while (!runUpdate)
+            {
+                Console.Clear();
+                await Database.AsyncDatabaseConnection($"SELECT * FROM drinking_water");
 
                 Console.WriteLine("-----------------------------");
-                Console.WriteLine("Habit Record Deleter");
+                Console.WriteLine("     Habit Record Updater    ");
                 Console.WriteLine("-----------------------------\n");
-                Console.WriteLine("Are you sure you want the delete the following record? (y/n)");
-                string confirmDelete = Console.ReadLine();
+                Console.WriteLine("Please type the Id of the record you want to update.");
 
-                switch (confirmDelete)
+                string updateSelection = Console.ReadLine();
+                Console.Clear();
+
+                await Database.AsyncDatabaseConnection(
+                    $"SELECT * FROM drinking_water WHERE Id = '{updateSelection}'"
+                );
+
+                Console.WriteLine("-----------------------------");
+                Console.WriteLine("     Habit Record Updater    ");
+                Console.WriteLine("-----------------------------\n");
+                Console.WriteLine("Are you sure you want the update the above record? (y/n)");
+
+                string confirmUpdate = Console.ReadLine();
+
+                switch (confirmUpdate.ToLower())
                 {
                     case "y":
+                        string newDate = GetDateInput();
+                        double newQuantity = GetQuantityInput();
                         await Database.AsyncDatabaseConnection(
-                            "delete",
-                            $"DELETE FROM drinking_water WHERE Id = '{deleteSelection}'"
+                            $"UPDATE drinking_water SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {updateSelection}"
                         );
-                        runDelete = true;
+                        runUpdate = true;
                         break;
                     case "n":
                         Console.Clear();
                         break;
                 }
             }
+
             MainMenu();
         }
-
-        internal static async void UpdateHabitData()
-        {
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine("     Habit Record Updater    ");
-            Console.WriteLine("-----------------------------\n");
-            string dateSelection = GetDateInput();
-            //string query = $"SELECT * FROM drinking_water WHERE Date = '{dateSelection}'";
-            await Database.AsyncDatabaseConnection(
-                "read",
-                $"SELECT * FROM drinking_water WHERE Date = '{dateSelection}'"
-            );
-            //await Database.AsyncDatabaseConnection("read", $"INSERT INTO drinking_water (Date, Quantity) VALUES ('{date}', {quantity})");
-        }
-
-        internal static async void CheckForEntry(string date)
-        {
-            await Database.AsyncDatabaseConnection(
-                "read",
-                $"SELECT * FROM drinking_water WHERE Date = '{date}'"
-            );
-            MainMenu();
-        } // Done
 
         private static double GetQuantityInput()
         {
@@ -167,12 +201,12 @@ namespace HabitTracker.TomDonegan
                 MainMenu();
 
             return double.Parse(quantityInput);
-        } // Done
+        }
 
         private static string GetDateInput()
         {
             Console.WriteLine(
-                "Please insert the date: (Format: dd-mm-yy). Type 0 to return to the main menu."
+                "\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to the main menu."
             );
 
             string dateInput = Console.ReadLine();
@@ -188,8 +222,7 @@ namespace HabitTracker.TomDonegan
                     "Please enter the date in the required format and length. Try again."
                 );
                 dateInput = Console.ReadLine();
-            }
-            ;
+            };
 
             int dayNumber = Convert.ToInt32(dateInput[..2]);
             int monthNumber = Convert.ToInt32(dateInput.Substring(3, 2));
@@ -199,35 +232,13 @@ namespace HabitTracker.TomDonegan
                 Console.WriteLine(
                     "Day date must be between 01 and 31.\nMonth date must be between 01 and 12. Try again."
                 );
+
                 dateInput = Console.ReadLine();
                 dayNumber = Convert.ToInt32(dateInput[..2]);
                 monthNumber = Convert.ToInt32(dateInput.Substring(3, 2));
-            }
-            ;
+            };
 
             return dateInput;
-        }
-
-        internal static void HabitTable()
-        {
-            DataTable table = new DataTable();
-            table.Columns.Add("Record", typeof(string));
-            table.Columns.Add("Date", typeof(string));
-            table.Columns.Add("Quantity", typeof(int));
-
-            table.Rows.Add("Test", "Test", 5);
-
-            // Display column titles
-            Console.WriteLine(
-                $"{table.Columns[0].ColumnName}, {table.Columns[1].ColumnName}, {table.Columns[2].ColumnName}"
-            );
-
-            foreach (DataRow row in table.Rows)
-            {
-                Console.WriteLine($"{row["Record"]}, {row["Date"]}, {row["Quantity"]}");
-            }
-
-            Console.ReadLine();
         }
     }
 }
