@@ -32,10 +32,12 @@ namespace HabitTracker.TomDonegan
                         InsertHabitData();
                         break;
                     case "3":
-                        UpdateEntry();
+                        //UpdateEntry();
+                        ModifyEntry("update");
                         break;
                     case "4":
-                        DeleteEntry();
+                        //DeleteEntry();
+                        ModifyEntry("delete");
                         break;
                     case "0":
                         Environment.Exit(0);
@@ -73,6 +75,88 @@ namespace HabitTracker.TomDonegan
             Console.ReadLine();
         }
 
+        internal static async void ModifyEntry(string modifySelection)
+        {
+            string capitalizedSelection = char.ToUpper(modifySelection[0]) + modifySelection.Substring(1);
+            bool runModify = false;
+
+            while (!runModify)
+            {
+                Console.Clear();
+
+                await Database.AsyncDatabaseConnection($"SELECT * FROM drinking_water");
+
+                Console.WriteLine("-----------------------------");
+                Console.WriteLine($"     Habit Record {capitalizedSelection}    ");
+                Console.WriteLine("-----------------------------\n");
+                Console.WriteLine($"Please type the ID of the record you want to {modifySelection}. Type 0 to return to the main menu.");
+
+                string selection = Console.ReadLine();
+
+                if (selection == "0")
+                {
+                    MainMenu();
+                }
+
+                while (!int.TryParse(selection, out _))
+                {
+                    Console.WriteLine("Please enter a valid number.");
+                    selection = Console.ReadLine();
+                }
+                Console.Clear();
+
+                bool recordExists = await Database.AsyncDatabaseConnection(
+                    $"SELECT * FROM drinking_water WHERE Id = '{selection}'"
+                );
+
+                if (recordExists)
+                {
+                    Console.WriteLine("-----------------------------");
+                    Console.WriteLine($"     Habit Record {capitalizedSelection}    ");
+                    Console.WriteLine("-----------------------------\n");
+                    Console.WriteLine("Are you sure you want the delete the above record? (y/n)");
+
+                    string confirmModification = Console.ReadLine();
+
+                    switch (confirmModification.ToLower())
+                    {
+                        case "y":
+                            if (modifySelection == "update")
+                            {
+                                string newDate = GetDateInput();
+                                double newQuantity = GetQuantityInput();
+                                await Database.AsyncDatabaseConnection(
+                                    $"UPDATE drinking_water SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {selection}"
+                                );
+                            }
+                            else
+                            {
+                                await Database.AsyncDatabaseConnection(
+                                    $"DELETE FROM drinking_water WHERE Id = '{selection}'");
+                                Console.WriteLine("Record deleted.");
+                            }
+                            runModify = true;
+                            break;
+                        case "n":
+                            Console.Clear();
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("-----------------------------");
+                    Console.WriteLine($"     Habit Record {capitalizedSelection}    ");
+                    Console.WriteLine("-----------------------------\n");
+                    Console.WriteLine($"Record {selection} does not exist in the database. Please check your selection.");
+                    Console.WriteLine($"Press 'Enter' to try again.");
+                    Console.ReadLine();
+                }
+            }
+
+            MainMenu();
+
+        }
+
         internal static async void DeleteEntry()
         {
             bool runDelete = false;
@@ -86,9 +170,14 @@ namespace HabitTracker.TomDonegan
                 Console.WriteLine("-----------------------------");
                 Console.WriteLine("     Habit Record Deleter    ");
                 Console.WriteLine("-----------------------------\n");
-                Console.WriteLine("Please type the Id of the record you want to delete.");
+                Console.WriteLine("Please type the ID of the record you want to delete. Type 0 to return to the main menu.");
 
                 string deleteSelection = Console.ReadLine() ;
+
+                if (deleteSelection == "0")
+                {
+                    MainMenu();
+                }
 
                 while (!int.TryParse(deleteSelection, out _)) {
                     Console.WriteLine("Please enter a valid number.");
@@ -148,35 +237,58 @@ namespace HabitTracker.TomDonegan
                 Console.WriteLine("-----------------------------");
                 Console.WriteLine("     Habit Record Updater    ");
                 Console.WriteLine("-----------------------------\n");
-                Console.WriteLine("Please type the Id of the record you want to update.");
+                Console.WriteLine("Please type the Id of the record you want to update. Type 0 to return to the main menu.");
 
                 string updateSelection = Console.ReadLine();
                 Console.Clear();
 
-                await Database.AsyncDatabaseConnection(
+                if (updateSelection == "0")
+                {
+                    MainMenu();
+                }
+
+                while (!int.TryParse(updateSelection, out _))
+                {
+                    Console.WriteLine("Please enter a valid number.");
+                    updateSelection = Console.ReadLine();
+                }
+
+                bool recordExists = await Database.AsyncDatabaseConnection(
                     $"SELECT * FROM drinking_water WHERE Id = '{updateSelection}'"
                 );
 
-                Console.WriteLine("-----------------------------");
-                Console.WriteLine("     Habit Record Updater    ");
-                Console.WriteLine("-----------------------------\n");
-                Console.WriteLine("Are you sure you want the update the above record? (y/n)");
-
-                string confirmUpdate = Console.ReadLine();
-
-                switch (confirmUpdate.ToLower())
+                if (recordExists)
                 {
-                    case "y":
-                        string newDate = GetDateInput();
-                        double newQuantity = GetQuantityInput();
-                        await Database.AsyncDatabaseConnection(
-                            $"UPDATE drinking_water SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {updateSelection}"
-                        );
-                        runUpdate = true;
-                        break;
-                    case "n":
-                        Console.Clear();
-                        break;
+                    Console.WriteLine("-----------------------------");
+                    Console.WriteLine("     Habit Record Updater    ");
+                    Console.WriteLine("-----------------------------\n");
+                    Console.WriteLine("Are you sure you want the update the above record? (y/n)");
+
+                    string confirmUpdate = Console.ReadLine();
+
+                    switch (confirmUpdate.ToLower())
+                    {
+                        case "y":
+                            string newDate = GetDateInput();
+                            double newQuantity = GetQuantityInput();
+                            await Database.AsyncDatabaseConnection(
+                                $"UPDATE drinking_water SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {updateSelection}"
+                            );
+                            runUpdate = true;
+                            break;
+                        case "n":
+                            Console.Clear();
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("-----------------------------");
+                    Console.WriteLine("     Habit Record Updater    ");
+                    Console.WriteLine("-----------------------------\n");
+                    Console.WriteLine($"Record {updateSelection} does not exist in the database. Please check your selection.");
+                    Console.WriteLine($"Press 'Enter' to try again.");
+                    Console.ReadLine();
                 }
             }
 
