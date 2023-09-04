@@ -108,6 +108,11 @@ namespace habit_tracker
                 try
                 {
                     waterMl = int.Parse(Console.ReadLine()!);
+                    while (waterMl < 0)
+                    {
+                        Console.WriteLine("Please enter number that is greater than 0.");
+                        waterMl = int.Parse(Console.ReadLine()!);
+                    }
                     break;
                 }
                 catch (Exception ex) 
@@ -206,7 +211,7 @@ namespace habit_tracker
             }
             
             string currentQuery;
-            int WaterMl = 0;
+            int waterMl = 0;
             Console.WriteLine("Please enter date in format dd-mm-yyyy: ");
             string date = Console.ReadLine()!;
             while (!CheckDate(date))
@@ -219,7 +224,12 @@ namespace habit_tracker
             {
                 try
                 {
-                    WaterMl = int.Parse(Console.ReadLine()!);
+                    waterMl = int.Parse(Console.ReadLine()!);
+                    while (waterMl < 0)
+                    {
+                        Console.WriteLine("Please enter number that is greater than 0.");
+                        waterMl = int.Parse(Console.ReadLine()!);
+                    }
                     break;
                 }
                 catch (Exception ex)
@@ -227,7 +237,7 @@ namespace habit_tracker
                     Console.WriteLine($"Please enter numbers only!");
                 }
             }
-            currentQuery = $"UPDATE drinking_water SET date = '{date}', quantity = '{WaterMl}' WHERE Id = {recordToUpdate}";
+            currentQuery = $"UPDATE drinking_water SET date = '{date}', quantity = '{waterMl}' WHERE Id = {recordToUpdate}";
             CommandNonQuery(currentQuery);
         }
     }
