@@ -1,6 +1,6 @@
 namespace HabitTracker;
 
-class HabitLogRecord
+class HabitLogRecord : ICloneable
 {
     public long ID { get; }
     public DateOnly Date { get; set; }
@@ -17,5 +17,10 @@ class HabitLogRecord
     {
         Date = date;
         Quantity = quantity;
+    }
+
+    public object Clone()
+    {
+        return new HabitLogRecord(ID, Date, Quantity);
     }
 }

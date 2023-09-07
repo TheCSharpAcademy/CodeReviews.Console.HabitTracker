@@ -4,6 +4,9 @@ enum AppState
 {
     MainMenu,
     LogInsert,
-    LogView,
+    LogViewList,
+    LogViewOne,
+    LogEdit,
+    LogDelete,
     Exit
 }

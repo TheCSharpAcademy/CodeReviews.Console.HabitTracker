@@ -36,6 +36,53 @@ class Database
         }
     }
 
+    public bool UpdateHabitLogRecord(HabitLogRecord record)
+    {
+        try
+        {
+            using var connection = new SqliteConnection(GetConnectionString());
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+            UPDATE habitlog
+            SET date=$date, quantity=$quantity
+            WHERE id=$id
+            ";
+            command.Parameters.AddWithValue("$id", record.ID);
+            command.Parameters.AddWithValue("$date", record.Date);
+            command.Parameters.AddWithValue("$quantity", record.Quantity);
+            return command.ExecuteNonQuery() == 1;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            return false;
+        }
+    }
+
+    public bool DeleteHabitLogRecord(long id)
+    {
+        try
+        {
+            using var connection = new SqliteConnection(GetConnectionString());
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+            DELETE FROM habitlog
+            WHERE id=$id
+            ";
+            command.Parameters.AddWithValue("$id", id);
+            return command.ExecuteNonQuery() == 1;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            return false;
+        }
+    }
+
     public List<HabitLogRecord> GetHabitLogRecords()
     {
         List<HabitLogRecord> habitlog = new();

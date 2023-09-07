@@ -27,3 +27,5 @@ see https://www.thecsharpacademy.com/project/12
 * https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/types
 * https://www.sqlite.org/autoinc.html
 * https://learn.microsoft.com/en-us/dotnet/standard/datetime/how-to-use-dateonly-timeonly
+* https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-7.0
+* https://learn.microsoft.com/en-us/dotnet/api/system.icloneable?view=net-7.0
