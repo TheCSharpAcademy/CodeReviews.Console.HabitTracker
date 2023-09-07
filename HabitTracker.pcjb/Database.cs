@@ -49,7 +49,7 @@ class Database
             @"
             SELECT id, date, quantity 
             FROM habitlog
-            ORDER BY date ASC
+            ORDER BY id ASC
             ";
             using var reader = command.ExecuteReader();
             while (reader.Read())

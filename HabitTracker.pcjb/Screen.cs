@@ -106,9 +106,11 @@ class Screen
         Console.WriteLine($"Log entries for habit '{habit.Name}'");
         if (habitlog != null && habitlog.Count > 0)
         {
+            string columnFormat = "{0,5} {1,10} {2,10}";
+            Console.WriteLine(String.Format(columnFormat, "ID", "Date", habit.UOM));
             foreach (var habitLogRecord in habitlog)
             {
-                Console.WriteLine($"#{habitLogRecord.ID} {habitLogRecord.Date} {habitLogRecord.Quantity} {habit.UOM}");
+                Console.WriteLine(String.Format(columnFormat, habitLogRecord.ID, habitLogRecord.Date, habitLogRecord.Quantity));
             }
         }
         else
