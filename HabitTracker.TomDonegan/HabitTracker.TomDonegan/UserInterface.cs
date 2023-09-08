@@ -22,7 +22,6 @@
                 Console.WriteLine("5 - Create a new habit.");
                 Console.WriteLine("6 - Switch habit.");
                 Console.WriteLine("7 - Delete a habit.");
-                Console.WriteLine("8 - View date range habit data.");
                 Console.WriteLine("0 - Exit Habit Tracker");
 
                 string menuSelection = Console.ReadLine();
@@ -49,9 +48,6 @@
                         break;
                     case "7":
                         HabitManagementHandler.AddRemoveHabit(currentHabit, "delete");
-                        break;
-                    case "8":
-                        HabitDataHandler.ViewHabitDataOverPeriod(currentHabit);
                         break;
                     case "0":
                         Environment.Exit(0);

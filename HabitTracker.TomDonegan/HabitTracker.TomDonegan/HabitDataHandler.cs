@@ -155,12 +155,12 @@ namespace HabitTracker.TomDonegan
 
         internal static string SwitchHabit()
         {
-            ArrayList habitList = DatabaseAccess.GetTableList();
+            ArrayList habitList = ListDatabaseTables();
 
-            foreach (var habit in habitList)
+            /*foreach (var habit in habitList)
             {
                 Console.WriteLine(habit);
-            }
+            }*/
 
             Console.WriteLine("Please select a habit by typing its name.");
             string selectedHabit = Console.ReadLine();

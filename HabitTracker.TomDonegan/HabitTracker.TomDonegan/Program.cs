@@ -9,8 +9,6 @@ namespace HabitTracker.TomDonegan
             while (true)
             {
                 HabitTrackerApp.Run();
-                DatabaseAccess.DatabaseCreation("", "");
-                UserInterface.MainMenu();
             }
         }        
     }
