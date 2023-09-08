@@ -3,6 +3,8 @@ namespace HabitTracker;
 enum AppState
 {
     MainMenu,
+    HabitInsert,
+    HabitSelect,
     LogInsert,
     LogViewList,
     LogViewOne,

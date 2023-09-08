@@ -7,9 +7,10 @@ class Program
     static void Main(string[] args)
     {
         var database = new Database(DatabaseFilename);
+        var habitController = new HabitController(database);
         var habitLogController = new HabitLogController(database);
         var appState = AppState.MainMenu;
-        
+
         if (!database.CreateDatabaseIfNotPresent())
         {
             Console.WriteLine($"Technical error: Could not create database {DatabaseFilename}. The error was logged.");
@@ -37,6 +38,17 @@ class Program
                     break;
                 case AppState.LogDelete:
                     appState = habitLogController.Delete();
+                    break;
+                case AppState.HabitInsert:
+                    appState = habitController.Create();
+                    break;
+                case AppState.HabitSelect:
+                    var selectedHabit = habitController.Select();
+                    if (selectedHabit != null)
+                    {
+                        habitLogController.SetHabit(selectedHabit);
+                    }
+                    appState = AppState.MainMenu;
                     break;
             }
         }

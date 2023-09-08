@@ -3,7 +3,7 @@ namespace HabitTracker;
 class HabitLogController
 {
     private readonly Database database;
-    private readonly Habit habit = new("Daily Walking", "steps");
+    private Habit? habit;
     private HabitLogRecord? selectedLogRecord = null;
 
     public HabitLogController(Database database)
@@ -13,6 +13,11 @@ class HabitLogController
 
     public AppState Create()
     {
+        if (habit == null) {
+            Screen.Message("Please select a habit before adding log entries.");
+            return AppState.MainMenu;
+        }
+
         var newHabitLogRecord = Screen.LogInsert(habit);
         if (newHabitLogRecord.Quantity > 0)
         {
@@ -30,7 +35,12 @@ class HabitLogController
 
     public AppState List()
     {
-        var habitlog = database.GetHabitLogRecords();
+        if (habit == null) {
+            Screen.Message("Please select a habit before viewing log entries.");
+            return AppState.MainMenu;
+        }
+
+        var habitlog = database.GetHabitLogRecords(habit.ID);
         selectedLogRecord = Screen.LogViewList(habit, habitlog);
         if (selectedLogRecord != null)
         {
@@ -44,18 +54,33 @@ class HabitLogController
 
     public AppState Read()
     {
-        if (selectedLogRecord != null)
-        {
-            return Screen.LogViewOne(habit, selectedLogRecord);
+        if (selectedLogRecord == null) {
+            Screen.Message("No log entry selected.");
+            return AppState.LogViewList;
         }
-        else
-        {
-            return AppState.MainMenu;
+
+        var habit = database.GetHabit(selectedLogRecord.HabitID);
+        if (habit == null) {
+            Screen.Message("No matching habit for log entry.");
+            return AppState.LogViewList;
         }
+
+        return Screen.LogViewOne(habit, selectedLogRecord);
     }
 
     public AppState Update()
     {
+        if (selectedLogRecord == null) {
+            Screen.Message("No log entry selected.");
+            return AppState.LogViewList;
+        }
+
+        var habit = database.GetHabit(selectedLogRecord.HabitID);
+        if (habit == null) {
+            Screen.Message("No matching habit for log entry.");
+            return AppState.LogViewList;
+        }
+
         if (selectedLogRecord != null)
         {
             var editedLogRecord = Screen.LogEdit(habit, selectedLogRecord);
@@ -73,17 +98,25 @@ class HabitLogController
 
     public AppState Delete()
     {
-        if (selectedLogRecord != null)
-        {
-            if (database.DeleteHabitLogRecord(selectedLogRecord.ID))
-            {
-                Screen.Message($"Habit log entry {selectedLogRecord.ID} deleted.");
-            }
-            else
-            {
-                Screen.Message($"Technical Error: Habit log entry {selectedLogRecord.ID} could not be deleted. The error was logged.");
-            }
+        if (selectedLogRecord == null) {
+            Screen.Message("No log entry selected.");
+            return AppState.LogViewList;
         }
+
+        if (database.DeleteHabitLogRecord(selectedLogRecord.ID))
+        {
+            Screen.Message($"Habit log entry {selectedLogRecord.ID} deleted.");
+        }
+        else
+        {
+            Screen.Message($"Technical Error: Habit log entry {selectedLogRecord.ID} could not be deleted. The error was logged.");
+        }
+
         return AppState.LogViewList;
+    }
+
+    public void SetHabit(Habit habit)
+    {
+        this.habit = habit;
     }
 }

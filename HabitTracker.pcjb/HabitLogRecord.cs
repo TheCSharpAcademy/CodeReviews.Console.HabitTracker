@@ -3,24 +3,27 @@ namespace HabitTracker;
 class HabitLogRecord : ICloneable
 {
     public long ID { get; }
+    public long HabitID { get; set; }
     public DateOnly Date { get; set; }
     public int Quantity { get; set; }
 
-    public HabitLogRecord(Int64 id, DateOnly date, int quantity)
+    public HabitLogRecord(long id, long habitID, DateOnly date, int quantity)
     {
         ID = id;
+        HabitID = habitID;
         Date = date;
         Quantity = quantity;
     }
 
-    public HabitLogRecord(DateOnly date, int quantity)
+    public HabitLogRecord(long habitID, DateOnly date, int quantity)
     {
+        HabitID = habitID;
         Date = date;
         Quantity = quantity;
     }
 
     public object Clone()
     {
-        return new HabitLogRecord(ID, Date, Quantity);
+        return new HabitLogRecord(ID, HabitID, Date, Quantity);
     }
 }
