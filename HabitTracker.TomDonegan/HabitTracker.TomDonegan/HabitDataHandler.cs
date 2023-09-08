@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace HabitTracker.TomDonegan
 {
@@ -14,11 +9,11 @@ namespace HabitTracker.TomDonegan
             Console.Clear();
 
             Helpers.DisplayHeader($"Current Habit: {habit}");
-            Helpers.DisplayHeader("All Habit Records");
+            Helpers.DisplayHeader($"{habit} Habit Records");
 
             try
             {
-                DatabaseAccess.HabitDatabaseConnection($"SELECT * FROM {habit}");
+                DatabaseAccess.QueryAndDisplayResults($"SELECT * FROM {habit}");
 
                 Console.WriteLine("\nPress 'Enter' to return to the main menu.");
                 Console.ReadLine();
@@ -36,7 +31,7 @@ namespace HabitTracker.TomDonegan
 
             Console.WriteLine($"Adding: Date: {date} Quantity: {quantity} to the database.");
 
-            DatabaseAccess.HabitDatabaseConnection(
+            DatabaseAccess.QueryAndDisplayResults(
                 $"INSERT INTO {habit} (Date, Quantity) VALUES ('{date}', {quantity})"
             );
 
@@ -47,7 +42,8 @@ namespace HabitTracker.TomDonegan
 
         internal static void ModifyEntry(string modifySelection, string habit)
         {
-            string capitalizedSelection = char.ToUpper(modifySelection[0]) + modifySelection.Substring(1);
+            string capitalizedSelection =
+                char.ToUpper(modifySelection[0]) + modifySelection.Substring(1);
             bool runModify = false;
 
             while (!runModify)
@@ -56,7 +52,7 @@ namespace HabitTracker.TomDonegan
 
                 Helpers.DisplayHeader($"Current Habit: {habit}");
 
-                DatabaseAccess.HabitDatabaseConnection($"SELECT * FROM {habit}");
+                DatabaseAccess.QueryAndDisplayResults($"SELECT * FROM {habit}");
 
                 Helpers.DisplayHeader($"Habit Record {capitalizedSelection}");
 
@@ -78,7 +74,7 @@ namespace HabitTracker.TomDonegan
                 }
                 Console.Clear();
 
-                bool recordExists = DatabaseAccess.HabitDatabaseConnection(
+                bool recordExists = DatabaseAccess.QueryAndDisplayResults(
                     $"SELECT * FROM {habit} WHERE Id = '{selection}'"
                 );
 
@@ -99,13 +95,13 @@ namespace HabitTracker.TomDonegan
                             {
                                 string newDate = InputValidation.GetDateInput();
                                 double newQuantity = InputValidation.GetQuantityInput();
-                                DatabaseAccess.HabitDatabaseConnection(
+                                DatabaseAccess.QueryAndDisplayResults(
                                     $"UPDATE drinking_water SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {selection}"
                                 );
                             }
                             else
                             {
-                                DatabaseAccess.HabitDatabaseConnection(
+                                DatabaseAccess.QueryAndDisplayResults(
                                     $"DELETE FROM drinking_water WHERE Id = '{selection}'"
                                 );
                                 Console.WriteLine("Record deleted.");
@@ -157,6 +153,27 @@ namespace HabitTracker.TomDonegan
             }
         }
 
-        // Other methods related to handling habit data...
+        internal static string SwitchHabit()
+        {
+            ArrayList habitList = DatabaseAccess.GetTableList();
+
+            foreach (var habit in habitList)
+            {
+                Console.WriteLine(habit);
+            }
+
+            Console.WriteLine("Please select a habit by typing its name.");
+            string selectedHabit = Console.ReadLine();
+
+            while (!habitList.Contains(selectedHabit))
+            {
+                Console.WriteLine(
+                    $"{selectedHabit} does not exist, please ensure the name is typed correctly."
+                );
+                selectedHabit = Console.ReadLine();
+            }
+
+            return selectedHabit;
+        }
     }
 }

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker.TomDonegan
 {
@@ -18,25 +13,24 @@ namespace HabitTracker.TomDonegan
             {
                 connection.OpenAsync();
 
-                using (var tableCmd = connection.CreateCommand())
+                using (var sqlCommand = connection.CreateCommand())
                 {
-                    tableCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+                    sqlCommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
 
-                    using (var reader = tableCmd.ExecuteReader())
+                    using (var reader = sqlCommand.ExecuteReader())
                     {
-                        ArrayList tableList = new ArrayList();
+                        ArrayList tableNames = new ArrayList();
 
                         Helpers.DisplayHeader("Current Habits");
                         while (reader.Read())
                         {
-                            tableList.Add(reader.GetString(0));
+                            tableNames.Add(reader.GetString(0));
                         }
-                        return tableList;
+                        return tableNames;
                     }
                 }
             }
         }
-
 
         public static void DatabaseCreation(string habitName, string uom)
         {
@@ -54,16 +48,16 @@ namespace HabitTracker.TomDonegan
                 {
                     connection.Open();
 
-                    var tableCmd = connection.CreateCommand();
+                    var sqlCommand = connection.CreateCommand();
 
-                    tableCmd.CommandText =
+                    sqlCommand.CommandText =
                         @$"CREATE TABLE IF NOT EXISTS {habitName} (
                                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         Date TEXT,
                                         Quantity INTEGER,
                                         Unit of Measure TEXT DEFAULT {uom}
                                         )";
-                    tableCmd.ExecuteNonQuery();
+                    sqlCommand.ExecuteNonQuery();
 
                     connection.Close();
                 }
@@ -74,7 +68,7 @@ namespace HabitTracker.TomDonegan
             }
         }
 
-        public static bool HabitDatabaseConnection(string databaseQuery)
+        public static bool QueryAndDisplayResults(string databaseQuery)
         {
             string connectionString = @"Data Source=HabitTracker.db";
 
@@ -84,37 +78,37 @@ namespace HabitTracker.TomDonegan
                 {
                     connection.Open();
 
-                    using (var tableCmd = connection.CreateCommand())
+                    using (var sqlCommand = connection.CreateCommand())
                     {
-                        tableCmd.CommandText = databaseQuery;
+                        sqlCommand.CommandText = databaseQuery;
 
-                        using (var reader = tableCmd.ExecuteReader())
+                        using (var reader = sqlCommand.ExecuteReader())
                         {
-                            bool recordExists = false;
+                            bool hasRecords = false;
 
                             while (reader.Read())
                             {
-                                if (!recordExists)
+                                if (!hasRecords)
                                 {
                                     Console.WriteLine(" Record     Date       Quantity    Unit");
-                                    recordExists = true;
+                                    hasRecords = true;
                                 }
 
-                                int record = reader.GetInt32(0);
+                                int recordId = reader.GetInt32(0);
                                 string date = reader.GetString(1);
                                 double quantity = reader.GetDouble(2);
                                 string uom = reader.GetString(3);
                                 Console.WriteLine(
                                     "{0,4} {1,13} {2,10} {3,7}",
-                                    record,
+                                    recordId,
                                     date,
                                     quantity,
                                     uom
                                 );
 
-                                recordExists = true;
+                                hasRecords = true;
                             }
-                            return recordExists;
+                            return hasRecords;
                         }
                         ;
                     }
@@ -126,6 +120,30 @@ namespace HabitTracker.TomDonegan
                     $"It has not been possible to connect to the Database. Error: {e}"
                 );
                 return false;
+            }
+        }
+
+        public static void DeleteHabit(string habitName)
+        {
+            string connectionString = @"Data Source=HabitTracker.db";
+
+            try
+            {
+                using (var connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    var sqlCommand = connection.CreateCommand();
+
+                    sqlCommand.CommandText = @$"DROP TABLE {habitName}";
+                    sqlCommand.ExecuteNonQuery();
+
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"The Database table could not be deleted. Error: {e}");
             }
         }
     }

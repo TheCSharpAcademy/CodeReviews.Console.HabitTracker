@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace HabitTracker.TomDonegan
 {
@@ -11,9 +6,7 @@ namespace HabitTracker.TomDonegan
     {
         internal static double GetQuantityInput()
         {
-            Console.WriteLine(
-                "Please insert the quantity. Type 0 to return to the main menu."
-            );
+            Console.WriteLine("Please insert the quantity. Type 0 to return to the main menu.");
 
             string quantityInput = Console.ReadLine();
 

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.RegularExpressions;
-
-namespace HabitTracker.TomDonegan
+﻿namespace HabitTracker.TomDonegan
 {
     internal class UserInterface
     {
@@ -15,8 +11,8 @@ namespace HabitTracker.TomDonegan
             {
                 Console.Clear();
 
-                Helpers.DisplayHeader($"Current Habit: {currentHabit}");
                 Helpers.DisplayHeader("Welcome to your Habit Tracker");
+                Helpers.DisplayHeader($"Current Habit: {currentHabit}");
 
                 Console.WriteLine("What would like to do today?\n");
                 Console.WriteLine("1 - View all habit data.");
@@ -25,6 +21,8 @@ namespace HabitTracker.TomDonegan
                 Console.WriteLine("4 - Delete an entry.");
                 Console.WriteLine("5 - Create a new habit.");
                 Console.WriteLine("6 - Switch habit.");
+                Console.WriteLine("7 - Delete a habit.");
+                Console.WriteLine("8 - View date range habit data.");
                 Console.WriteLine("0 - Exit Habit Tracker");
 
                 string menuSelection = Console.ReadLine();
@@ -38,45 +36,28 @@ namespace HabitTracker.TomDonegan
                         HabitDataHandler.InsertHabitData(currentHabit);
                         break;
                     case "3":
-                        //UpdateEntry();
                         HabitDataHandler.ModifyEntry("update", currentHabit);
                         break;
                     case "4":
-                        //DeleteEntry();
                         HabitDataHandler.ModifyEntry("delete", currentHabit);
                         break;
                     case "5":
-                        HabitCreationHandler.CreateNewHabit(currentHabit);
+                        HabitManagementHandler.AddRemoveHabit(currentHabit, "create");
                         break;
                     case "6":
-                        currentHabit = SwitchHabit();
+                        currentHabit = HabitDataHandler.SwitchHabit();
+                        break;
+                    case "7":
+                        HabitManagementHandler.AddRemoveHabit(currentHabit, "delete");
+                        break;
+                    case "8":
+                        HabitDataHandler.ViewHabitDataOverPeriod(currentHabit);
                         break;
                     case "0":
                         Environment.Exit(0);
                         break;
                 }
             }
-        }
-
-        private static string SwitchHabit()
-        {
-            ArrayList habitList = DatabaseAccess.GetTableList();
-
-            foreach (var habit in habitList)
-            {
-                Console.WriteLine(habit);
-            }
-
-            Console.WriteLine("Please select a habit by typing its name.");
-            string selectedHabit = Console.ReadLine();
-
-            while (!habitList.Contains(selectedHabit))
-            {
-                Console.WriteLine($"{selectedHabit} does not exist, please ensure the name is typed correctly.");
-                selectedHabit = Console.ReadLine();
-            }
-
-            return selectedHabit;
         }
     }
 }
