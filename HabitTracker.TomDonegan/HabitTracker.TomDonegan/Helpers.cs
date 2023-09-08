@@ -1,8 +1,10 @@
-﻿namespace HabitTracker.TomDonegan
+﻿using System.Globalization;
+
+namespace HabitTracker.TomDonegan
 {
     internal class Helpers
     {
-        internal static int NumberValidation(string requiresValidation)
+        /*internal static int NumberValidation(string requiresValidation)
         {
             int checkedNumber;
 
@@ -13,6 +15,19 @@
             }
 
             return checkedNumber;
+        }*/
+
+        internal static void DisplayHeader(string header)
+        {
+            if (header.Contains('_')) {
+                header = header.Replace('_', ' ');
+            }
+
+            header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(header);
+
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine(header);
+            Console.WriteLine("-----------------------------\n");
         }
     }
 }

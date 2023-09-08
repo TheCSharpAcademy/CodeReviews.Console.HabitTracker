@@ -2,13 +2,14 @@
 
 namespace HabitTracker.TomDonegan
 {
-    internal class Program
+    class Program
     {
-        internal static void Main(string[] args)
+       static void Main()
         {
             while (true)
             {
-                Database.DatabaseCheck();
+                HabitTrackerApp.Run();
+                DatabaseAccess.DatabaseCreation("", "");
                 UserInterface.MainMenu();
             }
         }        
