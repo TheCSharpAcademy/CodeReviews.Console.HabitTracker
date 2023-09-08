@@ -13,8 +13,8 @@ namespace Habit_Logger_Kakurokan
         {
             try
             {
-                AnsiConsole.Clear();
                 DataAcces dataAcces = new();
+                AnsiConsole.Clear();
 
                 var select_menu = AnsiConsole.Prompt(new SelectionPrompt<string>().Title(@"Welcome to your [blue]Habit logger![/] 
 What would you like to do?").MoreChoicesText("[grey](Move up and down to reveal more options)[/]")
@@ -51,7 +51,8 @@ What would you like to do?").MoreChoicesText("[grey](Move up and down to reveal 
         {
             using (var conn = new SQLiteConnection(data.MyConnection))
             {
-                conn.Execute("INSERT INTO Habits (Id, Name, Date, Quantity, Unit) VALUES (@Id, @Name, @Date, @Quantity, @Unit)", habit);
+                int id = conn.QuerySingle<int>("INSERT INTO Habits (Name, Date, Quantity, Unit) VALUES (@Name, @Date, @Quantity, @Unit) returning Id;", new { Name = habit.Name, Date = habit.Date, Quantity = habit.Quantity, Unit = habit.Unit });
+                habit.Id = id;
             }
             Thread.Sleep(2000);
             Main();
@@ -187,7 +188,6 @@ What would you like to do?").MoreChoicesText("[grey](Move up and down to reveal 
         }
         public static Habit CreateNewHabit()
         {
-            int id = AnsiConsole.Ask<int>("What`s the id of the [green]habit?[/]");
             string name = AnsiConsole.Ask<string>("What`s the name of the [green]habit?[/]");
             string date = AnsiConsole.Ask<string>("What`s the date?(Format: dd-MM-yyyy)");
             DateTime clean_date;
@@ -198,11 +198,11 @@ What would you like to do?").MoreChoicesText("[grey](Move up and down to reveal 
             int quantity = AnsiConsole.Ask<int>($"How many [green]{name}[/] you did at [green]{date}[/]?");
             string unit = AnsiConsole.Ask<string>("What`s the unit of [green]measurement?[/]");
 
-            Habit habit = new(name, clean_date, quantity, id, unit);
+            Habit habit = new(name, clean_date, quantity, unit);
 
             AnsiConsole.Markup("You habit was [green]successfully added[/]");
             AnsiConsole.WriteLine();
-            AnsiConsole.WriteLine(habit.ToString());
+            AnsiConsole.WriteLine(habit.ToStringWithoutId());
             Thread.Sleep(2000);
             return habit;
         }
