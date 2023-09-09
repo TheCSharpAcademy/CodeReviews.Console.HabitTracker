@@ -22,3 +22,27 @@ C:\Users\Leo\Documents\C# class\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogg
 C:\Users\Leo\Documents\C# class\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.genruntimeconfig.cache
 C:\Users\Leo\Documents\C# class\HabitLogger,Kakurokan\obj\Debug\net6.0\ref\HabitLogger.Kakurokan.dll
 C:\Users\Leo\Documents\C# class\HabitLogger,Kakurokan\bin\Debug\net6.0\habit_logger.db
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\habit_logger.db
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\HabitLogger.Kakurokan.exe
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\HabitLogger.Kakurokan.deps.json
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\HabitLogger.Kakurokan.runtimeconfig.json
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\HabitLogger.Kakurokan.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\HabitLogger.Kakurokan.pdb
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\Dapper.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\Spectre.Console.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\System.Data.SQLite.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\runtimes\linux-x64\native\SQLite.Interop.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\runtimes\osx-x64\native\SQLite.Interop.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\runtimes\win-x64\native\SQLite.Interop.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\bin\Debug\net6.0\runtimes\win-x86\native\SQLite.Interop.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.csproj.AssemblyReference.cache
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.AssemblyInfoInputs.cache
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.AssemblyInfo.cs
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.csproj.CoreCompileInputs.cache
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.csproj.CopyComplete
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\refint\HabitLogger.Kakurokan.dll
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.pdb
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\HabitLogger.Kakurokan.genruntimeconfig.cache
+C:\Users\Leo\Source\Repos\CodeReviews.Console.HabitTracker\HabitLogger,Kakurokan\obj\Debug\net6.0\ref\HabitLogger.Kakurokan.dll

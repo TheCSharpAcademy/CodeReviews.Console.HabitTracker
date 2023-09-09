@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KZ6ZgM8FFi9ILoE9YEV5xveBJCldWyE50smjmdAPyr+uyLqAMS4xi2bgZXO0ps7JJepZHxM9UJhYNJ3rUDISPQ==",
+  "dgSpecHash": "QdqGT2UlctDS0EeNrL/VWsnxBKjxUJWceVqhsOIUAWrRSYTRMBQF1BjivuB81guhIPou3sLxzSi/xCgJZMq+QA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Leo\\Documents\\C# class\\HabitLogger,Kakurokan\\HabitLogger.Kakurokan.csproj",
+  "projectFilePath": "C:\\Users\\Leo\\Source\\Repos\\CodeReviews.Console.HabitTracker\\HabitLogger,Kakurokan\\HabitLogger.Kakurokan.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Leo\\.nuget\\packages\\dapper\\2.0.151\\dapper.2.0.151.nupkg.sha512",
     "C:\\Users\\Leo\\.nuget\\packages\\spectre.console\\0.47.0\\spectre.console.0.47.0.nupkg.sha512",

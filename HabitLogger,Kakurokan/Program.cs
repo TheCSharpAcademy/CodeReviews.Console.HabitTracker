@@ -143,7 +143,7 @@ What would you like to do?").MoreChoicesText("[grey](Move up and down to reveal 
 
                 var deletes = new MultiSelectionPrompt<string>().Title("What Habit you want to [red]delete[/]?").NotRequired()
                 .MoreChoicesText("[grey](Move up and down to reveal more habits)[/]").InstructionsText(
-            "[grey](Press [blue]<space>[/] to toggle a fruit, " +
+            "[grey](Press [blue]<space>[/] to toggle a Habit, " +
             "[green]<enter>[/] to accept)[/]");
 
                 foreach (Habit item in output)
@@ -193,7 +193,7 @@ What would you like to do?").MoreChoicesText("[grey](Move up and down to reveal 
             DateTime clean_date;
             while (!DateTime.TryParseExact(date, "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out clean_date))
             {
-                date = AnsiConsole.Ask<String>("[red][[Invalid date]][/] Please, try again with the format: dd-MM-yyyy");
+                date = AnsiConsole.Ask<String>("[red][[Invalid date]][/] Please, try again (with the format: dd-MM-yyyy):");
             }
             int quantity = AnsiConsole.Ask<int>($"How many [green]{name}[/] you did at [green]{date}[/]?");
             string unit = AnsiConsole.Ask<string>("What`s the unit of [green]measurement?[/]");
