@@ -10,5 +10,6 @@ enum AppState
     LogViewOne,
     LogEdit,
     LogDelete,
+    ReportFrequencyAndTotalPerMonth,
     Exit
 }

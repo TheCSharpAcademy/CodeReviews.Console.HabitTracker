@@ -9,7 +9,9 @@ class Program
         var database = new Database(DatabaseFilename);
         var habitController = new HabitController(database);
         var habitLogController = new HabitLogController(database);
+        var reportController = new ReportController(database);
         var appState = AppState.MainMenu;
+        Habit? selectedHabit = null;
 
         if (!database.CreateDatabaseIfNotPresent())
         {
@@ -42,8 +44,11 @@ class Program
                 case AppState.HabitInsert:
                     appState = habitController.Create();
                     break;
+                case AppState.ReportFrequencyAndTotalPerMonth:
+                    appState = reportController.FrequencyAndTotalPerMonth(selectedHabit);
+                    break;
                 case AppState.HabitSelect:
-                    var selectedHabit = habitController.Select();
+                    selectedHabit = habitController.Select();
                     if (selectedHabit != null)
                     {
                         habitLogController.SetHabit(selectedHabit);

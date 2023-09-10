@@ -203,6 +203,42 @@ class Database
         return habitlog;
     }
 
+    public List<ReportFreqTotalMonthRecord> GetFrequencyAndTotalsPerMonth(long habitID)
+    {
+        List<ReportFreqTotalMonthRecord> results = new();
+
+        try
+        {
+            using var connection = new SqliteConnection(GetConnectionString());
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+            SELECT strftime('%Y', date) AS year, strftime('%m', date) AS month, COUNT(*) as frequency, SUM(quantity) as total
+            FROM habitlog
+            JOIN habits ON habitlog.habit_id = habits.id
+            WHERE habit_id = $habit_id
+            GROUP BY year, month
+            ORDER BY year, month
+            ";
+            command.Parameters.AddWithValue("$habit_id", habitID);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var year = reader.GetInt16(0);
+                var month = reader.GetInt16(1);
+                var frequency = reader.GetInt16(2);
+                var total = reader.GetInt16(3);
+                results.Add(new ReportFreqTotalMonthRecord(year, month, frequency, total));
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return results;
+    }
+
     public bool CreateDatabaseIfNotPresent()
     {
         try

@@ -12,6 +12,7 @@ class Screen
             Console.WriteLine("2 - Select habit");
             Console.WriteLine("3 - Log habit");
             Console.WriteLine("4 - View habit log");
+            Console.WriteLine("5 - Report: Frequency and total per month");
             Console.WriteLine("0 - Exit");
             Console.WriteLine("Enter one of the numbers above to select a menu option.");
 
@@ -28,6 +29,9 @@ class Screen
                     break;
                 case "4":
                     nextAppState = AppState.LogViewList;
+                    break;
+                case "5":
+                    nextAppState = AppState.ReportFrequencyAndTotalPerMonth;
                     break;
                 case "0":
                     nextAppState = AppState.Exit;
@@ -333,6 +337,28 @@ class Screen
             }
         }
         return editedLogRecord;
+    }
+
+    public static void ReportFrequencyAndTotalPerMonth(Habit habit, List<ReportFreqTotalMonthRecord> reportData)
+    {
+        Console.Clear();
+        Console.WriteLine("Report 'Frequency and total per month'");
+        Console.WriteLine($"Habit '{habit.Name}' measured in '{habit.UOM}'");
+        if (reportData != null && reportData.Count > 0)
+        {
+            string columnFormat = "{0,5} {1,5} {2,10} {3,10}";
+            Console.WriteLine(String.Format(columnFormat, "Year", "Month", "Frequency", "Total"));
+            foreach (var reportLine in reportData)
+            {
+                Console.WriteLine(String.Format(columnFormat, reportLine.Year, reportLine.Month, reportLine.Frequency, reportLine.Total));
+            }
+        }
+        else
+        {
+            Console.WriteLine("No report data found.");
+        }
+        Console.WriteLine("Press enter to proceed.");
+        Console.ReadLine();
     }
 
     public static void Message(string message)
