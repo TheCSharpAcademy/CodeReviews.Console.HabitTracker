@@ -64,7 +64,6 @@ class HabitLogController
             Screen.Message("No matching habit for log entry.");
             return AppState.LogViewList;
         }
-
         return Screen.LogViewOne(habit, selectedLogRecord);
     }
 
@@ -111,7 +110,6 @@ class HabitLogController
         {
             Screen.Message($"Technical Error: Habit log entry {selectedLogRecord.ID} could not be deleted. The error was logged.");
         }
-
         return AppState.LogViewList;
     }
 

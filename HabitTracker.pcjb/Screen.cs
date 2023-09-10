@@ -29,7 +29,6 @@ class Screen
                 case "4":
                     nextAppState = AppState.LogViewList;
                     break;
-
                 case "0":
                     nextAppState = AppState.Exit;
                     break;
@@ -206,7 +205,6 @@ class Screen
                 isValidInput = true;
             }
         }
-
         return new HabitLogRecord(habit.ID, date, quantity);
     }
 

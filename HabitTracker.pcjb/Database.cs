@@ -76,7 +76,7 @@ class Database
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText =
-                    @"
+            @"
             SELECT id, name, uom 
             FROM habits
             WHERE id = $id
