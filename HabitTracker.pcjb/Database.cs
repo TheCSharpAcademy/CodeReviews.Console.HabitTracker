@@ -26,7 +26,7 @@ class Database
             ($name, $uom)
             ";
             command.Parameters.AddWithValue("$name", habit.Name);
-            command.Parameters.AddWithValue("$uom", habit.UOM);
+            command.Parameters.AddWithValue("$uom", habit.Uom);
             return command.ExecuteNonQuery() == 1;
         }
         catch (Exception ex)

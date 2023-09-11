@@ -114,7 +114,7 @@ class Screen
             Console.WriteLine(String.Format(columnFormat, "ID", "Name", "UOM"));
             foreach (var habit in habits)
             {
-                Console.WriteLine(String.Format(columnFormat, habit.ID, habit.Name, habit.UOM));
+                Console.WriteLine(String.Format(columnFormat, habit.ID, habit.Name, habit.Uom));
             }
         }
         else
@@ -190,7 +190,7 @@ class Screen
         isValidInput = false;
         while (!isValidInput && !exit)
         {
-            Console.Write($"Quantity [{habit.UOM}]: ");
+            Console.Write($"Quantity [{habit.Uom}]: ");
             var rawQuantity = Console.ReadLine();
             if ("0".Equals(rawQuantity))
             {
@@ -219,7 +219,7 @@ class Screen
         if (habitlog != null && habitlog.Count > 0)
         {
             string columnFormat = "{0,5} {1,10} {2,10}";
-            Console.WriteLine(String.Format(columnFormat, "ID", "Date", habit.UOM));
+            Console.WriteLine(String.Format(columnFormat, "ID", "Date", habit.Uom));
             foreach (var habitLogRecord in habitlog)
             {
                 Console.WriteLine(String.Format(columnFormat, habitLogRecord.ID, habitLogRecord.Date, habitLogRecord.Quantity));
@@ -269,7 +269,7 @@ class Screen
         Console.WriteLine($"Log entry for habit '{habit.Name}':");
         Console.WriteLine($"ID      : {selectedLogRecord.ID}");
         Console.WriteLine($"Date    : {selectedLogRecord.Date}");
-        Console.WriteLine($"Quantity: {selectedLogRecord.Quantity} {habit.UOM}");
+        Console.WriteLine($"Quantity: {selectedLogRecord.Quantity} {habit.Uom}");
         Console.WriteLine("Enter 'e' to edit or 'd' to delete this log entry and press enter or press enter alone to cancel.");
         return Console.ReadLine() switch
         {
@@ -286,7 +286,7 @@ class Screen
         Console.WriteLine($"Edit log entry for habit '{habit.Name}':");
         Console.WriteLine($"ID      : {selectedLogRecord.ID}");
         Console.WriteLine($"Date    : {selectedLogRecord.Date}");
-        Console.WriteLine($"Quantity: {selectedLogRecord.Quantity} {habit.UOM}");
+        Console.WriteLine($"Quantity: {selectedLogRecord.Quantity} {habit.Uom}");
 
         var today = DateOnly.FromDateTime(DateTime.Now);
         bool isValidInput = false;
@@ -316,7 +316,7 @@ class Screen
         isValidInput = false;
         while (!isValidInput)
         {
-            Console.Write($"New quantity [{habit.UOM}] (leave empty to keep old quantity): ");
+            Console.Write($"New quantity [{habit.Uom}] (leave empty to keep old quantity): ");
             var rawQuantity = Console.ReadLine();
             if (String.IsNullOrEmpty(rawQuantity))
             {
@@ -343,7 +343,7 @@ class Screen
     {
         Console.Clear();
         Console.WriteLine("Report 'Frequency and total per month'");
-        Console.WriteLine($"Habit '{habit.Name}' measured in '{habit.UOM}'");
+        Console.WriteLine($"Habit '{habit.Name}' measured in '{habit.Uom}'");
         if (reportData != null && reportData.Count > 0)
         {
             string columnFormat = "{0,5} {1,5} {2,10} {3,10}";
@@ -361,10 +361,10 @@ class Screen
         Console.ReadLine();
     }
 
-    public static void Message(string message)
+    public static void Message(string msg)
     {
         Console.Clear();
-        Console.WriteLine(message);
+        Console.WriteLine(msg);
         Console.WriteLine("Press enter to proceed.");
         Console.ReadLine();
     }
