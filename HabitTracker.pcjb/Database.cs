@@ -77,7 +77,7 @@ class Database
             var command = connection.CreateCommand();
             command.CommandText =
             @"
-            SELECT id, name, uom 
+            SELECT name, uom 
             FROM habits
             WHERE id = $id
             ";
@@ -85,8 +85,8 @@ class Database
             using var reader = command.ExecuteReader();
             if (reader.Read())
             {
-                var name = reader.GetString(1);
-                var uom = reader.GetString(2);
+                var name = reader.GetString(0);
+                var uom = reader.GetString(1);
                 habit = new Habit(id, name, uom);
             }
         }
@@ -181,7 +181,7 @@ class Database
             var command = connection.CreateCommand();
             command.CommandText =
             @"
-            SELECT id, habit_id, date, quantity 
+            SELECT id, date, quantity 
             FROM habitlog
             WHERE habit_id = $habit_id
             ORDER BY date ASC
@@ -191,8 +191,8 @@ class Database
             while (reader.Read())
             {
                 var id = reader.GetInt64(0);
-                var date = DateOnly.FromDateTime(reader.GetDateTime(2));
-                var quantity = reader.GetInt32(3);
+                var date = DateOnly.FromDateTime(reader.GetDateTime(1));
+                var quantity = reader.GetInt32(2);
                 habitlog.Add(new HabitLogRecord(id, habitID, date, quantity));
             }
         }
