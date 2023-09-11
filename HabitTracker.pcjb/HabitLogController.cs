@@ -3,7 +3,6 @@ namespace HabitTracker;
 class HabitLogController
 {
     private readonly Database database;
-    private Habit? habit;
     private HabitLogRecord? selectedLogRecord = null;
 
     public HabitLogController(Database database)
@@ -11,7 +10,7 @@ class HabitLogController
         this.database = database;
     }
 
-    public AppState Create()
+    public AppState Create(Habit? habit)
     {
         if (habit == null) {
             Screen.Message("Please select a habit before adding log entries.");
@@ -33,7 +32,7 @@ class HabitLogController
         return AppState.MainMenu;
     }
 
-    public AppState List()
+    public AppState List(Habit? habit)
     {
         if (habit == null) {
             Screen.Message("Please select a habit before viewing log entries.");
@@ -111,10 +110,5 @@ class HabitLogController
             Screen.Message($"Technical Error: Habit log entry {selectedLogRecord.ID} could not be deleted. The error was logged.");
         }
         return AppState.LogViewList;
-    }
-
-    public void SetHabit(Habit habit)
-    {
-        this.habit = habit;
     }
 }

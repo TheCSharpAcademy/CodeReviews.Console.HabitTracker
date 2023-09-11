@@ -27,10 +27,10 @@ class Program
                     appState = Screen.MainMenu();
                     break;
                 case AppState.LogInsert:
-                    appState = habitLogController.Create();
+                    appState = habitLogController.Create(selectedHabit);
                     break;
                 case AppState.LogViewList:
-                    appState = habitLogController.List();
+                    appState = habitLogController.List(selectedHabit);
                     break;
                 case AppState.LogViewOne:
                     appState = habitLogController.Read();
@@ -49,10 +49,6 @@ class Program
                     break;
                 case AppState.HabitSelect:
                     selectedHabit = habitController.Select();
-                    if (selectedHabit != null)
-                    {
-                        habitLogController.SetHabit(selectedHabit);
-                    }
                     appState = AppState.MainMenu;
                     break;
             }
