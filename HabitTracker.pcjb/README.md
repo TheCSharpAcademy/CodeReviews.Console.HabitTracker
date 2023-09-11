@@ -34,7 +34,6 @@ Press (2) on the main menu screen to select the habit you want to add or edit lo
 Habits
    ID                 Name        UOM
     1          Drink Water    Glasses
-    2              Walking         km
 Enter ID and press enter to select a habit.
 1
 ```
@@ -44,8 +43,8 @@ Press (3) on the main menu screen to record a log entry for the active habit:
 ```
 New log entry for habit 'Drink Water'
 Enter '0' as date or quantity to return to main menu without adding a new log entry.
-Date: 2023-09-10
-Quantity [Glasses]: 5
+Date: 9/1/23   
+Quantity [Glasses]: 4
 ```
 
 ### View Log Entries for the Active Habit
@@ -53,17 +52,7 @@ Press (4) on the main menu screen to view all log entries you have entered for t
 ```
 Log entries for habit 'Drink Water'
    ID       Date    Glasses
-    1  9/10/2023          5
-    2   9/9/2023          3
-    3   9/8/2023          6
-    4   9/2/2023          8
-   14  8/15/2023          7
-   15  8/18/2023          4
-   16  8/27/2023          1
-   17   8/9/2023          3
-   18  8/19/2023          7
-   19   7/1/2023          4
-   20   7/2/2023          5
+    1   9/1/2023          4
 Enter ID and press enter to edit/delete a log entry or press enter alone to return to main menu.
 ```
 
@@ -72,27 +61,17 @@ On the screen with the list of all log entries you can select an entry to edit t
 ```
 Log entries for habit 'Drink Water'
    ID       Date    Glasses
-    1  9/10/2023          5
-    2   9/9/2023          3
-    3   9/8/2023          6
-    4   9/2/2023          8
-   14  8/15/2023          7
-   15  8/18/2023          4
-   16  8/27/2023          1
-   17   8/9/2023          3
-   18  8/19/2023          7
-   19   7/1/2023          4
-   20   7/2/2023          5
+    1   9/1/2023          4
 Enter ID and press enter to edit/delete a log entry or press enter alone to return to main menu.
-3
+1
 ```
 
 On the following screen you see the details of the selected log entry and can select if you would like to edit or delete the entry:
 ```
 Log entry for habit 'Drink Water':
-ID      : 3
-Date    : 9/8/2023
-Quantity: 6 Glasses
+ID      : 1
+Date    : 9/1/2023
+Quantity: 4 Glasses
 Enter 'e' to edit or 'd' to delete this log entry and press enter or press enter alone to cancel.
 e
 ```
@@ -100,29 +79,18 @@ e
 If you select 'e' for edit, you can modify the date and the quantity on the next screen:
 ```
 Edit log entry for habit 'Drink Water':
-ID      : 3
-Date    : 9/8/2023
-Quantity: 6 Glasses
+ID      : 1
+Date    : 9/1/2023
+Quantity: 4 Glasses
 New Date (leave empty to keep old date): 
-New quantity [Glasses] (leave empty to keep old quantity): 7
+New quantity [Glasses] (leave empty to keep old quantity): 5
 ```
 
 Afterwards you are back on the screen with the list of all log entries where you see the modified quantity:
-
 ```
 Log entries for habit 'Drink Water'
    ID       Date    Glasses
-    1  9/10/2023          5
-    2   9/9/2023          3
-    3   9/8/2023          7
-    4   9/2/2023          8
-   14  8/15/2023          7
-   15  8/18/2023          4
-   16  8/27/2023          1
-   17   8/9/2023          3
-   18  8/19/2023          7
-   19   7/1/2023          4
-   20   7/2/2023          5
+    1   9/1/2023          5
 Enter ID and press enter to edit/delete a log entry or press enter alone to return to main menu.
 ```
 
@@ -132,14 +100,13 @@ Press (5) on the main menu screen to generate a report calculating the monthly f
 Report 'Frequency and total per month'
 Habit 'Drink Water' measured in 'Glasses'
  Year Month  Frequency      Total
- 2023     7          2          9
- 2023     8          5         22
- 2023     9          4         23
+ 2022    12          2          8
+ 2023     1          1          6
+ 2023     9          3         18
 Press enter to proceed.
 ```
 
 ## Areas for Improvement
-* Sort the list of log entries by date and not by id. Currently it is sorted by id to make it easy to see the last entered log entry at the end of the list.
 * The screen showing the list of log entries as this will become too long very soon. Add pagination and a filter on user defined date range.
 * Do not require the user to select the active habit if there is only one habit in the database yet.
 * Add multiple log entries in a row without having to repeatedly select '3 - Log habit' on the main menu screen inbetween.
