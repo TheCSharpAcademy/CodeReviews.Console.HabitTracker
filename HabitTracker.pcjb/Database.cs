@@ -49,7 +49,7 @@ class Database
             @"
             SELECT id, name, uom 
             FROM habits
-            ORDER BY id ASC
+            ORDER BY name ASC
             ";
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -184,7 +184,7 @@ class Database
             SELECT id, habit_id, date, quantity 
             FROM habitlog
             WHERE habit_id = $habit_id
-            ORDER BY id ASC
+            ORDER BY date ASC
             ";
             command.Parameters.AddWithValue("$habit_id", habitID);
             using var reader = command.ExecuteReader();
