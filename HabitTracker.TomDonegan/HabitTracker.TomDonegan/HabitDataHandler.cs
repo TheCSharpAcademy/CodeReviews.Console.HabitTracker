@@ -96,13 +96,13 @@ namespace HabitTracker.TomDonegan
                                 string newDate = InputValidation.GetDateInput();
                                 double newQuantity = InputValidation.GetQuantityInput();
                                 DatabaseAccess.QueryAndDisplayResults(
-                                    $"UPDATE drinking_water SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {selection}"
+                                    $"UPDATE {habit} SET Date = '{newDate}', Quantity = {newQuantity} WHERE Id = {selection}"
                                 );
                             }
                             else
                             {
                                 DatabaseAccess.QueryAndDisplayResults(
-                                    $"DELETE FROM drinking_water WHERE Id = '{selection}'"
+                                    $"DELETE FROM {habit} WHERE Id = '{selection}'"
                                 );
                                 Console.WriteLine("Record deleted.");
                             }
@@ -125,7 +125,7 @@ namespace HabitTracker.TomDonegan
                 }
             }
 
-            UserInterface.MainMenu();
+            //UserInterface.MainMenu();
         }
 
         internal static ArrayList? ListDatabaseTables()
@@ -156,11 +156,6 @@ namespace HabitTracker.TomDonegan
         internal static string SwitchHabit()
         {
             ArrayList habitList = ListDatabaseTables();
-
-            /*foreach (var habit in habitList)
-            {
-                Console.WriteLine(habit);
-            }*/
 
             Console.WriteLine("Please select a habit by typing its name.");
             string selectedHabit = Console.ReadLine();
