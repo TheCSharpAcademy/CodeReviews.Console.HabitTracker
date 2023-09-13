@@ -124,8 +124,6 @@ namespace HabitTracker.TomDonegan
                     Console.ReadLine();
                 }
             }
-
-            //UserInterface.MainMenu();
         }
 
         internal static ArrayList? ListDatabaseTables()
@@ -153,22 +151,30 @@ namespace HabitTracker.TomDonegan
             }
         }
 
-        internal static string SwitchHabit()
+        internal static string SwitchHabit(int autoSwitch = 0)
         {
-            ArrayList habitList = ListDatabaseTables();
-
-            Console.WriteLine("Please select a habit by typing its name.");
-            string selectedHabit = Console.ReadLine();
-
-            while (!habitList.Contains(selectedHabit))
+            if (autoSwitch == 1)
             {
-                Console.WriteLine(
-                    $"{selectedHabit} does not exist, please ensure the name is typed correctly."
-                );
-                selectedHabit = Console.ReadLine();
-            }
+                Console.WriteLine("Due to deletion of currently selected habit, the default drinking water habit has been selected.");
+                return "drinking_water";
+            } else
+            {
+                ArrayList habitList = ListDatabaseTables();
 
-            return selectedHabit;
+                Console.WriteLine("Please select a habit by typing its name.");
+                string selectedHabit = Console.ReadLine();
+
+                
+                while (!habitList.Contains(selectedHabit))
+                {
+                    Console.WriteLine(
+                        $"{selectedHabit} does not exist, please ensure the name is typed correctly."
+                    );
+                    selectedHabit = Console.ReadLine();
+                }
+
+                return selectedHabit;
+            }            
         }
     }
 }

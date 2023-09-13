@@ -2,10 +2,10 @@
 {
     internal class UserInterface
     {
-        internal static async Task MainMenu()
+        internal static void MainMenu(string currentHabit = "drinking_water")
         {
             bool runningTracker = false;
-            string currentHabit = "drinking_water";
+            currentHabit = "drinking_water";
 
             while (!runningTracker)
             {
