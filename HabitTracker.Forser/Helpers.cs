@@ -5,7 +5,7 @@ namespace HabitTracker.Forser
 {
     internal class Helpers
     {
-        public static string connectionString { get; internal set; }
+        public static string ConnectionString { get; internal set; }
 
         static internal int GetNumberInput(string message)
         {
@@ -87,7 +87,7 @@ namespace HabitTracker.Forser
 
         internal static void Start()
         {
-            using (var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();

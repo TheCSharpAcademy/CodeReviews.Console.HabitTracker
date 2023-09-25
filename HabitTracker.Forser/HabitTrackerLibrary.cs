@@ -5,7 +5,7 @@ namespace HabitTracker.Forser
 {
     internal class HabitTrackerLibrary
     {
-        public static string connectionString { get; internal set; }
+        public static string ConnectionString { get; internal set; }
 
         static internal void Update()
         {
@@ -13,7 +13,7 @@ namespace HabitTracker.Forser
 
             var recordId = Helpers.GetNumberInput("\n\nPlease type the Id of the record you want to edit or type 0 to go back to Main Menu\n\n");
 
-            using (var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
 
@@ -48,7 +48,7 @@ namespace HabitTracker.Forser
 
             var recordId = Helpers.GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to go back to Main Menu\n\n");
 
-            using (var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -75,7 +75,7 @@ namespace HabitTracker.Forser
         {
             Console.Clear();
 
-            using (var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -120,7 +120,7 @@ namespace HabitTracker.Forser
 
             int quantity = Helpers.GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allow)\n\n");
 
-            using (var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
