@@ -28,7 +28,7 @@ namespace HabbitLogger.AndreasGuy54
                 int userInput;
                 bool validInput = int.TryParse(Console.ReadLine().ToLower().Trim(), out userInput);
 
-                while(!validInput) 
+                while(!validInput || userInput < 0)
                 {
                     Console.WriteLine("Enter a valid number");
                     validInput = int.TryParse(Console.ReadLine().ToLower().Trim(), out userInput);
