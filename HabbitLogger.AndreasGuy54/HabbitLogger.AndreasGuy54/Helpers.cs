@@ -1,10 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabbitLogger.AndreasGuy54
 {
@@ -50,7 +45,14 @@ namespace HabbitLogger.AndreasGuy54
                     case 2:
                         InsertRecord();
                         break;
+                    case 3:
+                        DeleteRecord();
+                        break;
+                    case 4:
+                        UpdateRecord();
+                        break;
                     default:
+                        Console.WriteLine("Invalid Command. Please type a number from 0 to 4:\n");
                         break;
                 }
             }
@@ -59,15 +61,15 @@ namespace HabbitLogger.AndreasGuy54
         internal static void ShowAllRecords()
         {
             Console.Clear();
-            using (var connection = new SqliteConnection(connectionString))
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
-                var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"SELECT * FROM drinking_water";
+                SqliteCommand showAllCmd = connection.CreateCommand();
+                showAllCmd.CommandText = $"SELECT * FROM drinking_water";
 
-                List<Water> tableData = new();
+                List<Water> waters = new();
 
-                SqliteDataReader reader = tableCmd.ExecuteReader();
+                SqliteDataReader reader = showAllCmd.ExecuteReader();
 
                 if (reader.HasRows)
                 {
@@ -75,7 +77,7 @@ namespace HabbitLogger.AndreasGuy54
                     {
                         if (DateTime.TryParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-UK"), DateTimeStyles.None, out DateTime date))
                         {
-                            tableData.Add(
+                            waters.Add(
                                 new Water
                                 {
                                     Id = reader.GetInt32(0),
@@ -98,11 +100,13 @@ namespace HabbitLogger.AndreasGuy54
                 connection.Close();
 
                 Console.WriteLine("----------------------------------\n");
-                foreach (var dw in tableData)
+                foreach (Water water in waters)
                 {
-                    Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - Quantity: {dw.Quantity}");
+                    Console.WriteLine($"{water.Id} - {water.Date.ToString("dd-MM-yyyy")} - Quantity: {water.Quantity}");
                 }
                 Console.WriteLine("-----------------------------------\n");
+                Console.WriteLine("Hit Enter/Return Key to return to Main Menu");
+                Console.ReadLine();
             }
         }
 
@@ -112,11 +116,11 @@ namespace HabbitLogger.AndreasGuy54
 
             int quantity = GetNumberInput("\n\nPlease insert the number of glasses or other unit of measure of your choice (no decimals allowed)\n\n");
 
-            using (var connection = new SqliteConnection(connectionString))
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
 
-                var insertCmd = connection.CreateCommand();
+                SqliteCommand insertCmd = connection.CreateCommand();
                 insertCmd.CommandText = $@"INSERT INTO drinking_water(date, quantity)
                     VALUES('{date}',{quantity})";
 
@@ -124,6 +128,74 @@ namespace HabbitLogger.AndreasGuy54
 
                 connection.Close();
             }
+        }
+
+        internal static void UpdateRecord()
+        {
+            Console.Clear();
+            ShowAllRecords();
+
+            int recordId = GetNumberInput("\n\nPlease type the Id of the record you want to update");
+
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                SqliteCommand selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
+                int checkQuery = Convert.ToInt32(selectCmd.ExecuteScalar());
+
+                if (checkQuery == 0)
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} does not exist \n\n");
+                    connection.Close();
+                    UpdateRecord();
+                }
+
+                string date = GetDateInput();
+                int quantity = GetNumberInput("\n\nPlease insert the number of glasses or other unit of measure of your choice (no decimals allowed)\n\n");
+
+                SqliteCommand updateCmd = connection.CreateCommand();
+                updateCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+
+                updateCmd.ExecuteNonQuery();
+                connection.Close();
+            }
+
+            Console.WriteLine($"\n\nRecord with Id {recordId} was updated\n\n");
+            Console.WriteLine("Hit Enter/Return Key to return to Main Menu");
+            Console.ReadLine();
+            GetUserInput();
+        }
+
+        internal static void DeleteRecord()
+        {
+            Console.Clear();
+            ShowAllRecords();
+
+            int recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete");
+
+            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                SqliteCommand deleteCmd = connection.CreateCommand();
+                deleteCmd.CommandText = $"DELETE FROM drinking_water WHERE Id = '{recordId}'";
+
+                int rowCount = deleteCmd.ExecuteNonQuery();
+
+                if (rowCount == 0)
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} does not exist \n\n");
+                    DeleteRecord();
+                }
+
+                connection.Close();
+            }
+
+            Console.WriteLine($"\n\nRecord with Id {recordId} was deleted\n\n");
+            Console.WriteLine("Hit Enter/Return Key to return to Main Menu");
+            Console.ReadLine();
+            GetUserInput();
         }
 
         internal static string GetDateInput()
