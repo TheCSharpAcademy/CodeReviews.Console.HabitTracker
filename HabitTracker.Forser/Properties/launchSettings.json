@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.Forser": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\Projects\\CSharpAcademy\\CodeReviews.Console.HabitTracker\\HabitTracker.Forser"
+    }
+  }
+}
