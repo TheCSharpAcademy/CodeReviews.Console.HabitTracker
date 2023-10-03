@@ -6,6 +6,7 @@ bool isRunning = true;
 
 while (isRunning)
 {
+    
     Console.WriteLine("MAIN MENU");
     Console.WriteLine("Type 0 to close the Application");
     Console.WriteLine("Type 1 to view All Records");

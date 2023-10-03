@@ -23,6 +23,7 @@ namespace HabitTracker
         }
         public void ViewRecords()
         {
+            Console.Clear();
             using (var connection = new SqliteConnection(ConnectionString))
             {
                 using (var command = connection.CreateCommand())
@@ -36,7 +37,7 @@ namespace HabitTracker
                     {
                         while (reader.Read())
                         {
-                            Console.WriteLine($"{reader.GetInt32(0)}: {reader.GetString(1)}   {reader.GetInt32} steps");
+                            Console.WriteLine($"{reader.GetInt32(0)}: {reader.GetString(1)}   {reader.GetInt32(2)} steps");
                         }
                     }
                     else
@@ -49,6 +50,7 @@ namespace HabitTracker
         }
         public void InsertRecord()
         {
+            Console.Clear();
             string date = DateTime.Now.Date.ToString();
             int steps = GetSteps();
 
@@ -66,31 +68,67 @@ namespace HabitTracker
 
         public void UpdateRecord()
         {
-            int id = GetId();
-            int steps = GetSteps();
-            using(var connection = new SqliteConnection(ConnectionString))
+            Console.Clear();
+            if (HaveRows())
             {
-                using(var command = connection.CreateCommand())
+                int id = GetId();
+                int steps = GetSteps();
+                int rows = 0;
+                using (var connection = new SqliteConnection(ConnectionString))
                 {
-                    connection.Open();
+                    using (var command = connection.CreateCommand())
+                    {
+                        connection.Open();
 
-                    command.CommandText = $"UPDATE WalkingHabit SET Steps = {steps} WHERE Id = {id}";
-                    command.ExecuteNonQuery();
+                        command.CommandText = $"UPDATE WalkingHabit SET Steps = {steps} WHERE Id = {id}";
+                        rows = command.ExecuteNonQuery();
+                    }
                 }
+                if (rows != 0)
+                {
+                    Console.WriteLine("Row updated succesfuly");
+                }
+                else
+                {
+                    Console.WriteLine("No row has been deleted");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No habit logged");
+                return;
             }
         }
 
         public void DeleteRecord()
         {
-            int id = GetId();
-            using(var connection = new SqliteConnection(ConnectionString))
+            Console.Clear();
+            if (HaveRows())
             {
-                using (var command = connection.CreateCommand())
+                int id = GetId();
+                int rows = 0;
+                using (var connection = new SqliteConnection(ConnectionString))
                 {
-                    connection.Open();
-                    command.CommandText = $"DELETE FROM WalkingHabit WHERE Id = {id}";
-                    command.ExecuteNonQuery();
+                    using (var command = connection.CreateCommand())
+                    {
+                        connection.Open();
+                        command.CommandText = $"DELETE FROM WalkingHabit WHERE Id = {id}";
+                        rows = command.ExecuteNonQuery();
+                    }
                 }
+                if (rows != 0)
+                {
+                    Console.WriteLine("Row deleted succesfuly");
+                }
+                else
+                {
+                    Console.WriteLine("No row has been deleted");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No habit logged");
+                return;
             }
         }
 
@@ -116,6 +154,25 @@ namespace HabitTracker
                 success = int.TryParse(Console.ReadLine(), out id);
             }
             return id;
+        }
+
+        private bool HaveRows()
+        {
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                using (var command = connection.CreateCommand())
+                {
+                    connection.Open();
+                    command.CommandText = "SELECT * FROM WalkingHabit";
+
+                    var reader = command.ExecuteReader();
+
+                    if (reader.HasRows) return true;
+
+                    Console.WriteLine("No habit has been logged");
+                    return false;
+                }
+            }
         }
     }
 }
