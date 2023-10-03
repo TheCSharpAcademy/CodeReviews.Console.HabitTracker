@@ -133,17 +133,9 @@ public class Helpers
         table.Write();
     }
 
-    public static int ValidateIndexSelection(int selectedIndex, List<Habit> habits, string sentence)
+    public static int ValidateIndexSelection(int selectedId, List<Habit> habits, string sentence)
     {
-        List<int> currentIds = new();
-
-        for (int i = 0; i < habits.Count; i++)
-        {
-            int habId = i + 1;
-            currentIds.Add(habId);
-        }
-
-        while (!currentIds.Contains(selectedIndex))
+        while (!habits.Any(x => x.Id == selectedId))
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("[Error] Selected Number Does Not Exist");
@@ -152,10 +144,10 @@ public class Helpers
             Console.Write($"{sentence}: ");
 
             string input = Console.ReadLine();
-            selectedIndex = ValidateNumericInput(input, "Your Selection");
-            return ValidateIndexSelection(selectedIndex, habits, sentence);
+            selectedId = ValidateNumericInput(input, "Your Selection");
+            return ValidateIndexSelection(selectedId, habits, sentence);
         }
 
-        return selectedIndex;
+        return selectedId;
     }
 }
