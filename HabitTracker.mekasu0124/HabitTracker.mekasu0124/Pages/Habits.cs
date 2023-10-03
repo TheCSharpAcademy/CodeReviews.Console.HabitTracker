@@ -180,14 +180,13 @@ public class Habits
         List<Habit> currentHabits = Database.GetHabits();
         Helpers.PrintHabitChart(currentHabits);
 
+        Console.WriteLine("Enter The ID Of The Habit You'd Like To Delete.");
         Console.Write("Your Selection: ");
         string input = Console.ReadLine();
-        int selectedIndex = Helpers.ValidateNumericInput(input, "Your Selection");
-        selectedIndex = Helpers.ValidateIndexSelection(selectedIndex, currentHabits, "Your Selection");
+        int selectedId = Helpers.ValidateNumericInput(input, "Your Selection");
+        selectedId = Helpers.ValidateIndexSelection(selectedId, currentHabits, "Your Selection");
 
-        Habit selectedHabit = Database.GetSelectedHabit(selectedIndex);
-
-        Database.DeleteEntry(selectedHabit);
+        Database.DeleteEntry(selectedId);
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Your Habit Has Been Deleted");
