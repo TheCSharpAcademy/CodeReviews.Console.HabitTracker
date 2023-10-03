@@ -1,15 +1,10 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker
 {
     public class DataAccess
     {
-        private readonly string ConnectionString = "";
+        private readonly string ConnectionString = @"Data Source=WalkingHabit-Tracker.db";
         
         public void CreateDatabase()
         {
@@ -69,8 +64,10 @@ namespace HabitTracker
             
         }
 
-        public void UpdateRecord(int id,int steps)
+        public void UpdateRecord()
         {
+            int id = GetId();
+            int steps = GetSteps();
             using(var connection = new SqliteConnection(ConnectionString))
             {
                 using(var command = connection.CreateCommand())
@@ -83,18 +80,42 @@ namespace HabitTracker
             }
         }
 
-        public void DeleteRecord(int id)
+        public void DeleteRecord()
         {
+            int id = GetId();
             using(var connection = new SqliteConnection(ConnectionString))
             {
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-
                     command.CommandText = $"DELETE FROM WalkingHabit WHERE Id = {id}";
                     command.ExecuteNonQuery();
                 }
             }
+        }
+
+        private int GetSteps()
+        {
+            Console.WriteLine("Enter how many steps u did today:");
+            bool succes = int.TryParse(Console.ReadLine(), out int steps);
+            while (!succes)
+            {
+                Console.WriteLine("Invalid value! Try again:");
+                succes = int.TryParse(Console.ReadLine(), out steps);
+            }
+            return steps;
+        }
+
+        private int GetId()
+        {
+            Console.WriteLine("Enter the record's id:");
+            bool success = int.TryParse(Console.ReadLine(), out int id);
+            while (!success)
+            {
+                Console.WriteLine("Invalid value ! Try again:");
+                success = int.TryParse(Console.ReadLine(), out id);
+            }
+            return id;
         }
     }
 }
