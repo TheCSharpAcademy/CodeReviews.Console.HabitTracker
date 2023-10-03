@@ -6,9 +6,6 @@ public class MainMenu
 {
     public static void ShowMenu()
     {
-        string username = Database.GetUser();
-        
-        Console.WriteLine($"Welcome To Your Habit Tracker, {username}");
         Console.WriteLine("What Would You Like To Do?");
         
         List<string> options = new()
@@ -16,6 +13,7 @@ public class MainMenu
             "1 - Track New Habit",
             "2 - Edit Current Habit",
             "3 - Delete Current Habit",
+            "4 - View Currently Tracked Habits",
             "0 - Quit Application"
         };
 
@@ -31,12 +29,19 @@ public class MainMenu
         switch (userInput)
         {
             case "1":
+                Habits.NewHabitEntry();
                 break;
             
             case "2":
+                Habits.SelectEditToHabit();
                 break;
             
             case "3":
+                Habits.DeleteHabit();
+                break;
+
+            case "4":
+                Habits.ViewAllHabits();
                 break;
             
             case "0":
