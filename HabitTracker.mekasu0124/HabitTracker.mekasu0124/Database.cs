@@ -117,6 +117,7 @@ public class Database
 
                 while (reader.Read())
                 {
+                    int id = int.Parse(reader["Id"].ToString());
                     string name = reader["Name"].ToString();
                     DateTime date = DateTime.Parse(reader["Date"].ToString());
                     int count = int.Parse(reader["Count"].ToString());
@@ -124,6 +125,7 @@ public class Database
 
                     Habit habit = new()
                     {
+                        Id = id,
                         Name = name,
                         Date = date,
                         Count = count,
@@ -160,6 +162,7 @@ public class Database
                 {
                     while (reader.Read())
                     {
+                        int id = int.Parse(reader["Id"].ToString());
                         string name = reader["Name"].ToString();
                         DateTime date = DateTime.Parse(reader["Date"].ToString());
                         int count = int.Parse(reader["Count"].ToString());
@@ -167,6 +170,7 @@ public class Database
 
                         selectedHabit = new()
                         {
+                            Id = id,
                             Name = name,
                             Date = date,
                             Count = count,

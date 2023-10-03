@@ -70,6 +70,7 @@ public class Habits
         switch (selectedAction)
         {
             case "1":
+                Console.Clear();
                 EditHabit(selectedHabit, selectedIndex);
                 break;
 
@@ -177,8 +178,17 @@ public class Habits
         Console.WriteLine("Select A Habit Below To Delete");
 
         List<Habit> currentHabits = Database.GetHabits();
-        
-        Console.WriteLine(currentHabits);
+        Helpers.PrintHabitChart(currentHabits);
+
+        Console.Write("Your Selection: ");
+        string input = Console.ReadLine();
+        int selectedIndex = Helpers.ValidateNumericInput(input, "Your Selection");
+        selectedIndex = Helpers.ValidateIndexSelection(selectedIndex, currentHabits, "Your Selection");
+
+        Habit selectedHabit = Database.GetSelectedHabit(selectedIndex);
+
+        Database.DeleteEntry(selectedHabit);
+
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Your Habit Has Been Deleted");
         Thread.Sleep(2000);

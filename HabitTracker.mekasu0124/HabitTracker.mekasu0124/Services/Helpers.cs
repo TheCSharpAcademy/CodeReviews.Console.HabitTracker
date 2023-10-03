@@ -47,10 +47,14 @@ public class Helpers
 
     public static string ValidateYesNo(string input, string sentence)
     {
-        while (input != "y" || input != "n")
+        List<string> options = new() { "y", "n" };
+
+        while (!options.Contains(input))
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("[Error] Entry Must Be Y or N");
+
+            Console.ForegroundColor = ConsoleColor.White;
             Console.Write($"{sentence}: ");
 
             input = Console.ReadLine();
@@ -116,7 +120,7 @@ public class Helpers
 
         for (int i = 0; i < habits.Count; i++)
         {
-            int habId = i + 1;
+            int habId = habits[i].Id;
             string habName = habits[i].Name;
             DateTime habDate = habits[i].Date;
             int habCount = habits[i].Count;
