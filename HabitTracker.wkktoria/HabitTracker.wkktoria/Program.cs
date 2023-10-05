@@ -13,12 +13,14 @@ internal class Program
 
     private static readonly string ConnectionString = @"Data Source = " + DbPath;
 
+    private static readonly CultureInfo CustomCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+
     private static void Main(string[] args)
     {
-        var customCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
-        customCulture.NumberFormat.NumberDecimalSeparator = ".";
+        CustomCulture.NumberFormat.NumberDecimalSeparator = ".";
+        CustomCulture.DateTimeFormat.DateSeparator = "-";
 
-        Thread.CurrentThread.CurrentCulture = customCulture;
+        Thread.CurrentThread.CurrentCulture = CustomCulture;
 
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
@@ -89,9 +91,18 @@ internal class Program
 
     private static string GetDateInput()
     {
-        Console.Write("Insert the date (format: dd-mm-yy): ");
+        Console.Write("Enter the date (format: dd-mm-yy): ");
 
         var dateInput = Console.ReadLine();
+
+        while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CustomCulture, DateTimeStyles.None,
+                   out _))
+        {
+            Console.WriteLine("Invalid date.");
+            Console.Write("Enter the date (format: dd-mm-yy): ");
+
+            dateInput = Console.ReadLine();
+        }
 
         return dateInput;
     }
@@ -104,7 +115,33 @@ internal class Program
 
         if (numberInput.Contains(',')) numberInput = numberInput.Replace(",", ".");
 
+        while (!double.TryParse(numberInput, out _) || Convert.ToDouble(numberInput) < 0)
+        {
+            Console.WriteLine("Invalid number.");
+            Console.Write("Enter the number: ");
+
+            numberInput = Console.ReadLine();
+        }
+
         return Convert.ToDouble(numberInput);
+    }
+
+    private static int GetIdInput()
+    {
+        Console.Write("Enter the id: ");
+
+        var numberInput = Console.ReadLine();
+
+
+        while (!int.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
+        {
+            Console.WriteLine("Invalid id.");
+            Console.Write("Enter the id: ");
+
+            numberInput = Console.ReadLine();
+        }
+
+        return Convert.ToInt32(numberInput);
     }
 
     private static void Insert()
@@ -138,7 +175,10 @@ internal class Program
         if (reader.HasRows)
             while (reader.Read())
                 tableData.Add(new DrinkingWater
-                    { Id = reader.GetInt32(0), Date = reader.GetDateTime(1), Quantity = reader.GetDouble(2) });
+                {
+                    Id = reader.GetInt32(0), Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", CustomCulture),
+                    Quantity = reader.GetDouble(2)
+                });
 
 
         connection.Close();
@@ -146,7 +186,7 @@ internal class Program
         Console.WriteLine("All records:");
         if (tableData.Any())
             foreach (var dw in tableData)
-                Console.WriteLine($"id: {dw.Id} - added: {dw.Date:dd-MM-yyyy} - quantity: {dw.Quantity:#.##}");
+                Console.WriteLine($"id: {dw.Id} - {dw.Date:dd MMM yyyy} - quantity: {dw.Quantity:#.##}");
         else
             Console.WriteLine("No records found.");
     }
@@ -155,7 +195,7 @@ internal class Program
     {
         GetAllRecords();
 
-        var recordId = (int)GetNumberInput("Please insert id of the record you want to update: ");
+        var recordId = GetIdInput();
 
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
@@ -190,7 +230,7 @@ internal class Program
     {
         GetAllRecords();
 
-        var recordId = (int)GetNumberInput("Please insert id of the record you want to delete: ");
+        var recordId = GetIdInput();
 
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
