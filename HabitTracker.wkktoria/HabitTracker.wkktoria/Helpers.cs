@@ -10,13 +10,12 @@ public static class Helpers
         Console.WriteLine("\nWhat would you like to do?");
         Console.WriteLine("\t- Type v to view all records");
         Console.WriteLine("\t- Type s to view records with selected name");
-        Console.WriteLine(
-            "\t- Type r to print report (supports only 'running' with 'km' as unit, 'drinking water' with 'glasses' as unit, 'reading' with 'pages' as unit)");
+        Console.WriteLine("\t- Type r to print report");
         Console.WriteLine("\t- Type i to insert record");
         Console.WriteLine("\t- Type u to update record");
         Console.WriteLine("\t- Type d to delete record");
         Console.WriteLine("\t- Type m to show main menu");
-        Console.WriteLine("\t- Type q to quit application");
+        Console.WriteLine("\t- Type 0 to quit application");
     }
 
     public static void GetUserInput(Database db)
@@ -51,7 +50,7 @@ public static class Helpers
                 case "m":
                     ShowMenu();
                     break;
-                case "q":
+                case "0":
                     quitApp = true;
                     break;
                 default:
@@ -63,15 +62,15 @@ public static class Helpers
 
     public static string GetDateInput(CultureInfo cultureInfo)
     {
-        Console.Write("Enter the date (format: dd-mm-yy): ");
+        Console.Write("Enter the date (format: yyyy-mm-dd): ");
 
         var dateInput = Console.ReadLine();
 
-        while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", cultureInfo, DateTimeStyles.None,
+        while (!DateTime.TryParseExact(dateInput, "yyyy-MM-dd", cultureInfo, DateTimeStyles.None,
                    out _))
         {
             Console.WriteLine("Invalid date.");
-            Console.Write("Enter the date (format: dd-mm-yy): ");
+            Console.Write("Enter the date (format: yyyy-mm-dd): ");
 
             dateInput = Console.ReadLine();
         }
