@@ -51,39 +51,37 @@ Press {}.";
             }
 
             Console.Clear();
+
+            if (recordsCount <= perPage)
             {
-                if (recordsCount <= perPage)
-                {
-                    string divider = new('=', headerBase.Length);
-                    header = $"{headerBase}\n{divider}\n";
-                }
-                else
-                {
-                    var totalPages = (int)Math.Ceiling(recordsCount / (double)perPage);
-                    var currentPage = (int)Math.Ceiling((skipped + 1) / (double)perPage);
-                    header = headerBase + $" (page {currentPage}/{totalPages})";
-                    string divider = new('=', header.Length);
-                    header = $"{header}\n{divider}\n";
-                }
-                Console.WriteLine(header);
+                string divider = new('=', headerBase.Length);
+                header = $"{headerBase}\n{divider}\n";
             }
+            else
             {
-                if (skipped == 0 && left == 0)
-                {
-                    footer = footerBase.Replace("{}", esc);
-                }
-                else if (skipped == 0)
-                {
-                    footer = footerBase.Replace("{}", $"{pgDown}or {esc}");
-                }
-                else if (left == 0)
-                {
-                    footer = footerBase.Replace("{}", $"{pgUp}or {esc}");
-                }
-                else
-                {
-                    footer = footerBase.Replace("{}", $"{pgUp}{pgDown}or {esc}");
-                }
+                var totalPages = (int)Math.Ceiling(recordsCount / (double)perPage);
+                var currentPage = (int)Math.Ceiling((skipped + 1) / (double)perPage);
+                header = headerBase + $" (page {currentPage}/{totalPages})";
+                string divider = new('=', header.Length);
+                header = $"{header}\n{divider}\n";
+            }
+            Console.WriteLine(header);
+
+            if (skipped == 0 && left == 0)
+            {
+                footer = footerBase.Replace("{}", esc);
+            }
+            else if (skipped == 0)
+            {
+                footer = footerBase.Replace("{}", $"{pgDown}or {esc}");
+            }
+            else if (left == 0)
+            {
+                footer = footerBase.Replace("{}", $"{pgUp}or {esc}");
+            }
+            else
+            {
+                footer = footerBase.Replace("{}", $"{pgUp}{pgDown}or {esc}");
             }
 
             if (subset.Count > 0)
