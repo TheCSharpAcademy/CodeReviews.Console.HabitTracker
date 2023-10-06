@@ -1,9 +1,5 @@
 ﻿using HabitTracker.K_MYR.Models;
-using System.Diagnostics.Metrics;
 using System.Globalization;
-using System.Net.Http.Headers;
-using System.Reflection.Metadata.Ecma335;
-using System.Reflection.PortableExecutable;
 
 namespace HabitTracker.K_MYR
 {
@@ -62,7 +58,7 @@ namespace HabitTracker.K_MYR
         {
             Console.Clear();
             var habits = PrintAllHabits();
-            int habitIndex = GetNumberInput("Please choose a habit or enter -1 to return to the main menu\n");
+            int habitIndex = GetNumberInput("Please choose a habit or enter -1 to return to the main menu\n", -1);
 
             while (habitIndex >= habits.Count)
             {
@@ -72,7 +68,7 @@ namespace HabitTracker.K_MYR
                 return;
 
             var habit = habits[habitIndex];
-            var results = SQLiteOperations.SelectTotalByHabit(habits[habitIndex]);
+            var results = SQLiteOperations.SelectStatisticsByHabit(habits[habitIndex]);
 
             Console.Clear();
             Console.WriteLine($"Report for {habit.Name}");
@@ -140,7 +136,6 @@ namespace HabitTracker.K_MYR
                     Console.WriteLine($"Record with Id {numberInput} has been deleted!");
                 }
             } while (numberInput != 0);
-
         }
 
         private static void UpdateRecord()
@@ -191,9 +186,7 @@ namespace HabitTracker.K_MYR
                     Measurement = measurement
                 };
             }
-
             return habits[habitIndex];
-
         }
 
         private static List<Habit> PrintAllHabits()
@@ -249,10 +242,8 @@ namespace HabitTracker.K_MYR
                 Console.WriteLine("\nInvalid input.");
                 stringInput = Console.ReadLine();
             }
-
             return stringInput;
         }
     }
 }
-
-
+            

@@ -1,8 +1,6 @@
 ﻿using HabitTracker.K_MYR.Models;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
-using System.Reflection.PortableExecutable;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTracker.K_MYR
 
@@ -122,7 +120,7 @@ namespace HabitTracker.K_MYR
             return tableData;
         }
 
-        internal static int[] SelectTotalByHabit(Habit habit)
+        internal static int[] SelectStatisticsByHabit(Habit habit)
         {
             using SqliteConnection connection = new(connectionString);
             connection.Open();
@@ -170,7 +168,5 @@ namespace HabitTracker.K_MYR
             checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM Habits WHERE Id = {id})";
             return Convert.ToInt32(checkCmd.ExecuteScalar());
         }
-
-
     }
 }
