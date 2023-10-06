@@ -1,6 +1,5 @@
 ﻿using HabitTracker.K_MYR;
-
-SQLiteOperations.CreateDbIfNotExists();
+SQLiteOperations.CreateTableIfNotExists();
 Helpers.GetUserInput();
 
 
