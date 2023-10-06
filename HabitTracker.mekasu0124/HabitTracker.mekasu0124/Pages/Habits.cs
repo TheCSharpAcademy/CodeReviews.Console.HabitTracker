@@ -186,7 +186,9 @@ public class Habits
         int selectedId = Helpers.ValidateNumericInput(input, "Your Selection");
         selectedId = Helpers.ValidateIndexSelection(selectedId, currentHabits, "Your Selection");
 
-        Database.DeleteEntry(selectedId);
+        var habit = currentHabits.First(x => x.Id == selectedId);
+
+        Database.DeleteEntry(habit);
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Your Habit Has Been Deleted");

@@ -82,7 +82,7 @@ public class Database
         }
     }
 
-    public static void DeleteEntry(int selectedId)
+    public static void DeleteEntry(Habit habit)
     {
         using (SQLiteConnection sqlite = new SQLiteConnection(@"Data Source=habits.db"))
         {
@@ -91,7 +91,7 @@ public class Database
                 sqlite.Open();
 
                 cmd.CommandText = "DELETE FROM habits WHERE Id=@selectedId";
-                cmd.Parameters.Add(new SQLiteParameter("@selectedId", selectedId));
+                cmd.Parameters.Add(new SQLiteParameter("@selectedId", habit.Id));
                 cmd.ExecuteNonQuery();
 
                 sqlite.Close();
