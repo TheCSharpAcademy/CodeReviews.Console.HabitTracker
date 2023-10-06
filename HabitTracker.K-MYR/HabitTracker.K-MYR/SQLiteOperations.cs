@@ -153,11 +153,6 @@ namespace HabitTracker.K_MYR
             int[] results = { sum, numberOfTimes, average, max };
 
             return results;
-
-
-
-
-
         }
 
         internal static int RecordExists(int id)
