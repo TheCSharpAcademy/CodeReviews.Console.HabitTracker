@@ -94,7 +94,7 @@ namespace HabitTracker.K_MYR
             {
                 foreach (var row in tableData)
                 {
-                    Console.WriteLine($"{row.Id,3} | {row.Date:dd-MM-yyy} | {row.Habit,15}  | Quantity: {row.Quantity} ");
+                    Console.WriteLine($"{row.Id,3} | {row.Date:dd-MM-yyy} | {row.Habit,15}  | {row.Quantity} {row.Measurement}");
                 }
             }
             else
@@ -119,9 +119,12 @@ namespace HabitTracker.K_MYR
             ShowAllRecords();
             int numberInput;
 
-            do
+            while (true)
             {
                 numberInput = GetNumberInput("Please enter the Id of the record you want to delete. Type 0 to return to the main menu\n");
+
+                if (numberInput == 0)
+                    break;
 
                 int rowCount = SQLiteOperations.Delete(numberInput);
 
@@ -135,7 +138,7 @@ namespace HabitTracker.K_MYR
                     ShowAllRecords();
                     Console.WriteLine($"Record with Id {numberInput} has been deleted!");
                 }
-            } while (numberInput != 0);
+            }
         }
 
         private static void UpdateRecord()
@@ -144,9 +147,12 @@ namespace HabitTracker.K_MYR
             ShowAllRecords();
             int numberInput;
 
-            do
+            while (true)
             {
                 numberInput = GetNumberInput("Please enter the Id of the record you want to update. Type 0 to return to the main menu\n");
+
+                if (numberInput == 0)
+                    break;
 
                 if (SQLiteOperations.RecordExists(numberInput) == 1)
                 {
@@ -156,13 +162,12 @@ namespace HabitTracker.K_MYR
                     Console.Clear();
                     ShowAllRecords();
                     Console.WriteLine($"Record with the Id {numberInput} has been updated\n");
-
                 }
                 else
                 {
-                    Console.WriteLine("\nRecord with Id {id} doesn't exist");
+                    Console.WriteLine("Record with Id {id} doesn't exist");
                 }
-            } while (numberInput != 0);
+            }
         }
 
         private static Habit GetHabit()
@@ -228,7 +233,6 @@ namespace HabitTracker.K_MYR
                 Console.Write(message);
                 numberInput = Console.ReadLine();
             }
-
             return Convert.ToInt32(numberInput);
         }
 
@@ -246,4 +250,3 @@ namespace HabitTracker.K_MYR
         }
     }
 }
-            

@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace HabitTracker.K_MYR
-
 {
     class SQLiteOperations
     {
@@ -97,7 +96,7 @@ namespace HabitTracker.K_MYR
             connection.Open();
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText =
-                $"SELECT * FROM Habits ORDER BY Date";
+                $"SELECT * FROM Habits";
 
             List<HabitRecord> tableData = new();
             SqliteDataReader reader = tableCmd.ExecuteReader();
