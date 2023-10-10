@@ -37,7 +37,7 @@ namespace HabitTracker.UgniusFalze
                 CREATE TABLE IF NOT EXISTS CupsOfCoffee(
                     Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     Quantity INTEGER NOT NULL,
-                    Date TEXT NOT NULL
+                    Date TEXT NOT NULL UNIQUE
                   );
             ";
             command.ExecuteNonQuery();

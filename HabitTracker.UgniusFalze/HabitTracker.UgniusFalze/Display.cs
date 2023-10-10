@@ -78,7 +78,7 @@
 
         public static void SQLLiteException()
         {
-            Console.WriteLine("SQLlite error, please try again.");
+            Console.WriteLine("SQLlite error, possibly duplicated dates, please try again.");
         }
 
         public static void IncorrectId()
