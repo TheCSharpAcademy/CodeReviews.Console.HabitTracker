@@ -37,7 +37,6 @@ namespace HabitTracker.K_MYR
             tableCmd.CommandText =
                 $"DELETE FROM Habits WHERE Id = '{id}'";
 
-            connection.Close();
             return tableCmd.ExecuteNonQuery();
         }
 
@@ -87,6 +86,7 @@ namespace HabitTracker.K_MYR
                     });
                 }
             }
+
             connection.Close();
             return habits;
         }
@@ -160,9 +160,10 @@ namespace HabitTracker.K_MYR
         {
             using SqliteConnection connection = new(connectionString);
             connection.Open();
+
             var checkCmd = connection.CreateCommand();
             checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM Habits WHERE Id = {id})";
-            connection.Close();
+            
             return Convert.ToInt32(checkCmd.ExecuteScalar());
         }
     }

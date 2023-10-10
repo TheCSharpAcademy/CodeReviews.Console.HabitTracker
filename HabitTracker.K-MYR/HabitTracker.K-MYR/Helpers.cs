@@ -44,6 +44,8 @@ namespace HabitTracker.K_MYR
                         ShowReport();
                         break;
                     case "5":
+                        Console.Clear();
+                        Console.WriteLine("Goodbye!");
                         closeApp = true;
                         Environment.Exit(0);
                         break;
@@ -83,8 +85,7 @@ namespace HabitTracker.K_MYR
         }
 
         private static void ShowAllRecords()
-        {
-            Console.Clear();
+        {            
             List<HabitRecord> tableData = SQLiteOperations.SelectAll();
             tableData.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
 
@@ -159,13 +160,14 @@ namespace HabitTracker.K_MYR
                     string date = GetDateInput();
                     int quantity = GetNumberInput("Please insert quantity (no decimals allowed)\n");
                     SQLiteOperations.Update(numberInput, date, quantity);
+
                     Console.Clear();
                     ShowAllRecords();
                     Console.WriteLine($"Record with the Id {numberInput} has been updated\n");
                 }
                 else
                 {
-                    Console.WriteLine("Record with Id {id} doesn't exist");
+                    Console.WriteLine($"Record with Id {numberInput} doesn't exist");
                 }
             }
         }
@@ -197,6 +199,7 @@ namespace HabitTracker.K_MYR
         private static List<Habit> PrintAllHabits()
         {
             var habits = SQLiteOperations.GetAllHabits();
+
             Console.Clear();
             Console.WriteLine("Current Habits".PadLeft(22));
             Console.WriteLine("------------------------------");
@@ -233,6 +236,7 @@ namespace HabitTracker.K_MYR
                 Console.Write(message);
                 numberInput = Console.ReadLine();
             }
+
             return Convert.ToInt32(numberInput);
         }
 
@@ -246,6 +250,7 @@ namespace HabitTracker.K_MYR
                 Console.WriteLine("\nInvalid input.");
                 stringInput = Console.ReadLine();
             }
+
             return stringInput;
         }
     }
