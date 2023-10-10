@@ -35,7 +35,7 @@
 
         public static void DisplayIncorrectFormat()
         {
-            Console.WriteLine("Incorrect date format, please enter the correct date format: " + SQLLiteOperations.GetDateFormat() + " .");
+            Console.WriteLine("Incorrect date format, please enter the correct date format: " + SqliteOperations.GetDateFormat() + " .");
         }
 
         public static void DisplayIncorrectNumber()
@@ -76,7 +76,7 @@
             Console.WriteLine("Console input error, try enter your input again.");
         }
 
-        public static void SQLLiteException()
+        public static void SqliteException()
         {
             Console.WriteLine("SQLlite error, possibly duplicated dates, please try again.");
         }

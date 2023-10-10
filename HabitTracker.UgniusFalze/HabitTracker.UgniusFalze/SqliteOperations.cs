@@ -2,10 +2,10 @@
 
 namespace HabitTracker.UgniusFalze
 {
-    internal class SQLLiteOperations
+    internal class SqliteOperations
     {
         private SqliteConnection connection;
-        public SQLLiteOperations(string dbFile = "habbitLog.db")
+        public SqliteOperations(string dbFile = "habbitLog.db")
         {
             connection = new SqliteConnection($"Data Source={dbFile}");
             connection.Open();

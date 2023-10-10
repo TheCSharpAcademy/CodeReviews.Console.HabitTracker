@@ -1,11 +1,9 @@
 ﻿using HabitTracker.UgniusFalze;
-
-
-void tracker()
+void Tracker()
 {
     bool exitTracker = false;
     Display.DisplayIntroMessage();
-    SQLLiteOperations sQLLiteOperations = new SQLLiteOperations();
+    SqliteOperations sQLLiteOperations = new SqliteOperations();
 
     do
     {
@@ -22,13 +20,13 @@ void tracker()
                     Display.DisplayAllHabbits(habbits);
                     break;
                 case 2:
-                    handleInput(sQLLiteOperations);
+                    HandleInput(sQLLiteOperations);
                     break;
                 case 3:
-                    handleDelete(sQLLiteOperations);
+                    HandleDelete(sQLLiteOperations);
                     break;
                 case 4:
-                    handleUpdate(sQLLiteOperations);
+                    HandleUpdate(sQLLiteOperations);
                     break;
                 case 0: exitTracker = true; break;
                 default: Display.DisplayIncorrectMenuOption(); break;
@@ -45,13 +43,13 @@ void tracker()
     } while (!exitTracker);
 }
 
-void handleInput(SQLLiteOperations sQLLiteOperations)
+void HandleInput(SqliteOperations sQLLiteOperations)
 {
     Display.DisplaySeperator();
     try
     {
-        DateOnly date = (DateOnly)handleDateInput();
-        long quantity = (long)handleQuantityInput();
+        DateOnly date = (DateOnly)HandleDateInput();
+        long quantity = (long)HandleQuantityInput();
         sQLLiteOperations.InsertHabbit(quantity, date);
     }
     catch (Exception e)
@@ -60,12 +58,12 @@ void handleInput(SQLLiteOperations sQLLiteOperations)
         {
             return;
         }
-        Display.SQLLiteException();
+        Display.SqliteException();
         return;
     }
 }
 
-void handleDelete(SQLLiteOperations sQLLiteOperations)
+void HandleDelete(SqliteOperations sQLLiteOperations)
 {
     Display.DisplayDeleteHabbit();
     Display.DisplaySeperator();
@@ -101,7 +99,7 @@ void handleDelete(SQLLiteOperations sQLLiteOperations)
     } while (!exitDelete);
 }
 
-void handleUpdate(SQLLiteOperations sQLLiteOperations)
+void HandleUpdate(SqliteOperations sQLLiteOperations)
 {
     Display.DisplaySeperator();
     Display.DisplayWhichRecordToUpdate();
@@ -153,7 +151,7 @@ void handleUpdate(SQLLiteOperations sQLLiteOperations)
                 switch (menuChoice)
                 {
                     case 1:
-                        var quantityInput = handleQuantityInput();
+                        var quantityInput = HandleQuantityInput();
                         if (quantityInput == null)
                         {
                             return;
@@ -162,7 +160,7 @@ void handleUpdate(SQLLiteOperations sQLLiteOperations)
                         sQLLiteOperations.UpdateQuantity(id, quantity);
                         return;
                     case 2:
-                        var dateInput = handleDateInput();
+                        var dateInput = HandleDateInput();
                         if (dateInput == null)
                         {
                             return;
@@ -181,7 +179,7 @@ void handleUpdate(SQLLiteOperations sQLLiteOperations)
                 }
                 else
                 {
-                    Display.SQLLiteException();
+                    Display.SqliteException();
                     return;
                 }
             }
@@ -190,7 +188,7 @@ void handleUpdate(SQLLiteOperations sQLLiteOperations)
     }
 }
 
-DateOnly? handleDateInput()
+DateOnly? HandleDateInput()
 {
     Display.DisplayDateInput();
     do
@@ -198,7 +196,7 @@ DateOnly? handleDateInput()
         try
         {
             string input = Console.ReadLine();
-            DateOnly dateOnly = DateOnly.ParseExact(input, SQLLiteOperations.GetDateFormat());
+            DateOnly dateOnly = DateOnly.ParseExact(input, SqliteOperations.GetDateFormat());
             return dateOnly;
         }
         catch (Exception e)
@@ -216,7 +214,7 @@ DateOnly? handleDateInput()
 
     } while (true);
 }
-long? handleQuantityInput()
+long? HandleQuantityInput()
 {
 
     Display.DisplayQuantityInput();
@@ -248,4 +246,4 @@ long? handleQuantityInput()
     } while (true);
 }
 
-tracker();
+Tracker();
