@@ -1,3 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿// Display the application information.
+ConsoleMessages.AppInformation();
 
-Console.WriteLine("Hello, World!");
+Console.ReadLine();
