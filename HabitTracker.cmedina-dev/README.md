@@ -37,6 +37,10 @@ This project is a habit tracker featuring a local SQLite database. It enables CR
     git clone https://github.com/cmedina-dev/CodeReviews.Console.HabitTracker.git
     ```
 
+2. **Open the Solution File**
+
+Build the file in HabitLogger. You can open the solution file and build in Visual Studio.
+
 ## Usage
 
 Navigation of the program is done via the keyboard. Follow the on-screen prompts as directed to add your own habits to the tracker.
