@@ -166,9 +166,9 @@ internal static class Program
         var year = IOHelpers.GetParsedUserInput<int>($"\nEnter Year to generate annual report. " +
             $"You have records for this years ({string.Join(", ", years)}): ");
 
-        if (years.Contains(year))
+        if (!years.Contains(year))
         {
-            Console.WriteLine($"Ypu don't have any records for this year: {year}");
+            Console.WriteLine($"You don't have any records for this year: {year}");
         }
 
         var groupped = records
