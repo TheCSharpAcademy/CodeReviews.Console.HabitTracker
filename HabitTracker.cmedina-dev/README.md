@@ -34,7 +34,7 @@ This project is a habit tracker featuring a local SQLite database. It enables CR
 1. **Clone the Repository**
 
     ```bash
-    git clone https://github.com/your-username/your-project-name.git
+    git clone https://github.com/cmedina-dev/CodeReviews.Console.HabitTracker.git
     ```
 
 ## Usage
