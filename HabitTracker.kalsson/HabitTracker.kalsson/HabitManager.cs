@@ -1,40 +1,158 @@
-﻿namespace HabitTracker.kalsson;
+﻿using System.Data.SQLite;
+
+namespace HabitTracker.kalsson;
 
 public class HabitManager
 {
+    private static readonly string ConnectionString = "Data Source=HabitTracker.db;Version=3;";
+    
     /// <summary>
-    /// Insert a new habit into the database.
+    /// Insert a new habit into the 'habits' table.
     /// </summary>
-    public void InsertHabit() 
+    /// <param name="name">The name of the habit.</param>
+    /// <param name="quantity">The quantity associated with the habit.</param>
+    /// <param name="unit">The unit of measurement for the quantity.</param>
+    public static void InsertHabit(string name, int quantity, string unit)
     {
-        // TODO: Create the logic for inserting a new habit into the database.
-        // SQL for inserting habit
+        try
+            {
+            using (var connection = new SQLiteConnection(ConnectionString))
+                {
+                // SQL query to insert a new habit
+                string sql = "INSERT INTO habits (name, quantity, unit) VALUES (@name, @quantity, @unit);";
+                using (var command = new SQLiteCommand(sql, connection))
+                    {
+                    command.Parameters.AddWithValue("@name", name);
+                    command.Parameters.AddWithValue("@quantity", quantity);
+                    command.Parameters.AddWithValue("@unit", unit);
+                
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    }
+                }
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"An error occurred while inserting a habit: {ex.Message}");
+            }
     }
 
     /// <summary>
-    /// Delete an existing habit from the database.
+    /// Deletes a habit from the database.
     /// </summary>
-    public void DeleteHabit() 
+    /// <param name="habit">The habit to delete.</param>
+    public static void DeleteHabit(string habit)
     {
-        // TODO: Create the logic for deleting an existing habit from the database.
-        // SQL for deleting habit
+        try
+            {
+            using (var connection = new SQLiteConnection(ConnectionString))
+                {
+                string sql = "DELETE FROM habits WHERE name=@name;";
+                using (var command = new SQLiteCommand(sql, connection))
+                    {
+                    command.Parameters.AddWithValue("@name", habit);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    }
+                }
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"An error occurred while trying delete a habit: {ex.Message}");
+            }
     }
 
     /// <summary>
-    /// Update details of an existing habit in the database.
+    /// Updates a habit in the database.
     /// </summary>
-    public void UpdateHabit() 
+    /// <param name="oldHabit">The old habit name.</param>
+    /// <param name="newHabit">The new habit name.</param>
+    public static void UpdateHabit(string oldHabit, string newHabit)
     {
-        // TODO: Create the logic for updating an existing habit in the database.
-        // SQL for updating habit
+        try
+            {
+            using (var connection = new SQLiteConnection(ConnectionString))
+                {
+                string sql = "UPDATE habits SET name=@newName WHERE name=@oldName;";
+                using (var command = new SQLiteCommand(sql, connection))
+                    {
+                    command.Parameters.AddWithValue("@oldName", oldHabit);
+                    command.Parameters.AddWithValue("@newName", newHabit);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    }
+                }
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"An error occurred while updating a habit: {ex.Message}");
+            }
     }
 
     /// <summary>
-    /// View all habits from the database.
+    /// Reads all habits from the database.
     /// </summary>
-    public void ViewHabit() 
+    /// <returns>A list of habits.</returns>
+    public static List<string>? GetAllHabits()
     {
-        // TODO: Create the logic for viewing all habits from the database.
-        // SQL for viewing habits
+        try
+            {
+            List<string?> habits = new List<string?>();
+            using (var connection = new SQLiteConnection(ConnectionString))
+                {
+                string sql = "SELECT * FROM habits;";
+                using (var command = new SQLiteCommand(sql, connection))
+                    {
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                        {
+                        while (reader.Read())
+                            {
+                            habits.Add(reader["name"].ToString());
+                            }
+                        }
+                    }
+                }
+            return habits!;
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"An error occurred while trying to fetch all habits: {ex.Message}");
+            }
+
+        return null;
+    }
+    
+    /// <summary>
+    /// Checks if a habit with the given name exists in the database.
+    /// </summary>
+    /// <param name="habitName">The name of the habit to check.</param>
+    /// <returns>True if the habit exists, false otherwise.</returns>
+    public static bool DoesHabitExist(string habitName)
+    {
+        try
+            {
+            using (var connection = new SQLiteConnection(ConnectionString))
+                {
+                string sql = "SELECT COUNT(*) FROM habits WHERE name = @name;";
+                using (var command = new SQLiteCommand(sql, connection))
+                    {
+                    command.Parameters.AddWithValue("@name", habitName);
+                    connection.Open();
+                    
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    
+                    connection.Close();
+                    
+                    return count > 0;
+                    }
+                }
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"An error occurred while trying to check if a habit exists: {ex.Message}");
+            }
+
+        return false;
     }
 }
