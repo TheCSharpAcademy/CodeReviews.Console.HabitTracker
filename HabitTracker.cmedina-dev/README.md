@@ -9,13 +9,9 @@
 - [Usage](#usage)
 - [Features](#features)
 
----
-
 ## Description
 
 This project is a habit tracker featuring a local SQLite database. It enables CRUD operations for habits, allowing users to create, modify, and delete their own habits.
-
----
 
 ## Requirements
 
@@ -26,8 +22,6 @@ This project is a habit tracker featuring a local SQLite database. It enables CR
 * Handle all possible errors so that the application never crashes.
 * Only terminate when the user inserts 0.
 * Only interact with the database using raw SQL.
-
----
 
 ## Installation
 
@@ -43,13 +37,10 @@ This project is a habit tracker featuring a local SQLite database. It enables CR
     git clone https://github.com/your-username/your-project-name.git
     ```
 
----
-
 ## Usage
 
 Navigation of the program is done via the keyboard. Follow the on-screen prompts as directed to add your own habits to the tracker.
 
----
 
 ## Features
 
