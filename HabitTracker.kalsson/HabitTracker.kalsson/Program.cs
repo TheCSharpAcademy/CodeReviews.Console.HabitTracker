@@ -9,7 +9,9 @@ while (true)
     {
     ConsoleMessages.ShowMainMenu();
     userInput = ConsoleMessages.GetUserInput();
-    
+
+    List<string>? habits;
+
     switch (userInput)
     {
             case 1:
@@ -47,18 +49,36 @@ while (true)
                 break;
             case 2:
                 Console.Clear();
-                List<string>? habits = HabitManager.GetAllHabits();
+                habits = HabitManager.GetAllHabits();
                 Console.WriteLine();
                 Console.WriteLine("List of habits:");
                 Console.WriteLine();
-                foreach (string habit in habits)
+                
+                for (int i = 0; i < habits.Count; i++)
                     {
-                    Console.WriteLine(habit);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{i + 1}. {habits[i]}");
+                    Console.ResetColor();
                     }
+                
                 Console.WriteLine();
                 break;
             case 3:
                 Console.Clear();
+                habits = HabitManager.GetAllHabits();
+                Console.WriteLine();
+                Console.WriteLine("List of habits:");
+                Console.WriteLine();
+                
+                for (int i = 0; i < habits.Count; i++)
+                    {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{i + 1}. {habits[i]}");
+                    Console.ResetColor();
+                    }
+                
+                Console.WriteLine();
+                
                 Console.Write("Enter the name of the habit to update: ");
                 string oldHabit = Console.ReadLine().ToUpper();
                 if (HabitManager.DoesHabitExist(oldHabit))
@@ -76,6 +96,19 @@ while (true)
                 break;
             case 4:
                 Console.Clear();
+                habits = HabitManager.GetAllHabits();
+                Console.WriteLine();
+                Console.WriteLine("List of habits:");
+                Console.WriteLine();
+                
+                for (int i = 0; i < habits.Count; i++)
+                    {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{i + 1}. {habits[i]}");
+                    Console.ResetColor();
+                    }
+                
+                Console.WriteLine();
                 Console.Write("Enter the name of the habit to delete: ");
                 string habitToDelete = Console.ReadLine().ToUpper();
                 if (HabitManager.DoesHabitExist(habitToDelete))
