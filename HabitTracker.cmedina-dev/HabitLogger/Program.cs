@@ -18,7 +18,7 @@
                 switch (input)
                 {
                     case "n":
-                        HabitHandler.CreateHabit();
+                        HabitHandler.CreateHabitMenu();
                         break;
                     case "u":
                         HabitHandler.UpdateHabit();

@@ -3,6 +3,7 @@ using System.Data.SQLite;
 using Dapper;
 using StatLibrary;
 using HabitLibrary;
+using System;
 
 namespace DatabaseHandler
 {
@@ -11,66 +12,81 @@ namespace DatabaseHandler
         private readonly string _databaseName;
         private readonly string _connectionString;
 
+        // Create a new table if one doesn't exist when DB is created
         public Database(string databaseName)
         {
             _databaseName = databaseName;
             _connectionString = $"Data Source={_databaseName}.sqlite;Version=3;";
+            using IDbConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+            string initializeQuery = @"CREATE TABLE IF NOT EXISTS Habits (
+                                        record_id INTEGER PRIMARY KEY,
+                                        habit_name TEXT NOT NULL,
+                                        stat_name TEXT NOT NULL,
+                                        stat_value INTEGER NOT NULL,
+                                        entry_timestamp TEXT NOT NULL)";
+            connection.Execute(initializeQuery);
         }
-        public void Create(string tableName)
+
+        private void TestRead()
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string createTableQuery = @$"CREATE TABLE {tableName} (name varchar(20), amount int)";
-
-            if (TableExists(tableName))
+            string testQuery = "SELECT habit_name, stat_name, stat_value, entry_timestamp FROM Habits";
+            var result = connection.Query<Record>(testQuery);
+            foreach (var item in result)
             {
-                throw new Exception("Habit already exists");
+                Console.WriteLine($"Habit Name: {item.habit_name}, Stat Name: {item.stat_name}, Stat Value: {item.stat_value} Date: {item.entry_timestamp}");
             }
-
-            try
-            {
-                connection.Execute(createTableQuery);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An unknown error occurred");
-            }
+            Console.ReadLine();
         }
+
+        // Create a new habit record with the following columns:
+        // RecordId | HabitName | StatName | StatCount | EntryTimestamp
+        public void Create(string habitName, Stat stat)
+        {
+            using IDbConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+            string testInsert = @"INSERT INTO Habits (habit_name, stat_name, stat_value, entry_timestamp)
+                                    VALUES (@HabitName, @StatName, @StatValue, @Date)";
+            DateTime dateTime = DateTime.Now;
+            string todayFormatted = dateTime.ToString("yyyy-MM-dd");
+            connection.Execute(testInsert, new { HabitName = habitName, StatName = stat.Name, StatValue = stat.Value, Date = todayFormatted });
+
+            TestRead();
+        }
+
+        // Delete ALL RecordIds matching the given HabitName column
         public int Drop(string tableName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string dropTableQuery = $"DROP TABLE IF EXISTS {tableName}";
-            int results = connection.Execute(dropTableQuery);
-            return results;
+
+            return 0;
         }
-        public void Insert(string tableName, Stat stat)
+
+        // Return ALL entries of a given habit
+        public void Read(string habitName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-
-            string insertQuery = $"INSERT INTO {tableName} (name, amount) VALUES (@Name, @Value)";
-            connection.Execute(insertQuery, new { Name = stat.name, Value = stat.value });
         }
 
-        public void Read(string tableName)
+        // Overload - Return ALL entries for a habit on a specific date
+        public void Read(string habitName, string date)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string readTableQuery = $"SELECT * FROM {tableName}";
-            IEnumerable<dynamic> results = connection.Query(readTableQuery);
-
-            Console.Clear();
-            Console.WriteLine("Displaying detailed results...");
-            Console.WriteLine("--------------------");
-            Console.Write($"{tableName} | ");
-            foreach (var row in results)
-            {
-                Console.WriteLine($"{row.name}: {row.amount} | ");
-            }
-            Console.WriteLine("--------------------");
         }
 
+        // Overload - Return ALL entries between two dates (inclusive)
+        public void Read(string habitName, string startDate, string endDate)
+        {
+            using IDbConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+        }
+
+        // Update ALL RecordIds with matching HabitName column
         public void UpdateHabitName(string tableName, string newName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
@@ -92,6 +108,7 @@ namespace DatabaseHandler
             }
         }
 
+        // Update ALL RecordIds with matching HabitName AND StatName columns
         public void UpdateStatName(string tableName, string oldName, string newName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
@@ -110,6 +127,7 @@ namespace DatabaseHandler
             }
         }
 
+        // Update specified RecordId based on HabitName and StatName with new StatValue
         public void UpdateStatValue(string tableName, string statName, int value)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
@@ -129,6 +147,7 @@ namespace DatabaseHandler
             }
         }
 
+        
         public bool TableExists(string tableName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
@@ -139,30 +158,25 @@ namespace DatabaseHandler
             return count >= 1;
         }
 
-        public List<Habit> InitializeDatabase()
+        public HashSet<Habit> InitializeDatabase()
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            List<Habit> habits = new();
+            HashSet<Habit> habits = new();
 
-            string query = "SELECT name FROM sqlite_master WHERE type='table'";
-            List<string> tableNames = connection.Query<string>(query).AsList();
+            string query = "SELECT * FROM Habits";
+            List<Record> habitRecords = connection.Query<Record>(query).AsList();
 
-            foreach (string tableName in tableNames)
+            foreach (Record record in habitRecords)
             {
+                Stat stat = new(record.stat_name, record.stat_value);
+
                 Habit habit = new()
                 {
-                    Name = tableName,
+                    Name = record.habit_name,
+                    Stat = stat,
                 };
 
-                string statNameQuery = $"SELECT name FROM {tableName}";
-                string statValueQuery = $"SELECT amount FROM {tableName}";
-
-                string statName = connection.QuerySingleOrDefault<string>(statNameQuery);
-                int statValue = connection.QuerySingleOrDefault<int>(statValueQuery);
-
-                Stat stat = new(statName, statValue);
-                habit.Stat = stat;
                 habits.Add(habit);
             }
 

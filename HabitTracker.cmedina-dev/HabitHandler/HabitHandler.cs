@@ -7,32 +7,76 @@
     public sealed class HabitHandler
     {
         static readonly Database db = new("HabitsDB");
-        static readonly List<Habit> habitList = db.InitializeDatabase();
+        static readonly HashSet<Habit> habitList = db.InitializeDatabase();
 
-        public static void CreateHabit()
+        public static void CreateHabitMenu()
         {
             Console.Clear();
-            Console.WriteLine("Enter a name for your habit: ");
-            Habit habit = new()
+            if (IsNewHabit())
             {
-                Name = Console.ReadLine()
+                CreateHabit();
+            }
+            else
+            {
+                AddRecord();
+            }
+        }
+        private static void AddRecord()
+        {
+            DisplayHabits();
+            Console.WriteLine("Enter the name of the habit you want to add an entry for:");
+
+            string habitName = Console.ReadLine();
+            Habit habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+            while (habit == null)
+            {
+                Console.Clear();
+                DisplayHabits();
+                Console.WriteLine("Please enter one of the above habits: ");
+                habitName = Console.ReadLine();
+                habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+            }
+
+            Console.WriteLine($"Tracking {habit.Name} via {habit.Stat.Name}");
+            Console.WriteLine("Enter an amount for this entry: ");
+            string amount = Console.ReadLine();
+            int value = 0;
+
+            while (!int.TryParse(amount, out value))
+            {
+                Console.Clear();
+                Console.WriteLine("Please enter a valid number:");
+                amount = Console.ReadLine();
+            }
+
+            Habit newEntry = new()
+            {
+                Name = habitName,
+                Stat = new Stat(habit.Stat.Name, value)
             };
 
             try
             {
-                db.Create(habit.Name);
+                db.Create(newEntry.Name, newEntry.Stat);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"Looks like there was an error creating your habit: {ex}");
-
+                Console.WriteLine("There was an error adding the record.");
                 DisplayContinue();
                 return;
             }
 
+            Console.WriteLine("Entry successfully logged!");
+            DisplayContinue();
+        }
+
+        private static void CreateHabit()
+        {
+            Console.WriteLine("Enter a name for your habit: ");
+            string habitName = Console.ReadLine();
+
             Console.WriteLine("Next, enter the stat you'd like to track: ");
             string statName = Console.ReadLine();
-
 
             Console.WriteLine("Finally, enter the starting value for this stat: ");
             string statValue = Console.ReadLine();
@@ -44,14 +88,18 @@
                 statValue = Console.ReadLine();
             }
 
-            habit.Stat = new Stat(statName, statResult);
+            Habit habit = new()
+            {
+                Name = habitName,
+                Stat = new Stat(statName, statResult)
+            };
 
             try
             {
-                db.Insert(habit.Name, habit.Stat);
+                db.Create(habit.Name, habit.Stat);
                 habitList.Add(habit);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Looks like there was an error entering your stat: {ex}");
 
@@ -71,31 +119,21 @@
 
             Console.WriteLine("Enter the name of the habit to update:");
             string habitName = Console.ReadLine();
-
-            if (!db.TableExists(habitName))
+            Habit habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+            while (habit == null)
             {
-                Console.WriteLine("Unable to locate that habit, please try again.");
-                DisplayContinue();
-                return;
-            }
-
-            Habit habit = new();
-
-            foreach (var item in habitList)
-            {
-                if (item.Name == habitName)
-                {
-                    habit = item;
-                    break;
-                }
+                Console.Clear();
+                DisplayHabits();
+                Console.WriteLine("Please enter one of the above habits: ");
+                habitName = Console.ReadLine();
+                habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
             }
 
             Console.Clear();
-            Console.WriteLine($"{habit.Name} - Currently at {habit.Stat.value} {habit.Stat.name}\n");
+            Console.WriteLine($"{habit.Name} tracking {habit.Stat.Name}\n");
             Console.WriteLine("Choose an option:");
             Console.WriteLine("n: Change the habit name");
             Console.WriteLine("s: Change the stat name");
-            Console.WriteLine("v: Change the stat value");
             Console.WriteLine("0: Return to main menu");
 
             string input = Console.ReadLine();
@@ -104,11 +142,8 @@
                 case "n":
                     ChangeHabitName(habit.Name);
                     break;
-                case "v":
-                    ChangeStatValue(habit.Name, habit.Stat.name);
-                    break;
                 case "s":
-                    ChangeStatName(habit.Name, habit.Stat.name);
+                    ChangeStatName(habit.Name, habit.Stat.Name);
                     break;
                 case "0":
                     break;
@@ -116,7 +151,6 @@
                     break;
             }
         }
-
         public static void DeleteHabitDB()
         {
             Console.Clear();
@@ -137,7 +171,6 @@
             Console.WriteLine("Habit successfully deleted!");
             DisplayContinue();
         }
-
         public static void ViewHabit()
         {
             Console.Clear();
@@ -148,7 +181,7 @@
 
             try
             {
-                db.Read(habitName);
+                //db.Read(habitName);
             }
             catch
             {
@@ -157,13 +190,29 @@
 
             DisplayContinue();
         }
-
         private static void DisplayContinue()
         {
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadLine();
         }
+        private static bool IsNewHabit()
+        {
+            Console.WriteLine("Choose an option:");
+            Console.WriteLine("1 - Create new habit");
+            Console.WriteLine("2 - Add entry to existing habit");
 
+            string input = Console.ReadLine();
+            while (input != "1" && input != "2")
+            {
+                Console.Clear();
+                Console.WriteLine("Choose an option:");
+                Console.WriteLine("1 - Create new habit");
+                Console.WriteLine("2 - Add entry to existing habit");
+                input = Console.ReadLine();
+            }
+
+            return input == "1";
+        }
         private static void DisplayHabits()
         {
             Console.WriteLine("Current list of habits:");
@@ -176,7 +225,7 @@
 
         private static void PruneHabitList(string habitName)
         {
-            habitList.RemoveAll(habit => habit.Name == habitName);
+            habitList.RemoveWhere(habit => habit.Name == habitName);
         }
 
         private static void UpdateHabitName(string oldName, string newName)
@@ -204,9 +253,9 @@
 
             foreach (Habit habit in habitList)
             {
-                if (habit.Stat.name == oldName)
+                if (habit.Stat.Name == oldName)
                 {
-                    habit.Stat.name = newName;
+                    habit.Stat.Name = newName;
                 }
             }
         }
@@ -220,9 +269,9 @@
 
             foreach (Habit habit in habitList)
             {
-                if (habit.Stat.name == statName)
+                if (habit.Stat.Name == statName)
                 {
-                    habit.Stat.value = newValue;
+                    habit.Stat.Value = newValue;
                 }
             }
         }

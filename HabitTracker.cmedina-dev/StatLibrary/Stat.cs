@@ -2,13 +2,13 @@
 {
     public sealed class Stat
     {
-        public string name;
-        public int value;
+        public string Name;
+        public int Value;
 
         public Stat(string name, int value)
         {
-            this.name = name;
-            this.value = value;
+            this.Name = name;
+            this.Value = value;
         }
     }
 }
