@@ -130,7 +130,6 @@ namespace DatabaseHandler
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            HashSet<string> habits = new();
 
             string query = "SELECT habit_name FROM Habits";
             List<string> habitRecords = connection.Query<string>(query).AsList();
