@@ -2,8 +2,6 @@
 using System.Data.SQLite;
 using Dapper;
 using StatLibrary;
-using HabitLibrary;
-using System;
 
 namespace DatabaseHandler
 {
@@ -27,20 +25,6 @@ namespace DatabaseHandler
                                         entry_timestamp TEXT NOT NULL)";
             connection.Execute(initializeQuery);
         }
-
-        private void TestRead()
-        {
-            using IDbConnection connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-            string testQuery = "SELECT habit_name, stat_name, stat_value, entry_timestamp FROM Habits";
-            var result = connection.Query<Record>(testQuery);
-            foreach (var item in result)
-            {
-                Console.WriteLine($"Habit Name: {item.habit_name}, Stat Name: {item.stat_name}, Stat Value: {item.stat_value} Date: {item.entry_timestamp}");
-            }
-            Console.ReadLine();
-        }
-
         // Create a new habit record with the following columns:
         // RecordId | HabitName | StatName | StatCount | EntryTimestamp
         public void Create(string habitName, Stat stat)
@@ -52,38 +36,27 @@ namespace DatabaseHandler
             DateTime dateTime = DateTime.Now;
             string todayFormatted = dateTime.ToString("yyyy-MM-dd");
             connection.Execute(testInsert, new { HabitName = habitName, StatName = stat.Name, StatValue = stat.Value, Date = todayFormatted });
-
-            TestRead();
         }
 
         // Delete ALL RecordIds matching the given HabitName column
-        public int Drop(string tableName)
+        public int Drop(string habitName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-
-            return 0;
+            string dropQuery = @"DELETE FROM Habits WHERE habit_name = @HabitName";
+            return connection.Execute(dropQuery, new { HabitName = habitName });
         }
 
         // Return ALL entries of a given habit
-        public void Read(string habitName)
+        public List<Record> Read(string habitName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-        }
-
-        // Overload - Return ALL entries for a habit on a specific date
-        public void Read(string habitName, string date)
-        {
-            using IDbConnection connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-        }
-
-        // Overload - Return ALL entries between two dates (inclusive)
-        public void Read(string habitName, string startDate, string endDate)
-        {
-            using IDbConnection connection = new SQLiteConnection(_connectionString);
-            connection.Open();
+            string readQuery = @"SELECT habit_name, stat_name, stat_value, entry_timestamp 
+                                    FROM Habits 
+                                    WHERE habit_name = @HabitName";
+            var records = connection.Query<Record>(readQuery, new { HabitName = habitName });
+            return records.ToList();
         }
 
         // Update ALL RecordIds with matching HabitName column
@@ -91,66 +64,33 @@ namespace DatabaseHandler
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string updateNameQuery = $"UPDATE Habits SET habit_name = @HabitName WHERE habit_name = {oldName}";
+            string updateNameQuery = $"UPDATE Habits SET habit_name = @HabitName WHERE habit_name = @OldName";
 
             try
             {
-                connection.Execute(updateNameQuery);
+                connection.Execute(updateNameQuery, new { HabitName = newName, OldName = oldName });
             }
-            catch
+            catch(Exception ex)
             {
-                throw new Exception("An error occurred while updating habit names.");
+                throw new Exception($"An error occurred while updating habit names: {ex}");
             }
         }
 
         // Update ALL RecordIds with matching HabitName AND StatName columns
-        public void UpdateStatName(string tableName, string oldName, string newName)
+        public void UpdateStatName(string habitName, string newName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string updateNameQuery = $"UPDATE {tableName} SET name = @NewName WHERE name = @OldName";
+            string updateNameQuery = $"UPDATE Habits SET stat_name = @StatName WHERE habit_name = @HabitName";
 
             try
             {
-                connection.Execute(updateNameQuery, new { NewName = newName, OldName = oldName });
+                connection.Execute(updateNameQuery, new { StatName = newName, HabitName = habitName });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"ERROR thrown: {ex}");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadLine();
+                throw new Exception($"An error occurred while updating habit names: {ex}");
             }
-        }
-
-        // Update specified RecordId based on HabitName and StatName with new StatValue
-        public void UpdateStatValue(string tableName, string statName, int value)
-        {
-            using IDbConnection connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-            string updateNameQuery = $"UPDATE {tableName} SET amount = @NewValue WHERE name = @StatName";
-
-            try
-            {
-                connection.Execute(updateNameQuery, new { NewValue = value, StatName = statName });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ERROR thrown: {ex}");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadLine();
-                return;
-            }
-        }
-
-        
-        public bool TableExists(string tableName)
-        {
-            using IDbConnection connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-
-            string validateTableQuery = $"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='{tableName}'";
-            int count = connection.QuerySingleOrDefault<int>(validateTableQuery);
-            return count >= 1;
         }
 
         public HashSet<string> InitializeDatabase()
@@ -174,9 +114,27 @@ namespace DatabaseHandler
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string statQuery = $"SELECT stat_name FROM Habits WHERE habit_name = {habitName}";
-            string result = connection.QueryFirst<string>(statQuery);
-            return result;
+            string statQuery = $"SELECT stat_name FROM Habits WHERE habit_name = @HabitName";
+            try
+            {
+                string result = connection.QueryFirst<string>(statQuery, new { HabitName = habitName });
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error occurred: {ex}");
+            }
+        }
+
+        public bool GetHabit(string habitName)
+        {
+            using IDbConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+            HashSet<string> habits = new();
+
+            string query = "SELECT habit_name FROM Habits";
+            List<string> habitRecords = connection.Query<string>(query).AsList();
+            return habitRecords.Count > 0;
         }
     }
 }

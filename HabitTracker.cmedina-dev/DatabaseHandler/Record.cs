@@ -1,6 +1,6 @@
 ﻿namespace DatabaseHandler
 {
-    internal sealed class Record
+    public sealed class Record
     {
         public int record_id { get; set; }
         public string habit_name { get; set; }

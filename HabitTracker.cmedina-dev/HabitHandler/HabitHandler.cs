@@ -76,6 +76,13 @@
             Console.WriteLine("Enter a name for your habit: ");
             string habitName = Console.ReadLine();
 
+            if (db.GetHabit(habitName))
+            {
+                Console.WriteLine("Habit already exists.");
+                DisplayContinue();
+                return;
+            }
+
             Console.WriteLine("Next, enter the stat you'd like to track: ");
             string statName = Console.ReadLine();
 
@@ -161,15 +168,15 @@
 
             Console.WriteLine("Enter the name of the habit you want to delete: ");
             string habitName = Console.ReadLine();
+            int results = db.Drop(habitName);
 
-            if (!db.TableExists(habitName))
+            if (results == 0)
             {
                 Console.WriteLine("Unable to locate that habit, please try again.");
                 DisplayContinue();
                 return;
             }
 
-            db.Drop(habitName);
             PruneHabitList(habitName);
             Console.WriteLine("Habit successfully deleted!");
             DisplayContinue();
@@ -184,7 +191,11 @@
 
             try
             {
-                //db.Read(habitName);
+                List<Record> habitsRecords = db.Read(habitName);
+                foreach(Record record in habitsRecords)
+                {
+                    Console.WriteLine($"{record.habit_name} | {record.stat_name} | {record.stat_value} | {record.entry_timestamp}");
+                }
             }
             catch
             {
@@ -245,9 +256,10 @@
                     Console.WriteLine("Habit name updated successfully!");
                 }
             }
-            catch
+            catch(Exception ex)
             {
                 Console.WriteLine("Looks like an error occurred trying to change names, please try again!");
+                Console.WriteLine(ex.ToString());
                 habitList.Add(originalHabit); // Restores the original habit
             }
 
@@ -260,9 +272,8 @@
 
             try
             {
-                //db.UpdateStatName(tableName, oldName, newName);
+                db.UpdateStatName(habit, newName);
                 Console.WriteLine("Stat name updated successfully!");
-                //UpdateStatName(oldName, newName);
                 DisplayContinue();
             }
             catch
