@@ -87,16 +87,11 @@ namespace DatabaseHandler
         }
 
         // Update ALL RecordIds with matching HabitName column
-        public void UpdateHabitName(string tableName, string newName)
+        public void UpdateHabitName(string oldName, string newName)
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            string updateNameQuery = $"ALTER TABLE {tableName} RENAME TO {newName}";
-
-            if (TableExists(newName))
-            {
-                throw new Exception("Habit already exists");
-            }
+            string updateNameQuery = $"UPDATE Habits SET habit_name = @HabitName WHERE habit_name = {oldName}";
 
             try
             {
@@ -104,7 +99,7 @@ namespace DatabaseHandler
             }
             catch
             {
-                throw new Exception("An unknown error occurred.");
+                throw new Exception("An error occurred while updating habit names.");
             }
         }
 
@@ -158,29 +153,30 @@ namespace DatabaseHandler
             return count >= 1;
         }
 
-        public HashSet<Habit> InitializeDatabase()
+        public HashSet<string> InitializeDatabase()
         {
             using IDbConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
-            HashSet<Habit> habits = new();
+            HashSet<string> habits = new();
 
-            string query = "SELECT * FROM Habits";
-            List<Record> habitRecords = connection.Query<Record>(query).AsList();
+            string query = "SELECT habit_name FROM Habits";
+            List<string> habitRecords = connection.Query<string>(query).AsList();
 
-            foreach (Record record in habitRecords)
+            foreach (string record in habitRecords)
             {
-                Stat stat = new(record.stat_name, record.stat_value);
-
-                Habit habit = new()
-                {
-                    Name = record.habit_name,
-                    Stat = stat,
-                };
-
-                habits.Add(habit);
+                habits.Add(record);
             }
 
             return habits;
+        }
+
+        public string GetStatName(string habitName)
+        {
+            using IDbConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+            string statQuery = $"SELECT stat_name FROM Habits WHERE habit_name = {habitName}";
+            string result = connection.QueryFirst<string>(statQuery);
+            return result;
         }
     }
 }

@@ -7,7 +7,7 @@
     public sealed class HabitHandler
     {
         static readonly Database db = new("HabitsDB");
-        static readonly HashSet<Habit> habitList = db.InitializeDatabase();
+        static readonly HashSet<string> habitList = db.InitializeDatabase();
 
         public static void CreateHabitMenu()
         {
@@ -27,17 +27,19 @@
             Console.WriteLine("Enter the name of the habit you want to add an entry for:");
 
             string habitName = Console.ReadLine();
-            Habit habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+            string habit = habitList.FirstOrDefault(existingName => existingName == habitName)!;
+
             while (habit == null)
             {
                 Console.Clear();
                 DisplayHabits();
                 Console.WriteLine("Please enter one of the above habits: ");
                 habitName = Console.ReadLine();
-                habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+                habit = habitList.FirstOrDefault(existingName => existingName == habitName)!;
             }
 
-            Console.WriteLine($"Tracking {habit.Name} via {habit.Stat.Name}");
+            string statName = db.GetStatName(habit);
+            Console.WriteLine($"Tracking {habit} via {statName}");
             Console.WriteLine("Enter an amount for this entry: ");
             string amount = Console.ReadLine();
             int value = 0;
@@ -52,7 +54,7 @@
             Habit newEntry = new()
             {
                 Name = habitName,
-                Stat = new Stat(habit.Stat.Name, value)
+                Stat = new Stat(statName, value)
             };
 
             try
@@ -69,7 +71,6 @@
             Console.WriteLine("Entry successfully logged!");
             DisplayContinue();
         }
-
         private static void CreateHabit()
         {
             Console.WriteLine("Enter a name for your habit: ");
@@ -97,7 +98,7 @@
             try
             {
                 db.Create(habit.Name, habit.Stat);
-                habitList.Add(habit);
+                habitList.Add(habitName);
             }
             catch (Exception ex)
             {
@@ -111,7 +112,6 @@
 
             DisplayContinue();
         }
-
         public static void UpdateHabit()
         {
             Console.Clear();
@@ -119,18 +119,21 @@
 
             Console.WriteLine("Enter the name of the habit to update:");
             string habitName = Console.ReadLine();
-            Habit habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+            string habit = habitList.FirstOrDefault(existingName => existingName == habitName)!;
+
             while (habit == null)
             {
                 Console.Clear();
                 DisplayHabits();
                 Console.WriteLine("Please enter one of the above habits: ");
                 habitName = Console.ReadLine();
-                habit = habitList.FirstOrDefault(habit => habit.Name == habitName);
+                habit = habitList.FirstOrDefault(existingName => existingName == habitName)!;
             }
 
+            string statName = db.GetStatName(habit);
+
             Console.Clear();
-            Console.WriteLine($"{habit.Name} tracking {habit.Stat.Name}\n");
+            Console.WriteLine($"{habit} tracking {statName}\n");
             Console.WriteLine("Choose an option:");
             Console.WriteLine("n: Change the habit name");
             Console.WriteLine("s: Change the stat name");
@@ -140,10 +143,10 @@
             switch (input)
             {
                 case "n":
-                    ChangeHabitName(habit.Name);
+                    ChangeHabitName(habit);
                     break;
                 case "s":
-                    ChangeStatName(habit.Name, habit.Stat.Name);
+                    ChangeStatName(habit);
                     break;
                 case "0":
                     break;
@@ -216,122 +219,50 @@
         private static void DisplayHabits()
         {
             Console.WriteLine("Current list of habits:");
-            foreach (Habit habit in habitList)
+            foreach (string habit in habitList)
             {
-                Console.WriteLine($"\t* {habit.Name}");
+                Console.WriteLine($"\t* {habit}");
             }
             Console.Write("\n");
         }
-
         private static void PruneHabitList(string habitName)
         {
-            habitList.RemoveWhere(habit => habit.Name == habitName);
+            habitList.RemoveWhere(habit => habit == habitName);
         }
-
-        private static void UpdateHabitName(string oldName, string newName)
-        {
-            if (string.IsNullOrEmpty(oldName) || string.IsNullOrEmpty(newName))
-            {
-                return;
-            }
-
-            foreach (Habit habit in habitList)
-            {
-                if (habit.Name == oldName)
-                {
-                    habit.Name = newName;
-                }
-            }
-        }
-
-        private static void UpdateStatName(string oldName, string newName)
-        {
-            if (string.IsNullOrEmpty(oldName) || string.IsNullOrEmpty(newName))
-            {
-                return;
-            }
-
-            foreach (Habit habit in habitList)
-            {
-                if (habit.Stat.Name == oldName)
-                {
-                    habit.Stat.Name = newName;
-                }
-            }
-        }
-
-        private static void UpdateStatValue(string statName, int newValue)
-        {
-            if (string.IsNullOrEmpty(statName))
-            {
-                return;
-            }
-
-            foreach (Habit habit in habitList)
-            {
-                if (habit.Stat.Name == statName)
-                {
-                    habit.Stat.Value = newValue;
-                }
-            }
-        }
-
-        private static void ChangeHabitName(string oldName)
+        private static void ChangeHabitName(string habit)
         {
             Console.WriteLine("Enter the new name of the habit:");
             string newName = Console.ReadLine();
 
+            string originalHabit = habit;
+
             try
             {
-                db.UpdateHabitName(oldName, newName);
-                Console.WriteLine("Habit name updated successfully!");
-                UpdateHabitName(oldName, newName);
-                DisplayContinue();
+                if (habitList.Add(newName))
+                {
+                    PruneHabitList(originalHabit);
+                    db.UpdateHabitName(originalHabit, newName);
+                    Console.WriteLine("Habit name updated successfully!");
+                }
             }
             catch
             {
                 Console.WriteLine("Looks like an error occurred trying to change names, please try again!");
-                DisplayContinue();
-                return;
+                habitList.Add(originalHabit); // Restores the original habit
             }
-        }
 
-        private static void ChangeStatName(string tableName, string oldName)
+            DisplayContinue();
+        }
+        private static void ChangeStatName(string habit)
         {
             Console.WriteLine("Enter the new name of the stat:");
             string newName = Console.ReadLine();
 
             try
             {
-                db.UpdateStatName(tableName, oldName, newName);
+                //db.UpdateStatName(tableName, oldName, newName);
                 Console.WriteLine("Stat name updated successfully!");
-                UpdateStatName(oldName, newName);
-                DisplayContinue();
-            }
-            catch
-            {
-                Console.WriteLine("Looks like an error occurred trying to change names, please try again!");
-                DisplayContinue();
-                return;
-            }
-        }
-
-        private static void ChangeStatValue(string tableName, string statName)
-        {
-            Console.WriteLine("Enter the new numerical value of the stat:");
-            string newValue = Console.ReadLine();
-            int newStatValue = 0;
-            while (!int.TryParse(newValue, out newStatValue))
-            {
-                Console.WriteLine("Please enter a numerical value.");
-                newValue = Console.ReadLine();
-            }    
-
-            try
-            {
-                db.UpdateStatValue(tableName, statName, newStatValue);
-                Console.WriteLine("Stat value updated successfully!");
-                UpdateStatValue(statName, newStatValue);
+                //UpdateStatName(oldName, newName);
                 DisplayContinue();
             }
             catch

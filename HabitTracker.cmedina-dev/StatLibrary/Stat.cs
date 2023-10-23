@@ -1,9 +1,10 @@
-﻿namespace StatLibrary
+﻿#nullable enable
+namespace StatLibrary
 {
     public sealed class Stat
     {
         public string Name;
-        public int Value;
+        public int? Value;
 
         public Stat(string name, int value)
         {
