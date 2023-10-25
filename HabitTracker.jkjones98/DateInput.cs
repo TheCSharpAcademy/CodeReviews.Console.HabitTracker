@@ -6,7 +6,7 @@ namespace DateInput;
 public class UserDateInput
 {
     ClassUserInput rtnToMainMenu = new ClassUserInput();
-    internal string getDate(string message)
+    internal string GetDate(string message)
     {
         Console.WriteLine(message);
 

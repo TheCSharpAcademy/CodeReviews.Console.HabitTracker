@@ -11,9 +11,6 @@ public class DisplaySQLiteReports
     {
         ReportSwitch reportMenu = new ReportSwitch();
 
-        GetColumnName columnNameObj = new GetColumnName();
-        string columnName = columnNameObj.GetColName();
-
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
