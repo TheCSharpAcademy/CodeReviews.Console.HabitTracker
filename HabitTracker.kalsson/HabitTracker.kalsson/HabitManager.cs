@@ -92,12 +92,12 @@ public class HabitManager
     /// <summary>
     /// Reads all habits from the database.
     /// </summary>
-    /// <returns>A list of habits.</returns>
+    /// <returns>A list of formatted string representing habits.</returns>
     public static List<string>? GetAllHabits()
     {
         try
             {
-            List<string?> habits = new List<string?>();
+            List<string> habits = new List<string>();
             using (var connection = new SQLiteConnection(ConnectionString))
                 {
                 string sql = "SELECT * FROM habits;";
@@ -108,18 +108,21 @@ public class HabitManager
                         {
                         while (reader.Read())
                             {
-                            habits.Add(reader["name"].ToString());
+                            string name = reader["name"].ToString();
+                            int quantity = int.Parse(reader["quantity"].ToString());
+                            string unit = reader["unit"].ToString();
+                        
+                            habits.Add($"{name} - {quantity} {unit}");
                             }
                         }
                     }
                 }
-            return habits!;
+            return habits;
             }
         catch (Exception ex)
             {
             Console.WriteLine($"An error occurred while trying to fetch all habits: {ex.Message}");
             }
-
         return null;
     }
     

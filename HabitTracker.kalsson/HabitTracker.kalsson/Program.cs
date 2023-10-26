@@ -53,14 +53,16 @@ while (true)
                 Console.WriteLine();
                 Console.WriteLine("List of habits:");
                 Console.WriteLine();
-                
-                for (int i = 0; i < habits.Count; i++)
+
+                if (habits != null)
                     {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"{i + 1}. {habits[i]}");
-                    Console.ResetColor();
+                    for (int i = 0; i < habits.Count; i++)
+                        {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{i + 1}. {habits[i]}");  // This will print the formatted string directly
+                        Console.ResetColor();
+                        }
                     }
-                
                 Console.WriteLine();
                 break;
             case 3:
