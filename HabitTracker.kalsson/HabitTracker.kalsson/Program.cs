@@ -54,13 +54,42 @@ while (true)
                 Console.WriteLine("List of habits:");
                 Console.WriteLine();
 
+                // Table headers
+                Console.WriteLine(String.Format("{0,-5} {1,-20} {2,-10} {3,-10}", "No.", "Habit", "Quantity", "Unit"));
+                Console.WriteLine("-----------------------------------------------------");
+
                 if (habits != null)
                     {
                     for (int i = 0; i < habits.Count; i++)
                         {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"{i + 1}. {habits[i]}");  // This will print the formatted string directly
-                        Console.ResetColor();
+                        string[] parts = habits[i].Split(" - ");
+                        if (parts.Length == 2) // Your habit string seems to have only one delimiter ' - '
+                            {
+                            string habitName = parts[0];
+                            string habitDetail = parts[1]; // This should be "QUANTITY UNIT"
+
+                            string[] details = habitDetail.Split(" "); // Assume space between quantity and unit
+                            if (details.Length == 2)
+                                {
+                                string habitQuantity = details[0];
+                                string habitUnit = details[1];
+
+                                // Display habit in formatted manner
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine(String.Format("{0,-5} {1,-20} {2,-10} {3,-10}", i + 1, habitName, habitQuantity, habitUnit));
+                                Console.ResetColor();
+                                }
+                            else
+                                {
+                                // Log malformed data for debugging
+                                Console.WriteLine($"Malformed habit detail for item {i + 1}. Detail: {habitDetail}");
+                                }
+                            }
+                        else
+                            {
+                            // Log malformed data for debugging
+                            Console.WriteLine($"Malformed habit data for item {i + 1}. Raw data: {habits[i]}");
+                            }
                         }
                     }
                 Console.WriteLine();
