@@ -1,14 +1,10 @@
-﻿
-using Microsoft.Data.Sqlite;
-using System.Globalization;
+﻿using System.Globalization;
 
 public class HabitTracker
 {
-    private const string CONNECTIONSTR = "Data Source=habit.db";
-
     static int Main(string[] args)
     {
-        CreateWaterHabitTableIfNotExist();
+        WaterHabitHelpers.CreateWaterHabitTableIfNotExist();
         bool endApp = false;
 
         while (!endApp)
@@ -18,8 +14,9 @@ public class HabitTracker
             Console.WriteLine("Main Menu");
             Console.WriteLine("Type 0, exit app.");
             Console.WriteLine("Type 1, insert a water drinking habit record.");
+            Console.WriteLine("Type 2, show all water drinking habit records.");
             Console.WriteLine("-----------------------------------------");
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
             switch (input)
             {
                 case "0":
@@ -27,6 +24,9 @@ public class HabitTracker
                     break;
                 case "1":
                     InsertWaterHabitRecord();
+                    break;
+                case "2":
+                    ShowAllWaterHabitRecords();
                     break;
                 default:
                     break;
@@ -61,45 +61,20 @@ public class HabitTracker
         WaterHabit habit = new();
         habit.Date = date;
         habit.Quantity = quantity;
-        Insert(habit);
-        Console.WriteLine("");
+        WaterHabitHelpers.Insert(habit);
     }
 
-    public static void CreateWaterHabitTableIfNotExist()
+    public static void ShowAllWaterHabitRecords()
     {
-        using (var connection = new SqliteConnection(CONNECTIONSTR))
+        Console.Clear();
+        List<WaterHabit> waterHabits = WaterHabitHelpers.SeleteAll();
+        if (waterHabits == null)
         {
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-                CREATE TABLE IF NOT EXISTS waterHabit (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    date Date NOT NULL,
-                    quantity INT NOT NULL
-                );
-            ";
-            command.ExecuteNonQuery();
+            Console.WriteLine("There is no water habit record.");
+            return;
         }
+        Console.WriteLine("========================================");
+        waterHabits.ForEach(waterHab => Console.WriteLine($"{waterHab.Id}: {waterHab.Date.ToString("dd-MM-yyyy")} {waterHab.Quantity}"));
+        Console.WriteLine("========================================");
     }
-
-    public static void Insert(WaterHabit habit)
-    {
-        using (var connection = new SqliteConnection(CONNECTIONSTR))
-        {
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = $@"INSERT INTO waterHabit(date, quantity) 
-                                     VALUES('{habit.Date}', '{habit.Quantity}')";
-            command.ExecuteNonQuery();
-        }
-    }
-
-}
-
-public class WaterHabit
-{
-    public int Id { set; get; }
-    public DateTime Date { set; get; }
-    public int Quantity { set; get; }
 }
