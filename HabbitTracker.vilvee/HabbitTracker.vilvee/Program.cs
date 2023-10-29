@@ -26,15 +26,19 @@ namespace HabbitTracker.vilvee
 MAIN MENU
 
 [1] CREATE NEW HABIT
+
 [2] GET ALL HABITS
+
 [3] DELETE HABIT
+
 [4] INSERT RECORD
+
 [5] UPDATE RECORD
-[6] GET ALL RECORDS
-[7] DELETE RECORD
+
+[6] DELETE RECORD
+
 [0] CLOSE
 
------------------------------------------
 ";
                 Console.WriteLine(menu);
 
@@ -48,29 +52,28 @@ MAIN MENU
                         Environment.Exit(0);
                         break;
                     case "1":
+                        Console.Clear();
                         CreateNewHabit();
                         break;
                     case "2":
+                        Console.Clear();
                         GetAllHabits();
                         break;
                     case "3":
+                        Console.Clear();
                         DeleteHabit();
                         break;
                     case "4":
-                        GetAllHabits();
-                        InsertRecord(GetTable("\n\nWhat habit do you want to insert a record into?.\n\n"));
+                        Console.Clear();
+                        InsertRecord(GetTable("\n\nEnter the name of the habit you want to insert a record into?.\n\n"));
                         break;
                     case "5":
-                        GetAllHabits();
-                        UpdateRecord(GetTable("\n\nWhat habit do you want to update?.\n\n"));
+                        Console.Clear();
+                        UpdateRecord(GetTable("\n\nEnter the name of the habit you want to update?.\n\n"));
                         break;
                     case "6":
-                        GetAllHabits();
-                        GetAllRecords(GetTable("\n\nWhich habit do you want to edit? Enter the row number.\n\n"));
-                        break;
-                    case "7":
-                        GetAllHabits();
-                        DeleteRecord(GetTable("\n\nWhich habit do you want to edit? Enter the row number.\n\n"));
+                        Console.Clear();
+                        DeleteRecord(GetTable("\n\nEnter the name of the habit you want to delete a record from.\n\n"));
                         break;
                     default:
                         Console.WriteLine("Invalid command");
@@ -116,7 +119,7 @@ MAIN MENU
         /// </summary>
         private static void GetAllHabits()
         {
-            Console.Clear();
+            
             using (var connection = new SqliteConnection(databaseConnection))
             {
                 connection.Open();
@@ -147,15 +150,14 @@ MAIN MENU
 
                 connection.Close();
 
-                Console.WriteLine("-----------------------------------------\n");
+                Console.WriteLine("---------------------------------------------------");
 
                 foreach (var record in records)
                 {
                     Console.WriteLine($"{record}");
                     GetAllRecords(record);
-                    Console.WriteLine("\n");
                 }
-                Console.WriteLine("-----------------------------------------\n");
+                Console.WriteLine("---------------------------------------------------\n");
             }
         }
 
@@ -191,14 +193,14 @@ MAIN MENU
         {
             var date = GetDateInput();
 
-            var quantityOfWater = GetNumberInput("\n\nPlease insert number quantity");
+            var quantity = GetNumberInput("\n\nPlease insert number quantity");
 
             using (var connection = new SqliteConnection(databaseConnection))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText =
-                    $"INSERT INTO {habitName} (date, quantity) VALUES('{date}', '{quantityOfWater}')";
+                    $"INSERT INTO {habitName} (date, quantity) VALUES('{date}', '{quantity}')";
                 tableCmd.ExecuteNonQuery();
                 connection.Close();
             }
@@ -235,7 +237,7 @@ MAIN MENU
 
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText =
-                    $"UPDATE DrinkingWater SET date = '{date}', quantity = {quantity} WHERE Id = {recordId} ";
+                    $"UPDATE {habitName} SET date = '{date}', quantity = {quantity} WHERE Id = {recordId} ";
                 tableCmd.ExecuteNonQuery();
                 Console.WriteLine($"\n\nRecord {recordId} was successfully updated.\n\n");
                 connection.Close();
