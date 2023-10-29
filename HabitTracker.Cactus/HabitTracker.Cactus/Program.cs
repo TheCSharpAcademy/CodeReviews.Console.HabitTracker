@@ -50,7 +50,7 @@ public class HabitTracker
     {
         Console.Clear();
         ShowAllWaterHabitRecords();
-        if (waterHabitsCache == null) return;
+        if (waterHabitsCache == null || waterHabitsCache.Count == 0) return;
         int cnt = waterHabitsCache.Count;
         int id = InputUtils.GetInValidInputId(cnt);
         DateTime date = InputUtils.GetValidInputDate();
@@ -80,7 +80,7 @@ public class HabitTracker
     public static void ShowAllWaterHabitRecords()
     {
         Console.Clear();
-        if (waterHabitsCache == null)
+        if (waterHabitsCache == null || waterHabitsCache.Count == 0)
         {
             Console.WriteLine("There is no water habit record.");
             return;
