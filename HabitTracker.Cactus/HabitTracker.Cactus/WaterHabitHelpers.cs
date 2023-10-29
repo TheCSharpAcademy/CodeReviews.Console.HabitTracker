@@ -23,16 +23,19 @@ public class WaterHabitHelpers
         }
     }
 
-    public static void Insert(WaterHabit habit)
+    public static int Insert(WaterHabit habit)
     {
+        int id = -1;
         using (var connection = new SqliteConnection(CONNECTIONSTR))
         {
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText = $@"INSERT INTO waterHabit(date, quantity) 
                                      VALUES('{habit.Date}', '{habit.Quantity}')";
-            command.ExecuteNonQuery();
+            //command.ExecuteNonQuery();
+            id = Convert.ToInt32(command.ExecuteScalar());
         }
+        return id;
     }
 
     public static List<WaterHabit> SeleteAll()
@@ -55,5 +58,17 @@ public class WaterHabitHelpers
             }
         }
         return waterHabits;
+    }
+
+    public static void Update(WaterHabit habit)
+    {
+        using (var connection = new SqliteConnection(CONNECTIONSTR))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = $@"UPDATE waterHabit SET date='{habit.Date}', quantity='{habit.Quantity}'
+                                        WHERE id='{habit.Id}'";
+            command.ExecuteNonQuery();
+        }
     }
 }
