@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-public class HabitTracker
+﻿public class HabitTracker
 {
     // Store water habit records in the memory to avoid frequent database queries.
     private static List<WaterHabit>? waterHabitsCache;
@@ -13,15 +11,7 @@ public class HabitTracker
 
         while (!endApp)
         {
-            Console.Clear();
-            Console.WriteLine("---------------------------------------------------------");
-            Console.WriteLine("Main Menu");
-            Console.WriteLine("Type 0, exit app.");
-            Console.WriteLine("Type 1, insert a water drinking habit record.");
-            Console.WriteLine("Type 2, show all water drinking habit records.");
-            Console.WriteLine("Type 3, update specific water drinking habit record.");
-            Console.WriteLine("Type 4, delete specific water drinking habit record.");
-            Console.WriteLine("---------------------------------------------------------");
+            PrintMainMenu();
             string? input = Console.ReadLine();
             switch (input)
             {
@@ -48,6 +38,19 @@ public class HabitTracker
             Console.WriteLine("\n");
         }
         return 0;
+    }
+
+    public static void PrintMainMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("---------------------------------------------------------");
+        Console.WriteLine("Main Menu");
+        Console.WriteLine("Type 0, exit app.");
+        Console.WriteLine("Type 1, insert a water drinking habit record.");
+        Console.WriteLine("Type 2, show all water drinking habit records.");
+        Console.WriteLine("Type 3, update specific water drinking habit record.");
+        Console.WriteLine("Type 4, delete specific water drinking habit record.");
+        Console.WriteLine("---------------------------------------------------------");
     }
 
     public static void DeleteSpecificWaterHabitRecord()

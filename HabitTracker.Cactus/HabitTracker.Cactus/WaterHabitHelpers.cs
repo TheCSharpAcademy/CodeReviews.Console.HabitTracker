@@ -1,7 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Globalization;
-using System.Security.Cryptography;
-
 public class WaterHabitHelpers
 {
     private const string CONNECTIONSTR = "Data Source=habit.db";
