@@ -16,9 +16,7 @@ namespace HabbitTracker.vilvee
         private static void GetUserInput()
         {
             Console.Clear();
-            string habitName;
             bool closeApp = false;
-            string message;
             while (closeApp == false)
             {
                 string menu = @"
