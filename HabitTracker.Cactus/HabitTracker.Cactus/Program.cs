@@ -20,6 +20,7 @@ public class HabitTracker
             Console.WriteLine("Type 1, insert a water drinking habit record.");
             Console.WriteLine("Type 2, show all water drinking habit records.");
             Console.WriteLine("Type 3, update specific water drinking habit record.");
+            Console.WriteLine("Type 4, delete specific water drinking habit record.");
             Console.WriteLine("-----------------------------------------");
             string? input = Console.ReadLine();
             switch (input)
@@ -36,6 +37,9 @@ public class HabitTracker
                 case "3":
                     UpdateSpecificWaterHabitRecord();
                     break;
+                case "4":
+                    DeleteSpecificWaterHabitRecord();
+                    break;
                 default:
                     break;
             }
@@ -46,13 +50,26 @@ public class HabitTracker
         return 0;
     }
 
+    public static void DeleteSpecificWaterHabitRecord()
+    {
+        Console.Clear();
+        Console.WriteLine("DELETE MENU");
+        ShowAllWaterHabitRecords();
+        if (waterHabitsCache == null || waterHabitsCache.Count == 0) return;
+        HashSet<int> ids = waterHabitsCache.Select(x => x.Id).ToHashSet<int>();
+        int id = InputUtils.GetInValidInputId(ids);
+        WaterHabitHelpers.Delete(id);
+        waterHabitsCache = WaterHabitHelpers.SeleteAll(); // Update the cache after deleting a record
+    }
+
     public static void UpdateSpecificWaterHabitRecord()
     {
         Console.Clear();
+        Console.WriteLine("UPDATE MENU");
         ShowAllWaterHabitRecords();
         if (waterHabitsCache == null || waterHabitsCache.Count == 0) return;
-        int cnt = waterHabitsCache.Count;
-        int id = InputUtils.GetInValidInputId(cnt);
+        HashSet<int> ids = waterHabitsCache.Select(x => x.Id).ToHashSet<int>();
+        int id = InputUtils.GetInValidInputId(ids);
         DateTime date = InputUtils.GetValidInputDate();
         int quantity = InputUtils.GetValidInputQuantity();
         WaterHabit waterHabit = waterHabitsCache[id - 1];

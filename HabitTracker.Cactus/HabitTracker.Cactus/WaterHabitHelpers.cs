@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
+using System.Security.Cryptography;
 
 public class WaterHabitHelpers
 {
@@ -29,10 +30,11 @@ public class WaterHabitHelpers
         using (var connection = new SqliteConnection(CONNECTIONSTR))
         {
             connection.Open();
+
             var command = connection.CreateCommand();
             command.CommandText = $@"INSERT INTO waterHabit(date, quantity) 
-                                     VALUES('{habit.Date}', '{habit.Quantity}')";
-            //command.ExecuteNonQuery();
+                                     VALUES('{habit.Date}', '{habit.Quantity}');
+                                     SELECT last_insert_rowid();";
             id = Convert.ToInt32(command.ExecuteScalar());
         }
         return id;
@@ -68,6 +70,17 @@ public class WaterHabitHelpers
             var command = connection.CreateCommand();
             command.CommandText = $@"UPDATE waterHabit SET date='{habit.Date}', quantity='{habit.Quantity}'
                                         WHERE id='{habit.Id}'";
+            command.ExecuteNonQuery();
+        }
+    }
+
+    public static void Delete(int id)
+    {
+        using (var connection = new SqliteConnection(CONNECTIONSTR))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = $@"DELETE FROM waterHabit WHERE id='{id}'";
             command.ExecuteNonQuery();
         }
     }
