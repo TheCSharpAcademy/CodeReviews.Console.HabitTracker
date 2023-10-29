@@ -14,14 +14,14 @@ public class HabitTracker
         while (!endApp)
         {
             Console.Clear();
-            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine("---------------------------------------------------------");
             Console.WriteLine("Main Menu");
             Console.WriteLine("Type 0, exit app.");
             Console.WriteLine("Type 1, insert a water drinking habit record.");
             Console.WriteLine("Type 2, show all water drinking habit records.");
             Console.WriteLine("Type 3, update specific water drinking habit record.");
             Console.WriteLine("Type 4, delete specific water drinking habit record.");
-            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine("---------------------------------------------------------");
             string? input = Console.ReadLine();
             switch (input)
             {
@@ -72,7 +72,7 @@ public class HabitTracker
         int id = InputUtils.GetInValidInputId(ids);
         DateTime date = InputUtils.GetValidInputDate();
         int quantity = InputUtils.GetValidInputQuantity();
-        WaterHabit waterHabit = waterHabitsCache[id - 1];
+        WaterHabit waterHabit = waterHabitsCache.Where(habit => habit.Id == id).ToList()[0];
         waterHabit.Date = date;
         waterHabit.Quantity = quantity;
         WaterHabitHelpers.Update(waterHabit);
@@ -81,6 +81,7 @@ public class HabitTracker
     public static void InsertWaterHabitRecord()
     {
         Console.Clear();
+        Console.WriteLine("INSERT MENU");
         DateTime date = InputUtils.GetValidInputDate();
         int quantity = InputUtils.GetValidInputQuantity();
         WaterHabit habit = new();
@@ -102,8 +103,8 @@ public class HabitTracker
             Console.WriteLine("There is no water habit record.");
             return;
         }
-        Console.WriteLine("========================================");
+        Console.WriteLine("======================Habit Records======================");
         waterHabitsCache.ForEach(waterHab => Console.WriteLine($"{waterHab.Id}: {waterHab.Date.ToString("dd-MM-yyyy")} {waterHab.Quantity}"));
-        Console.WriteLine("========================================");
+        Console.WriteLine("=========================================================");
     }
 }
