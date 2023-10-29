@@ -65,11 +65,11 @@ MAIN MENU
                         break;
                     case "4":
                         Console.Clear();
-                        InsertRecord(GetTable("\n\nEnter the name of the habit you want to insert a record into?.\n\n"));
+                        InsertRecord(GetTable("\n\nEnter the name of the habit you want to insert a record into?\n\n"));
                         break;
                     case "5":
                         Console.Clear();
-                        UpdateRecord(GetTable("\n\nEnter the name of the habit you want to update?.\n\n"));
+                        UpdateRecord(GetTable("\n\nEnter the name of the habit you want to update?\n\n"));
                         break;
                     case "6":
                         Console.Clear();
@@ -166,24 +166,28 @@ MAIN MENU
         /// </summary>
         private static void DeleteHabit()
         {
-            Console.Clear();
 
             var message = "\n\nWhich habit do you want to delete? Enter the row number.\n\n";
+
             var habitName = GetTable(message);
 
-            using (var connection = new SqliteConnection(databaseConnection))
+            if (habitName != null)
             {
-                connection.Open();
+                using (var connection = new SqliteConnection(databaseConnection))
+                {
+                    connection.Open();
 
-                //create habit
-                var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"DROP TABLE IF EXISTS {habitName}";
-                tableCmd.ExecuteNonQuery();
-                connection.Close();
+                    //create habit
+                    var tableCmd = connection.CreateCommand();
+                    tableCmd.CommandText = $"DROP TABLE IF EXISTS {habitName}";
+                    tableCmd.ExecuteNonQuery();
+                    connection.Close();
 
-                Console.WriteLine($"Habit {habitName} deleted");
-                Console.ReadKey();
+                    Console.WriteLine($"Habit {habitName} deleted");
+                    Console.ReadKey();
+                }
             }
+
         }
 
         /// <summary>
@@ -191,18 +195,21 @@ MAIN MENU
         /// </summary>
         private static void InsertRecord(string habitName)
         {
-            var date = GetDateInput();
-
-            var quantity = GetNumberInput("\n\nPlease insert number quantity");
-
-            using (var connection = new SqliteConnection(databaseConnection))
+            if(habitName != null)
             {
-                connection.Open();
-                var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText =
-                    $"INSERT INTO {habitName} (date, quantity) VALUES('{date}', '{quantity}')";
-                tableCmd.ExecuteNonQuery();
-                connection.Close();
+                var date = GetDateInput();
+
+                var quantity = GetNumberInput("\n\nPlease insert number quantity");
+
+                using (var connection = new SqliteConnection(databaseConnection))
+                {
+                    connection.Open();
+                    var tableCmd = connection.CreateCommand();
+                    tableCmd.CommandText =
+                        $"INSERT INTO {habitName} (date, quantity) VALUES('{date}', '{quantity}')";
+                    tableCmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -211,7 +218,7 @@ MAIN MENU
         /// </summary>
         private static void UpdateRecord(string habitName)
         {
-            Console.Clear();
+
             GetAllRecords(habitName);
             var recordId = GetNumberInput("\n\nWhich row do you want to update? Enter the row number.\n\n");
 
@@ -303,28 +310,32 @@ MAIN MENU
         /// </summary>
         private static void DeleteRecord(string habitName)
         {
-            Console.Clear();
-            GetAllRecords(habitName);
-            var recordId = GetNumberInput("\n\nWhich row do you want to delete? Enter the row number.\n\n");
 
-            using (var connection = new SqliteConnection(databaseConnection))
+            GetAllHabits();
+
+            if(habitName != null)
             {
-                connection.Open();
-                var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"DELETE FROM {habitName} WHERE Id = '{recordId}'";
-                var rowCount = tableCmd.ExecuteNonQuery();
+                var recordId = GetNumberInput("\n\nWhich row do you want to delete? Enter the row number.\n\n");
 
-                if (rowCount == 0)
+                using (var connection = new SqliteConnection(databaseConnection))
                 {
-                    Console.WriteLine($"\n\nRecord with Id {recordId} does not exist.\n\n");
-                    DeleteRecord(habitName);
+                    connection.Open();
+                    var tableCmd = connection.CreateCommand();
+                    tableCmd.CommandText = $"DELETE FROM {habitName} WHERE Id = '{recordId}'";
+                    var rowCount = tableCmd.ExecuteNonQuery();
+
+                    if (rowCount == 0)
+                    {
+                        Console.WriteLine($"\n\nRecord with Id {recordId} does not exist.\n\n");
+                        DeleteRecord(habitName);
+                    }
+
+                    Console.WriteLine($"\n\nRecord {recordId} was deleted.\n\n");
+                    connection.Close();
                 }
 
-                Console.WriteLine($"\n\nRecord {recordId} was deleted.\n\n");
-                connection.Close();
+                GetUserInput();
             }
-
-            GetUserInput();
         }
 
         internal static string GetDateInput()
@@ -333,8 +344,7 @@ MAIN MENU
             var dateInput = Console.ReadLine();
             if (dateInput == "0") GetUserInput();
 
-            while (!DateTime.TryParseExact(dateInput, "dd-mm-yyyy", new CultureInfo("en-US"), DateTimeStyles.None,
-                       out _))
+            while (!DateTime.TryParseExact(dateInput, "dd-mm-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
                 Console.WriteLine("\n\nInvalid format. (dd-mm-yyyy)");
                 dateInput = Console.ReadLine();
@@ -355,32 +365,38 @@ MAIN MENU
         internal static string GetTable(string message)
         {
             GetAllHabits();
-
+           
             Console.WriteLine(message);
-
             var habitName = Console.ReadLine();
-
-            using (var connection = new SqliteConnection(databaseConnection))
+            try
             {
-                connection.Open();
-
-                //check if record exists
-                var checkCmd = connection.CreateCommand();
-                checkCmd.CommandText =
-                    $"SELECT EXISTS(SELECT * FROM {habitName})";
-                var checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-                if (checkQuery == 0)
+                using (var connection = new SqliteConnection(databaseConnection))
                 {
-                    Console.WriteLine($"\n\nHabit {habitName} does not exist.\n\n");
+                    connection.Open();
+
+                    //check if record exists
+                    var checkCmd = connection.CreateCommand();
+                    checkCmd.CommandText =
+                        $"SELECT EXISTS(SELECT * FROM {habitName})";
+                    var checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                    if (checkQuery == 0)
+                    {
+                        Console.WriteLine($"\n\nThis habit does not exist\n\n");
+                        connection.Close();
+                    }
+
                     connection.Close();
-                    GetTable(message);
                 }
-
-                connection.Close();
-
-                return habitName;
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("This habit does not exist");
+                return null;
+            }
+
+            return habitName;
+            
         }
 
     }
