@@ -79,7 +79,7 @@ namespace HabitTracker.SamGannon
 
         }
 
-        void UpdateRecord()
+        public void UpdateRecord()
         {
 
             GetAllRecords();
@@ -115,7 +115,7 @@ namespace HabitTracker.SamGannon
             }
         }
 
-        void DeleteRecord()
+        public void DeleteRecord()
         {
             Console.Clear();
             GetAllRecords();
