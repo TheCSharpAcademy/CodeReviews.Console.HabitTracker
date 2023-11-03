@@ -1,9 +1,7 @@
 ﻿using HabitTracker.SamGannon;
 using Microsoft.Data.Sqlite;
-using System.Globalization;
 
 string connectionString = @"Data Source=habit-Tracker.db";
-Helpers helper;
 
 using (var connection = new SqliteConnection(connectionString))
 {

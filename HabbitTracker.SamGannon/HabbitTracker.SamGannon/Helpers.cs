@@ -29,17 +29,17 @@ namespace HabitTracker.SamGannon
         {
             Console.WriteLine("PLease enter the date: (Format: dd-mm-yy). Type 0 to return to main menu.\n\n");
 
-            string dateINput = Console.ReadLine();
+            string dateInput = Console.ReadLine();
 
-            if (dateINput == "0") menu.GetUserInput();
+            if (dateInput == "0") menu.GetUserInput();
 
-            while (!DateTime.TryParseExact(dateINput, "dd-mm-yy", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
+            while (!DateTime.TryParseExact(dateInput, "dd-mm-yy", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
             {
                 Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main menu or try again:\n\n");
-                dateINput = Console.ReadLine();
+                dateInput = Console.ReadLine();
             }
 
-            return dateINput;
+            return dateInput;
 
         }
     }
