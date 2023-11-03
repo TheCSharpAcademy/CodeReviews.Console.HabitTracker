@@ -15,6 +15,8 @@ namespace HabitTracker.SamGannon
         public DataAccess(string connectionString)
         {
             this.connectionString = connectionString;
+            this.helper = new Helpers();
+            this.menu = new Menu();
         }
 
         public void GetAllRecords()
@@ -55,6 +57,9 @@ namespace HabitTracker.SamGannon
                 Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MMM-yyyy")} - Quantity: {dw.Quantity}");
             }
             Console.WriteLine("---------------------------------------\n");
+
+            Console.WriteLine("Press any key and enter to continue.");
+            Console.ReadLine();
         }
 
         public void InsertRecord()
@@ -79,10 +84,9 @@ namespace HabitTracker.SamGannon
 
         public void UpdateRecord()
         {
-
             GetAllRecords();
 
-            var recordId = helper.GetNumberInput("\n\nPlease type the Id of the record you want to delete or press 1 to go to the Main Menu");
+            var recordId = helper.GetNumberInput("\n\nPlease type the Id of the record you want to delete or press 0 to go to the Main Menu");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -118,7 +122,7 @@ namespace HabitTracker.SamGannon
             Console.Clear();
             GetAllRecords();
 
-            var recordId = helper.GetNumberInput("\n\nPlease type the Id of the record you want to delete or press 1 to go to the Main Menu");
+            var recordId = helper.GetNumberInput("\n\nPlease type the Id of the record you want to delete or press 0 to go to the Main Menu");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -130,7 +134,8 @@ namespace HabitTracker.SamGannon
 
                 if (rowCount == 0)
                 {
-                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. \n\n");
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. Press a key to continue \n\n");
+                    Console.ReadLine();
                     DeleteRecord();
                 }
 
@@ -178,6 +183,9 @@ namespace HabitTracker.SamGannon
                 Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MMM-yyyy")} - Quantity: {dw.Quantity}");
             }
             Console.WriteLine("---------------------------------------\n");
+
+            Console.WriteLine("Press any key and enter to continue.");
+            Console.ReadLine();
         }
     }
 }

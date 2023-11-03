@@ -16,6 +16,7 @@ namespace HabitTracker.SamGannon
             bool closeApp = false;
             while (closeApp == false)
             {
+                Console.Clear();
                 Console.WriteLine("\n\nMAIN MENU");
                 Console.WriteLine("\nWhat would you like to do?");
                 Console.WriteLine("\nType 0 to close the application");
@@ -36,6 +37,7 @@ namespace HabitTracker.SamGannon
                         Environment.Exit(0);
                         break;
                     case "1":
+                        Console.Clear();
                         dataFunctions.GetAllRecords();
                         break;
                     case "2":
