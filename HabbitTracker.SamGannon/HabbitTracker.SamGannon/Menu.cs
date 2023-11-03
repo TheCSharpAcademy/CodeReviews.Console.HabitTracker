@@ -26,7 +26,7 @@ namespace HabitTracker.SamGannon
                 Console.WriteLine("Type 2 to Insert Record");
                 Console.WriteLine("Type 3 to Delete Record");
                 Console.WriteLine("Type 4 to Update Record");
-                Console.WriteLine("---------------------------------------\n");
+                Console.WriteLine("---------------------------------------");
                 Console.WriteLine("Type R to View Reports");
 
                 string commandInput = Console.ReadLine().ToUpper();
@@ -45,10 +45,10 @@ namespace HabitTracker.SamGannon
                         dataFunctions.InsertRecord();
                         break;
                     case "3":
-                        //DeleteRecord();
+                        dataFunctions.DeleteRecord();
                         break;
                     case "4":
-                        //UpdateRecord();
+                        dataFunctions.UpdateRecord();
                         break;
                     case "R":
                         ReportsMenu();
