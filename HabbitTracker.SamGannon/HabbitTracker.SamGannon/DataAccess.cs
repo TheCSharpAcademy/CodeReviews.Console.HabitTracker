@@ -34,15 +34,20 @@ namespace HabitTracker.SamGannon
                     if (reader.HasRows)
                     {
                         while (reader.Read())
-                        {
-                            tableData.Add(
+                            try
+                            {
+                                tableData.Add(
                                 new DrinkingWater
                                 {
                                     Id = reader.GetInt32(0),
                                     Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                                     Quantity = reader.GetInt32(2),
                                 });
-                        }
+                            }
+                            catch (FormatException ex)
+                            {
+                                Console.WriteLine($"Error parsing date: {ex.Message}. Skipping this record.");
+                            }
                     }
                     else
                     {
