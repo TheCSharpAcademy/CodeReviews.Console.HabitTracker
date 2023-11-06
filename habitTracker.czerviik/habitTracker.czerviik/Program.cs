@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
 
+List<string> habitList;
+
 string connectionString = @"Data Source=habit-Tracker.db";
 using (var connection = new SqliteConnection(connectionString))
 {
@@ -33,6 +35,7 @@ void GetUserInput()
         Console.WriteLine("Type 2 to Insert Record.");
         Console.WriteLine("Type 3 to Delete Record.");
         Console.WriteLine("Type 4 to Update Record");
+        Console.WriteLine("Type 5 to Add new habit.");
         Console.WriteLine("_____________________________________________\n");
 
         string command = Console.ReadLine();
@@ -55,65 +58,78 @@ void GetUserInput()
             case "4":
                 Update();
                 break;
-            default:
-                Console.WriteLine("Please enter a number 0-4.");
+            case "5":
+                AddHabit();
                 break;
-
-
+            default:
+                Console.WriteLine("Please enter a number 0-5.");
+                break;
         }
     }
 }
 void GetAllRecords()
 {
     Console.Clear();
+    string habitName = ChooseHabit();
+    string columnName = GetColumnName(habitName);
+    List<Habit> tableData = new();
+
+
     using (var connection = new SqliteConnection(connectionString))
     {
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"SELECT * FROM drinking_water";
+        tableCmd.CommandText = $"SELECT * FROM {habitName}";
 
-        List<DrinkingWater> tableData = new();
-        SqliteDataReader reader = tableCmd.ExecuteReader();
-        if(reader.HasRows)
+        using (var reader = tableCmd.ExecuteReader())
         {
-            while (reader.Read())
+            if (reader.HasRows)
             {
-                tableData.Add(
-                    new DrinkingWater
-                    {
-                        Id = reader.GetInt32(0),
-                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                        Quantity = reader.GetInt32(2)
-                    }); 
+                while (reader.Read())
+                {
+                    tableData.Add(
+                        new Habit
+                        {
+                            Id = reader.GetInt32(0),
+                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", CultureInfo.InvariantCulture),
+                            Quantity = reader.IsDBNull(2) ? 0 : reader.GetInt32(2)
+                        });
+                }
+            }
+            else
+            {
+                Console.WriteLine("No records found. Press any key to return to the Main menu.");
+                Console.ReadKey();
+                GetUserInput();
             }
         }
-        else
-        {
-            Console.WriteLine("No rows found");
-        }
 
-        connection.Close();
-
-        Console.WriteLine("---------------------------------------------------\n");
-        foreach (var drinkingWater in tableData) 
-        {
-            Console.WriteLine($"{drinkingWater.Id} - {drinkingWater.Date.ToString("dd-MMM-yyyy")} - Quantity: {drinkingWater.Quantity}");
-        }
-        Console.WriteLine("---------------------------------------------------\n");
     }
 
+    Console.WriteLine("---------------------------------------------------\n");
+    Console.WriteLine($"Records in {habitName} table:\n\n");
+    
+    foreach (var habit in tableData) 
+    {
+        Console.WriteLine($"{habit.Id} - {habit.Date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture)} - {columnName}: {habit.Quantity}");
+    }
+    Console.WriteLine("---------------------------------------------------\n");
 }
+
+
 
 void Insert()
 {
+    string habitName = ChooseHabit();
     string date = GetDateInput();
-    int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+    string columnName = GetColumnName(habitName);
+    int quantity = GetNumberInput($"\n\nPlease insert number of {columnName} for {habitName}. (no decimals allowed):\n\n");
 
     using (var connection = new SqliteConnection(connectionString))
     {
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"INSERT INTO drinking_water(date, Quantity) VALUES('{date}',{quantity})";
+        tableCmd.CommandText = $"INSERT INTO {habitName}(date, {columnName}) VALUES('{date}',{quantity})";
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
@@ -181,7 +197,7 @@ void Update()
 
     var recordId = GetNumberInput("\n\nPlease type Id of the record you would like to update. Type 0 to return to Main Menu.\n\n");
 
-    using(var connection = new SqliteConnection(connectionString))
+    using (var connection = new SqliteConnection(connectionString))
     {
         connection.Open();
 
@@ -207,10 +223,111 @@ void Update()
         connection.Close();
     }
 }
-
-public class DrinkingWater
+void AddHabit()
 {
+    Console.Clear();
+        
+    Console.WriteLine("\n\nEnter the new habit's name:");
+    string habitName = Console.ReadLine();
+    string habitNameEdited = habitName.Replace(' ', '_').ToLower();
+        
+    Console.WriteLine("\n\nEnter the unit of measurement (f.e. kilometres, liters, quantity,...):");
+    string habitUnit = Console.ReadLine();
+
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText =
+            @$"CREATE TABLE IF NOT EXISTS {habitNameEdited} (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Date TEXT,
+        {habitUnit} INTEGER
+        )";
+
+        tableCmd.ExecuteNonQuery();
+
+        connection.Close();
+    }
+}
+
+void GetHabitsList()
+{
+    habitList = new();
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'";
+
+        using (var reader = tableCmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                var habitName = reader.GetString(0);
+                habitList.Add(habitName);
+            }
+        }
+    }
+
+    if (habitList.Count > 0)
+    {
+        for (int i = 1; i <= habitList.Count; i++)
+        {
+            Console.WriteLine($"{i} - {habitList[i - 1]}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("There are no habits yet.");
+        GetUserInput();
+    }
+}
+
+string ChooseHabit()
+{
+    string result = "";
+    Console.WriteLine("\n\nChoose a habit number from the list:\n");
+    GetHabitsList();
+
+    string userInput = Console.ReadLine();
+    if(int.TryParse(userInput, out int userNumber)&& userNumber > 0)
+    {
+        result = habitList[userNumber-1];
+    }
+    else 
+    {
+        Console.WriteLine("You entered a wrong value.");
+        ChooseHabit();
+    }
+    return result;
+}
+
+string GetColumnName(string habitName)
+{
+    string columnName = "";
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+
+        using (var columnCmd = connection.CreateCommand())
+        {
+            columnCmd.CommandText = $"SELECT name FROM (SELECT * FROM pragma_table_info('{habitName}') LIMIT 1 OFFSET 2);";
+            columnName = (string)columnCmd.ExecuteScalar();
+        }
+    }
+    return columnName;
+}
+public class Habit
+{
+    public Habit()
+    {
+        EntriesCount++;
+    }
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public int Quantity { get; set; }
+    public static int EntriesCount { get; private set; }
 }
