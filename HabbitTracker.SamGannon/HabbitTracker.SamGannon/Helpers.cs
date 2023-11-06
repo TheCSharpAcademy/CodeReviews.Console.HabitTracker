@@ -33,9 +33,9 @@ namespace HabitTracker.SamGannon
 
             if (dateInput == "0") menu.GetUserInput();
 
-            while (!DateTime.TryParseExact(dateInput, "dd-mm-yy", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
+            while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
-                Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main menu or try again:\n\n");
+                Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). PLease try again\n\n");
                 dateInput = Console.ReadLine();
             }
 

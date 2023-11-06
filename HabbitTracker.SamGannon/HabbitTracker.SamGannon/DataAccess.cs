@@ -165,7 +165,7 @@ namespace HabitTracker.SamGannon
                                 new DrinkingWater
                                 {
                                     Id = reader.GetInt32(0),
-                                    Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                                    Date = DateTime.ParseExact(reader.GetString(1), "dd-MMM-yy", new CultureInfo("en-US")),
                                     Quantity = reader.GetInt32(2),
                                 });
                         }
