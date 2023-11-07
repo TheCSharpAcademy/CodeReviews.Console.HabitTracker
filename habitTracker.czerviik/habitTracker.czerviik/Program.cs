@@ -2,6 +2,7 @@
 using System.Globalization;
 
 List<string> habitList;
+string habitName = "";
 
 string connectionString = @"Data Source=habit-Tracker.db";
 using (var connection = new SqliteConnection(connectionString))
@@ -48,11 +49,14 @@ void GetUserInput()
                 break;
             case "1":
                 GetAllRecords();
+                Console.WriteLine("\nPress any key to return to Main menu...");
+                Console.ReadKey();
                  break;
             case "2":
                 Insert();
                 break;
             case "3":
+                
                 Delete();
                 break;
             case "4":
@@ -62,7 +66,9 @@ void GetUserInput()
                 AddHabit();
                 break;
             default:
-                Console.WriteLine("Please enter a number 0-5.");
+                Console.WriteLine("\nPlease enter a number 0-5. Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
                 break;
         }
     }
@@ -120,7 +126,7 @@ void GetAllRecords()
 
 void Insert()
 {
-    string habitName = ChooseHabit();
+    habitName = ChooseHabit();
     string date = GetDateInput();
     string columnName = GetColumnName(habitName);
     int quantity = GetNumberInput($"\n\nPlease insert number of {columnName} for {habitName}. (no decimals allowed):\n\n");
@@ -133,6 +139,9 @@ void Insert()
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
+
+    Console.WriteLine("Record added succesfully. Press any key to continue...");
+    Console.ReadKey();
 }
 
 string GetDateInput()
@@ -143,7 +152,7 @@ string GetDateInput()
 
     while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
     {
-        Console.WriteLine("You entered a wrong date format!");
+        Console.WriteLine("You entered a wrong date format!\nTry again:");
         dateInput = Console.ReadLine();
     }
     return dateInput;
@@ -167,57 +176,71 @@ int GetNumberInput(string message)
 
 void Delete()
 {
-    Console.Clear();
-    GetAllRecords();
-    var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to Main Menu");
-    
-    using (var connection = new SqliteConnection(connectionString))
-    {
-        connection.Open();
-        var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"DELETE FROM drinking_water WHERE Id = {recordId}";
-        int rowCount = tableCmd.ExecuteNonQuery();
-        
-        if(rowCount == 0)
-        {
-            Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
-            Delete();
-        }
+    int rowCount;
+    int recordId;
 
-        Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
-        GetUserInput();
-        connection.Close();
-    }
+    GetAllRecords();
+
+    do
+    {
+        recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to Main Menu\n");
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = $"DELETE FROM {habitName} WHERE Id = {recordId}";
+            rowCount = tableCmd.ExecuteNonQuery();
+            connection.Close();
+        }
+        
+        if (rowCount == 0)
+        {
+            Console.WriteLine($"Record with Id {recordId} doesn't exist.");
+        }
+    } while (rowCount == 0);
+
+    Console.WriteLine($"\nRecord with Id {recordId} was deleted. \n\n");
+
+    GetUserInput();
 }
 
 void Update()
 {
     Console.Clear();
+    int recordId;
+    bool inputIsValid = false;
     GetAllRecords();
+    string columnName = GetColumnName(habitName);
 
-    var recordId = GetNumberInput("\n\nPlease type Id of the record you would like to update. Type 0 to return to Main Menu.\n\n");
 
     using (var connection = new SqliteConnection(connectionString))
     {
-        connection.Open();
-
-        var checkCmd = connection.CreateCommand();
-        checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
-        int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-        if (checkQuery == 0)
+        do
         {
-            Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\nPress any key to continue...\n\n");
-            connection.Close();
-            Console.ReadKey();
-            Update();
-        }
+            recordId = GetNumberInput("\nPlease type Id of the record you would like to update. Type 0 to return to Main Menu.\n");
+
+            connection.Open();
+
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM {habitName} WHERE Id = {recordId})";
+            long checkQuery = (long)checkCmd.ExecuteScalar();
+
+            if (checkQuery == 0)
+            {
+                connection.Close();
+                Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else inputIsValid = true;
+        } while (!inputIsValid);
+        
 
         string date = GetDateInput();
-        int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+        int quantity = GetNumberInput($"\n\nPlease insert number of {columnName} for {habitName}. (no decimals allowed):\n\n");
 
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+        tableCmd.CommandText = $"UPDATE {habitName} SET date = '{date}', {columnName} = {quantity} WHERE Id = {recordId}";
         tableCmd.ExecuteNonQuery();
 
         connection.Close();
@@ -228,10 +251,10 @@ void AddHabit()
     Console.Clear();
         
     Console.WriteLine("\n\nEnter the new habit's name:");
-    string habitName = Console.ReadLine();
+    habitName = Console.ReadLine();
     string habitNameEdited = habitName.Replace(' ', '_').ToLower();
         
-    Console.WriteLine("\n\nEnter the unit of measurement (f.e. kilometres, liters, quantity,...):");
+    Console.WriteLine("\n\nEnter the unit of measurement (f.e. kilometers, liters, quantity,...):");
     string habitUnit = Console.ReadLine();
 
     using (var connection = new SqliteConnection(connectionString))
@@ -255,6 +278,8 @@ void AddHabit()
 void GetHabitsList()
 {
     habitList = new();
+    List<long>entriesCountList = new();
+
     using (var connection = new SqliteConnection(connectionString))
     {
         connection.Open();
@@ -266,17 +291,25 @@ void GetHabitsList()
         {
             while (reader.Read())
             {
-                var habitName = reader.GetString(0);
+                habitName = reader.GetString(0);
                 habitList.Add(habitName);
             }
         }
-    }
 
+        foreach (var habit in habitList)
+        {
+            var countCmd = connection.CreateCommand();
+            countCmd.CommandText = $"SELECT COUNT (*) FROM [{habit}]";
+            long count = (long)countCmd.ExecuteScalar();
+            entriesCountList.Add(count);
+        }
+    }
+    
     if (habitList.Count > 0)
     {
         for (int i = 1; i <= habitList.Count; i++)
         {
-            Console.WriteLine($"{i} - {habitList[i - 1]}");
+            Console.WriteLine($"{i} - {habitList[i - 1]} - records: {entriesCountList[i-1]}");
         }
     }
     else
@@ -288,23 +321,34 @@ void GetHabitsList()
 
 string ChooseHabit()
 {
+    
     string result = "";
-    Console.WriteLine("\n\nChoose a habit number from the list:\n");
-    GetHabitsList();
+    bool inputIsValid = false;
+    do
+    {
+        Console.Clear();
+        Console.WriteLine("\n\nChoose a habit number from the list:\nType 0 to return to Main menu.\n");
+        GetHabitsList();
 
-    string userInput = Console.ReadLine();
-    if(int.TryParse(userInput, out int userNumber)&& userNumber > 0)
-    {
-        result = habitList[userNumber-1];
-    }
-    else 
-    {
-        Console.WriteLine("You entered a wrong value.");
-        ChooseHabit();
-    }
+        string userInput = Console.ReadLine();
+        if (int.TryParse(userInput, out int userNumber) && userNumber > 0 && userNumber <= habitList.Count)
+        {
+            result = habitList[userNumber - 1];
+            inputIsValid = true;
+        }
+        else if (userInput == "0")
+        {
+            GetUserInput();
+        }
+        else
+        {
+            Console.WriteLine("You entered a wrong value. Press any key to continue...");
+            Console.ReadKey();
+        }
+    } while (!inputIsValid);
+    
     return result;
 }
-
 string GetColumnName(string habitName)
 {
     string columnName = "";
@@ -322,12 +366,7 @@ string GetColumnName(string habitName)
 }
 public class Habit
 {
-    public Habit()
-    {
-        EntriesCount++;
-    }
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public int Quantity { get; set; }
-    public static int EntriesCount { get; private set; }
 }
