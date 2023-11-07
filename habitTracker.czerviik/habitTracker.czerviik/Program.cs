@@ -14,7 +14,7 @@ using (var connection = new SqliteConnection(connectionString))
         @"CREATE TABLE IF NOT EXISTS drinking_water (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Date TEXT,
-            Quantity INTEGER
+            liters INTEGER
             )";
 
     tableCmd.ExecuteNonQuery();
@@ -23,6 +23,7 @@ using (var connection = new SqliteConnection(connectionString))
 }
 
 GetUserInput();
+
 void GetUserInput()
 {
     Console.Clear();
@@ -37,6 +38,7 @@ void GetUserInput()
         Console.WriteLine("Type 3 to Delete Record.");
         Console.WriteLine("Type 4 to Update Record");
         Console.WriteLine("Type 5 to Add new habit.");
+        Console.WriteLine("Type 6 to Ask specific questions.");
         Console.WriteLine("_____________________________________________\n");
 
         string command = Console.ReadLine();
@@ -56,7 +58,6 @@ void GetUserInput()
                 Insert();
                 break;
             case "3":
-                
                 Delete();
                 break;
             case "4":
@@ -64,6 +65,9 @@ void GetUserInput()
                 break;
             case "5":
                 AddHabit();
+                break;
+            case "6":
+                QuestionMenu();
                 break;
             default:
                 Console.WriteLine("\nPlease enter a number 0-5. Press any key to continue...");
@@ -76,7 +80,7 @@ void GetUserInput()
 void GetAllRecords()
 {
     Console.Clear();
-    string habitName = ChooseHabit();
+    string habitName = ChooseHabit("\nChoose a habit number from the list:\nType 0 to return to Main menu.\n");
     string columnName = GetColumnName(habitName);
     List<Habit> tableData = new();
 
@@ -97,7 +101,7 @@ void GetAllRecords()
                         new Habit
                         {
                             Id = reader.GetInt32(0),
-                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", CultureInfo.InvariantCulture),
+                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", CultureInfo.InvariantCulture),
                             Quantity = reader.IsDBNull(2) ? 0 : reader.GetInt32(2)
                         });
                 }
@@ -109,7 +113,6 @@ void GetAllRecords()
                 GetUserInput();
             }
         }
-
     }
 
     Console.WriteLine("---------------------------------------------------\n");
@@ -126,7 +129,7 @@ void GetAllRecords()
 
 void Insert()
 {
-    habitName = ChooseHabit();
+    habitName = ChooseHabit("\nChoose a habit number from the list:\nType 0 to return to Main menu.\n");
     string date = GetDateInput();
     string columnName = GetColumnName(habitName);
     int quantity = GetNumberInput($"\n\nPlease insert number of {columnName} for {habitName}. (no decimals allowed):\n\n");
@@ -146,11 +149,11 @@ void Insert()
 
 string GetDateInput()
 {
-    Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to Main Menu.");
+    Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yyyy). Type 0 to return to Main Menu.");
     string dateInput = Console.ReadLine();
     if (dateInput == "0") GetUserInput();
 
-    while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+    while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
     {
         Console.WriteLine("You entered a wrong date format!\nTry again:");
         dateInput = Console.ReadLine();
@@ -319,7 +322,7 @@ void GetHabitsList()
     }
 }
 
-string ChooseHabit()
+string ChooseHabit(string message)
 {
     
     string result = "";
@@ -327,7 +330,7 @@ string ChooseHabit()
     do
     {
         Console.Clear();
-        Console.WriteLine("\n\nChoose a habit number from the list:\nType 0 to return to Main menu.\n");
+        Console.WriteLine(message);
         GetHabitsList();
 
         string userInput = Console.ReadLine();
@@ -363,6 +366,58 @@ string GetColumnName(string habitName)
         }
     }
     return columnName;
+}
+void QuestionMenu()
+{
+    Console.Clear();
+
+    habitName = ChooseHabit("\n\nQUESTION MENU\nChoose a habit number from the list:\nType 0 to return to Main menu.\n");
+    string columnName = GetColumnName(habitName);
+    Console.Clear();
+    Console.WriteLine($"\n\nQUESTION MENU for {habitName}");
+    Console.WriteLine("\nWhat would you like to ask?");
+    Console.WriteLine("\nType 0 to return to Main menu.");
+    Console.WriteLine($"Type 1 to get Sum of all {columnName} in a specific year.");
+    Console.WriteLine("_____________________________________________\n");
+
+    string command = Console.ReadLine();
+
+    switch (command)
+    {
+        case "0":
+            GetUserInput();
+            break;
+        case "1":
+            AskQuantity(columnName); 
+            break;
+        default:
+            Console.WriteLine("\nPlease enter a number 0-3. Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+            break;
+    }
+}
+
+void AskQuantity(string columnName)
+{
+    int year = GetNumberInput("\nEnter the year you want to show:");
+
+    using(var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var sumCmd = connection.CreateCommand();
+        sumCmd.CommandText = $"SELECT SUM({columnName}) FROM {habitName} WHERE Date LIKE '%{year}'";
+        var result = sumCmd.ExecuteScalar();
+        if (result != DBNull.Value)
+        {
+            long sum = (long)result;
+            Console.WriteLine($"The sum of {columnName} in the year {year} is {sum}.");
+        }
+        else Console.WriteLine("The sum cannot be calculated. Press any key to continue...");
+
+        Console.ReadKey();
+
+    }
 }
 public class Habit
 {
