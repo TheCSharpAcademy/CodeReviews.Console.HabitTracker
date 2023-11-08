@@ -205,9 +205,8 @@ void Delete()
         }
     } while (rowCount == 0);
 
-    Console.WriteLine($"\nRecord with Id {recordId} was deleted. \n\n");
-
-    GetUserInput();
+    Console.WriteLine($"Record with Id {recordId} was deleted. Press any key to continue...");
+    Console.ReadKey();
 }
 
 void Update()
@@ -220,11 +219,10 @@ void Update()
 
     using (var connection = new SqliteConnection(connectionString))
     {
+        connection.Open();
         do
         {
             recordId = GetNumberInput("\nPlease type Id of the record you would like to update. Type 0 to return to Main Menu.\n", MenuTypes.MainMenu);
-
-            connection.Open();
 
             var checkCmd = connection.CreateCommand();
             checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM {habitName} WHERE Id = {recordId})";
@@ -246,9 +244,10 @@ void Update()
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = $"UPDATE {habitName} SET date = '{date}', {columnName} = {quantity} WHERE Id = {recordId}";
         tableCmd.ExecuteNonQuery();
-
         connection.Close();
     }
+    Console.WriteLine($"Record with Id {recordId} was updated. Press any key to continue...");
+    Console.ReadKey();
 }
 void AddHabit()
 {
