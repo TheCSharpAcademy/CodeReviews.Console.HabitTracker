@@ -28,24 +28,18 @@ public class ChangeMeasurementUnit
         }
         else
         {
-            // ALTER name
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var insertCommand = connection.CreateCommand();
 
                 insertCommand.CommandText = $"ALTER TABLE drinking_water RENAME COLUMN {oldColName} TO {newColName}";
-
-                // Don't return any values, not querying any values
                 insertCommand.ExecuteNonQuery();
 
                 connection.Close();
             }
-
             System.Console.WriteLine("Column name changed");
             printTable.DisplayRecs();
         }
-
-        
     }
 }

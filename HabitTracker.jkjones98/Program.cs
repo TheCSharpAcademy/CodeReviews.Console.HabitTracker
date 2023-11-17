@@ -7,7 +7,6 @@ class Program
 {    static void Main(string[] args)
     {
         string connectionString = @"Data Source=habit-Tracker2.db";
-
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -22,19 +21,10 @@ class Program
 
                 )
                 ";
-
-            // Don't return any values, not querying any values
-            
             tableCommand.ExecuteNonQuery();
-
             connection.Close();
-
         }
-
         ClassUserInput getInput = new ClassUserInput();
         getInput.GetUserInput();
-
     }
-
-    
 }

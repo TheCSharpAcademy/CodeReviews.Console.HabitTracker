@@ -1,5 +1,4 @@
 using Microsoft.Data.Sqlite;
-using ColumnName;
 using HabitTracker.SelectReport;
 
 namespace HabitTracker.DisplayReports;
@@ -15,7 +14,6 @@ public class DisplaySQLiteReports
         {
             connection.Open();
             var command = connection.CreateCommand();
-
             command.CommandText = operation;
 
             List<RunningReports> runningQueryTable = new();
@@ -47,7 +45,6 @@ public class DisplaySQLiteReports
             }
             Console.WriteLine("------------------------------------\n");
         }
-
         reportMenu.ReportOptions();
     }
 }

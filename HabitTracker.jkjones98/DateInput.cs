@@ -9,9 +9,7 @@ public class UserDateInput
     internal string GetDate(string message)
     {
         Console.WriteLine(message);
-
         string dateInput = Console.ReadLine();
-
         if(dateInput == "0") rtnToMainMenu.GetUserInput();
 
         while(!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
@@ -20,8 +18,6 @@ public class UserDateInput
             dateInput = Console.ReadLine();
             if(dateInput == "0") rtnToMainMenu.GetUserInput();
         }
-        
-
         return dateInput;
     }
 }

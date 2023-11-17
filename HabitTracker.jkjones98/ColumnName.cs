@@ -15,14 +15,10 @@ public class GetColumnName
             var tableCommand = connection.CreateCommand();
 
             tableCommand.CommandText = "SELECT * FROM drinking_water";
-
-            // Create sqlitedatareader
             SqliteDataReader reader = tableCommand.ExecuteReader();
 
-            // If reader has rows run code inside if statement
             if(reader.HasRows)
             {
-                // Not good to hard code the index but this is the best I have for now
                 currentColumnName = reader.GetName(2);
             }
 
