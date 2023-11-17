@@ -68,17 +68,11 @@ public class UI
                         break;
                     }
                     var updateHours = GetNumberInput("Enter updated hour: ");
-                    var updatedDate = GetDateInput("Enter a date(Format: dd/mm/yyy hh:mm i.e 01/06/1992 14:45): ");
-                    while (!Validate.IsValidUpdateDate(log.DateUpdated, DateTime.Parse(updatedDate)))
-                    {
-                        Console.WriteLine("New update date can't be prior to current update date.Try again.");
-                        updatedDate = GetDateInput("Enter a date(Format: dd/mm/yyy hh:mm i.e 01/06/1992 14:45): ");
-                    }
 
                     _logService.Update(log.Id, new CSharpLog
                     {
                         Hours = updateHours,
-                        DateUpdated = DateTime.Parse(updatedDate)
+                        DateUpdated = DateTime.Now
                     });
                     break;
                 case "5":
