@@ -6,7 +6,7 @@ Console based CRUD app to track various habits. Developed using C# and SQLite.
 - [x] This is an application where you’ll register one habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
 - [x] The application should store and retrieve data from a real database
-- [ ] When the application starts, it should create a sqlite database, if one isn’t present.
+- [x] When the application starts, it should create a sqlite database, if one isn’t present.
 - [x] It should also create a table in the database, where the habit will be logged.
 - [x] The app should show the user a menu of options.
 - [x] The users should be able to insert, delete, update and view their logged habit.
@@ -46,7 +46,8 @@ Console based CRUD app to track various habits. Developed using C# and SQLite.
   - Setting the project took me a while as I didn't get why should I change the project's working directory as said in the tutorial.
   - At first I had to undestand basics of SQLite with which I'm still not perfectly familiar, but improving.
   - Setting a database connection felt quite messy to me at the beginning but I manage to understand it later on. 
-  - Though it is recommended to not use classes in this project, I felt that it would be benefical. Refactorization into classes is still a matter of consideration.
+  - Though it is recommended to not to use classes in this project, I felt that it would be benefical. Refactorization into classes is still a matter of consideration.
+  - When I moved to challenge tasks, I had to restructurize some methods and console outputs because of the functionality of adding more than one habit.
 
 # Lessons learned
 
