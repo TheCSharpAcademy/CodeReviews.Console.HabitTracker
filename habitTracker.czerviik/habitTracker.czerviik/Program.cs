@@ -230,7 +230,6 @@ void Update()
 
             if (checkQuery == 0)
             {
-                connection.Close();
                 Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\nPress any key to continue...");
                 Console.ReadKey();
             }
