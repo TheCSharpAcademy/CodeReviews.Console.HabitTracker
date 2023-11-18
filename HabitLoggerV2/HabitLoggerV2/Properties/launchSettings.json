@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitLoggerV2": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\M\\source\\repos\\HabitLoggerV2"
+    }
+  }
+}
