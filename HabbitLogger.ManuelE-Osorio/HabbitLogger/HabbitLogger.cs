@@ -64,6 +64,7 @@ class HabbitLogger
                     }
                     else 
                     {
+                        Console.Clear();
                         Console.WriteLine("The selected habbit does not have any records.\n");
                     }
                     break;
@@ -75,6 +76,7 @@ class HabbitLogger
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("The selected habbit does not have any records.\n");
                     }
                     break;
@@ -86,6 +88,7 @@ class HabbitLogger
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("The selected habbit does not have any records.\n");
                     }
                     break;
@@ -105,6 +108,7 @@ class HabbitLogger
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("The selected habbit does not have any records.\n");
                     }
                     break;
@@ -260,7 +264,7 @@ class HabbitLogger
             Console.WriteLine("Please write an integer quantity of the measure:");
             habbitMeasure = Console.ReadLine();
             if (DateOnly.TryParseExact(habbitDate,"yyyy/MM/dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out habbitDateValidated)
-            && int.TryParse(habbitMeasure,out int habbitMeasureInt))
+            && int.TryParse(habbitMeasure,out int habbitMeasureInt) && habbitMeasureInt > 0)
             {
                 data[0] = habbitDate;
                 data[1] = habbitMeasure;
