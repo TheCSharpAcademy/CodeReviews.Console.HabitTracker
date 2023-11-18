@@ -391,7 +391,7 @@ class HabbitLogger
         string dailyAverage = DailyAverage(selectedHabbit);   
         Console.WriteLine($"Your maximum value is {maxMeasure[1]} on {maxMeasure[0]}");
         Console.WriteLine($"Your minimum value is {minMeasure[1]} on {minMeasure[0]}");
-        Console.WriteLine($"Your daily avergae is {dailyAverage}");
+        Console.WriteLine($"Your daily average is {dailyAverage}\n");
     }
 
     static string[] GetMinMaxMeasure(string selectedHabbit,string Option)
