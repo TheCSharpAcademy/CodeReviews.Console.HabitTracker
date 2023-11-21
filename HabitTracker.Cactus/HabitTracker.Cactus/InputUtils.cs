@@ -1,8 +1,7 @@
 ﻿using System.Globalization;
 
-internal static class InputUtils
+public static class InputUtils
 {
-
     public static int GetInValidInputId(HashSet<int> ids)
     {
         Console.WriteLine($"Please type a id you want to operate:");
@@ -35,7 +34,7 @@ internal static class InputUtils
         int quantity;
         Console.WriteLine("Please type your quantity:");
         string? quantityStr = Console.ReadLine();
-        while (!int.TryParse(quantityStr, out quantity))
+        while (!int.TryParse(quantityStr, out quantity) || quantity <= 0)
         {
             Console.WriteLine("Sorry, your quantity is invalid. Please type a valid quantity:");
             quantityStr = Console.ReadLine();
