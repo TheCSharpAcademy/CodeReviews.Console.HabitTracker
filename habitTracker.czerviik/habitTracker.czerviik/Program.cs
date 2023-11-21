@@ -89,7 +89,7 @@ void GetAllRecords()
     {
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"SELECT * FROM {habitName}";
+        tableCmd.CommandText = $"SELECT * FROM '{habitName}'";
 
         using (var reader = tableCmd.ExecuteReader())
         {
@@ -136,7 +136,7 @@ void Insert()
     {
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"INSERT INTO {habitName}(date, {columnName}) VALUES('{date}',{quantity})";
+        tableCmd.CommandText = $"INSERT INTO '{habitName}' (date, '{columnName}') VALUES('{date}',{quantity})";
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
@@ -194,7 +194,7 @@ void Delete()
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"DELETE FROM {habitName} WHERE Id = {recordId}";
+            tableCmd.CommandText = $"DELETE FROM '{habitName}' WHERE Id = {recordId};";
             rowCount = tableCmd.ExecuteNonQuery();
             connection.Close();
         }
@@ -225,7 +225,7 @@ void Update()
             recordId = GetNumberInput("\nPlease type Id of the record you would like to update. Type 0 to return to Main Menu.\n", MenuTypes.MainMenu);
 
             var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM {habitName} WHERE Id = {recordId})";
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM '{habitName}' WHERE Id = {recordId})";
             long checkQuery = (long)checkCmd.ExecuteScalar();
 
             if (checkQuery == 0)
@@ -265,10 +265,10 @@ void AddHabit()
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-            @$"CREATE TABLE IF NOT EXISTS {habitNameEdited} (
+            @$"CREATE TABLE IF NOT EXISTS '{habitNameEdited}' (
         Id INTEGER PRIMARY KEY AUTOINCREMENT,
         Date TEXT,
-        {habitUnit} INTEGER
+        '{habitUnit}' INTEGER
         )";
 
         tableCmd.ExecuteNonQuery();
@@ -323,7 +323,6 @@ void GetHabitsList()
 
 string ChooseHabit(string message)
 {
-    string result = "";
     bool inputIsValid = false;
     do
     {
@@ -334,7 +333,7 @@ string ChooseHabit(string message)
         string userInput = Console.ReadLine();
         if (int.TryParse(userInput, out int userNumber) && userNumber > 0 && userNumber <= habitList.Count)
         {
-            result = habitList[userNumber - 1];
+            habitName = habitList[userNumber - 1];
             inputIsValid = true;
         }
         else if (userInput == "0")
@@ -348,7 +347,7 @@ string ChooseHabit(string message)
         }
     } while (!inputIsValid);
     
-    return result;
+    return habitName;
 }
 string GetColumnName(string habitName)
 {
@@ -439,10 +438,10 @@ long PerformDbQuestionOperation(string habitName, string columnName, string oper
 
         if (specificYear)
         {
-            operCmd.CommandText = $"SELECT {operationText} ({columnName}) FROM {habitName} WHERE Date LIKE '%{year}'";
+            operCmd.CommandText = $"SELECT {operationText} ([{columnName}]) FROM [{habitName}] WHERE Date LIKE '%{year}'";
         }
         else
-            operCmd.CommandText = $"SELECT {operationText} ({columnName}) FROM {habitName}";
+            operCmd.CommandText = $"SELECT {operationText} ([{columnName}]) FROM [{habitName}]";
 
         var resultDb = operCmd.ExecuteScalar();
         return resultDb != DBNull.Value ? Convert.ToInt64(resultDb) : -1;
@@ -500,6 +499,7 @@ void GetQuantityOperation(string habitName, string columnName, DbOperTypes oper)
         {
             Console.WriteLine($"The {operatorName} cannot be calculated. Press any key to continue...");
             Console.ReadKey();
+            inputIsValid = true;
         }
     } while (!inputIsValid);
 
