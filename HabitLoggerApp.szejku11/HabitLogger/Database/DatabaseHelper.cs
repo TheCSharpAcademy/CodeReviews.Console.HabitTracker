@@ -1,14 +1,7 @@
 ﻿using HabitLogger.Models;
 using HabitLogger.UI;
 using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitLogger.Database
 {
