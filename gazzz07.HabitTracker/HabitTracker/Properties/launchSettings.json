@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Git\\learning_csharp\\HabitTracker\\HabitTracker"
+    }
+  }
+}
