@@ -1,3 +1,7 @@
+<h1>Habit Logger Console Application</h1>
+<h3>Authored by Serdar Sipahioğlu</h3>
+<h3>28/12/2023</h3>
+<hr>
 <p>This is my first C# sharp project working with SQlite.</p>
 <p>This is a console application using CRUD to track one of your daily habits. </p>
 <p>---------------------------------------------------------------------------</p>
