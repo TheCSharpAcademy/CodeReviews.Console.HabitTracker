@@ -323,7 +323,6 @@ q---Quit program");
             Console.WriteLine("Id".PadRight(10) + "Date".PadRight(20) + $"Quantity({habitUnit})");
             Console.WriteLine("---       ----------          -----------------");
             var tableCmd = connection.CreateCommand();
-            string thisDay = FormatDateForQuery(DateTime.Today);
             tableCmd.CommandText = $"SELECT * FROM {tableName} WHERE strftime('%Y',Date)=strftime('%Y',date('now')) AND  strftime('%m',Date) = strftime('%m',date('now'))";
             tableCmd.CommandType = System.Data.CommandType.Text;
             SqliteDataReader myReader = tableCmd.ExecuteReader();
