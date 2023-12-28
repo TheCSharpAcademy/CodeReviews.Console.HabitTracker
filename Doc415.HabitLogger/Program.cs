@@ -396,7 +396,7 @@ q---Quit program");
             {
                 Console.SetCursorPosition(cursorX, cursorY);
                 Console.Write(input.Substring(0, i));
-                Thread.Sleep(20);
+                Thread.Sleep(40);
             }
         }
         static void CreateDb()
