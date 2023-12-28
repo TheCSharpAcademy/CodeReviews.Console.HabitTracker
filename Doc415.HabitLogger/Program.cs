@@ -50,7 +50,7 @@ namespace Doc415.HabitLogger
                 return false;
             }
         }
-        static void UserMenu(bool clrscreen = false)
+        static void UserMenu()
         {
             bool validEntry = false;
             do
@@ -401,7 +401,6 @@ q---Quit program");
         }
         static void CreateDb()
         {
-            {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText = @$"CREATE TABLE IF NOT EXISTS {tableName} (
@@ -411,7 +410,6 @@ q---Quit program");
                     )";
                 tableCmd.ExecuteNonQuery();
                 connection.Close();
-            }
         }
     }
 }
