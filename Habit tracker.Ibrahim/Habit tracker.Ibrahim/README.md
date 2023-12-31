@@ -2,10 +2,12 @@
 
 <h2>By: Ibrahim Gilani</h2>
 
-**Overview**
+<h3>Overview</h3>
+
 Prayer Tracker is a simple yet powerful application designed to help users keep track of their daily prayers. Built with C# and using SQLite for data storage, this application offers features like viewing prayer history, adding new prayer records, updating existing ones, and deleting records. It also provides reports on prayer averages over different time periods.
 
-**Usage**
+<h3>Usage</h3>
+
 Upon starting the application, you will be greeted with a welcome message and instructions to access the main menu. The main menu provides the following options:
 
 View History: Displays your prayer history.
@@ -15,13 +17,15 @@ Update Prayer Data: Modify the number of prayers for a specific date.
 View Reports: Shows average prayers for the last week, year, and all time.
 Navigate through these options by typing the corresponding number and pressing Enter.
 
-**Features**
+<h3>Features</h3>
+
 Prayer Tracking: Keep a record of your daily prayers.
 Data Management: Easily insert, update, or delete prayer data.
 Reporting: View average prayers over different time periods.
 Data Validation: Ensures correct data entry with built-in validation.
 
-**Input Validation**
+<h3>Input Validation</h3>
+
 The Prayer Tracker application includes several input validation checks to ensure smooth and accurate data entry:
 
 Date Validation: When entering dates (for adding, updating, or deleting prayer data), the application requires the format yyyy-MM-dd. If an invalid date or format is entered, it prompts the user to re-enter the correct date.
