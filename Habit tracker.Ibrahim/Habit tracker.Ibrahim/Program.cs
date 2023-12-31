@@ -47,10 +47,10 @@ class Program
             Console.WriteLine("Main Menu \n");
             Console.WriteLine("What would you like to do?\n");
             Console.WriteLine("Type 0 to close Application");
-            Console.WriteLine("Type 1 to View all records");
-            Console.WriteLine("Type 2 to Insert Record");
-            Console.WriteLine("Type 3 to Delete Record");
-            Console.WriteLine("Type 4 to Update Record");
+            Console.WriteLine("Type 1 to View History");
+            Console.WriteLine("Type 2 to Insert prayer data");
+            Console.WriteLine("Type 3 to Delete prayer data");
+            Console.WriteLine("Type 4 to Update prayer data");
             Console.WriteLine("Type 5 to view Reports\n");
             string userChoice = helper.ValidateChoice(Console.ReadLine());
 
