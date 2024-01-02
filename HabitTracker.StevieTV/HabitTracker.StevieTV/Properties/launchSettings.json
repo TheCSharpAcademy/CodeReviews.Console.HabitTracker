@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.StevieTV": {
+      "commandName": "Project",
+      "workingDirectory": "E:\\Development\\study\\CSharpAcademy\\CodeReviews.Console.HabitTracker\\HabitTracker.StevieTV\\"
+    }
+  }
+}
