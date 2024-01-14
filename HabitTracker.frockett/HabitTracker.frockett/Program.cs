@@ -9,6 +9,8 @@ internal class Program
 
     static void Main(string[] args)
     {
+        bool shouldSeedData = CheckForTable("drinking_water");
+
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -24,13 +26,12 @@ internal class Program
 
             connection.Close();
         }
-
         GetUserInput();
     }
 
     static void GetUserInput()
     {
-        Console.Clear();
+        //Console.Clear();
         bool closeApp = false;
 
         while (!closeApp)
@@ -75,6 +76,27 @@ internal class Program
             
         }
         return;
+    }
+
+    // This method checks to see if the table exists at application startup. It returns a bool which is used to determine whether or not to generate seed data
+    private static bool CheckForTable(string tableName)
+    {
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = $"SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{tableName}'";
+
+            var result = checkCmd.ExecuteScalar();
+            int resultCount = Convert.ToInt32(result);
+
+            if (resultCount > 0)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void UpdateRecord()
