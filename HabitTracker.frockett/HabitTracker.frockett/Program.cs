@@ -11,18 +11,17 @@ internal class Program
 
     static void Main(string[] args)
     {
+        List<string> tableName = new List<string>() { "drinking_water", "running_in_km", "doing_push_ups" };
 
-        string[] tableName = { "drinking_water", "running_in_km", "doing_push_ups" };
-
-        for (int i = 0; i < tableName.Length; i++)
+        for (int i = 0; i < tableName.Count; i++)
         {
-            bool shouldSeedData = CheckForTable(tableName[i]);
+            bool shouldSeedData = CheckForTable(tableName.ElementAt(i));
 
-            CreateSQLTable(tableName[i]);
+            CreateSQLTable(tableName.ElementAt(i));
 
             if (shouldSeedData)
             {
-                SeedRandomData(tableName[i]);
+                SeedRandomData(tableName.ElementAt(i));
             }
         }
 
