@@ -1,6 +1,6 @@
 ﻿namespace HabitTracker.frockett;
 
-internal static class RandomData
+internal static class RandomGenerators
 {
     static Random gen = new Random();
     static DateTime start = new DateTime(2005, 1, 1);
