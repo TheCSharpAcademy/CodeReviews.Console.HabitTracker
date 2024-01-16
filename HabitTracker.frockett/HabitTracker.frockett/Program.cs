@@ -8,27 +8,33 @@ namespace HabitTracker.frockett;
 internal class Program
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
-
+    List<string> tableName = new List<string>() { "drinking_water", "running_in_km", "doing_push_ups" };
+    List<string> unitName = new List<string>() { "glasses", "kilometer", "reps" };
     static void Main(string[] args)
     {
-        List<string> tableName = new List<string>() { "drinking_water", "running_in_km", "doing_push_ups" };
+        Program program = new Program();
 
+        program.SeedTestData();
+
+        program.GetUserInput();
+    }
+
+    private void SeedTestData()
+    {
         for (int i = 0; i < tableName.Count; i++)
         {
             bool shouldSeedData = CheckForTable(tableName.ElementAt(i));
 
-            CreateSQLTable(tableName.ElementAt(i));
+            CreateSQLTable(tableName.ElementAt(i), connectionString);
 
             if (shouldSeedData)
             {
-                SeedRandomData(tableName.ElementAt(i));
+                SeedRandomData(tableName.ElementAt(i), connectionString);
             }
         }
-
-        GetUserInput();
     }
 
-    private static void CreateSQLTable(string tableName)
+    private static void CreateSQLTable(string tableName, string connectionString)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -47,7 +53,7 @@ internal class Program
         }
     }
 
-    private static void SeedRandomData(string tableName)
+    private static void SeedRandomData(string tableName, string connectionString)
     {
         for (int i = 0; i < 100; i++)
         {
@@ -67,7 +73,7 @@ internal class Program
         Console.WriteLine("data seeded successfully");
     }
 
-    static void GetUserInput()
+    void GetUserInput()
     {
         Console.Clear();
         bool closeApp = false;
@@ -78,10 +84,11 @@ internal class Program
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Please select an option from the menu below\n");
             Console.WriteLine("1. View All Records");
-            Console.WriteLine("2. Insert Record");
-            Console.WriteLine("3. Delete Record");
-            Console.WriteLine("4. Update Record");
-            Console.WriteLine("5. Close Application");
+            Console.WriteLine("2. Add New Habit");
+            Console.WriteLine("3. Insert Record");
+            Console.WriteLine("4. Delete Record");
+            Console.WriteLine("5. Update Record");
+            Console.WriteLine("0. Close Application");
             Console.WriteLine("_______________________________________________");
             string? readResult = Console.ReadLine();
 
@@ -96,15 +103,18 @@ internal class Program
                     PrintAllRecords();
                     break;
                 case 2:
-                    InsertRecord();
+                    InsertHabit();
                     break;
                 case 3:
-                    DeleteRecord();
+                    InsertRecord();
                     break;
                 case 4:
-                    UpdateRecord();
+                    DeleteRecord();
                     break;
                 case 5:
+                    UpdateRecord();
+                    break;
+                case 0:
                     closeApp = true;
                     break;
                 default:
@@ -114,6 +124,39 @@ internal class Program
             
         }
         return;
+    }
+
+    private static void InsertHabit()
+    {
+        Console.Clear();
+        Console.WriteLine("\nEnter the name of your habit: \n");
+        string? habitName = Console.ReadLine();
+
+        if(habitName == null)
+        {
+            Console.WriteLine("\nInvalid, please enter the name of your habit\n");
+            habitName = Console.ReadLine();
+        }
+
+        Console.Clear();
+        Console.WriteLine($"\nWhat is the unit of measurement for {habitName}?");
+        Console.WriteLine("E.g. glasses, miles, reps, etc.\n");
+        string? habitUnit = Console.ReadLine();
+
+        if (habitUnit == null)
+        {
+            Console.WriteLine("\nInvalid, please enter the unit of measurement\n");
+            habitUnit = Console.ReadLine();
+        }
+
+        AddToList(habitName, habitUnit);
+
+    }
+
+    private void AddToList(string? habitName, string? habitUnit)
+    {
+        tableName.Add(habitName);
+        unitName.Add(habitUnit);
     }
 
     // This method checks to see if the table exists at application startup. It returns a bool which is used to determine whether or not to generate seed data
