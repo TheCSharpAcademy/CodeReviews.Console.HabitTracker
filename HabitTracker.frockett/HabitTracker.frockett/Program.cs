@@ -1,8 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using System.Globalization;
-using ConsoleTableExt;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
+﻿
 namespace HabitTracker.frockett;
 
 internal class Program

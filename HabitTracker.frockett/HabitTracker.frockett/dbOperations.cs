@@ -1,8 +1,5 @@
-﻿
-using Microsoft.Data.Sqlite;
-using System.Collections.Generic;
+﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTracker.frockett;
 

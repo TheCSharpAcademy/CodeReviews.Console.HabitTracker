@@ -1,6 +1,4 @@
 ﻿
-using System.Globalization;
-
 namespace HabitTracker.frockett;
 
 internal class UserInput
