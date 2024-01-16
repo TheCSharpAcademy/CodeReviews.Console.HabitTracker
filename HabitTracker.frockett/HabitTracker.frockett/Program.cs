@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
+using ConsoleTableExt;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTracker.frockett;
@@ -10,15 +11,32 @@ internal class Program
 
     static void Main(string[] args)
     {
-        //string[] tableName = { "drinking_water", "running_in_km", "doing_push_ups" };
-        bool shouldSeedData = CheckForTable("drinking_water");
 
+        string[] tableName = { "drinking_water", "running_in_km", "doing_push_ups" };
+
+        for (int i = 0; i < tableName.Length; i++)
+        {
+            bool shouldSeedData = CheckForTable(tableName[i]);
+
+            CreateSQLTable(tableName[i]);
+
+            if (shouldSeedData)
+            {
+                SeedRandomData(tableName[i]);
+            }
+        }
+
+        GetUserInput();
+    }
+
+    private static void CreateSQLTable(string tableName)
+    {
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water (
+            tableCmd.CommandText = @$"CREATE TABLE IF NOT EXISTS {tableName} (
                                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         Date TEXT,
                                         Quantity INTEGER
@@ -28,15 +46,9 @@ internal class Program
 
             connection.Close();
         }
-        if(shouldSeedData)
-        {
-            SeedRandomData(); 
-        }
-
-        GetUserInput();
     }
 
-    private static void SeedRandomData()
+    private static void SeedRandomData(string tableName)
     {
         for (int i = 0; i < 100; i++)
         {
@@ -48,7 +60,7 @@ internal class Program
                 connection.Open();
 
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+                tableCmd.CommandText = $"INSERT INTO {tableName}(date, quantity) VALUES('{date}', {quantity})";
                 tableCmd.ExecuteNonQuery();
                 connection.Close();
             }
