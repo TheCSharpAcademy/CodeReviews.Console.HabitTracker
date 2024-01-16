@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTracker.frockett;
 
@@ -9,6 +10,7 @@ internal class Program
 
     static void Main(string[] args)
     {
+        //string[] tableName = { "drinking_water", "running_in_km", "doing_push_ups" };
         bool shouldSeedData = CheckForTable("drinking_water");
 
         using (var connection = new SqliteConnection(connectionString))
@@ -26,12 +28,37 @@ internal class Program
 
             connection.Close();
         }
+        if(shouldSeedData)
+        {
+            SeedRandomData(); 
+        }
+
         GetUserInput();
+    }
+
+    private static void SeedRandomData()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            string date = RandomData.GetRandomDate();
+            int quantity = RandomData.GetRandomQuantity();
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+                tableCmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        Console.WriteLine("data seeded successfully");
     }
 
     static void GetUserInput()
     {
-        //Console.Clear();
+        Console.Clear();
         bool closeApp = false;
 
         while (!closeApp)
@@ -93,10 +120,11 @@ internal class Program
 
             if (resultCount > 0)
             {
-                return true;
+                return false;
             }
+            connection.Close();
         }
-        return false;
+        return true;
     }
 
     private static void UpdateRecord()
@@ -104,7 +132,7 @@ internal class Program
         Console.Clear();
         PrintAllRecords();
 
-        var recordId = GetQuantityInput("\nPlease enter the ID of the record you want to update, or enter 0 to return to the main menu\n");
+        var recordId = GetNumberInput("\nPlease enter the ID of the record you want to update, or enter 0 to return to the main menu\n");
 
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -122,12 +150,14 @@ internal class Program
             }
 
             string date = GetDateInput();
-            int quantity = GetQuantityInput("\nPlease enter number of glasses or other metric (number must be an integer), or enter 0 to return to main menu\n");
+            int quantity = GetNumberInput("\nPlease enter number of glasses or other metric (number must be an integer), or enter 0 to return to main menu\n");
 
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
 
             int rowCount = tableCmd.ExecuteNonQuery();
+
+            connection.Close();
         }
     }
 
@@ -136,7 +166,7 @@ internal class Program
         Console.Clear();
         PrintAllRecords();
 
-        int recordId = GetQuantityInput("\nPlease enter the ID of the record you want to delete, or enter 0 to return to the main menu\n");
+        int recordId = GetNumberInput("\nPlease enter the ID of the record you want to delete, or enter 0 to return to the main menu\n");
 
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -155,6 +185,7 @@ internal class Program
             {
                 Console.WriteLine($"\n\nRecord with ID {recordId} deleted successfully. \n\n");
             }
+            connection.Close();
         }
 
     }
@@ -196,16 +227,17 @@ internal class Program
             Console.WriteLine("-----------------------------------------------\n");
             foreach(var entry in tableData)
             {
-                Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yyyy")} - Quantity: {entry.Quantity}");
+                Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yy")} - Quantity: {entry.Quantity}");
             }
             Console.WriteLine("-----------------------------------------------\n");
+            Console.ReadLine();
         }
     }
 
     private static void InsertRecord()
     {
         string date = GetDateInput();
-        int quantity = GetQuantityInput("\n\nPlease enter number of glasses or other metric (number must be an integer)\n\n");
+        int quantity = GetNumberInput("\n\nPlease enter number of glasses or other metric (number must be an integer)\n\n");
 
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -237,7 +269,7 @@ internal class Program
 
         return dateInput;
     }
-    private static int GetQuantityInput(string message)
+    private static int GetNumberInput(string message)
     {
         Console.Clear();
         Console.WriteLine(message);
@@ -255,11 +287,4 @@ internal class Program
    
         return cleanQuantityInput;
     }
-}
-
-public class DrinkingWater
-{
-    public int Id { get; set; }
-    public DateTime Date { get; set; }
-    public int Quantity { get; set; }
 }
