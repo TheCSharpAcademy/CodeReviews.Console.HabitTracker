@@ -3,7 +3,6 @@ namespace HabitTracker.frockett;
 
 internal class Program
 {
-
     static void Main(string[] args)
     {
         dbOperations db = new dbOperations();

@@ -15,7 +15,6 @@ internal class Helpers
             Console.WriteLine("\nInvalid date. Format must be (dd-mm-yy). Enter 0 to return to main menu\n");
             dateInput = Console.ReadLine();
         }
-
         return dateInput;
     }
     public int GetNumberInput(string message)

@@ -1,5 +1,4 @@
 ﻿namespace HabitTracker.frockett;
-
 internal static class RandomGenerators
 {
     static Random gen = new Random();

@@ -1,5 +1,4 @@
 ﻿namespace HabitTracker.frockett;
-
 public class HabitDataModel
 {
     public int Id { get; set; }

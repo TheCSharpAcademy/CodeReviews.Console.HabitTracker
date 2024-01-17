@@ -1,5 +1,4 @@
-﻿
-namespace HabitTracker.frockett;
+﻿namespace HabitTracker.frockett;
 
 internal class UserInput
 {

@@ -267,7 +267,7 @@ internal class dbOperations
                 Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yy")} - Quantity: {entry.Quantity}");
             }
             Console.WriteLine("-----------------------------------------------\n");
-            //Console.ReadLine();
+            Console.ReadLine();
         }
     }
 
@@ -288,7 +288,6 @@ internal class dbOperations
             connection.Close();
         }
     }
-
 
     public void SeedRandomData(string tableName, string connectionString, int unitId)
     {
