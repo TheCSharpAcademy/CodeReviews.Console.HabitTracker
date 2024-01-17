@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace HabitTracker.frockett;
 
-internal class dbOperations
+internal class DbOperations
 {
     Helpers helpers = new Helpers();
 
@@ -45,7 +45,7 @@ internal class dbOperations
 
         if(CheckForTable(habitName)) //this if-condition looks a bit weird because CheckForTable actually returns false when there is a table due to phrasing of the bool in SeedTestData
         {
-            CreateSQLTable(habitName, connectionString);
+            CreateSqlTable(habitName, connectionString);
             Console.WriteLine($"Table for {habitName} created!");
         }
 
@@ -77,7 +77,7 @@ internal class dbOperations
         {
             bool shouldSeedData = CheckForTable(tableName.ElementAt(i));
 
-            CreateSQLTable(tableName.ElementAt(i), connectionString);
+            CreateSqlTable(tableName.ElementAt(i), connectionString);
 
             if (shouldSeedData)
             {
@@ -143,7 +143,7 @@ internal class dbOperations
         }
     }
 
-    public void CreateSQLTable(string tableName, string connectionString)
+    public void CreateSqlTable(string tableName, string connectionString)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -191,8 +191,7 @@ internal class dbOperations
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
 
-            int rowCount = tableCmd.ExecuteNonQuery();
-
+            tableCmd.ExecuteNonQuery();
             connection.Close();
         }
     }

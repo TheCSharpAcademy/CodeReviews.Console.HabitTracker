@@ -2,7 +2,7 @@
 
 internal class UserInput
 {
-    dbOperations db = new dbOperations();
+    DbOperations db = new DbOperations();
 
     public void GetUserInput()
     {
