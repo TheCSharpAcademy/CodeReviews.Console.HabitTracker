@@ -2,7 +2,7 @@
 internal static class RandomGenerators
 {
     static Random gen = new Random();
-    static DateTime start = new DateTime(2005, 1, 1);
+    static DateTime start = new DateTime(2022, 1, 1);
     static int dateRange = (DateTime.Today - start).Days;
 
     internal static string GetRandomDate()

@@ -130,7 +130,6 @@ internal class DbOperations
 
             for (int i = 0; i < unitName.Count; i++)
             {
-                Console.WriteLine("Current unit name: " + unitName.ElementAt(i));
                 using (var connection = new SqliteConnection(connectionString))
                 {
                     connection.Open();

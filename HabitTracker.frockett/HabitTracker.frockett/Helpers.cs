@@ -30,7 +30,4 @@ internal class Helpers
         }
         return cleanQuantityInput;
     }
-
-
-
 }
