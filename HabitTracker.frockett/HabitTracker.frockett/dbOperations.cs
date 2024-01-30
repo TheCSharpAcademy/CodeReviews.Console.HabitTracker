@@ -228,44 +228,56 @@ internal class DbOperations
     {
         Console.Clear();
 
-        using (var connection = new SqliteConnection(connectionString))
+        try
         {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText =
-                $"SELECT * FROM drinking_water";
-
-            List<HabitDataModel> tableData = new List<HabitDataModel>();
-
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (reader.HasRows)
+            using (var connection = new SqliteConnection(connectionString))
             {
-                while (reader.Read())
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText =
+                    $"SELECT * FROM drinking_water";
+
+                List<HabitDataModel> tableData = new List<HabitDataModel>();
+
+                SqliteDataReader reader = tableCmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
-                    tableData.Add(
-                    new HabitDataModel
+                    while (reader.Read())
                     {
-                        Id = reader.GetInt32(0),
-                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                        Quantity = reader.GetInt32(2),
-                        UnitId = reader.GetInt32(3)
-                    });
+                        tableData.Add(
+                        new HabitDataModel
+                        {
+                            Id = reader.GetInt32(0),
+                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                            Quantity = reader.GetInt32(2),
+                            UnitId = reader.GetInt32(3)
+                        });
+                    }
                 }
-            }
-            else
-            {
-                Console.WriteLine("No rows found");
-            }
+                else
+                {
+                    Console.WriteLine("No rows found");
+                }
 
-            connection.Close();
-            Console.WriteLine("-----------------------------------------------\n");
-            foreach (var entry in tableData)
-            {
-                Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yy")} - Quantity: {entry.Quantity}");
+                connection.Close();
+                Console.WriteLine("-----------------------------------------------\n");
+                foreach (var entry in tableData)
+                {
+                    Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yy")} - Quantity: {entry.Quantity}");
+                }
+                Console.WriteLine("-----------------------------------------------\n");
+                Console.ReadLine();
             }
-            Console.WriteLine("-----------------------------------------------\n");
+        }
+
+        catch (Exception ex)
+        {
+            Console.WriteLine("Database query failed, try refreshing the database");
+            Console.WriteLine("Error details: " + ex.Message);
+            Console.WriteLine("Press enter to return to menu...");
             Console.ReadLine();
+            return;
         }
     }
 
@@ -304,6 +316,5 @@ internal class DbOperations
                 connection.Close();
             }
         }
-        Console.WriteLine("data seeded successfully");
     }
 }
