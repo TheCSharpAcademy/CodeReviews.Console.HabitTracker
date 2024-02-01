@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 
 namespace HabitLogger
 {
-    class program
+    class Program
     {
         static string connectionString = @"Data Source=HabbitLogger.db";
         static void Main(string[] args)
@@ -97,7 +97,7 @@ namespace HabitLogger
                             Id = reader.GetInt32(0),
                             Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                             Quantity = reader.GetInt32(2)
-                        }); ;
+                        }); 
                     }
                 }
                 else
