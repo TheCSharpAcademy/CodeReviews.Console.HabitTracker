@@ -48,9 +48,9 @@ namespace Habit_Logger
                 Program.StartMenu();
             }
 
-            while (!DateTime.TryParse(dateInput,out _))
+            while (!DateTime.TryParseExact(dateInput , "MM/dd/yyyy hh:mm tt" , new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
-                Helper.printError("Invalid date. (Format: dd-mm-yyyyy hh:mm::ss PM/AM). Type 0 to return to main manu or try again:");
+                Helper.printError("Invalid date. (Format: MM/dd/yyyy hh:mm tt). Type 0 to return to main manu or try again:");
                 dateInput = Console.ReadLine();
             }
 
