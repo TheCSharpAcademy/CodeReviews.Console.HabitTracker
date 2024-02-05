@@ -22,7 +22,6 @@ public class DataAccess(string databasePath)
 
         connection.Close();
     }
-
     public void InsertHabit(string habitName)
     {
         using SQLiteConnection connection = new(connectionString);
@@ -38,7 +37,6 @@ public class DataAccess(string databasePath)
 
         connection.Close();
     }
-
     public void DisplayHabits()
     {
         using SQLiteConnection connection = new(connectionString);
@@ -64,12 +62,19 @@ public class DataAccess(string databasePath)
         string deleteQuery = $"DELETE FROM Habits WHERE Id = {habitId}";
         using (SQLiteCommand command = new(deleteQuery, connection))
         {
-            command.ExecuteNonQuery();
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 0)
+            {
+                Console.WriteLine($"No habit with Id {habitId} found");
+            }
+            else
+            {
+                Console.WriteLine($"Habit with Id {habitId} deleted successfully.");
+            }
         }
 
         connection.Close();
     }
-
     public void UpdateHabit(int habitId, string newName)
     {
         using SQLiteConnection connection = new(connectionString);
@@ -78,7 +83,15 @@ public class DataAccess(string databasePath)
         string updateQuery = $"UPDATE Habits SET Name = '{newName}' WHERE Id = {habitId}";
         using (SQLiteCommand command = new(updateQuery, connection))
         {
-            command.ExecuteNonQuery();
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 0)
+            {
+                Console.WriteLine($"No habit with Id {habitId} found");
+            }
+            else
+            {
+                Console.WriteLine($"Habit with Id {habitId} updated successfully.");
+            }
         }
 
         connection.Close();

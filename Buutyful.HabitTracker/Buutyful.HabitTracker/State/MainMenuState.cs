@@ -1,5 +1,6 @@
 ﻿using Buutyful.HabitTracker.Abstractions;
 using Buutyful.HabitTracker.Command;
+using System.Data;
 
 namespace Buutyful.HabitTracker.State;
 
@@ -25,6 +26,8 @@ public class MainMenuState(StateManager stateManager) : IState
             "info" => new InfoCommand(),
             "view" => new SwitchStateCommand(_manager, new ViewState(_manager)),
             "create" => new SwitchStateCommand(_manager, new CreateState(_manager)),
+            "update" => new SwitchStateCommand(_manager, new UpdateState(_manager)),
+            "delete" => new SwitchStateCommand(_manager, new DeleteState(_manager)),
             "back" => new SwitchStateCommand(_manager, _manager.PastState()),
             "forward" => new SwitchStateCommand(_manager, _manager.FutureState()),
             "clear" => new ClearCommand(),

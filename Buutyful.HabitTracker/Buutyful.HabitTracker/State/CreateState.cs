@@ -17,7 +17,7 @@ namespace Buutyful.HabitTracker.State
             string habit = "";
             while (toBeSelected)
             {
-                Console.WriteLine("Create Habit, instert the habit name:");
+                Console.WriteLine("Create Habit, instert the habit [Name]:");
                 var name = Console.ReadLine();
                 Console.WriteLine($"Do you want to insert [{name}]? [y] / [n]");
                 var answer = Console.ReadLine();

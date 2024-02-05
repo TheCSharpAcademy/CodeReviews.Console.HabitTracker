@@ -11,6 +11,8 @@ public class InfoCommand : ICommand
             {Commands.View, "Display database records"},
             {Commands.Create, "Create new Habit entry" },
             {Commands.Back, "Goes back to past state" },
+            {Commands.Update, "Update Habit with given id" },
+            {Commands.Delete, "Delete Habit with given id" },
             {Commands.Forward, "Goes to forward state" },
             {Commands.Clear, "Clear console"},
             {Commands.Quit, "Quit the application" }
@@ -35,6 +37,8 @@ public enum Commands
     Menu,
     View,
     Create,
+    Update,
+    Delete,
     Back,
     Forward,
     Clear,
