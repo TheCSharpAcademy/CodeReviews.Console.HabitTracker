@@ -15,9 +15,7 @@ Run project in Visual Studio.
 - The app should show the user a menu of options.
 - The users should be able to insert, delete, update and view their logged habit.
 - You should handle all possible errors so that the application never crashes.
-- The application should only be terminated when the user inserts 0.
-- You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
-- Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example:
+- The application should only be terminated when the user enters 0.
 
 ## What I Learned / Future Improvements:
 I learned how to interact with SQLite in the context of a C# console app and run basic SQL commands.  I was able to use C# syntax and programming fundamentals such as switch logic and methods and classes.  Future improvements include seeding data upon app run for users, adding a report functionality to get insight on one's habit in the past year for example.
