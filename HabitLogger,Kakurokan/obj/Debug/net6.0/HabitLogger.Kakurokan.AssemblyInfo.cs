@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HabitLogger.Kakurokan")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0998b4efa7b0659944b405a4fca803213cb7a677")]
 [assembly: System.Reflection.AssemblyProductAttribute("HabitLogger.Kakurokan")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HabitLogger.Kakurokan")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
