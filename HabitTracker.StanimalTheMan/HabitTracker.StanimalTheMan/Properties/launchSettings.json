@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.StanimalTheMan": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Stanimal\\CodeReviews.Console.HabitTracker\\HabitTracker.StanimalTheMan\\HabitTracker.StanimalTheMan"
+    }
+  }
+}
