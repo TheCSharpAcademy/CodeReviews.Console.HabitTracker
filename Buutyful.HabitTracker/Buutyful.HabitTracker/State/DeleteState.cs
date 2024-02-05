@@ -21,6 +21,7 @@ public class DeleteState(StateManager manager) : IState
             if(int.TryParse(Console.ReadLine(), out var i)) id = i;
             Console.WriteLine($"Do you want to delete [{id}]? [y] / [n]");
             var answer = Console.ReadLine();
+            if (answer?.ToLower() == "break") return;
             if (answer?.ToLower() == "y")
             {               
                 toBeSelected = false;

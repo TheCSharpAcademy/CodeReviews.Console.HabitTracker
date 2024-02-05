@@ -10,11 +10,12 @@ public class InfoCommand : ICommand
             {Commands.Menu, "Return to the main menu"},
             {Commands.View, "Display database records"},
             {Commands.Create, "Create new Habit entry" },
-            {Commands.Back, "Goes back to past state" },
             {Commands.Update, "Update Habit with given id" },
             {Commands.Delete, "Delete Habit with given id" },
+            {Commands.Back, "Goes back to past state" },
             {Commands.Forward, "Goes to forward state" },
             {Commands.Clear, "Clear console"},
+            {Commands.Break, "Breaks out of input loop"},
             {Commands.Quit, "Quit the application" }
         };
 
@@ -42,5 +43,6 @@ public enum Commands
     Back,
     Forward,
     Clear,
+    Break,
     Quit
 }

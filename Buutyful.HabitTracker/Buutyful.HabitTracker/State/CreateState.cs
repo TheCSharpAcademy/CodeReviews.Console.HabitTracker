@@ -19,8 +19,10 @@ namespace Buutyful.HabitTracker.State
             {
                 Console.WriteLine("Create Habit, instert the habit [Name]:");
                 var name = Console.ReadLine();
+                if (name?.ToLower() == "break") return;
                 Console.WriteLine($"Do you want to insert [{name}]? [y] / [n]");
                 var answer = Console.ReadLine();
+                if (answer?.ToLower() == "break") return;
                 if (answer?.ToLower() == "y")
                 {
                     habit = name ?? "NO_NAME";
