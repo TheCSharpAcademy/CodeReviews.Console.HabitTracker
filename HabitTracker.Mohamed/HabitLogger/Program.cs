@@ -1,6 +1,5 @@
 ﻿using CodingTracker;
 using Spectre.Console;
-using System.Diagnostics;
 
 namespace HabitLogger;
 
@@ -90,7 +89,7 @@ class Program
     private static void OpenInsertWindow()
     {
         string date = Validations.GetValidatedDate("Please Enter Date in Excat date format (MM/dd/yyyy) : ");
-        int kilometers = Validations.GetValidatedInteger("Please Enter number of Kilometers you run ");
+        int kilometers = Validations.GetValidatedKilometers("Please Enter number of Kilometers you run ");
 
         var controller = new HabitLoggerController();
         controller.Insert(date, kilometers);
@@ -113,7 +112,7 @@ class Program
 
         Console.WriteLine("-------------------------------------------------\n");
         string date = Validations.GetValidatedDate("Please Enter Date in Excat date format (MM/dd/yyyy) : ");
-        int kilometers = Validations.GetValidatedInteger("Please Enter number of Kilometers you run ");
+        int kilometers = Validations.GetValidatedKilometers("Please Enter number of Kilometers you run ");
 
         var controller = new HabitLoggerController();
         controller.Update(id, date, kilometers);

@@ -17,7 +17,6 @@ namespace CodingTracker
                         }));
             return date;
         }
-
         public static string GetValidatedTime(string message)
         {
             string time = AnsiConsole.Prompt(
@@ -30,7 +29,6 @@ namespace CodingTracker
                         }));
             return time;
         }
-
         public static int GetValidatedInteger(string message)
         {
             return AnsiConsole.Prompt(
@@ -38,7 +36,17 @@ namespace CodingTracker
                     .PromptStyle("green")
                     .ValidationErrorMessage("[red]Enter valid integer[/]"));
         }
-
+        public static int GetValidatedKilometers(string message)
+        {
+            return AnsiConsole.Prompt(
+                new TextPrompt<int>(message)
+                    .PromptStyle("green")
+                    .ValidationErrorMessage("[red]Enter valid integer[/]")
+                .Validate(x =>
+                {
+                    return (x <= 0) ? ValidationResult.Error("[red]kilometers must be large than 0 [/]") : ValidationResult.Success();
+                }));
+        }
         public static bool ValidateStartAndEndTime(string startAt , string endAt)
         {
             DateTime start =  DateTime.Parse(startAt);

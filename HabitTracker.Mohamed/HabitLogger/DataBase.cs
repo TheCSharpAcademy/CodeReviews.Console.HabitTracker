@@ -10,7 +10,6 @@ public static class DataBase
 
         using (var connection = new SqliteConnection(connectionString))
         {
-
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
@@ -34,7 +33,6 @@ public static class DataBase
 
         using (var connection = new SqliteConnection(connectionString))
         {
-
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
@@ -56,13 +54,10 @@ public static class DataBase
         var connectionString = "Data Source=habit-logger.db";
         using (var connection = new SqliteConnection(connectionString))
         {
-
             connection.Open();
-
             var checkCmd = connection.CreateCommand();
             checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit_logger WHERE Id = {id})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
             connection.Close();
             return checkQuery > 0;
         }
