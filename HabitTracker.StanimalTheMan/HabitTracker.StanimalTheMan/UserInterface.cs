@@ -8,7 +8,7 @@ namespace HabitTracker.StanimalTheMan;
 
 internal class UserInterface
 {
-	static bool closeApp = false;
+	static bool closeApp;
 	internal static void ShowMenu(string connectionString)
 	{
 		Console.Clear();
