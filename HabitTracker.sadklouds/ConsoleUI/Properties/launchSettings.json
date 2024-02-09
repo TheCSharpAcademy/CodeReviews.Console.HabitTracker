@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ConsoleUI": {
-      "commandName": "Project",
-      "workingDirectory": "C:\\Pablo\\codereviews\\CodeReviews.Console.HabitTracker\\HabitTracker.sadklouds\\ConsoleUI\\"
-    }
-  }
-}

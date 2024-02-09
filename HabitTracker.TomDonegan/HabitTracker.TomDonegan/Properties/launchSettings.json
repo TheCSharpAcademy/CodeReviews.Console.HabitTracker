@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "HabitTracker.TomDonegan": {
-      "commandName": "Project",
-      "workingDirectory": "E:\\Development\\C#Academy\\Forked\\CodeReviews.Console.HabitTracker\\HabitTracker.TomDonegan\\HabitTracker.TomDonegan\\"
-    }
-  }
-}
