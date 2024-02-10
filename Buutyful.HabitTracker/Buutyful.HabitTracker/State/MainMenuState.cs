@@ -32,7 +32,8 @@ public class MainMenuState(StateManager stateManager) : IState
             "forward" => new SwitchStateCommand(_manager, _manager.FutureState()),
             "clear" => new ClearCommand(),
             "quit" => new QuitCommand(),
-            _ => new InvalidCommand(command),
+            "menu" => new InvalidCommand(command, "You are already in the main menu"),
+            _ => new InvalidCommand(command, "please, use the content inside the [] to navigate")
         };
     }
 }

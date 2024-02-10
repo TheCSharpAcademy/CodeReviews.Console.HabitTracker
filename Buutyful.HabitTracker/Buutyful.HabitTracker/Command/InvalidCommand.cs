@@ -2,11 +2,10 @@
 
 namespace Buutyful.HabitTracker.Command;
 
-public class InvalidCommand(string? command) : ICommand
-{
-    private readonly string _command = command ??= string.Empty;
+public class InvalidCommand(string? command, string error) : ICommand
+{    
     public void Execute()
     {
-        Console.WriteLine($"Invalid Command : {_command}");            
+        Console.WriteLine($"Invalid Command : [{command}], {error}");            
     }
 }
