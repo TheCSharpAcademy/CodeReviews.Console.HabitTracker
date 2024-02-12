@@ -1,4 +1,4 @@
-# Habit Tracker App
+Habit Tracker App
 
 Info
 C# Academy project that uses SQLite to track a single habit.
