@@ -16,8 +16,6 @@ class Program
 
         CreateTable();
 
-        CreateTable();
-
         MainMenu();
 
         void CreateTable()
