@@ -111,7 +111,7 @@ internal static class Utilities
             if (!isValid)
             {
                 Console.WriteLine(
-                    "Invalid input or future date. Please enter a date in the past in the format 'dd-MM-yyyy'.");
+                    "Invalid input or future date. Please enter a date in the past in the format 'yyyy-MM-dd'.");
             }
         } while (!isValid);
 

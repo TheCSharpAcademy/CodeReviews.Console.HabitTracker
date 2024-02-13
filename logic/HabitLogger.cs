@@ -264,7 +264,7 @@ internal class HabitLogger
             if (updateDate)
             {
                 var date = Utilities.ValidateDate(
-                    "\nEnter the date of the record (yyyy-MM-dd): or insert 0 to go back to main menu:"
+                    "\nEnter the date of the record (yyyy-MM-dd):"
                 );
                 parameters.Add("@date", date);
             }

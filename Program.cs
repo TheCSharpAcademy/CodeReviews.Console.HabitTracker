@@ -34,9 +34,14 @@ internal static class Program
             { "Delete Record", logger.DeleteRecord },
             { "View Records", logger.GetRecords },
             { "Update Record", logger.UpdateRecord },
+            { "Help", MenuView.ShowHelp},
             { "Quit", () => throw new Utilities.ExitFromAppException() }
         };
 
+        MenuView.ShowHelp();
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
+        
         while (isRunning)
         {
             try
