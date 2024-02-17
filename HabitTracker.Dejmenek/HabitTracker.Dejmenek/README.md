@@ -33,9 +33,9 @@ It provides a command-line application for managing your daily habits. It allows
 
 ## Examples
 - Main Menu
-  ![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/1c7772d4-402e-45fc-9f99-985f3452c20a)
+![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/1c7772d4-402e-45fc-9f99-985f3452c20a)
 - View all habits
-  ![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/811a05c8-7f9d-41a5-ae32-0e30aa6a28c8)
+![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/811a05c8-7f9d-41a5-ae32-0e30aa6a28c8)
 
 ## Requirements
 - [x] This is an application where you’ll register one habit.
