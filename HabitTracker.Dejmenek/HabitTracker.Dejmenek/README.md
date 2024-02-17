@@ -7,7 +7,7 @@
 - [Examples](#examples)
 - [Requirements](#requirements)
 - [Challenges](#challenges)
-- [Used Resources][#used-resources]
+- [Used Resources](#used-resources)
 
 ## General Info
 Project made for @TheCSharpAcademy.
@@ -33,20 +33,21 @@ It provides a command-line application for managing your daily habits. It allows
 
 ## Examples
 - Main Menu
+  ![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/1c7772d4-402e-45fc-9f99-985f3452c20a)
 - View all habits
-
+  ![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/811a05c8-7f9d-41a5-ae32-0e30aa6a28c8)
 
 ## Requirements
-- [x] This is an application where you’ll register one habit.
+- [x] This is an application where youâ€™ll register one habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
 - [x] The application should store and retrieve data from a real database
-- [x] When the application starts, it should create a sqlite database, if one isn’t present.
+- [x] When the application starts, it should create a sqlite database, if one isnâ€™t present.
 - [x] It should also create a table in the database, where the habit will be logged.
 - [x] The app should show the user a menu of options.
 - [x] The users should be able to insert, delete, update and view their logged habit.
 - [x] You should handle all possible errors so that the application never crashes.
 - [x] The application should only be terminated when the user inserts 0.
-- [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
+- [x] You can only interact with the database using raw SQL. You canâ€™t use mappers such as Entity Framework.
 - [x] Your project needs to contain a Read Me file where you'll explain how your app works.
 
 ## Challenges
