@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.Dejmenek": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Damian\\source\\repos\\CodeReviews.Console.HabitTracker\\HabitTracker.Dejmenek\\HabitTracker.Dejmenek"
+    }
+  }
+}
