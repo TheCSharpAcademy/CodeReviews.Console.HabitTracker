@@ -10,7 +10,7 @@
 - [Used Resources](#used-resources)
 
 ## General Info
-Project made for @TheCSharpAcademy.
+Project made for @TheCSharpAcademy.  
 It provides a command-line application for managing your daily habits. It allows you to create, view, edit, and delete habits, helping you stay motivated and track your progress over time.
 
 ## Technologies
@@ -32,9 +32,9 @@ It provides a command-line application for managing your daily habits. It allows
 	- Delete habits
 
 ## Examples
-- Main Menu
+- Main Menu  
 ![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/1c7772d4-402e-45fc-9f99-985f3452c20a)
-- View all habits
+- View all habits  
 ![image](https://github.com/Dejmenek/CodeReviews.Console.HabitTracker/assets/83865666/811a05c8-7f9d-41a5-ae32-0e30aa6a28c8)
 
 ## Requirements
