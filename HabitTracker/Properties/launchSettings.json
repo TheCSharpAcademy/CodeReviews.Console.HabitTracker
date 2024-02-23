@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Joshua\\Documents\\CSharp\\GitHub Repositories\\CodeReviews.Console.HabitTracker"
+    }
+  }
+}
