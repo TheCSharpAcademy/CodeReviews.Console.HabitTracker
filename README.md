@@ -1,11 +1,11 @@
-
 # Habit Tracker
+
 
 ## Description
 
 Console Based CRUD application to track the ammount of times a user does a habit.
 
-## Given Requirements
+### Given Requirements
 
 - [X] This habit can't be tracked by time (ex. hours of sleep).
 - [X] The application should store and retrieve data from a real database
