@@ -152,7 +152,7 @@ namespace HabitTrackerProgram
                                     Thread.Sleep(1000);
                                     continue;
                                 }
-                                db.UpdateData(sqlite_conn, habitName, countToBeAdded);
+                                db.UpdateData(sqlite_conn, habitName.ToLower(), countToBeAdded);
                                 exit = true;
                             } while (!exit);
                             exit = false;

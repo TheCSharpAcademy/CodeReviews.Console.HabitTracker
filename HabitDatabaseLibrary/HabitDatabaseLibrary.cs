@@ -10,9 +10,10 @@ namespace HabitDatabaseLibrary
         JsonWriter writer;
         public Database()
         {
+            // Create log file and directory
+
             Directory.CreateDirectory("Logs");
             string fileName = $"Logs/databaselog_{DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss_tt")}.json";
-            // log file
             StreamWriter logFile = File.CreateText(fileName);
             logFile.AutoFlush = true;
             writer = new JsonTextWriter(logFile);
@@ -20,6 +21,7 @@ namespace HabitDatabaseLibrary
             writer.WriteStartObject();
             writer.WritePropertyName("Database Log");
             writer.WriteStartArray();
+
         }
 
         void LogError(Exception ex, string habitName = "null", string countIncrement = "null", string currentCount="null")
