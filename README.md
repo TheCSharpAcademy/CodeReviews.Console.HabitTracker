@@ -1,6 +1,4 @@
 # Habit Tracker
-
-
 ## Description
 
 Console Based CRUD application to track the ammount of times a user does a habit.
