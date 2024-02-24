@@ -19,7 +19,9 @@ Developed using C# and SQLite
 
 * A console based UI where users can navigate with commands
 
-		- ![image](https://github.com/Fennikko/Images/blob/main/Screenshot%202024-02-23%20212510.png)
+-![image](https://github.com/Fennikko/Images/blob/main/Screenshot%202024-02-23%20212510.png)
+
+
 * CRUD DB functions
 
 		- From the main menu users can close the application, view all records, insert a record, delete a record, or update a record
