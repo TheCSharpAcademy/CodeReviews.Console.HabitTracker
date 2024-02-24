@@ -3,8 +3,8 @@ Console based CRUD application to track water intake
 Developed using C# and SQLite
 
 # Given Requirements:
-- [x] When application starts, it creates a sqlite database if one is not present
-- [x] Creates a datavase where water intake is logged
+- [x] When application starts, it creates a SQLite database if one is not present
+- [x] Creates a database where water intake is logged
 - [x] Shows a menu of options
 - [x] Allows user to insert, delete, update, and view their water intake
 - [x] Handles all errors so application doesn't crash
