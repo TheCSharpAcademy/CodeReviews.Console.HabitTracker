@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 namespace habitTracker.fennikko;
 public class RecordManipulation
 {
-    public static readonly string ConnectionString = @"Data Source=HabitTracker.db";
+    private const string ConnectionString = @"Data Source=HabitTracker.db";
 
     public static void InitialDatabaseCreation()
     {
@@ -13,11 +13,13 @@ public class RecordManipulation
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-            @"CREATE TABLE IF NOT EXISTS drinking_water (
-        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-        Date TEXT,
-        Quantity INTEGER
-        )";
+            """
+            CREATE TABLE IF NOT EXISTS drinking_water (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Date TEXT,
+                    Quantity INTEGER
+                    )
+            """;
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
@@ -27,15 +29,17 @@ public class RecordManipulation
         var appRunning = true;
         while (appRunning)
         {
-            Console.WriteLine(@"MAIN MENU
+            Console.WriteLine("""
+                              MAIN MENU
 
-What would you like to do?
-0 - Close application
-1 - View all records
-2 - Insert a record
-3 - Delete a record
-4 - Update a record");
-            Console.WriteLine("-----------------------------");
+                              What would you like to do?
+                              0 - Close application
+                              1 - View all records
+                              2 - Insert a record
+                              3 - Delete a record
+                              4 - Update a record
+                              """);
+            Console.WriteLine("--------------------------------");
 
             var command = Console.ReadLine();
 
@@ -59,6 +63,8 @@ What would you like to do?
                     break;
                 default:
                     Console.WriteLine("Invalid command. Please type a number between 0 to 4");
+                    Thread.Sleep(3000);
+                    Console.Clear();
                     break;
             }
         }
@@ -73,7 +79,7 @@ What would you like to do?
         tableCmd.CommandText =
             $"Select * FROM drinking_water";
         List<DrinkingWater> tableData = new();
-        SqliteDataReader reader = tableCmd.ExecuteReader();
+        var reader = tableCmd.ExecuteReader();
         if (reader.HasRows)
         {
             while (reader.Read())
@@ -92,12 +98,12 @@ What would you like to do?
             Console.WriteLine("No rows found.");
         }
         connection.Close();
-        Console.WriteLine("------------------------------------------");
+        Console.WriteLine("--------------------------------");
         foreach (var dw in tableData)
         {
             Console.WriteLine($"{dw.Id} - {dw.Date:dd-MMM-yyyy} - Quantity: {dw.Quantity}");
         }
-        Console.WriteLine("------------------------------------------");
+        Console.WriteLine("--------------------------------");
     }
 
     public static void Delete()
@@ -166,6 +172,7 @@ What would you like to do?
             $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
         tableCmd.ExecuteNonQuery();
         connection.Close();
+        Console.Clear();
     }
 
     public static string GetDateInput()
