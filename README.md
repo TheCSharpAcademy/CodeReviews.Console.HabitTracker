@@ -14,8 +14,8 @@ Developed using C# and SQLite
 
 * SQLite database connection
 		
-		- The program uses a SQLite db conneciton to store and read information.
-		- If no database exists, or the correct table does not exist, they will be created when the program starts.
+- The program uses a SQLite db conneciton to store and read information.
+- If no database exists, or the correct table does not exist, they will be created when the program starts.
 
 * A console based UI where users can navigate with commands
 				
@@ -24,5 +24,5 @@ Developed using C# and SQLite
 
 * CRUD DB functions
 
-		- From the main menu users can close the application, view all records, insert a record, delete a record, or update a record.
-		- Date and number of bottles are checked to make sure they are in the correct format.
+- From the main menu users can close the application, view all records, insert a record, delete a record, or update a record.
+- Date and number of bottles are checked to make sure they are in the correct format.
