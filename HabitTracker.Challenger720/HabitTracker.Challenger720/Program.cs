@@ -231,6 +231,7 @@ namespace HabitTracker
             {
                 Console.WriteLine(message);
                 numberInput = Console.ReadLine();
+                Console.WriteLine();
 
             } while (!int.TryParse(numberInput, out num));
 
