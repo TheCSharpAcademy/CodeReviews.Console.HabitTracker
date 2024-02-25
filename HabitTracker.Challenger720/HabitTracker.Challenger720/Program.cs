@@ -72,7 +72,6 @@ namespace HabitTracker
                         break;
                 }
             }
-
         }
 
         static void viewRecord()
@@ -111,7 +110,6 @@ namespace HabitTracker
                 }
 
                 Console.WriteLine();
-
             }
         }
 
@@ -161,7 +159,6 @@ namespace HabitTracker
                 }
 
                 connection.Close();
-
             }
         }
 
@@ -200,10 +197,7 @@ namespace HabitTracker
 
                     connection.Close();
                 }
-
-
             }
-
         }
 
         static string getDate()
