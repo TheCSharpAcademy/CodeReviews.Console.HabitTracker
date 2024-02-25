@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Microsoft.VisualBasic.FileIO;
 using SQLitePCL;
@@ -52,6 +53,7 @@ namespace HabitTracker
                 {
                     case "0":
                         end = true;
+                        Environment.Exit(0);
                         break;
                     case "1":
                         viewRecord();
@@ -66,7 +68,7 @@ namespace HabitTracker
                         update();
                         break;
                     default:
-                        Console.WriteLine("Invalid command. Please type number 0 to 4.");
+                        Console.WriteLine("\nInvalid command. Please type number 0 to 4.\n");
                         break;
                 }
             }
@@ -108,6 +110,8 @@ namespace HabitTracker
                 {
                     Console.WriteLine(row);
                 }
+
+                Console.WriteLine();
 
             }
         }
@@ -168,62 +172,71 @@ namespace HabitTracker
 
             var recordID = getNumber("\nPlease type the ID of the record you want to update, or type 0 to go back to main menu.");
 
-            string date = getDate();
-            int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
-
             using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = $"UPDATE StudyHours SET ID = '{recordID}' WHERE Date='{date}',Quantity='{quantity}'";
 
-                int rowCount = command.ExecuteNonQuery();
+                command.CommandText = $"SELECT * FROM StudyHours WHERE ID = '{recordID}'";
 
-                if (rowCount == 0)
+                var rows = command.ExecuteScalar();
+
+                if (rows == null)
                 {
-                    Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Try again! \n");
-                    delete();
+                    Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Please any key to try again! \n");
+                    Console.ReadLine();
+                    update();
                 }
                 else
                 {
-                    Console.WriteLine($"\nRecord ID {recordID} is deleted. \n");
+                    string date = getDate();
+                    int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
+
+                    command.CommandText = $"UPDATE StudyHours SET Date='{date}',Quantity='{quantity}' WHERE ID = '{recordID}'";
+
+                    command.ExecuteNonQuery();
+
+                    Console.WriteLine($"\nRecord ID {recordID} is updated. \n");
+
+                    connection.Close();
                 }
 
-                connection.Close();
 
             }
+
         }
 
-            static string getDate()
+        static string getDate()
+        {
+            string? date;
+            bool result;
+            do
             {
-                string? date;
-                do
-                {
-                    Console.WriteLine("Please insert the date in format of YYYY-MM-DD. Type 0 to return to main menu.");
-                    date = Console.ReadLine();
-
-                } while (date == null);
-
+                Console.WriteLine("Please insert the date in format of YYYY-MM-DD. Type 0 to return to main menu.");
+                date = Console.ReadLine();
                 if (date == "0") userInput(false);
+                result = DateTime.TryParseExact(date, "yyyy-MM-dd", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime product);
 
-                return date;
-            }
+            } while ((date == null) || (!result));
 
-            static int getNumber(string message)
+            return date;
+        }
+
+        static int getNumber(string message)
+        {
+            int num;
+            string? numberInput;
+
+            do
             {
-                int num;
-                string? numberInput;
+                Console.WriteLine(message);
+                numberInput = Console.ReadLine();
 
-                do
-                {
-                    Console.WriteLine(message);
-                    numberInput = Console.ReadLine();
+            } while (!int.TryParse(numberInput, out num));
 
-                } while (!int.TryParse(numberInput, out num));
+            if (numberInput == "0") userInput(false);
 
-                if (numberInput == "0") userInput(false);
-
-                return num;
-            }
+            return num;
         }
     }
+}
