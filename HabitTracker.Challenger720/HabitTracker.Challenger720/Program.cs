@@ -100,8 +100,7 @@ namespace HabitTracker
                 }
                 else
                 {
-                    Console.WriteLine("No rows found\n");
-                    Console.WriteLine("Press any key to return to main menu");
+                    Console.WriteLine("No rows found.");
                 }
 
                 connection.Close();
@@ -152,7 +151,8 @@ namespace HabitTracker
 
                 if (rowCount == 0)
                 {
-                    Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Try again! \n");
+                    Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Please any key to try again! \n");
+                    Console.ReadLine();
                     delete();
                 }
                 else
