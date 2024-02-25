@@ -139,7 +139,7 @@ namespace HabitTracker
             Console.Clear();
             viewRecord();
 
-            var recordID = getNumber("\nPlease type the ID of the record you want to delete, or type 0 to go back to main menu.");
+            var recordID = getNumber("Please type the ID of the record you want to delete, or type 0 to go back to main menu.");
 
             using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
             {
@@ -170,7 +170,7 @@ namespace HabitTracker
             Console.Clear();
             viewRecord();
 
-            var recordID = getNumber("\nPlease type the ID of the record you want to update, or type 0 to go back to main menu.");
+            var recordID = getNumber("Please type the ID of the record you want to update, or type 0 to go back to main menu.");
 
             using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
             {
