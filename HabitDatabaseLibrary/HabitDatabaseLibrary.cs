@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Data.SQLite;
 using ConsoleTables;
-using System.Reflection.PortableExecutable;
-using System.Security.Cryptography;
+
 
 namespace HabitDatabaseLibrary
 {
@@ -91,7 +90,7 @@ namespace HabitDatabaseLibrary
             }
         }
 
-        public void ReadData(string connectionString)
+        public SQLiteDataReader ReadData(string connectionString)
         {
             Console.Clear();
 
@@ -102,6 +101,7 @@ namespace HabitDatabaseLibrary
 
             using (var conn = new SQLiteConnection(connectionString))
             {
+                List<string> data = new List<string>();
                 try
                 {
                     conn.Open();
@@ -113,17 +113,11 @@ namespace HabitDatabaseLibrary
 
                     SQLiteDataReader reader = cmd.ExecuteReader();
 
-                    var table = new ConsoleTable("Date", "Cups of coffee Consumed.");
-
-                    while (reader.Read())
-                    {
-                        table.AddRow(reader["Date"], reader["Count"]);
-                    }
-                    table.Write();
-                    LogSuccess();
                     conn.Close();
+                    LogSuccess();
+                    return reader;
                 }
-                catch (Exception ex) { LogError(ex); conn.Close(); }
+                catch (Exception ex) { LogError(ex); conn.Close(); return null; }
             }
             
         }
