@@ -1,12 +1,11 @@
+# Console App: Habit Logger
 [
     "# Head",
     "## Item",
     "### Detail"
 ]
 
-# Console App: Habit Logger
-
-Console based CRUD application to track time studying each day, 
+Console based CRUD application to track time studying each day,
 using C# and SQLite.
 
 This is my 3rd beginner project at C# Academy.
@@ -106,7 +105,6 @@ static void userInput(bool end)
 - User can choose to insert, delete, update study hour, view record or quit app.
 - If user enters an invalid input, they are ask to enter a valid number again.
 
-
 ```javascript
 static void viewRecord()
 {
@@ -154,7 +152,8 @@ static void viewRecord()
 - When user requests to view the record, all the data in SQL database are
 'read' and transferred into a List in C#.
 
-- If no rows are 'read', the user is notified no rows found and brings user back to main menu.
+- If no rows are 'read', the user is notified no rows found 
+and brings user back to main menu.
 - The List is then printed onto the console by iteratiing through all its rows.
 
 
@@ -256,7 +255,8 @@ static void update()
         else
         {
             string date = getDate();
-            int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
+            int quantity = getNumber("Please insert number of hours 
+            in whole number, or type 0 to go back to main menu.");
 
             command.CommandText = $"UPDATE StudyHours 
             SET Date='{date}',Quantity='{quantity}' WHERE ID = '{recordID}'";
@@ -286,7 +286,8 @@ static void delete()
     Console.Clear();
     viewRecord();
 
-    var recordID = getNumber("Please type the ID of the record you want to delete, or type 0 to go back to main menu.");
+    var recordID = getNumber("Please type the ID of the 
+    record you want to delete, or type 0 to go back to main menu.");
 
     using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
     {
@@ -298,7 +299,8 @@ static void delete()
 
         if (rowCount == 0)
         {
-            Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Please any key to try again! \n");
+            Console.WriteLine($"\nRecord ID {recordID} doesn't exist. 
+            Please any key to try again! \n");
             Console.ReadLine();
             delete();
         }
@@ -336,12 +338,13 @@ notified the record is deleted.
 # Lessons Learned
 
 - How to use SQLite to create a simple CRUD app in C#
-- Read Microsoft Documentation when in doubt. I already know SQL before this project,
-but the learning curve is still steep, because I do not understand how to incorporate it
- into C# and I was panicking when I first watch the youtube tutorial. Fortunately,
- I found the Microsoft Documentation helps a lot
+- Read Microsoft Documentation when in doubt. I already know SQL 
+before this project,
+but the learning curve is still steep, 
+because I do not understand how to incorporate it
+ into C# and I was panicking when I first watch the youtube tutorial. 
+ Fortunately, I found the Microsoft Documentation helps a lot
 
 - Make use of debugging with breakpoints
 - Refactor the codes and keep it clean
 - Take a rest when I can't process. Programming requires a very active brain
-
