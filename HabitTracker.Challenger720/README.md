@@ -1,4 +1,5 @@
 # Console App: Habit Logger
+
 [
     "# Head",
     "## Item",
@@ -17,7 +18,7 @@ reading Microsoft documentations.
 My aim is to keep my codes simple,
 so I can follow the logic when I make reference of my own code later.
 
-# Features
+## Features
 
 - ADO.NET, because it’s the closest to raw SQL (Microsoft.Data.SQLite NuGet Package)
 - This app stores and retrive study hours by date from a SQL database
@@ -25,7 +26,7 @@ so I can follow the logic when I make reference of my own code later.
 - User can insert, delete, update and view the logged study hours
 - User input is checked for validity (e.g. date format, hours are whole numbers only)
 
-# Usage/Examples
+## Usage/Examples
 
 ```javascript
 static void Main(string[] args)
@@ -152,7 +153,7 @@ static void viewRecord()
 - When user requests to view the record, all the data in SQL database are
 'read' and transferred into a List in C#.
 
-- If no rows are 'read', the user is notified no rows found 
+- If no rows are 'read', the user is notified no rows found
 and brings user back to main menu.
 - The List is then printed onto the console by iteratiing through all its rows.
 
@@ -323,7 +324,7 @@ or go back to main menu.
 - If the ID is valid, the record will be deleted and the user is
 notified the record is deleted.
 
-# Documentation
+## Documentation
 
 [Pablo's Youtube Tutorial](https://www.youtube.com/watch?v=d1JIJdDVFjs)
 
@@ -335,14 +336,13 @@ notified the record is deleted.
 
 [Microsoft Documentation: DateTime Format](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-8.0)
 
-# Lessons Learned
+## Lessons Learned
 
 - How to use SQLite to create a simple CRUD app in C#
-- Read Microsoft Documentation when in doubt. I already know SQL 
-before this project,
-but the learning curve is still steep, 
+- Read Microsoft Documentation when in doubt. I already know SQL
+before this project, but the learning curve is still steep,
 because I do not understand how to incorporate it
- into C# and I was panicking when I first watch the youtube tutorial. 
+ into C# and I was panicking when I first watch the youtube tutorial.
  Fortunately, I found the Microsoft Documentation helps a lot
 
 - Make use of debugging with breakpoints
