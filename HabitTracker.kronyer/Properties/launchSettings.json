@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\pedro\\OneDrive\\Área de Trabalho\\Journey\\HabitTracker\\HabitTracker"
+    }
+  }
+}
