@@ -29,10 +29,10 @@ namespace HabitTracker
                 connection.Close();
             }
 
-            userInput(end);
+            UserInput(end);
         }
 
-        static void userInput(bool end)
+        static void UserInput(bool end)
         {
             Console.Clear();
             string? input;
@@ -56,16 +56,16 @@ namespace HabitTracker
                         Environment.Exit(0);
                         break;
                     case "1":
-                        viewRecord();
+                        ViewRecord();
                         break;
                     case "2":
-                        insert();
+                        Insert();
                         break;
                     case "3":
-                        delete();
+                        Delete();
                         break;
                     case "4":
-                        update();
+                        Update();
                         break;
                     default:
                         Console.WriteLine("\nInvalid command. Please type number 0 to 4.\n");
@@ -74,7 +74,7 @@ namespace HabitTracker
             }
         }
 
-        static void viewRecord()
+        static void ViewRecord()
         {
             Console.Clear();
 
@@ -113,11 +113,11 @@ namespace HabitTracker
             }
         }
 
-        static void insert()
+        static void Insert()
         {
             Console.Clear();
-            string date = getDate();
-            int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
+            string date = GetDate();
+            int quantity = GetNumber("Please Insert number of hours in whole number, or type 0 to go back to main menu.");
 
             using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
             {
@@ -132,12 +132,12 @@ namespace HabitTracker
             }
         }
 
-        static void delete()
+        static void Delete()
         {
             Console.Clear();
-            viewRecord();
+            ViewRecord();
 
-            var recordID = getNumber("Please type the ID of the record you want to delete, or type 0 to go back to main menu.");
+            var recordID = GetNumber("Please type the ID of the record you want to Delete, or type 0 to go back to main menu.");
 
             using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
             {
@@ -151,7 +151,7 @@ namespace HabitTracker
                 {
                     Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Please any key to try again! \n");
                     Console.ReadLine();
-                    delete();
+                    Delete();
                 }
                 else
                 {
@@ -162,12 +162,12 @@ namespace HabitTracker
             }
         }
 
-        static void update()
+        static void Update()
         {
             Console.Clear();
-            viewRecord();
+            ViewRecord();
 
-            var recordID = getNumber("Please type the ID of the record you want to update, or type 0 to go back to main menu.");
+            var recordID = GetNumber("Please type the ID of the record you want to Update, or type 0 to go back to main menu.");
 
             using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
             {
@@ -182,12 +182,12 @@ namespace HabitTracker
                 {
                     Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Please any key to try again! \n");
                     Console.ReadLine();
-                    update();
+                    Update();
                 }
                 else
                 {
-                    string date = getDate();
-                    int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
+                    string date = GetDate();
+                    int quantity = GetNumber("Please Insert number of hours in whole number, or type 0 to go back to main menu.");
 
                     command.CommandText = $"UPDATE StudyHours SET Date='{date}',Quantity='{quantity}' WHERE ID = '{recordID}'";
 
@@ -200,15 +200,15 @@ namespace HabitTracker
             }
         }
 
-        static string getDate()
+        static string GetDate()
         {
             string? date;
             bool result;
             do
             {
-                Console.WriteLine("Please insert the date in format of YYYY-MM-DD. Type 0 to return to main menu.");
+                Console.WriteLine("Please Insert the date in format of YYYY-MM-DD. Type 0 to return to main menu.");
                 date = Console.ReadLine();
-                if (date == "0") userInput(false);
+                if (date == "0") UserInput(false);
                 result = DateTime.TryParseExact(date, "yyyy-MM-dd", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime product);
 
             } while ((date == null) || (!result));
@@ -216,7 +216,7 @@ namespace HabitTracker
             return date;
         }
 
-        static int getNumber(string message)
+        static int GetNumber(string message)
         {
             int num;
             string? numberInput;
@@ -229,7 +229,7 @@ namespace HabitTracker
 
             } while (!int.TryParse(numberInput, out num));
 
-            if (numberInput == "0") userInput(false);
+            if (numberInput == "0") UserInput(false);
 
             return num;
         }
