@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using ConsoleTables;
 using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
 
 namespace HabitDatabaseLibrary
 {
@@ -55,184 +56,165 @@ namespace HabitDatabaseLibrary
             writer.WriteValue(DateTime.Now.ToString("MM/dd/yyyy hh:mm tt"));
             writer.WriteEndObject();
         }
-        public SQLiteConnection CreateConnection()
+
+        public void CreateDatabase(string connectionString)
         {
 
-            SQLiteConnection sqlite_conn;
-            sqlite_conn = new SQLiteConnection($"Data Source=database.db;Version=3;New=True;Compress=True;");
-
-            writer.WriteStartObject();
-            writer.WritePropertyName("Operation");
-            writer.WriteValue("Open Database");
-            writer.WritePropertyName("Result");
-
-            try
+            using (var conn = new SQLiteConnection(connectionString))
             {
-                sqlite_conn.Open();
-                LogSuccess();
+
+                SQLiteCommand cmd = conn.CreateCommand();
+                const string tableQuery = "CREATE TABLE IF NOT EXIST Coffee_Consumed ( Date TEXT, Count int )";
+
+                try
+                {
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("Operation");
+                    writer.WriteValue("Open Database");
+                    writer.WritePropertyName("Result");
+
+                    conn.Open();
+                    
+                    LogSuccess();
+
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("Operation");
+                    writer.WriteValue("Create Table");
+                    writer.WritePropertyName("Result");
+
+                    cmd.CommandText = tableQuery;
+                    cmd.ExecuteNonQuery();
+                    
+                    LogSuccess();
+                }
+                catch (Exception ex) { LogError(ex); conn.Close(); }
             }
-
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-
-
-            return sqlite_conn;
         }
 
-        public void CreateTable(SQLiteConnection conn)
-        {
-            const string habitTableSQL = "CREATE TABLE Habit_Table (HabitName varchar(255), Count int);";
-            SQLiteCommand sqlite_cmd = conn.CreateCommand();
-
-            writer.WriteStartObject();
-            writer.WritePropertyName("Operation");
-            writer.WriteValue("Create Table");
-            writer.WritePropertyName("Result");
-
-            try
-            {
-                sqlite_cmd.CommandText = habitTableSQL;
-                sqlite_cmd.ExecuteNonQuery();
-                LogSuccess();
-            }
-
-            catch (SQLiteException ex)
-            {
-                LogError(ex);
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-            
-        }
-
-        public void ReadData(SQLiteConnection conn)
+        public void ReadData(string connectionString)
         {
             Console.Clear();
-
-            SQLiteDataReader reader;
 
             writer.WriteStartObject();
             writer.WritePropertyName("Operation");
             writer.WriteValue("Read Table");
             writer.WritePropertyName("Result");
 
-            try
+            using (var conn = new SQLiteConnection(connectionString))
             {
-                SQLiteCommand sqlite_cmd = conn.CreateCommand();
-                sqlite_cmd.CommandText = "SELECT * FROM Habit_Table;";
-
-                reader = sqlite_cmd.ExecuteReader();
-                var table = new ConsoleTable("Habit Name", "Habit Count");
-
-                while (reader.Read())
+                try
                 {
-                    table.AddRow(reader["HabitName"], reader["Count"]);
+                    conn.Open();
+                    const string selectQuery = "SELECT * FROM Coffee_Consumed";
+
+                    SQLiteCommand cmd = conn.CreateCommand();
+
+                    cmd.CommandText = selectQuery;
+
+                    SQLiteDataReader reader = cmd.ExecuteReader();
+
+                    var table = new ConsoleTable("Date", "Cups of coffee Consumed.");
+
+                    while (reader.Read())
+                    {
+                        table.AddRow(reader["Date"], reader["Count"]);
+                    }
+                    table.Write();
+                    LogSuccess();
+                    conn.Close();
                 }
-                table.Write();
-
-
-                LogSuccess();
+                catch (Exception ex) { LogError(ex); conn.Close(); }
             }
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-        }
-        public void InsertData(SQLiteConnection conn, string habitName)
-        {
-            SQLiteCommand sqlite_cmd = conn.CreateCommand();
-            string insertHabitSQL = $"INSERT INTO Habit_Table (HabitName, Count) VALUES ('{habitName}', 0);";
             
-            writer.WriteStartObject();
-            writer.WritePropertyName("Operation");
-            writer.WriteValue("Insert Data");
-            writer.WritePropertyName("Result");
+        }
+        public void InsertData(string connnectionString, string date, int count)
+        {
+            using (var conn = new SQLiteConnection(connnectionString))
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName("Operation");
+                writer.WriteValue("Insert Data");
+                writer.WritePropertyName("Result");
 
-            try
-            {
-                sqlite_cmd.CommandText = insertHabitSQL;
-                sqlite_cmd.ExecuteNonQuery();
-                LogSuccess(habitName: habitName);
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, habitName: habitName);
+                try
+                {
+                    conn.Open();
+
+                    SQLiteCommand cmd = conn.CreateCommand();
+                    string insertHabitSQL = $"INSERT INTO Coffee_Consumed (LogDate, Count) VALUES ('{date}', 0);";
+
+                    cmd.CommandText = insertHabitSQL;
+                    cmd.ExecuteNonQuery();
+
+                    LogSuccess();
+
+                    conn.Close();
+                }
+                catch (Exception ex) { LogError(ex); conn.Close(); }
             }
         }
 
-        public void DeleteData(SQLiteConnection conn, string habitName)
+        public void DeleteData(string connectionString, string date)
         {
-            SQLiteCommand sqlite_cmd = conn.CreateCommand();
-            string deleteHabitSQL = $"DELETE FROM Habit_Table WHERE HabitName='{habitName}';";
-            writer.WriteStartObject();
-            writer.WritePropertyName("Operation");
-            writer.WriteValue("Delete Data");
-            writer.WritePropertyName("Result");
-            try
+            using (var conn = new SQLiteConnection(connectionString))
             {
-                sqlite_cmd.CommandText = deleteHabitSQL;
-                sqlite_cmd.ExecuteNonQuery();
-                LogSuccess(habitName: habitName);
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, habitName: habitName);
+                writer.WriteStartObject();
+                writer.WritePropertyName("Operation");
+                writer.WriteValue("Delete Data");
+                writer.WritePropertyName("Result");
+
+                try
+                {
+                    conn.Open();
+                    
+                    SQLiteCommand sqlite_cmd = conn.CreateCommand();
+                    string deleteHabitSQL = $"DELETE FROM Coffee_Consumed WHERE Date S= '{date}';";
+
+                    sqlite_cmd.CommandText = deleteHabitSQL;
+                    sqlite_cmd.ExecuteNonQuery();
+                    LogSuccess();
+
+                    conn.Close();
+                }
+                catch (Exception ex) { LogError(ex); conn.Close(); }
             }
         }
 
-        public void UpdateData(SQLiteConnection conn, string habitName, int count)
+        public void UpdateData(string connectionString, string date, int count)
         {
-            SQLiteCommand sqlite_cmd = conn.CreateCommand();
-            SQLiteDataReader reader;
-            int currentCount;
+
             writer.WriteStartObject();
             writer.WritePropertyName("Operation");
             writer.WriteValue("Update Data");
             writer.WritePropertyName("Result");
-            try
-            {
-                
-                sqlite_cmd.CommandText = $"SELECT Count FROM Habit_Table WHERE HabitName = '{habitName}';";
-                reader = sqlite_cmd.ExecuteReader();
-                reader.Read();
-                currentCount = reader.GetInt32(0);
-                reader.Close();
-                
-                
-                string updateHabitSQL = $"UPDATE Habit_Table SET Count = {currentCount + count} WHERE habitName = '{habitName}'";
-                sqlite_cmd.CommandText = updateHabitSQL;
-                sqlite_cmd.ExecuteNonQuery();
-                LogSuccess(habitName: habitName, currentCount: currentCount.ToString(), countIncrement: count.ToString());
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-        }
 
-        public void CloseConnection(SQLiteConnection conn)
-        {
+            using (var conn = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    SQLiteCommand cmd = conn.CreateCommand();
+                    SQLiteDataReader reader;
+                    int currentCount;
 
-            writer.WriteStartObject();
-            writer.WritePropertyName("Operation");
-            writer.WriteValue("Close Connection");
-            writer.WritePropertyName("Result");
-            
-            try
-            {
-                conn.Close();
-                LogSuccess();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-            writer.WriteEndArray();
-            writer.Close();
+                    cmd.CommandText = $"SELECT Count FROM Coffee_Consumed WHERE Date = '{date}';";
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    currentCount = reader.GetInt32(0);
+                    reader.Close();
+
+
+                    string updateHabitSQL = $"UPDATE Coffee_Consumed SET Count = {currentCount + count} WHERE Date = '{date}'";
+                    cmd.CommandText = updateHabitSQL;
+                    cmd.ExecuteNonQuery();
+                    LogSuccess();
+                    conn.Close();
+                }
+                catch (Exception ex) { LogError(ex); conn.Close(); }
+            } 
         }
+   
     }
 }
+
+
