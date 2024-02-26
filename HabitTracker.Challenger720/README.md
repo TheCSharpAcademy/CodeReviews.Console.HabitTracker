@@ -1,13 +1,21 @@
+[
+    "# Head",
+    "## Item",
+    "### Detail"
+]
 
 # Console App: Habit Logger
 
-Console based CRUD application to track time studying each day, using C# and SQLite. 
-This is the 3rd beginner project at C# Academy.
+Console based CRUD application to track time studying each day, 
+using C# and SQLite.
 
-Guidance by Pable from C# Academy is provided in his Youtube Tutorial, 
-but I try my best to build this console app by myself through reading Microsoft documentations. 
+This is my 3rd beginner project at C# Academy.
 
-My aim is to keep my codes simple, 
+Guidance by Pable from C# Academy is provided in his Youtube Tutorial,
+but I try my best to build this console app by myself through
+reading Microsoft documentations.
+
+My aim is to keep my codes simple,
 so I can follow the logic when I make reference of my own code later.
 
 # Features
@@ -48,7 +56,6 @@ static void Main(string[] args)
 - When the application starts, a SQLite database is created if one isn’t present.
 - It creates a table in the database to log the study hours
 - It brings the user into main menu where data manipulation happens.
-
 
 ```javascript
 static void userInput(bool end)
@@ -121,7 +128,8 @@ static void viewRecord()
         {
             while (reader.Read())
             {
-                table.Add($"{reader.GetString(0)} - Date: {reader.GetString(1)} - 
+                table.Add($"{reader.GetString(0)} - 
+                Date: {reader.GetString(1)} - 
                 Hours: {reader.GetString(2)}");
             }
         }
@@ -143,8 +151,8 @@ static void viewRecord()
 }
 ```
 
-- When user requests to view the record, all the data in SQL database are 'read' 
-and transferred into a List in C#.
+- When user requests to view the record, all the data in SQL database are
+'read' and transferred into a List in C#.
 
 - If no rows are 'read', the user is notified no rows found and brings user back to main menu.
 - The List is then printed onto the console by iteratiing through all its rows.
@@ -181,7 +189,8 @@ static string getDate()
         Type 0 to return to main menu.");
         date = Console.ReadLine();
         if (date == "0") userInput(false);
-        result = DateTime.TryParseExact(date, "yyyy-MM-dd", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime product);
+        result = DateTime.TryParseExact(date, "yyyy-MM-dd", 
+        new CultureInfo("en-US"), DateTimeStyles.None, out DateTime product);
 
     } while ((date == null) || (!result));
 
@@ -206,14 +215,15 @@ static int getNumber(string message)
     return num;
 }
 ```
-- To insert the study hours onto the table in SQL database, 
+
+- To insert the study hours onto the table in SQL database,
 user is required to input a valid date and study hour in whole number.
 
-- getData method checks if the user input a valid date by DateTime's 
-TryParseExact method (refer to Microsoft Documentation for usage). 
+- getData method checks if the user input a valid date by DateTime's
+TryParseExact method (refer to Microsoft Documentation for usage).
 If the date is invalid or empty, user is prompt to enter again.
 
-- getNumber method checks if the user input a valid number for 
+- getNumber method checks if the user input a valid number for
 study hour, it should be a whole number.
 
 - The user can return to the main menu by entering "0" at any point.
@@ -260,13 +270,14 @@ static void update()
     }
 }
 ```
-- User can update the existing record by entering the ID of record 
+
+- User can update the existing record by entering the ID of record
 as shown on the screen (presented through viewRecord method).
 
-- If user input a invalid ID, the user is prompted to try again 
+- If user input a invalid ID, the user is prompted to try again
 or go back to main menu.
 
-- If the ID exists, the user will be asked to enter date and study hour, 
+- If the ID exists, the user will be asked to enter date and study hour,
 which are vetted by the same validity method as mentioned above in "insert" menu.
 
 ```javascript
@@ -301,13 +312,13 @@ static void delete()
 }
 ```
 
-- User can delete the existing record by entering the ID of record 
+- User can delete the existing record by entering the ID of record
 as shown on the screen (presented through viewRecord method).
 
-- If user input a invalid ID, the user is prompted to try again 
+- If user input a invalid ID, the user is prompted to try again
 or go back to main menu.
 
-- If the ID is valid, the record will be deleted and the user is 
+- If the ID is valid, the record will be deleted and the user is
 notified the record is deleted.
 
 # Documentation
@@ -325,9 +336,9 @@ notified the record is deleted.
 # Lessons Learned
 
 - How to use SQLite to create a simple CRUD app in C#
-- Read Microsoft Documentation when in doubt. I already know SQL before this project, 
+- Read Microsoft Documentation when in doubt. I already know SQL before this project,
 but the learning curve is still steep, because I do not understand how to incorporate it
- into C# and I was panicking when I first watch the youtube tutorial. Fortunately, 
+ into C# and I was panicking when I first watch the youtube tutorial. Fortunately,
  I found the Microsoft Documentation helps a lot
 
 - Make use of debugging with breakpoints
