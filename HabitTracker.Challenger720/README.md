@@ -1,14 +1,16 @@
 
-Console App: Habit Logger
--
+# Console App: Habit Logger
 
-Console based CRUD application to track time studying each day, using C# and SQLite. This is the 3rd beginner project at C# Academy. 
+Console based CRUD application to track time studying each day, using C# and SQLite. 
+This is the 3rd beginner project at C# Academy.
 
-Guidance by Pable from C# Academy is provided in his Youtube Tutorial, but I try my best to build this console app by myself through reading Microsoft documentations. 
+Guidance by Pable from C# Academy is provided in his Youtube Tutorial, 
+but I try my best to build this console app by myself through reading Microsoft documentations. 
 
-My aim is to keep my codes simple, so I can follow the logic when I make reference of my own code later.
+My aim is to keep my codes simple, 
+so I can follow the logic when I make reference of my own code later.
 
-## Features
+# Features
 
 - ADO.NET, because it’s the closest to raw SQL (Microsoft.Data.SQLite NuGet Package)
 - This app stores and retrive study hours by date from a SQL database
@@ -16,11 +18,7 @@ My aim is to keep my codes simple, so I can follow the logic when I make referen
 - User can insert, delete, update and view the logged study hours
 - User input is checked for validity (e.g. date format, hours are whole numbers only)
 
-
-
-
-
-## Usage/Examples
+# Usage/Examples
 
 ```javascript
 static void Main(string[] args)
@@ -46,6 +44,7 @@ static void Main(string[] args)
     userInput(end);
 }
 ```
+
 - When the application starts, a SQLite database is created if one isn’t present.
 - It creates a table in the database to log the study hours
 - It brings the user into main menu where data manipulation happens.
@@ -95,8 +94,9 @@ static void userInput(bool end)
 
 }
 ```
+
 - User is presented a main menu and asked to type in a number to do a list of actions.
-- User can choose to insert / delete / update study hours, view the record or quit the app.
+- User can choose to insert, delete, update study hour, view record or quit app.
 - If user enters an invalid input, they are ask to enter a valid number again.
 
 
@@ -121,7 +121,8 @@ static void viewRecord()
         {
             while (reader.Read())
             {
-                table.Add($"{reader.GetString(0)} - Date: {reader.GetString(1)} - Hours: {reader.GetString(2)}");
+                table.Add($"{reader.GetString(0)} - Date: {reader.GetString(1)} - 
+                Hours: {reader.GetString(2)}");
             }
         }
         else
@@ -141,7 +142,10 @@ static void viewRecord()
     }
 }
 ```
-- When user requests to view the record, all the data in SQL database are 'read' and transferred into a List in C#.
+
+- When user requests to view the record, all the data in SQL database are 'read' 
+and transferred into a List in C#.
+
 - If no rows are 'read', the user is notified no rows found and brings user back to main menu.
 - The List is then printed onto the console by iteratiing through all its rows.
 
@@ -151,7 +155,8 @@ static void insert()
 {
     Console.Clear();
     string date = getDate();
-    int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
+    int quantity = getNumber("Please insert number of hours in whole number, 
+    or type 0 to go back to main menu.");
 
     using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
     {
@@ -172,7 +177,8 @@ static string getDate()
     bool result;
     do
     {
-        Console.WriteLine("Please insert the date in format of YYYY-MM-DD. Type 0 to return to main menu.");
+        Console.WriteLine("Please insert the date in format of YYYY-MM-DD. 
+        Type 0 to return to main menu.");
         date = Console.ReadLine();
         if (date == "0") userInput(false);
         result = DateTime.TryParseExact(date, "yyyy-MM-dd", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime product);
@@ -200,9 +206,16 @@ static int getNumber(string message)
     return num;
 }
 ```
-- To insert the study hours onto the table in SQL database, user is required to input a valid date and study hour in whole number.
-- getData method checks if the user input a valid date by DateTime's TryParseExact method (refer to Microsoft Documentation for usage). If the date is invalid or empty, user is prompt to enter again.
-- getNumber method checks if the user input a valid number for study hour, it should be a whole number.
+- To insert the study hours onto the table in SQL database, 
+user is required to input a valid date and study hour in whole number.
+
+- getData method checks if the user input a valid date by DateTime's 
+TryParseExact method (refer to Microsoft Documentation for usage). 
+If the date is invalid or empty, user is prompt to enter again.
+
+- getNumber method checks if the user input a valid number for 
+study hour, it should be a whole number.
+
 - The user can return to the main menu by entering "0" at any point.
 
 ```javascript
@@ -211,7 +224,8 @@ static void update()
     Console.Clear();
     viewRecord();
 
-    var recordID = getNumber("Please type the ID of the record you want to update, or type 0 to go back to main menu.");
+    var recordID = getNumber("Please type the ID of the record 
+    you want to update, or type 0 to go back to main menu.");
 
     using (var connection = new SqliteConnection("Data source=HabitTracker.db"))
     {
@@ -224,7 +238,8 @@ static void update()
 
         if (rows == null)
         {
-            Console.WriteLine($"\nRecord ID {recordID} doesn't exist. Please any key to try again! \n");
+            Console.WriteLine($"\nRecord ID {recordID} 
+            doesn't exist. Please any key to try again! \n");
             Console.ReadLine();
             update();
         }
@@ -233,7 +248,8 @@ static void update()
             string date = getDate();
             int quantity = getNumber("Please insert number of hours in whole number, or type 0 to go back to main menu.");
 
-            command.CommandText = $"UPDATE StudyHours SET Date='{date}',Quantity='{quantity}' WHERE ID = '{recordID}'";
+            command.CommandText = $"UPDATE StudyHours 
+            SET Date='{date}',Quantity='{quantity}' WHERE ID = '{recordID}'";
 
             command.ExecuteNonQuery();
 
@@ -244,9 +260,14 @@ static void update()
     }
 }
 ```
-- User can update the existing record by entering the ID of record as shown on the screen (presented through viewRecord method).
-- If user input a invalid ID, the user is prompted to try again or go back to main menu.
-- If the ID exists, the user will be asked to enter date and study hour, which are vetted by the same validity method as mentioned above in "insert" menu.
+- User can update the existing record by entering the ID of record 
+as shown on the screen (presented through viewRecord method).
+
+- If user input a invalid ID, the user is prompted to try again 
+or go back to main menu.
+
+- If the ID exists, the user will be asked to enter date and study hour, 
+which are vetted by the same validity method as mentioned above in "insert" menu.
 
 ```javascript
 static void delete()
@@ -279,11 +300,17 @@ static void delete()
     }
 }
 ```
-- User can delete the existing record by entering the ID of record as shown on the screen (presented through viewRecord method).
-- If user input a invalid ID, the user is prompted to try again or go back to main menu.
-- If the ID is valid, the record will be deleted and the user is notified the record is deleted.
 
-## Documentation
+- User can delete the existing record by entering the ID of record 
+as shown on the screen (presented through viewRecord method).
+
+- If user input a invalid ID, the user is prompted to try again 
+or go back to main menu.
+
+- If the ID is valid, the record will be deleted and the user is 
+notified the record is deleted.
+
+# Documentation
 
 [Pablo's Youtube Tutorial](https://www.youtube.com/watch?v=d1JIJdDVFjs)
 
@@ -294,10 +321,15 @@ static void delete()
 [C# and SQLite – Updating Data](https://stuartsplace.com/information-technology/programming/c-sharp/c-sharp-and-sqlite-updating-data)
 
 [Microsoft Documentation: DateTime Format](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-8.0)
-## Lessons Learned
+
+# Lessons Learned
 
 - How to use SQLite to create a simple CRUD app in C#
-- Read Microsoft Documentation when in doubt. I already know SQL before this project, but the learning curve is still steep, because I do not understand how to incorporate it into C# and I was panicking when I first watch the youtube tutorial. Fortunately, I found the Microsoft Documentation helps a lot
+- Read Microsoft Documentation when in doubt. I already know SQL before this project, 
+but the learning curve is still steep, because I do not understand how to incorporate it
+ into C# and I was panicking when I first watch the youtube tutorial. Fortunately, 
+ I found the Microsoft Documentation helps a lot
+
 - Make use of debugging with breakpoints
 - Refactor the codes and keep it clean
 - Take a rest when I can't process. Programming requires a very active brain
