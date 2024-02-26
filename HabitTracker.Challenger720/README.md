@@ -1,4 +1,4 @@
-# ConsoleHabitLogger
+# Console App: Habit Logger
 
 Console based CRUD application to track time studying each day,
 using C# and SQLite.
@@ -22,7 +22,7 @@ so I can follow the logic when I make reference of my own code later.
 
 ## Usage/Examples
 
-```javascript
+```cs
 static void Main(string[] args)
 {
     bool end = false;
@@ -51,7 +51,7 @@ static void Main(string[] args)
 - It creates a table in the database to log the study hours
 - It brings the user into main menu where data manipulation happens.
 
-```javascript
+```cs
 static void userInput(bool end)
 {
     Console.Clear();
@@ -100,7 +100,7 @@ static void userInput(bool end)
 - User can choose to insert, delete, update study hour, view record or quit app.
 - If user enters an invalid input, they are ask to enter a valid number again.
 
-```javascript
+```cs
 static void viewRecord()
 {
     Console.Clear();
@@ -151,7 +151,7 @@ static void viewRecord()
 and brings user back to main menu.
 - The List is then printed onto the console by iteratiing through all its rows.
 
-```javascript
+```cs
 static void insert()
 {
     Console.Clear();
@@ -221,7 +221,7 @@ study hour, it should be a whole number.
 
 - The user can return to the main menu by entering "0" at any point.
 
-```javascript
+```cs
 static void update()
 {
     Console.Clear();
@@ -274,7 +274,7 @@ or go back to main menu.
 - If the ID exists, the user will be asked to enter date and study hour,
 which are vetted by the same validity method as mentioned above in "insert" menu.
 
-```javascript
+```cs
 static void delete()
 {
     Console.Clear();
