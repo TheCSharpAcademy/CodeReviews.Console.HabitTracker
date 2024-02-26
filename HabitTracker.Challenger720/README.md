@@ -1,10 +1,4 @@
-# Console App: Habit Logger
-
-[
-    "# head",
-    "## item",
-    "*"
-]
+# Console App: Habit Logger #
 
 Console based CRUD application to track time studying each day,
 using C# and SQLite.
@@ -18,7 +12,7 @@ reading Microsoft documentations.
 My aim is to keep my codes simple,
 so I can follow the logic when I make reference of my own code later.
 
-## Features
+## Features ##
 
 - ADO.NET, because it’s the closest to raw SQL (Microsoft.Data.SQLite NuGet Package)
 - This app stores and retrive study hours by date from a SQL database
@@ -26,7 +20,7 @@ so I can follow the logic when I make reference of my own code later.
 - User can insert, delete, update and view the logged study hours
 - User input is checked for validity (e.g. date format, hours are whole numbers only)
 
-## Usage/Examples
+## Usage/Examples ##
 
 ```javascript
 static void Main(string[] args)
@@ -323,7 +317,7 @@ or go back to main menu.
 - If the ID is valid, the record will be deleted and the user is
 notified the record is deleted.
 
-## Documentation
+## Documentation ##
 
 [Pablo's Youtube Tutorial](https://www.youtube.com/watch?v=d1JIJdDVFjs)
 
@@ -335,7 +329,7 @@ notified the record is deleted.
 
 [Microsoft Documentation: DateTime Format](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-8.0)
 
-## Lessons Learned
+## Lessons Learned ##
 
 - How to use SQLite to create a simple CRUD app in C#
 - Read Microsoft Documentation when in doubt. I already know SQL
