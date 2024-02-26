@@ -1,9 +1,9 @@
 # Console App: Habit Logger
 
 [
-    "# Head",
-    "## Item",
-    "### Detail"
+    "# head",
+    "## item",
+    "*"
 ]
 
 Console based CRUD application to track time studying each day,
@@ -156,7 +156,6 @@ static void viewRecord()
 - If no rows are 'read', the user is notified no rows found
 and brings user back to main menu.
 - The List is then printed onto the console by iteratiing through all its rows.
-
 
 ```javascript
 static void insert()
