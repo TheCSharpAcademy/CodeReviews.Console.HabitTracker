@@ -48,10 +48,12 @@ namespace HabitDatabaseLibrary
                         {
                             if (reader["LogDate"].ToString().Contains(check))
                             {
+                                reader.Close();
                                 conn.Close();
                                 return true;
                             }
                         }
+                        reader.Close();
                         conn.Close();
                         return false;
                     }
@@ -65,6 +67,7 @@ namespace HabitDatabaseLibrary
                             table.AddRow(reader["LogDate"], reader["Count"]);
                         }
                         table.Write();
+                        reader.Close();
                         conn.Close();
                         return false;
                     }
