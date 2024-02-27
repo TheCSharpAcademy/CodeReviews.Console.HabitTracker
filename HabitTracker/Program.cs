@@ -1,8 +1,4 @@
 ﻿using HabitDatabaseLibrary;
-using ConsoleTables;
-using System.Reflection.PortableExecutable;
-using System.CodeDom.Compiler;
-using System.ComponentModel.Design;
 
 namespace HabitTrackerProgram
 {
@@ -67,30 +63,97 @@ namespace HabitTrackerProgram
 
         static void ViewCoffeeConsumed()
         {
-            var results = db.ReadData(connectionString);
-            if (results != null)
-            {
-                var table = new ConsoleTable("Date", "Cups of coffee Consumed.");
-                while (results.Read())
-                {
-                    table.AddRow(results["Date"], results["Count"]);
-                }
-                table.Write();
-            }
-            else
-            {
-                Console.WriteLine("No results found. Table may not exist.");
-            }
+            db.ReadData(connectionString);
+            Console.WriteLine("Press any key to return to menu");
+            Console.ReadKey();
         }
 
         static void DeleteCoffeeLog()
         {
-            // Delete
+            string? userInput;
+            string formattedData;
+
+            Console.Clear();
+            Console.WriteLine("Example input (Feb 12)");
+            Console.Write("Enter the Log Date to be removed: ");
+            userInput = Console.ReadLine();
+            if (userInput != null)
+            {
+                if (userInput.Length <= 6)
+                {
+                    userInput = userInput.Trim();
+                    formattedData = FormatInput(userInput);
+                    db.DeleteData(connectionString, formattedData);
+
+                    Console.WriteLine("Operation Performed.");
+                    Console.WriteLine("Press any key to return to menu.");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Input");
+                    Console.WriteLine("Press any key to return to menu.");
+                    Console.ReadKey();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid Input");
+                Console.WriteLine("Press any key to return to menu.");
+                Console.ReadKey();
+            }
         }
 
         static void CreateUpdateCoffeeLog()
         {
-            // Create Update
+            int consumedCups;
+            string? userInput;
+
+            Console.Clear();
+            Console.Write("Please enter cups of coffee consumed: ");
+            userInput = Console.ReadLine();
+            if (userInput != null)
+            {
+                if(int.TryParse(userInput, out consumedCups))
+                {
+                    string month = DateTime.Now.ToString("MMM");
+                    string day = DateTime.Now.ToString("dd");
+                    string date = $"{month} {day}";
+                    date = date.Trim();
+                    
+                    bool found = db.ReadData(connectionString, check: date, ifExists: true);
+                    if (found)
+                    {
+                        int currentCount = db.GetCurrentCount(connectionString, date);
+                        Thread.Sleep(100);
+                        db.UpdateData(connectionString, date, consumedCups, currentCount);
+                    }
+                    else
+                    {
+                        db.InsertData(connectionString, date, consumedCups);
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Press any key to return to menu.");
+                    Console.ReadKey();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Press any key to return to menu");
+                Console.ReadKey();
+            }
+        }
+
+        static string FormatInput(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                throw new ArgumentException("Input is null or empty.");
+            char[] inputChar = input.ToCharArray();
+            inputChar[0] = char.ToUpper(inputChar[0]);
+            return new string(inputChar);
         }
     }
 }
