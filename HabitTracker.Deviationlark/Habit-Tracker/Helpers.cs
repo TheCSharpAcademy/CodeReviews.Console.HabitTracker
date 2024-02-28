@@ -48,7 +48,6 @@ namespace HabitTracker
             using (var connection = new SqliteConnection(CRUD.connectionString))
             {
                 connection.Open();
-                var tableCmd = connection.CreateCommand();
                 string sql = $"SELECT * FROM {habit} LIMIT 1;";
                 using (SqliteCommand command = new SqliteCommand(sql, connection))
                 {
