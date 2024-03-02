@@ -20,7 +20,8 @@ internal class Helpers
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"SELECT * FROM drinking_water ";
+        tableCmd.CommandText =
+            $"SELECT * FROM drinking_water ";
         List<DrinkingWater> tableData = GetTableData(tableCmd);
         connection.Close();
 
@@ -68,14 +69,14 @@ internal class Helpers
         int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
 
         using var connection = new SqliteConnection(connectionString);
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText =
-               $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
-            tableCmd.ExecuteNonQuery();
-            connection.Close();
-        }
+
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+           $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+        tableCmd.ExecuteNonQuery();
+        connection.Close();
+
     }
 
     internal static void Delete()
@@ -85,20 +86,20 @@ internal class Helpers
 
         var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to go back to Main Menu\n\n");
 
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText =
-                $"DELETE from drinking_water WHERE Id = '{recordId}'";
-            int rowCount = tableCmd.ExecuteNonQuery();
+        using var connection = new SqliteConnection(connectionString);
 
-            if (rowCount == 0)
-            {
-                Console.WriteLine($"\n\nRecord with Id {recordId} does not exist. \n\n");
-                Delete();
-            }
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+            $"DELETE from drinking_water WHERE Id = '{recordId}'";
+        int rowCount = tableCmd.ExecuteNonQuery();
+
+        if (rowCount == 0)
+        {
+            Console.WriteLine($"\n\nRecord with Id {recordId} does not exist. \n\n");
+            Delete();
         }
+
         Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
         Menu.GetUserInput();
     }
@@ -110,30 +111,30 @@ internal class Helpers
         var recordId = GetNumberInput("\n\nPlease type Id of the record would like to update. Type 0 to return to main manu.\n\n");
 
         using var connection = new SqliteConnection(connectionString);
+
+        connection.Open();
+        var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText =
+            $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
+        int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+        if (checkQuery == 0)
         {
-            connection.Open();
-            var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText =
-                $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
-            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-            if (checkQuery == 0)
-            {
-                Console.WriteLine($"\n\nRecord with Id {recordId} does not exist.\n\n");
-                connection.Close();
-                Update();
-            }
-
-            string date = GetDateInput();
-
-            int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
-
-            var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText =
-                $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
-            tableCmd.ExecuteNonQuery();
+            Console.WriteLine($"\n\nRecord with Id {recordId} does not exist.\n\n");
             connection.Close();
+            Update();
         }
+
+        string date = GetDateInput();
+
+        int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+            $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+        tableCmd.ExecuteNonQuery();
+        connection.Close();
+
     }
 
     internal static string GetDateInput()
