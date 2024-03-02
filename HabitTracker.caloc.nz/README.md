@@ -1,6 +1,3 @@
-
-# Habit Tracker
-
 Followed the C# Academy YouTube tutorial and applied my learnings from the  
 previous projects to this project. Needed to go back to previous projects and  
 research some of the changes I made to to understand the changes I made.
