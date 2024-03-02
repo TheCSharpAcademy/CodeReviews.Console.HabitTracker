@@ -13,6 +13,7 @@ public class DrinkingWater
 internal class Helpers
 {
     internal static string connectionString = @"Data Source=habit-Tracker.db";
+
     internal static void GetAllRecords()
     {
         Console.Clear();
@@ -20,34 +21,9 @@ internal class Helpers
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText =
-                $"SELECT * FROM drinking_water ";
-            List<DrinkingWater> tableData = [];
-            SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            string[] formats = ["dd-MM-yy", "dd-MM-yyyy", "dd/MM/yy", "dd/MM/yyyy"];
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    if (DateTime.TryParseExact(reader.GetString(1), formats, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime date))
-                    {
-                        tableData.Add(
-                        new DrinkingWater
-                        {
-                            Id = reader.GetInt32(0),
-                            Date = date,
-                            Quantity = reader.GetInt32(2)
-                        });
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("No rows found");
-            }
+            tableCmd.CommandText = $"SELECT * FROM drinking_water ";
+            List<DrinkingWater> tableData = GetTableData(tableCmd);
             connection.Close();
-            tableData = tableData.OrderBy(dw => dw.Date).ToList();
 
             Console.WriteLine("-----------------------------\n");
             foreach (var dw in tableData)
@@ -56,6 +32,35 @@ internal class Helpers
             }
             Console.WriteLine("-----------------------------\n");
         }
+    }
+
+    private static List<DrinkingWater> GetTableData(SqliteCommand tableCmd)
+    {
+        List<DrinkingWater> tableData = [];
+        SqliteDataReader reader = tableCmd.ExecuteReader();
+
+        string[] formats = ["dd-MM-yy", "dd-MM-yyyy", "dd/MM/yy", "dd/MM/yyyy"];
+        if (reader.HasRows)
+        {
+            while (reader.Read())
+            {
+                if (DateTime.TryParseExact(reader.GetString(1), formats, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime date))
+                {
+                    tableData.Add(
+                    new DrinkingWater
+                    {
+                        Id = reader.GetInt32(0),
+                        Date = date,
+                        Quantity = reader.GetInt32(2)
+                    });
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No rows found");
+        }
+        return tableData.OrderBy(dw => dw.Date).ToList();
     }
 
     internal static void Insert()
