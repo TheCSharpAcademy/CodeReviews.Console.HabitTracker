@@ -18,14 +18,6 @@ internal class Helpers
     {
         Console.Clear();
         using var connection = new SqliteConnection(connectionString);
-        {
-            GetDrinkingWaterData(connection);
-        }
-    }
-
-    internal static void GetDrinkingWaterData(SqliteConnection connection)
-    {
-        
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = $"SELECT * FROM drinking_water ";
