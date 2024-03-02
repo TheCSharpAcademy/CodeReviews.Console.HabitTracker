@@ -2,7 +2,7 @@
 
 Followed the C# Academy YouTube tutorial and applied my learnings from the previous projects to this project. Needed to go back to previous projects and research some of the changes I made to to understand the changes I made.
 
-# Project Requirements
+## Project Requirements
 
 - [x] This is an application where you’ll register one habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
@@ -16,7 +16,7 @@ Followed the C# Academy YouTube tutorial and applied my learnings from the previ
 - [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
 - [x] Your project needs to contain a Read Me file where you'll explain how your app works.
 
-# Program Overview
+## Program Overview
 
 - When the program loads for the first time, it will create a SQLite DB.
 - The SQLite DB will store the information entered by the users.
@@ -24,9 +24,9 @@ Followed the C# Academy YouTube tutorial and applied my learnings from the previ
 - Displays a report, sorted by oldest input at the top of the list.
 - Input accepts multiple date formtats (dd-MM-yy, dd-MM-yyyy, dd/MM/yy, dd/MM/yyyy).
 
-# Code Overview
+## Code Overview
 
 - Code is separated into multiple classes.
-    - Menu.cs: Containts the menu items.
-    - Helpers.cs: Contains the helper items, Get, Update, Delete.
-    - Program.cs: Contains the remaining program items.
+  - Menu.cs: Containts the menu items.
+  - Helpers.cs: Contains the helper items, Get, Update, Delete.
+  - Program.cs: Contains the remaining program items.

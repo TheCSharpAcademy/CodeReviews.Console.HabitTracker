@@ -19,19 +19,25 @@ internal class Helpers
         Console.Clear();
         using var connection = new SqliteConnection(connectionString);
         {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"SELECT * FROM drinking_water ";
-            List<DrinkingWater> tableData = GetTableData(tableCmd);
-            connection.Close();
-
-            Console.WriteLine("-----------------------------\n");
-            foreach (var dw in tableData)
-            {
-                Console.WriteLine($"{dw.Id} - {dw.Date:dd-MMM-yyyy} - Quantity: {dw.Quantity}");
-            }
-            Console.WriteLine("-----------------------------\n");
+            GetDrinkingWaterData(connection);
         }
+    }
+
+    internal static void GetDrinkingWaterData(SqliteConnection connection)
+    {
+        
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText = $"SELECT * FROM drinking_water ";
+        List<DrinkingWater> tableData = GetTableData(tableCmd);
+        connection.Close();
+
+        Console.WriteLine("-----------------------------\n");
+        foreach (var dw in tableData)
+        {
+            Console.WriteLine($"{dw.Id} - {dw.Date:dd-MMM-yyyy} - Quantity: {dw.Quantity}");
+        }
+        Console.WriteLine("-----------------------------\n");
     }
 
     private static List<DrinkingWater> GetTableData(SqliteCommand tableCmd)
