@@ -139,7 +139,7 @@ internal class Helpers
 
     internal static string GetDateInput()
     {
-        Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy, dd-mm-yyyy, dd/mm/yy, dd/mm/yyyy). Type 0 to return to main manu.\n\n");
+        Console.WriteLine("\n\nPlease insert the date: (Format: dd-MM-yy, dd-MM-yyyy, dd/MM/yy, dd/MM/yyyy). Type 0 to return to main manu.\n\n");
 
         string dateInput = Console.ReadLine()!;
 
@@ -149,7 +149,7 @@ internal class Helpers
         string[] formats = ["dd-MM-yy", "dd-MM-yyyy", "dd/MM/yy", "dd/MM/yyyy"];
         while (!DateTime.TryParseExact(dateInput, formats, new CultureInfo("en-US"), DateTimeStyles.None, out _))
         {
-            Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy, dd-mm-yyyy, dd/mm/yy, dd/mm/yyyy). Type 0 to return to main manu or try again:\n\n");
+            Console.WriteLine("\n\nInvalid date. (Format: dd-MM-yy, dd-MM-yyyy, dd/MM/yy, dd/MM/yyyy). Type 0 to return to main manu or try again:\n\n");
             dateInput = Console.ReadLine()!;
         }
         return dateInput;
