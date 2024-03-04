@@ -68,16 +68,16 @@ namespace HabitTracker
                         Environment.Exit(0);
                         break;
                     case "1":
-                        CRUD.GetAllRecords();
+                        Crud.GetAllRecords();
                         break;
                     case "2":
-                        CRUD.Insert(habit);
+                        Crud.Insert(habit);
                         break;
                     case "3":
-                        CRUD.Delete(habit);
+                        Crud.Delete(habit);
                         break;
                     case "4":
-                        CRUD.Update(habit);
+                        Crud.Update(habit);
                         break;
                     default:
                         Console.WriteLine("Invalid Command. Please type a number from 0 to 4.");
