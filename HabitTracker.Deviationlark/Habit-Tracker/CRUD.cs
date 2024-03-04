@@ -10,7 +10,6 @@ namespace HabitTracker
         public static bool GetAllRecords()
         {
             bool hasRows = false;
-            var menu = new Menu();
             string habit = Habits.GetInputHabit(Menu.habits);
             string info = Helpers.GetColumn(habit);
             using (var connection = new SqliteConnection(connectionString))

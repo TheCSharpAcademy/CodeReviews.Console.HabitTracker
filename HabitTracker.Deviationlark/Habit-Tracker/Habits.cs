@@ -4,7 +4,7 @@ namespace HabitTracker
 {
     public class Habits
     {
-        public static int count = 0;
+        public static int count;
         public static string GetInputHabit(List<string> habits)
         {
             // Gets the table names from the database and 
