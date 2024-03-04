@@ -16,7 +16,7 @@ namespace HabitTracker
             habits.Clear();
             Console.Clear();
 
-            using (var connection = new SqliteConnection(CRUD.connectionString))
+            using (var connection = new SqliteConnection(Crud.connectionString))
             {
                 connection.Open();
 
@@ -75,7 +75,7 @@ namespace HabitTracker
             } while (int.TryParse(habit[1], out _) || string.IsNullOrEmpty(habit[1]));
 
 
-            using (var connection = new SqliteConnection(CRUD.connectionString))
+            using (var connection = new SqliteConnection(Crud.connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -99,7 +99,7 @@ namespace HabitTracker
         {
             count = 0;
             string? input = "";
-            using (var connection = new SqliteConnection(CRUD.connectionString))
+            using (var connection = new SqliteConnection(Crud.connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -122,7 +122,7 @@ namespace HabitTracker
             }
             if (Menu.habits.Capacity > 0)
             {
-                using (var connection = new SqliteConnection(CRUD.connectionString))
+                using (var connection = new SqliteConnection(Crud.connectionString))
                 {
                     connection.Open();
 
