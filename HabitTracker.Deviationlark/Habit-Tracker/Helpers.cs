@@ -45,7 +45,7 @@ namespace HabitTracker
         public static string GetColumn(string habit)
         {
             string columnName;
-            using (var connection = new SqliteConnection(CRUD.connectionString))
+            using (var connection = new SqliteConnection(Crud.connectionString))
             {
                 connection.Open();
                 string sql = $"SELECT * FROM {habit} LIMIT 1;";
