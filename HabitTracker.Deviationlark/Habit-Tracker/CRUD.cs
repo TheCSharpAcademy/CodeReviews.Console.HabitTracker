@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 
 namespace HabitTracker
 {
-    public class CRUD
+    public class Crud
     {
         public static List<DrinkingWater> tableData = new();
         public static string connectionString = @"Data Source=Habit-Tracker.db";
