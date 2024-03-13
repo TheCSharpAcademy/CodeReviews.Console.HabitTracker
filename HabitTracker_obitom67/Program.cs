@@ -35,7 +35,7 @@ namespace HabitTracker_obitom67
 
         static void GetUserInput()
         {
-            //Console.Clear();
+            
             bool closeApp = false;
             while (closeApp == false)
             {
@@ -178,7 +178,7 @@ namespace HabitTracker_obitom67
                             Id = reader.GetInt32(0),
                             Date = DateTime.ParseExact(readerString,"dd-MM-yy",new CultureInfo("en-US")),
                             Quantity = reader.GetInt32(2),
-                        }); ;
+                        }); 
                     }
                 }
                 else
@@ -201,7 +201,7 @@ namespace HabitTracker_obitom67
         private static string GetDateInput()
         {
             DateTime date = new DateTime();
-            string dateString = "";
+            
             Console.WriteLine("\n\n Please insert the date: (Format: dd-mm-yy). Type 0 to return to main menu.");
             string inputValue = Console.ReadLine();
 
