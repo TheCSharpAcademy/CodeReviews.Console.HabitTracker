@@ -1,9 +1,7 @@
-
-# Habit Logger Console App
-This is a C# Academy project with some additional functionalities for tracking daily 
-calories. The application allows users to log their daily calorie intake and perform 
-various operations on the logged data. Below are the requirements, features, user 
-manual, areas for improvement, and additional challenges of the application.  
+This is a C# Academy project with some additional functionalities for tracking daily
+calories. The application allows users to log their daily calorie intake and perform
+various operations on the logged data. Below are the requirements, features, user
+manual, areas for improvement, and additional challenges of the application.
 
 ## Requirements
 - [x] Track one habit only by quantity (ex. number of water glasses a day), not
@@ -35,7 +33,7 @@ manual, areas for improvement, and additional challenges of the application.
 * User navigates in Main menu by pressing specific keys and Enter  
   ![Menu](https://github.com/HopelessCoding/learning/assets/161690352/27c11482-75d6-4b6f-bf2b-7a2cef5370bf)
 
-### Menu Options  
+### Menu Options
 * **A - Add New Record**: Allows the user to add a new record.
   * User should enter a valid date or leave it empty to use current date
   * If date already exists program writes a message and returns to main menu
@@ -47,7 +45,7 @@ manual, areas for improvement, and additional challenges of the application.
   * If date already exists program writes a message and returns to main menu
   * User should enter valid calories
 * **D - Delete Record**: Deletes a record by entering its ID
-* **R - Generate Reports**: Opens reports menu 
+* **R - Generate Reports**: Opens reports menu
 * **0 - Close Application**: Terminates the application
 
 ### Reports Menu Options
@@ -55,8 +53,8 @@ manual, areas for improvement, and additional challenges of the application.
 ![Report](https://github.com/HopelessCoding/learning/assets/161690352/8886c595-63ca-43cf-8a2c-c72aa0fbda8c)
 * **7 - Last 7 Days**: Prints report from last 7 days
 * **A - Average Calories for Last X Days**: Calculates average calories from last
-  X days based on user input 
-* **0 - Exit to Main Menu**: Returns back to main menu  
+  X days based on user input
+* **0 - Exit to Main Menu**: Returns back to main menu
 
 ## Areas for Improvement and Lessons Learned
 * **Consider All Potential Use and Error Cases**: Thinking about potential use
@@ -65,8 +63,8 @@ manual, areas for improvement, and additional challenges of the application.
 * **Code Structure**: Consider organizing the code, such as using classes and multiple
   projects, during the coding phase for better organization.
   * Will help the final code organization, especially important in larger projects
-* **Return to Main Menu**: It would be nice to add clear funtionality which would return
-  user back to main menu when they have already selected a command
+* **Return to Main Menu**: It would be nice to add clear funtionality which
+  would return user back to main menu when they have already selected a command
   * Now the user is returned back to the main menu by pressing Enter or entering
     a faulty value
 * **Validation Checks**: Very happy for all the validation checks which are done,
