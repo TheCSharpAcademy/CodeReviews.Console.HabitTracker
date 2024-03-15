@@ -78,9 +78,9 @@ manual, areas for improvement, and additional challenges of the application.
     a faulty value
 - **Validation Checks**: Very happy for all the validation checks which are done,
   take lot of time to learn and implement those correctly but it was worth it
-  - Those probly could be implemented in a smarter way in some cases but next time
-    
-## Addtional challenges for future
+  - Those probably could be implemented in a smarter way in some cases but next time
+
+## Additional challenges for future
 
 - [x] Report functionality
 - [ ] User created habits to track
