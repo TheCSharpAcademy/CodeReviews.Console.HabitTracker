@@ -1,16 +1,19 @@
-# HabitLogger - An exploration of Sqlite
-This console application gives you the ability to track the progress of your goals. Turn your desired behaviour into habits! Live the life you always dreamed of.
+# HabitLogger
+This console application gives you the ability to track the progress of your 
+goals. Turn your desired behaviour into habits! Live the life you always 
+dreamed of.
 
 ## How to run the application
-Click the run button in Visual Studio, or use the following command in the terminal:
+Click the run button in Visual Studio, or use the following command in the 
+terminal:
 
-```
+```bash
 dotnet run --project HabitLogger
 ```
 
 You be presented with the folowwing menu:
 
-```
+```bash
 MAIN MENU
 
 What would you like to do?
@@ -24,6 +27,8 @@ Type 4 to Update Record.
 Select option: 
 ```
 
-Type any number between 0 and 4 and follow the instruction to interact with the application.
+Type any number between 0 and 4 and follow the instruction to interact with 
+the application.
 
-The first time the you'll find two sample habits in the database. You can delete these if you wish.
+The first time the you'll find two sample habits in the database. 
+You can delete these if you wish.

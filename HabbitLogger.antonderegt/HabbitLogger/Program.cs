@@ -160,12 +160,6 @@ class Program
 
         command.ExecuteNonQuery();
 
-        command.CommandText =
-        @"
-            SELECT last_insert_rowid()
-        ";
-        long newId = (long)command.ExecuteScalar()!;
-
         Console.WriteLine("\nHabit added! Press enter to return to the menu...");
         Console.ReadLine();
     }
