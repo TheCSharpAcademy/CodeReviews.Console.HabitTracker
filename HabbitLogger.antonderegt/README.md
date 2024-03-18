@@ -1,5 +1,5 @@
-#
-## Habit Tracker
+
+# Habit Tracker
 This console application gives you the ability to track the progress of your 
 
 goals. Turn your desired behaviour into habits! Live the life you always 
