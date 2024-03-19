@@ -4,23 +4,22 @@ namespace HabbitLogger;
 
 class Program
 {
-    private readonly string connectionString = @"Data Source=habitLogger.db";
-
     static void Main(string[] args)
     {
+        string connectionString = @"Data Source=habitLogger.db";
         bool keepRunning = true;
-        Program program = new();
-        program.EnsureTableExists();
-        program.SeedData();
+
+        EnsureTableExists(connectionString);
+        SeedData(connectionString);
 
         while (keepRunning)
         {
             ShowMenu();
-            keepRunning = program.ProcessInput();
+            keepRunning = ProcessInput(connectionString);
         }
     }
 
-    void EnsureTableExists()
+    static void EnsureTableExists(string connectionString)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
@@ -38,7 +37,7 @@ class Program
         command.ExecuteNonQuery();
     }
 
-    void SeedData()
+    static void SeedData(string connectionString)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
@@ -78,7 +77,7 @@ class Program
         Console.Write("\nSelect option: ");
     }
 
-    bool ProcessInput()
+    static bool ProcessInput(string connectionString)
     {
         string? input = Console.ReadLine();
 
@@ -89,18 +88,18 @@ class Program
                 case 0:
                     return false;
                 case 1:
-                    ShowAllRecords();
+                    ShowAllRecords(connectionString);
                     Console.WriteLine("\nPress enter to return to the menu...");
                     Console.ReadLine();
                     return true;
                 case 2:
-                    InsertRecord();
+                    InsertRecord(connectionString);
                     return true;
                 case 3:
-                    DeleteRecord();
+                    DeleteRecord(connectionString);
                     return true;
                 case 4:
-                    UpdateRecord();
+                    UpdateRecord(connectionString);
                     return true;
                 default:
                     Console.WriteLine("\nUnknown action, press enter to try again...");
@@ -116,7 +115,7 @@ class Program
         }
     }
 
-    void ShowAllRecords()
+    static void ShowAllRecords(string connectionString)
     {
         Console.Clear();
         Console.WriteLine("Your habits:\n");
@@ -138,7 +137,7 @@ class Program
         }
     }
 
-    void InsertRecord()
+    static void InsertRecord(string connectionString)
     {
         Console.Clear();
         using var connection = new SqliteConnection(connectionString);
@@ -150,12 +149,21 @@ class Program
         Console.Write("Unit of meassure: ");
         string? unitOfMeassure = Console.ReadLine();
 
+        Console.Write("Quantity: ");
+        if (!int.TryParse(Console.ReadLine(), out int quantity))
+        {
+            Console.WriteLine("\nInvalid quantity... Press enter to return to the menu...");
+            Console.ReadLine();
+            return;
+        }
+
         command.CommandText =
         @"
             INSERT INTO habit (name, quantity, unitOfMeassure)
-            VALUES ($name, 0, $unit)
+            VALUES ($name, $quantity, $unit)
         ";
         command.Parameters.AddWithValue("$name", name);
+        command.Parameters.AddWithValue("$quantity", quantity);
         command.Parameters.AddWithValue("$unit", unitOfMeassure);
 
         command.ExecuteNonQuery();
@@ -164,9 +172,9 @@ class Program
         Console.ReadLine();
     }
 
-    void DeleteRecord()
+    static void DeleteRecord(string connectionString)
     {
-        ShowAllRecords();
+        ShowAllRecords(connectionString);
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
         SqliteCommand command = connection.CreateCommand();
@@ -189,9 +197,9 @@ class Program
         Console.ReadLine();
     }
 
-    void UpdateRecord()
+    static void UpdateRecord(string connectionString)
     {
-        ShowAllRecords();
+        ShowAllRecords(connectionString);
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
         SqliteCommand command = connection.CreateCommand();
@@ -199,7 +207,7 @@ class Program
         Console.Write("\nName of habit to update: ");
         string? name = Console.ReadLine();
 
-        bool habitExists = CheckIfRecordExists(name);
+        bool habitExists = CheckIfRecordExists(connectionString, name);
 
         if (!habitExists)
         {
@@ -233,7 +241,7 @@ class Program
         Console.ReadLine();
     }
 
-    bool CheckIfRecordExists(string? name)
+    static bool CheckIfRecordExists(string connectionString, string? name)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
