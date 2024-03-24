@@ -1,4 +1,26 @@
-﻿DisplayMenu();
+﻿using Microsoft.Data.Sqlite;
+
+string connectionString = @"Data Source=habit-Tracker.db";
+
+using (var connection = new SqliteConnection(connectionString))
+{
+    connection.Open();
+    var tableCmd = connection.CreateCommand();
+
+    tableCmd.CommandText = 
+        @"CREATE TABLE IF NOT EXISTS pet_the_dog (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Date TEXT,
+            Quantity INTEGER
+            )";
+
+    tableCmd.ExecuteNonQuery();
+
+    connection.Close();
+    
+}
+
+DisplayMenu();
 
 void DisplayMenu()
 {
@@ -11,3 +33,4 @@ void DisplayMenu()
     Console.WriteLine("Type 4 to Delete a Record.");
     Console.WriteLine("--------------------------------\n");
 }
+
