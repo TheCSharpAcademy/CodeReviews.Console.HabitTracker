@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GetTeched.Console.HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "E:\\C# Dev\\CodeReviews.Console.HabitTracker\\GetTeched.Console.HabitTracker\\"
+    }
+  }
+}
