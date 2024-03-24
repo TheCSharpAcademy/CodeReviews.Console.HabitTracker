@@ -5,6 +5,11 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RunWorkingDirectoy>/Users/nathanielemms/RiderProjects/CSharp Academy/HabitTracker/CodeReviews.Console.HabitTracker/HabitTracker/</RunWorkingDirectoy>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath></OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
