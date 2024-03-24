@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using System.Runtime.InteropServices;
 using Microsoft.Data.Sqlite;
 
 string connectionString = @"Data Source=habit-Tracker.db";
@@ -19,6 +19,8 @@ using (var connection = new SqliteConnection(connectionString))
 
     connection.Close();
 }
+
+GetUserInput();
 
 void GetUserInput()
 {
@@ -57,13 +59,71 @@ void GetUserInput()
 
 void DisplayMenu()
 {
-    Console.WriteLine("MAIN MENU\n");
+    Console.WriteLine("\nMAIN MENU\n");
     Console.WriteLine("What would you like to do?\n");
     Console.WriteLine("Type 0 to Close the Application.");
     Console.WriteLine("Type 1 to View All Records.");
     Console.WriteLine("Type 2 to Insert a Record.");
     Console.WriteLine("Type 3 to Update a Record.");
     Console.WriteLine("Type 4 to Delete a Record.");
-    Console.WriteLine("-----------------------------------\n");
+    Console.WriteLine("-----------------------------------");
+    Console.Write("Option: ");
 }
 
+void ViewAllRecords()
+{
+    Console.WriteLine("Placeholder, this would show all records.");
+}
+
+void Insert()
+{
+    string date = GetDateInput();
+
+    int quantity = GetQuantity();
+
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText = 
+            $"INSERT INTO pet_the_dog(date, quantity) VALUES (\"{date}\", {quantity})";
+
+        tableCmd.ExecuteNonQuery();
+
+        connection.Close();
+    }
+
+}
+
+
+string? GetDateInput()
+{
+    Console.WriteLine("\nPlease enter the date for the record (format yy-mm-dd). Type 0 to return to the main menu: ");
+    string dateInput = Console.ReadLine();
+    
+    if (dateInput == "0") GetUserInput();
+    return dateInput;
+}
+
+int GetQuantity()
+{
+    Console.WriteLine("\nHow many times did you pet the dog on this date? Type 0 to return to the main menu: ");
+    string quantityInput = Console.ReadLine();
+    
+    if (quantityInput == "0") GetUserInput();
+
+    int quantity = Convert.ToInt32(quantityInput);
+    return quantity;
+}
+
+
+void Update()
+{
+    Console.WriteLine("Placeholder, this would update a record.");
+}
+
+void Delete()
+{
+    Console.WriteLine("Placeholder, this would delete a record.");
+}
