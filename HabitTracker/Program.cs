@@ -162,7 +162,18 @@ void Update()
 
 void Delete()
 {
-    Console.WriteLine("Placeholder, this would delete a record. Press any key to return to menu...");
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText =
+            "DELETE FROM pet_the_dog WHERE Id = '4'";
+        
+        connection.Close();
+    }
+    
+    Console.WriteLine("\nThe record has been successfully deleted. Press any key to return to the menu...");
     Console.ReadKey();
     Console.Clear();
 }
