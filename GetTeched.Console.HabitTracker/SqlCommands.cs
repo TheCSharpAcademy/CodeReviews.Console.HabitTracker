@@ -95,7 +95,8 @@ class SqlCommands
                         {
                             Id = reader.GetInt32(0),
                             Date = DateTime.ParseExact(reader.GetString(1), "dd-mm-yy", new CultureInfo("en-US")),
-                            Quantity = reader.GetInt32(2)
+                            Quantity = reader.GetInt32(2),
+                            Unit = reader.GetString(3)
                         });
                 }
             }
@@ -108,7 +109,7 @@ class SqlCommands
             Console.WriteLine("------------------------------------------------");
             foreach (var record in tableData)
             {
-                Console.WriteLine($"{record.Id} | {record.Date.ToString("dd-mm-yyyy")} | Quantity: {record.Quantity}");
+                Console.WriteLine($"{record.Id} | {record.Date.ToString("dd-mm-yyyy")} | Quantity: {record.Quantity} {record.Unit}");
             }
             Console.WriteLine("------------------------------------------------\n");
         }

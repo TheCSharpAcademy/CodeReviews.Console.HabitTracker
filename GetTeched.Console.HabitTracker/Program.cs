@@ -12,7 +12,7 @@
  * Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example:
  * Example Read Me file: https://github.com/thags/ConsoleTimeLogger
  * -------------------------------------CHALLENGES---------------------------------------------------------------
- * Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
+ * Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit. !!!!COMPLETED!!!!
  * Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. 
    This is specially helpful during development so you don't have to reinsert data every time you create the database.
  * Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
@@ -25,6 +25,7 @@ class Program
 {
     static string connectionString = @"Data Source=Habit-Tracker.db";
     static SqlCommands sqlCommands = new();
+    static RandomData randomData = new();
     //static string tableName = "drinking_water";
     static void Main(string[] args)
     {
@@ -75,13 +76,13 @@ class Program
                     UpdateRecord(tableName);
                     break;
                 case "5":
-                    ViewAllTables();
+                    ViewAllTables(true);
                     break;
                 case "6":
                     tableName = SelectTable();
                     break;
                 case "9":
-                    CreateNewHabit();
+                    CreateNewHabit();      
                     break;
                 default:
                     Console.WriteLine("Invalid Command. Please Type a number between 0 and 4.\n");
@@ -122,7 +123,7 @@ class Program
         return tableName = tables[tableNumber - 1];
     }
 
-    private static void ViewAllTables()
+    private static void ViewAllTables(bool returnToMenu = false)
     {
         List<string> tables = sqlCommands.SqlGetTables();
         int listNumber = 1;
@@ -133,14 +134,18 @@ class Program
             listNumber++;
         }
         //TODO: ViewAllTables will be used by many other methods - add argument to skip below return to menu option.
-        Console.WriteLine("\nPress any key to return to the Main Menu.");
-        Console.ReadLine();
+        if(returnToMenu)
+        {
+            Console.WriteLine("\nPress any key to return to the Main Menu.");
+            Console.ReadLine();
+        }
+        
     }
 
     private static void UpdateRecord(string tableName)
     {
         Console.Clear();
-        ViewAllRecords();
+        ViewAllRecords(tableName);
 
         bool zeroRow = false;
 
@@ -167,7 +172,7 @@ class Program
     private static void DeleteRecord(string tableName)
     {
         Console.Clear();
-        ViewAllRecords();
+        ViewAllRecords(tableName);
         bool zeroRow = false;
 
         var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu.\n\n");
@@ -263,8 +268,20 @@ class Program
         unitMeasurement = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(userInput);
 
         sqlCommands.sqlCreateTable(tableName, unitMeasurement);
+        GenerateRandomData(tableName);
         GetUserInput();
 
+    }
+
+    private static void GenerateRandomData(string tableName)
+    {
+        Console.WriteLine($"Would you like to generate random data for {tableName}? Type \"yes\" to generate random data or any other key to return to the Main Menu.");
+        string userInput = Console.ReadLine().ToLower().Trim();
+        if(userInput == "yes")
+        {
+            randomData.GenerateRandomData(tableName);
+        }
+        
     }
 
 }
