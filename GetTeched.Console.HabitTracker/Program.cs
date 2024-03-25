@@ -25,7 +25,7 @@ class Program
 {
     static string connectionString = @"Data Source=Habit-Tracker.db";
     static SqlCommands sqlCommands = new();
-    static string tableName = "drinking_water";
+    //static string tableName = "drinking_water";
     static void Main(string[] args)
     {
         sqlCommands.SqlInitialize();
@@ -38,6 +38,8 @@ class Program
         Console.Clear();
         bool endApplication = false;
         int errorCount = 0;
+        Console.WriteLine("Welcome to your Habit Tracker. Please select a tracker you would like to manage.");
+        string tableName = SelectTable();
         while (!endApplication)
         {
             Console.WriteLine("\n\tMAIN MENU");
@@ -47,7 +49,8 @@ class Program
             Console.WriteLine("Type 2 to Insert Record.");
             Console.WriteLine("Type 3 to Delete Record.");
             Console.WriteLine("Type 4 to Update Record.");
-            Console.WriteLine("Type 5 to View Available Habit Trackers");
+            Console.WriteLine("Type 5 to View Available Habit Trackers.");
+            Console.WriteLine("Type 6 to Change Habit Tracker Table.");
             Console.WriteLine("Type 9 to Create New Habit Tracker");
             Console.WriteLine("-------------------------------------------");
 
@@ -60,19 +63,22 @@ class Program
                     endApplication = true;
                     break;
                 case "1":
-                    ViewAllRecords();
+                    ViewAllRecords(tableName);
                     break;
                 case "2":
-                    InsertRecord();
+                    InsertRecord(tableName);
                     break;
                 case "3":
-                    DeleteRecord();
+                    DeleteRecord(tableName);
                     break;
                 case "4":
-                    UpdateRecord();
+                    UpdateRecord(tableName);
                     break;
                 case "5":
                     ViewAllTables();
+                    break;
+                case "6":
+                    tableName = SelectTable();
                     break;
                 case "9":
                     CreateNewHabit();
@@ -94,20 +100,44 @@ class Program
         }
     }
 
+    private static string SelectTable()
+    {
+        ViewAllTables();
+        List<string> tables = sqlCommands.SqlGetTables();
+        string tableName = "";
+
+        Console.WriteLine("Please type the number of the table you would like to view/modify.\n");
+        string userInput = Console.ReadLine();
+        while(!int.TryParse(userInput,out _))
+        {
+            Console.WriteLine($"{userInput} is not a valid request, value must be a number. Please try again.");
+            userInput = Console.ReadLine();
+        }
+        int tableNumber = Convert.ToInt32(userInput);
+        while (tableNumber > tables.Count || tableNumber < 0)
+        {
+            Console.WriteLine("You have entered a number outside the list provided. Please try again.");
+            SelectTable();
+        }
+        return tableName = tables[tableNumber - 1];
+    }
+
     private static void ViewAllTables()
     {
         List<string> tables = sqlCommands.SqlGetTables();
-
+        int listNumber = 1;
         Console.WriteLine("Current Available Tables:\n");
         foreach (string table in tables)
         {
-            Console.WriteLine(table); ;
+            Console.WriteLine($"{listNumber} - {table}");
+            listNumber++;
         }
+        //TODO: ViewAllTables will be used by many other methods - add argument to skip below return to menu option.
         Console.WriteLine("\nPress any key to return to the Main Menu.");
         Console.ReadLine();
     }
 
-    private static void UpdateRecord()
+    private static void UpdateRecord(string tableName)
     {
         Console.Clear();
         ViewAllRecords();
@@ -120,7 +150,7 @@ class Program
 
         if (zeroRow)
         {
-            UpdateRecord();
+            UpdateRecord(tableName);
         }
         else
         {
@@ -134,7 +164,7 @@ class Program
         GetUserInput();
     }
 
-    private static void DeleteRecord()
+    private static void DeleteRecord(string tableName)
     {
         Console.Clear();
         ViewAllRecords();
@@ -146,7 +176,7 @@ class Program
 
         if (zeroRow)
         {
-            DeleteRecord();
+            DeleteRecord(tableName);
         }
 
         Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n Press any key to return to Main Menu.");
@@ -154,7 +184,7 @@ class Program
         GetUserInput();
     }
 
-    private static void InsertRecord()
+    private static void InsertRecord(string tableName)
     {
         string date = GetDateInput();
         int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
@@ -190,7 +220,7 @@ class Program
         return dateInput;
     }
 
-    private static void ViewAllRecords()
+    private static void ViewAllRecords(string tableName)
     {
         Console.Clear();
         sqlCommands.SqlViewAction(tableName);

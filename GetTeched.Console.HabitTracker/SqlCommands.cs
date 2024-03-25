@@ -27,8 +27,8 @@ class SqlCommands
                 @"CREATE TABLE IF NOT EXISTS drinking_water (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Date TEXT,
-                    Quantity INTEGER
-                    )";
+                    Quantity INTEGER,
+                    Unit TEXT DEFAULT ""Cups"" NOT NULL)";
 
             tableCmd.ExecuteNonQuery();
 
@@ -182,7 +182,8 @@ class SqlCommands
                 @$"CREATE TABLE IF NOT EXISTS {tableName} (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Date TEXT,
-                '{measurementUnit}' INTEGER)";
+                Quantity INTEGER,
+                Unit TEXT DEFAULT '{measurementUnit}' NOT NULL)";
 
             tableCmd.ExecuteNonQuery();
 
