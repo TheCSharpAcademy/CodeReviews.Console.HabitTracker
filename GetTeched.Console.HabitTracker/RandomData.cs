@@ -12,18 +12,20 @@ internal class RandomData
     internal void GenerateRandomData(string tableName)
     {
         Random random = new Random();
-        int day = random.Next(1, 28);
-        int month = random.Next(1, 12);
-        int year = random.Next(24, 25);
+        
 
         int[] values = GetMinMaxRandomValues();
         int minimumRandom = values[0];
         int maximumRandom = values[1];
 
-        string date = $"{day}-{month}-{year}";
+        
 
         for(int i = 0; i < 365;  i++)
         {
+            int day = random.Next(1, 28);
+            int month = random.Next(1, 12);
+            int year = random.Next(24, 25);
+            string date = $"{day.ToString("D2")}-{month.ToString("D2")}-{year}";
             int randomValues = random.Next(minimumRandom, maximumRandom);
             sqlCommands.SqlInsertAction(tableName,date,randomValues);
         }
