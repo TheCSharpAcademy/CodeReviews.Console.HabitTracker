@@ -18,38 +18,173 @@
  * Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
  */
 using Microsoft.Data.Sqlite;
+using System.Globalization;
 
 namespace habit_tracker;
 class Program
 {
+    static string connectionString = @"Data Source=Habit-Tracker.db";
+    static SqlCommands sqlCommands = new();
+    static string tableName = "drinking_water";
     static void Main(string[] args)
     {
-        string connectionString = @"Data Source=Habit-Tracker.db";
+        sqlCommands.SqlInitialize();
 
-        using(var connection = new SqliteConnection(connectionString))
+        GetUserInput();
+    }
+
+    static void GetUserInput()
+    {
+        Console.Clear();
+        bool endApplication = false;
+        int errorCount = 0;
+        while (!endApplication)
         {
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
+            Console.WriteLine("\n\tMAIN MENU");
+            Console.WriteLine("\nWhat would you like to do?\n");
+            Console.WriteLine("\nType 0 to Close Application.");
+            Console.WriteLine("Type 1 to View All Records.");
+            Console.WriteLine("Type 2 to Insert Record.");
+            Console.WriteLine("Type 3 to Delete Record.");
+            Console.WriteLine("Type 4 to Update Record.");
+            Console.WriteLine("Type 9 to Create New Habit Tracker");
+            Console.WriteLine("-------------------------------------------");
 
-            tableCmd.CommandText = 
-                @"CREATE TABLE IF NOT EXISTS drinking_water (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date TEXT,
-                    Quantity INTEGER
-                    )";
 
-            tableCmd.ExecuteNonQuery();
+            string userInput = Console.ReadLine();
+            switch (userInput)
+            {
+                case "0":
+                    Console.WriteLine("\nGood Bye!\n");
+                    endApplication = true;
+                    break;
+                case "1":
+                    ViewAllRecords();
+                    break;
+                case "2":
+                    InsertRecord();
+                    break;
+                case "3":
+                    DeleteRecord();
+                    break;
+                case "4":
+                    UpdateRecord();
+                    break;
+                case "9":
+                    break;
+                default:
+                    Console.WriteLine("Invalid Command. Please Type a number between 0 and 4.\n");
+                    errorCount++;
+                    if (errorCount == 3)
+                    {
+                        errorCount = 0;
+                        Console.Clear();
+                        Console.WriteLine("Invalid Command. Please Type a number between 0 and 4.\n");
 
-            connection.Close();
+                    }
+                    userInput = Console.ReadLine();
+                    break;
+            }
+            if (endApplication) break;
+        }
+    }
+
+    private static void UpdateRecord()
+    {
+        Console.Clear();
+        ViewAllRecords();
+
+        bool zeroRow = false;
+
+        var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to update or type 0 to return to Main Menu.\n\n");
+
+        zeroRow = sqlCommands.SqlUpdateActionCheck(tableName, recordId);
+
+        if (zeroRow)
+        {
+            UpdateRecord();
+        }
+        else
+        {
+            string date = GetDateInput();
+            int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+            sqlCommands.SqlUpdateAction(tableName, recordId, date, quantity);
         }
 
-        Console.WriteLine("MAIN MENU");
-        Console.WriteLine("What would you like to do?\n");
-        Console.WriteLine("Type 0 to Close Application.");
-        Console.WriteLine("Type 1 to View All Records.");
-        Console.WriteLine("Type 2 to Insert Record.");
-        Console.WriteLine("Type 3 to Delete Record.");
-        Console.WriteLine("Type 4 to Update Record.");
-        Console.WriteLine("-------------------------------------------");
+        Console.WriteLine($"\n\nRecord with Id {recordId} was updated. \n\nPress any key to return to Main Menu.");
+        Console.ReadLine();
+        GetUserInput();
     }
+
+    private static void DeleteRecord()
+    {
+        Console.Clear();
+        ViewAllRecords();
+        bool zeroRow = false;
+
+        var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu.\n\n");
+
+        zeroRow = sqlCommands.SqlDeleteAction(tableName, recordId);
+
+        if (zeroRow)
+        {
+            DeleteRecord();
+        }
+
+        Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n Press any key to return to Main Menu.");
+        Console.ReadLine();
+        GetUserInput();
+    }
+
+    private static void InsertRecord()
+    {
+        string date = GetDateInput();
+        int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+        
+
+        sqlCommands.SqlInsertAction(tableName,date,quantity);
+    }
+
+    private static int GetNumberInput(string message)
+    {
+        Console.WriteLine(message);
+        string numberInput = Console.ReadLine();
+        if (numberInput == "0") GetUserInput();
+        while (!Int32.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
+        {
+            Console.WriteLine("\n\nInvaild number. Try again.\n\n");
+            numberInput = Console.ReadLine();
+        }
+        int finalInput = Convert.ToInt32(numberInput);
+        return finalInput;
+    }
+
+    private static string GetDateInput()
+    {
+        Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to Main Menu.\n\n");
+        string dateInput = Console.ReadLine();
+        if (dateInput == "0") GetUserInput();
+        while (!DateTime.TryParseExact(dateInput, "dd-mm-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+        {
+            Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to Main Menu or try again\n\n");
+            dateInput = Console.ReadLine();
+        }
+        return dateInput;
+    }
+
+    private static void ViewAllRecords()
+    {
+        Console.Clear();
+        sqlCommands.SqlViewAction(tableName);
+    }
+
+    private static void CreateNewHabit()
+    {
+        Console.Clear();
+        string tableName;
+        string unitMeasurement;
+
+
+    }
+
 }
