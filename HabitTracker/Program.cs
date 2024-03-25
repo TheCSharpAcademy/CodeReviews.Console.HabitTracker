@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Globalization;
+using Microsoft.Data.Sqlite;
 
 string connectionString = @"Data Source=habit-Tracker.db";
 
@@ -88,20 +89,20 @@ void ViewAllRecords()
             tableData.Add(new DogPets
             {
                 Id = reader.GetInt32(0),
-                Date = DateTime.Parse(reader.GetString(1)),
+                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-Gb")),
                 Quantity = reader.GetInt32(2)
             });
         }
 
         connection.Close();
 
-        Console.WriteLine("==============================================");
+        Console.WriteLine("\n=========Dog Petting Tracker=========");
         foreach (var row in tableData)
         {
-            Console.WriteLine($"{row.Id} - {row.Date} - Quantity: {row.Quantity}");
+            Console.WriteLine($"{row.Id} - {row.Date:yyyy-MM-dd} - Quantity: {row.Quantity}");
         }
 
-        Console.WriteLine("==============================================");
+        Console.WriteLine("=====================================");
     }
 
     Console.WriteLine("Press any key to return to the main menu...");
@@ -134,7 +135,7 @@ void Insert()
 
 string? GetDateInput()
 {
-    Console.WriteLine("\nPlease enter the date for the record (format yy-mm-dd). Type 0 to return to the main menu: ");
+    Console.WriteLine("\nPlease enter the date for the record (format dd-mm-yy). Type 0 to return to the main menu: ");
     string? dateInput = Console.ReadLine();
 
     if (dateInput == "0") GetUserInput();
@@ -154,12 +155,16 @@ int GetQuantity()
 
 void Update()
 {
-    Console.WriteLine("Placeholder, this would update a record.");
+    Console.WriteLine("Placeholder, this would update a record. Press any key to return to menu...");
+    Console.ReadKey();
+    Console.Clear();
 }
 
 void Delete()
 {
-    Console.WriteLine("Placeholder, this would delete a record.");
+    Console.WriteLine("Placeholder, this would delete a record. Press any key to return to menu...");
+    Console.ReadKey();
+    Console.Clear();
 }
 
 public class DogPets
