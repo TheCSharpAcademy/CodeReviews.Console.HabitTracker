@@ -7,7 +7,7 @@ using (var connection = new SqliteConnection(connectionString))
     connection.Open();
     var tableCmd = connection.CreateCommand();
 
-    tableCmd.CommandText = 
+    tableCmd.CommandText =
         @"CREATE TABLE IF NOT EXISTS pet_the_dog ( 
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Date TEXT,
@@ -28,7 +28,7 @@ void GetUserInput()
     {
         DisplayMenu();
 
-        string commandInput = Console.ReadLine();
+        string? commandInput = Console.ReadLine();
 
         switch (commandInput)
         {
@@ -88,21 +88,22 @@ void ViewAllRecords()
             tableData.Add(new DogPets
             {
                 Id = reader.GetInt32(0),
-                Date = reader.GetDateTime(1),
+                Date = DateTime.Parse(reader.GetString(1)),
                 Quantity = reader.GetInt32(2)
             });
         }
-        
+
         connection.Close();
-        
+
         Console.WriteLine("==============================================");
         foreach (var row in tableData)
         {
             Console.WriteLine($"{row.Id} - {row.Date} - Quantity: {row.Quantity}");
         }
+
         Console.WriteLine("==============================================");
     }
-    
+
     Console.WriteLine("Press any key to return to the main menu...");
     Console.ReadKey();
     Console.Clear();
@@ -110,7 +111,7 @@ void ViewAllRecords()
 
 void Insert()
 {
-    string date = GetDateInput();
+    string? date = GetDateInput();
 
     int quantity = GetQuantity();
 
@@ -119,24 +120,23 @@ void Insert()
         connection.Open();
         var tableCmd = connection.CreateCommand();
 
-        tableCmd.CommandText = 
+        tableCmd.CommandText =
             $"INSERT INTO pet_the_dog(date, quantity) VALUES ('{date}', {quantity})";
 
         tableCmd.ExecuteNonQuery();
 
         connection.Close();
     }
-    
+
     Console.Clear();
     Console.WriteLine("Your input has been received.\n");
 }
 
-
 string? GetDateInput()
 {
     Console.WriteLine("\nPlease enter the date for the record (format yy-mm-dd). Type 0 to return to the main menu: ");
-    string dateInput = Console.ReadLine();
-    
+    string? dateInput = Console.ReadLine();
+
     if (dateInput == "0") GetUserInput();
     return dateInput;
 }
@@ -144,14 +144,13 @@ string? GetDateInput()
 int GetQuantity()
 {
     Console.WriteLine("\nHow many times did you pet the dog on this date? Type 0 to return to the main menu: ");
-    string quantityInput = Console.ReadLine();
-    
+    string? quantityInput = Console.ReadLine();
+
     if (quantityInput == "0") GetUserInput();
 
     int quantity = Convert.ToInt32(quantityInput);
     return quantity;
 }
-
 
 void Update()
 {
