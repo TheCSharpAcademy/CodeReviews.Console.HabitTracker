@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 
 string connectionString = @"Data Source=habit-Tracker.db";
 
@@ -24,7 +23,6 @@ GetUserInput();
 
 void GetUserInput()
 {
-    Console.Clear();
     bool closeApp = false;
     while (closeApp == false)
     {
@@ -72,7 +70,42 @@ void DisplayMenu()
 
 void ViewAllRecords()
 {
-    Console.WriteLine("Placeholder, this would show all records.");
+    // Console.WriteLine("Placeholder, this would show all records.");
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText =
+            $"SELECT * FROM pet_the_dog";
+
+        List<DogPets> tableData = new();
+
+        SqliteDataReader reader = tableCmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            tableData.Add(new DogPets
+            {
+                Id = reader.GetInt32(0),
+                Date = reader.GetDateTime(1),
+                Quantity = reader.GetInt32(2)
+            });
+        }
+        
+        connection.Close();
+        
+        Console.WriteLine("==============================================");
+        foreach (var row in tableData)
+        {
+            Console.WriteLine($"{row.Id} - {row.Date} - Quantity: {row.Quantity}");
+        }
+        Console.WriteLine("==============================================");
+    }
+    
+    Console.WriteLine("Press any key to return to the main menu...");
+    Console.ReadKey();
+    Console.Clear();
 }
 
 void Insert()
@@ -87,13 +120,15 @@ void Insert()
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText = 
-            $"INSERT INTO pet_the_dog(date, quantity) VALUES (\"{date}\", {quantity})";
+            $"INSERT INTO pet_the_dog(date, quantity) VALUES ('{date}', {quantity})";
 
         tableCmd.ExecuteNonQuery();
 
         connection.Close();
     }
-
+    
+    Console.Clear();
+    Console.WriteLine("Your input has been received.\n");
 }
 
 
@@ -126,4 +161,11 @@ void Update()
 void Delete()
 {
     Console.WriteLine("Placeholder, this would delete a record.");
+}
+
+public class DogPets
+{
+    public int Id { get; set; }
+    public DateTime Date { get; set; }
+    public int Quantity { get; set; }
 }
