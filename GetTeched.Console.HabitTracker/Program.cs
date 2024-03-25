@@ -47,6 +47,7 @@ class Program
             Console.WriteLine("Type 2 to Insert Record.");
             Console.WriteLine("Type 3 to Delete Record.");
             Console.WriteLine("Type 4 to Update Record.");
+            Console.WriteLine("Type 5 to View Available Habit Trackers");
             Console.WriteLine("Type 9 to Create New Habit Tracker");
             Console.WriteLine("-------------------------------------------");
 
@@ -70,7 +71,11 @@ class Program
                 case "4":
                     UpdateRecord();
                     break;
+                case "5":
+                    ViewAllTables();
+                    break;
                 case "9":
+                    CreateNewHabit();
                     break;
                 default:
                     Console.WriteLine("Invalid Command. Please Type a number between 0 and 4.\n");
@@ -87,6 +92,19 @@ class Program
             }
             if (endApplication) break;
         }
+    }
+
+    private static void ViewAllTables()
+    {
+        List<string> tables = sqlCommands.SqlGetTables();
+
+        Console.WriteLine("Current Available Tables:\n");
+        foreach (string table in tables)
+        {
+            Console.WriteLine(table); ;
+        }
+        Console.WriteLine("\nPress any key to return to the Main Menu.");
+        Console.ReadLine();
     }
 
     private static void UpdateRecord()
@@ -184,6 +202,38 @@ class Program
         string tableName;
         string unitMeasurement;
 
+        Console.WriteLine("Existing Tables:");
+        foreach (string table in sqlCommands.SqlGetTables())
+        {
+            Console.WriteLine(table);
+        }
+
+        Console.WriteLine("\nPlease enter a name of a new habit you want to keep track of:");
+        string userInput = Console.ReadLine();
+        while(string.IsNullOrEmpty(userInput))
+        {
+            Console.WriteLine("Invalid table name or no table name entered. Please Try again.");
+            userInput = Console.ReadLine();
+        }
+
+        tableName = userInput.ToLower().Trim().Replace(" ", "_");
+        string checkTableName = sqlCommands.SqlGetTables().Where(table => table.Contains(userInput)).FirstOrDefault();
+
+        while (checkTableName != null)
+        {
+            Console.WriteLine($"Table: {tableName} Already exists press any key to try again");
+            Console.ReadLine();
+            CreateNewHabit();
+        }
+        Console.WriteLine($"Table: {tableName} has been created.");
+
+        Console.WriteLine($"What is the unit of measurement for {tableName} table? eg. 1 Cup");
+        Console.WriteLine("Please enter a unit of measurement.");
+        userInput = Console.ReadLine().ToLower().Trim();
+        unitMeasurement = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(userInput);
+
+        sqlCommands.sqlCreateTable(tableName, unitMeasurement);
+        GetUserInput();
 
     }
 

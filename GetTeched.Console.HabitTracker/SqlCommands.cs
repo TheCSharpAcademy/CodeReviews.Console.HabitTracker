@@ -27,8 +27,7 @@ class SqlCommands
                 @"CREATE TABLE IF NOT EXISTS drinking_water (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Date TEXT,
-                    Quantity INTEGER,
-                    Unit TEXT
+                    Quantity INTEGER
                     )";
 
             tableCmd.ExecuteNonQuery();
@@ -37,30 +36,27 @@ class SqlCommands
         }
     }
 
-    public void SqlGetTables()
+    public List<string> SqlGetTables()
     {
-        using(var connection = new SqliteConnection( connectionString))
+        List<string> tables = new();
+        using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY 1";
-
-            List<string> tables = new();
+            tableCmd.CommandText = 
+                @"SELECT name FROM sqlite_schema 
+                WHERE type = 'table' 
+                AND name Not LIKE 'sqlite_%'";
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            if (reader.GetSchemaTable() != null)
+            while (reader.Read())
             {
-                while(reader.Read())
-                {
-                    tables.Add(reader.GetString(0));
-                }
+                tables.Add(reader.GetString(0)); 
             }
-            tableCmd.ExecuteNonQuery();
-
+            connection.Close();           
         }
+        return tables;
     }
-
     public void SqlInsertAction(string tableName, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
@@ -176,7 +172,7 @@ class SqlCommands
         }
     }
 
-    public void sqlCreateTable(string tableName)
+    public void sqlCreateTable(string tableName, string measurementUnit)
     {
         using(var connection = new SqliteConnection(connectionString))
         {
@@ -186,8 +182,7 @@ class SqlCommands
                 @$"CREATE TABLE IF NOT EXISTS {tableName} (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Date TEXT,
-                Quantity INTEGER,
-                Unit TEXT)";
+                '{measurementUnit}' INTEGER)";
 
             tableCmd.ExecuteNonQuery();
 
