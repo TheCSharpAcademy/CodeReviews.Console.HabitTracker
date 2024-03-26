@@ -24,6 +24,8 @@ GetUserInput();
 
 void GetUserInput()
 {
+    Console.Clear();
+    
     bool closeApp = false;
     while (closeApp == false)
     {
@@ -71,6 +73,7 @@ void DisplayMenu()
 
 void ViewAllRecords()
 {
+    Console.Clear();
     // Console.WriteLine("Placeholder, this would show all records.");
     using (var connection = new SqliteConnection(connectionString))
     {
@@ -104,17 +107,17 @@ void ViewAllRecords()
 
         Console.WriteLine("=====================================");
     }
-
-    Console.WriteLine("Press any key to return to the main menu...");
+    
+    Console.WriteLine("Press any key to continue...");
     Console.ReadKey();
-    Console.Clear();
+
 }
 
 void Insert()
 {
     string? date = GetDateInput();
 
-    int quantity = GetQuantity();
+    int quantity = GetNumber("\nHow many times did you pet the dog on this date? Type 0 to return to the main menu: ");
 
     using (var connection = new SqliteConnection(connectionString))
     {
@@ -142,9 +145,9 @@ string? GetDateInput()
     return dateInput;
 }
 
-int GetQuantity()
+int GetNumber(string message)
 {
-    Console.WriteLine("\nHow many times did you pet the dog on this date? Type 0 to return to the main menu: ");
+    Console.WriteLine(message);
     string? quantityInput = Console.ReadLine();
 
     if (quantityInput == "0") GetUserInput();
@@ -162,20 +165,26 @@ void Update()
 
 void Delete()
 {
+    ViewAllRecords();
+    
     using (var connection = new SqliteConnection(connectionString))
     {
+        int idToDelete = GetNumber("\nEnter the record ID that would like to delete or type 0 to return to the menu: ");
+
         connection.Open();
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-            "DELETE FROM pet_the_dog WHERE Id = '4'";
-        
+            $"DELETE FROM pet_the_dog WHERE Id = '{idToDelete}'";
+
+        tableCmd.ExecuteNonQuery();
+
         connection.Close();
+
+        Console.WriteLine(
+            $"\nRecord ID {idToDelete} has been successfully deleted. Press any key to return to the menu...");
+        Console.ReadKey();
     }
-    
-    Console.WriteLine("\nThe record has been successfully deleted. Press any key to return to the menu...");
-    Console.ReadKey();
-    Console.Clear();
 }
 
 public class DogPets
