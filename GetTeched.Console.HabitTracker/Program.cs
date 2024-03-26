@@ -147,19 +147,36 @@ class Program
         ViewAllTables();
         List<string> tables = sqlCommands.SqlGetTables();
         string tableName = "";
-
+        bool inputError = false;
         Console.WriteLine("Please type the number of the table you would like to view/modify.\n");
         string userInput = Console.ReadLine();
         while (!int.TryParse(userInput, out _))
         {
-            Console.WriteLine($"{userInput} is not a valid request, value must be a number. Please try again.");
+            inputError = true;
+            if (inputError)
+            {
+                userInput = (userInput == "") ? "blank" : userInput;
+                Console.Clear();
+                ViewAllTables();
+                Console.WriteLine($"\n{userInput} is not a valid request, value must be a number. Please try again.");
+                inputError = false;
+            }         
             userInput = Console.ReadLine();
         }
         int tableNumber = Convert.ToInt32(userInput);
         while (tableNumber > tables.Count || tableNumber <= 0)
         {
-            Console.WriteLine("You have entered a number outside the list provided. Please try again.");
-            SelectTable();
+            inputError = true;
+            if (inputError)
+            {
+                Console.Clear();
+                ViewAllTables();
+                Console.WriteLine("\nYou have entered a number outside the list provided. Please try again.");
+                inputError = false;
+            }
+            userInput = Console.ReadLine();
+            tableNumber = Convert.ToInt32(userInput);
+
         }
         Console.Clear();
         return tableName = tables[tableNumber - 1];
