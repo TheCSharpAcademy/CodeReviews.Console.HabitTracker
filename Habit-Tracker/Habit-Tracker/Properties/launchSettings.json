@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Habit-Tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Elies\\OneDrive\\桌面\\CsharpProjects\\Habit-Tracker\\Habit-Tracker"
+    }
+  }
+}
