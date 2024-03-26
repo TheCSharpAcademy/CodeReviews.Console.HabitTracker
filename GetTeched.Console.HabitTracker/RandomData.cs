@@ -1,58 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace habit_tracker;
+﻿namespace habit_tracker;
 
 internal class RandomData
 {
     SqlCommands sqlCommands = new();
-    internal void GenerateRandomData(string tableName)
+    internal void GenerateRandomData(string tableName = "", bool initial = true)
     {
         Random random = new Random();
-        
 
-        int[] values = GetMinMaxRandomValues();
-        int minimumRandom = values[0];
-        int maximumRandom = values[1];
+        List<string> habits = new List<string>() { "Drinking Coffee", "Kilometers Run", "Active Minutes", "Steps Per Day", "Hours of Sleep" };
+        List<string> unitName = new List<string>() { "Cups", "Kilometers", "Minutes", "Steps", "Hours" };
+        List<int> units = new List<int>() { 8, 20, 120, 30000, 12 };
 
-        
+        int loggedDays; string measurementUnit; int day; int month; int year; string date; int randomValues;
 
-        for(int i = 0; i < 365;  i++)
+        bool tableExists = false;
+
+
+        if (initial)
         {
-            int day = random.Next(1, 28);
-            int month = random.Next(1, 12);
-            int year = random.Next(24, 25);
-            string date = $"{day.ToString("D2")}-{month.ToString("D2")}-{year}";
-            int randomValues = random.Next(minimumRandom, maximumRandom);
-            sqlCommands.SqlInsertAction(tableName,date,randomValues);
-        }
+            for (int i = 0; i <= habits.Count - 1; i++)
+            {
+                loggedDays = random.Next(100, 365);
+                tableName = habits[i].ToLower().Trim().Replace(" ", "_");
+                measurementUnit = unitName[i];
+                tableExists = sqlCommands.SqlInitialize(tableName, measurementUnit);
+                
+                if(!tableExists)
+                {
+                    for (int j = 1; j <= loggedDays; j++)
+                    {
+                        day = random.Next(1, 28);
+                        month = random.Next(1, 12);
+                        year = 23;
+                        date = $"{day.ToString("D2")}-{month.ToString("D2")}-{year}";
 
+                        randomValues = random.Next(1, units[i]);
+                        sqlCommands.SqlInsertAction(tableName, date, randomValues);
+                    }
+                }
+                
+            }
+        }
+        else
+        {
+            loggedDays = random.Next(100, 365);
+            for(int i = 0;i <= loggedDays; i++)
+            {
+                day = random.Next(1, 28);
+                month = random.Next(1, 12);
+                year = 23;
+                date = $"{day.ToString("D2")}-{month.ToString("D2")}-{year}";
+
+                randomValues = random.Next(1, 30);
+                sqlCommands.SqlInsertAction(tableName, date, randomValues);
+            }
+        }
+        
 
     }
 
-    internal int[] GetMinMaxRandomValues()
-    {
-        int[] values = new int[2];
-        Console.WriteLine("What is your minimum unit threshold you would like to generate?");
-        string userInput = Console.ReadLine();
-        while (string.IsNullOrEmpty(userInput) || !int.TryParse(userInput, out _))
-        {
-            Console.WriteLine("You did not enter a number value, please try again.");
-            userInput = Console.ReadLine();
-        }
-        values[0] = Convert.ToInt32(userInput);
-        Console.WriteLine("What is your maximum unit threshold you would like to generate?");
-        userInput = Console.ReadLine();
-        while (string.IsNullOrEmpty(userInput) || !int.TryParse(userInput, out _))
-        {
-            Console.WriteLine("You did not enter a number value, please try again.");
-            userInput = Console.ReadLine();
-        }
-        values[1] = Convert.ToInt32(userInput);
-
-        return values;
-    }
 }

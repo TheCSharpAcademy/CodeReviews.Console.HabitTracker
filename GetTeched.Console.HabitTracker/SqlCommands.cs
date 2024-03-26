@@ -1,7 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
-using static habit_tracker.Program;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker;
 
@@ -12,28 +10,43 @@ class SqlCommands
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
-        public string Unit {get; set; }
+        public string Unit { get; set; }
     }
 
     static string connectionString = @"Data Source=Habit-Tracker.db";
-    public void SqlInitialize()
+    public bool SqlInitialize(string tableName, string measurementUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-            var tableCmd = connection.CreateCommand();
 
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM {tableName})";
+            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+            if (checkQuery == 1)
+            {
+                return true;
+            }
+            connection.Close();
+        }
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
             tableCmd.CommandText =
-                @"CREATE TABLE IF NOT EXISTS drinking_water (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date TEXT,
-                    Quantity INTEGER,
-                    Unit TEXT DEFAULT ""Cups"" NOT NULL)";
+                @$"CREATE TABLE IF NOT EXISTS {tableName} (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Date TEXT,
+                Quantity INTEGER,
+                Unit TEXT DEFAULT '{measurementUnit}' NOT NULL)";
 
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
+        return false;
     }
 
     public List<string> SqlGetTables()
@@ -43,7 +56,7 @@ class SqlCommands
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = 
+            tableCmd.CommandText =
                 @"SELECT name FROM sqlite_schema 
                 WHERE type = 'table' 
                 AND name Not LIKE 'sqlite_%'";
@@ -51,9 +64,9 @@ class SqlCommands
             SqliteDataReader reader = tableCmd.ExecuteReader();
             while (reader.Read())
             {
-                tables.Add(reader.GetString(0)); 
+                tables.Add(reader.GetString(0));
             }
-            connection.Close();           
+            connection.Close();
         }
         return tables;
     }
@@ -157,7 +170,7 @@ class SqlCommands
         return zeroRow;
     }
 
-    public void SqlUpdateAction(string tableName,int recordId, string date, int quantity)
+    public void SqlUpdateAction(string tableName, int recordId, string date, int quantity)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -175,11 +188,11 @@ class SqlCommands
 
     public void sqlCreateTable(string tableName, string measurementUnit)
     {
-        using(var connection = new SqliteConnection(connectionString))
+        using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = 
+            tableCmd.CommandText =
                 @$"CREATE TABLE IF NOT EXISTS {tableName} (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Date TEXT,
@@ -190,5 +203,54 @@ class SqlCommands
 
             connection.Close();
         }
+    }
+
+    public List<int> sqlNumberOfDays(string tableName)
+    {
+        List<int> list = new List<int>();
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = @$"SELECT Quantity FROM {tableName}";
+
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    list.Add(reader.GetInt32(0));
+                }
+            }
+            connection.Close();
+        }
+
+        return list;
+    }
+
+    public string SqlGetUnitName(string tableName)
+    {
+        string measurementUnit = "";
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = @$"SELECT Unit FROM {tableName}";
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                if (reader.Read())
+                {
+                    measurementUnit = reader.GetString(0);
+                }
+
+            }
+            connection.Close();
+        }
+        return measurementUnit;
     }
 }
