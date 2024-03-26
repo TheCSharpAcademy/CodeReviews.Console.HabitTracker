@@ -31,16 +31,20 @@ class Program
         GetUserInput();
     }
 
-    static void GetUserInput()
+    static void GetUserInput(string tableName = "", bool showTables = true)
     {
         Console.Clear();
         bool endApplication = false;
-        int errorCount = 0;
-        Console.WriteLine("Welcome to your Habit Tracker. Please select a tracker you would like to manage.");
-        string tableName = SelectTable();
+        bool inputError = false;
+        if (showTables)
+        {
+            Console.WriteLine("Welcome to your Habit Tracker. Please select a tracker you would like to manage.");
+            tableName = SelectTable();
+        }
         Console.Clear();
         while (!endApplication)
         {
+
             Console.WriteLine("\n\tMAIN MENU");
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine($"\nYou are currently viewing your {tableName.Replace("_", " ").ToUpper()} habit tracker");
@@ -53,14 +57,24 @@ class Program
             Console.WriteLine("Type 6 to Change Habit Tracker Table.");
             Console.WriteLine("Type 7 to Create New Habit Tracker");
             Console.WriteLine("Type 8 to Generate Reports For Tracker");
+            Console.WriteLine("Type 9 to Delete Current Selected Table");
+            Console.WriteLine("Type drop to Reset To Factory Defaults");
             Console.WriteLine("-------------------------------------------");
 
-            string userInput = Console.ReadLine();
+            if (inputError)
+            {
+                Console.WriteLine("Invalid Command. Please Type a number between 0 and 8.");
+                Console.WriteLine("-------------------------------------------\n");
+                inputError = false;
+            }
+
+            string userInput = Console.ReadLine().ToLower().Trim();
             switch (userInput)
             {
                 case "0":
                     Console.WriteLine("\nGood Bye!\n");
                     endApplication = true;
+                    Environment.Exit(0);
                     break;
                 case "1":
                     ViewAllRecords(tableName);
@@ -86,18 +100,15 @@ class Program
                 case "8":
                     GenerateReports(tableName);
                     break;
+                case "9":
+                    DropTable(tableName);
+                    break;
+                case "drop":
+                    DropAllTables();
+                    break;
                 default:
-                    Console.WriteLine("Invalid Command. Please Type a number between 0 and 8.\n");
-                    errorCount++;
-                    if (errorCount == 3)
-                    {
-                        errorCount = 0;
-                        Console.Clear();
-                        Console.WriteLine("Invalid Command. Please Type a number between 0 and 8.\n");
-                        userInput = Console.ReadLine();
-
-                    }
-                    userInput = Console.ReadLine();
+                    inputError = true;
+                    Console.Clear();
                     break;
             }
             if (endApplication) break;
@@ -107,11 +118,12 @@ class Program
     private static void GenerateReports(string tableName)
     {
         List<int> records = sqlCommands.sqlNumberOfDays(tableName);
-        int sum = records.Sum();
-        double ave = records.Average();
-        int days = records.Count();
-        int min = records.Min();
-        int max = records.Max();
+        int sumRecords = records.Sum();
+        double averageRecords = records.Average();
+        string averageFormat = string.Format("{0:N2}", averageRecords);
+        int daysLogged = records.Count();
+        int minimum = records.Min();
+        int maximum = records.Max();
         string unitName = sqlCommands.SqlGetUnitName(tableName);
 
         Console.Clear();
@@ -119,11 +131,11 @@ class Program
         Console.WriteLine($"\t\tReport for {tableName.Replace("_", " ").ToUpper()}");
         Console.WriteLine("--------------------------------------------------------------------");
 
-        Console.WriteLine($"\nTotal {unitName}:\t {sum}\n");
-        Console.WriteLine($"Average {unitName}:\t {ave}\n");
-        Console.WriteLine($"Total Days Logged:\t {days}\n");
-        Console.WriteLine($"Minimum {unitName}:\t {min}\n");
-        Console.WriteLine($"Maximum {unitName}:\t {max}\n");
+        Console.WriteLine($"\nTotal Days Logged: {daysLogged}\n");
+        Console.WriteLine($"Total {unitName}: {sumRecords}\n");
+        Console.WriteLine($"Average {unitName}: {averageFormat}\n");
+        Console.WriteLine($"Minimum {unitName}: {minimum}\n");
+        Console.WriteLine($"Maximum {unitName}: {maximum}\n");
         Console.WriteLine("\n\nPress any key to return to the Main Menu.");
         Console.ReadLine();
         Console.Clear();
@@ -157,6 +169,7 @@ class Program
     {
         List<string> tables = sqlCommands.SqlGetTables();
         int listNumber = 1;
+        Console.Clear();
         Console.WriteLine("Current Available Tables:\n");
         foreach (string table in tables)
         {
@@ -172,25 +185,29 @@ class Program
 
     }
 
-    private static void UpdateRecord(string tableName)
+    private static void UpdateRecord(string tableName, bool zeroRow = false)
     {
         Console.Clear();
         ViewAllRecords(tableName, false);
 
-        bool zeroRow = false;
+        if (zeroRow)
+        {
+            Console.WriteLine("Invalid Id entered, please try again.");
+        }
+
         string unitName = sqlCommands.SqlGetUnitName(tableName);
-        var recordId = GetNumberInput("\nPlease type the Id of the record you want to update or type 0 to return to Main Menu.\n");
+        var recordId = GetNumberInput("\nPlease type the Id of the record you want to update or type 0 to return to Main Menu.\n", tableName);
 
         zeroRow = sqlCommands.SqlUpdateActionCheck(tableName, recordId);
 
         if (zeroRow)
         {
-            UpdateRecord(tableName);
+            UpdateRecord(tableName, true);
         }
         else
         {
-            string date = GetDateInput();
-            int quantity = GetNumberInput($"\nPlease insert number of {unitName} or other measure of your choice (no decimals allowed)\n");
+            string date = GetDateInput(tableName);
+            int quantity = GetNumberInput($"\nPlease insert number of {unitName} or other measure of your choice (no decimals allowed)\n", tableName);
             sqlCommands.SqlUpdateAction(tableName, recordId, date, quantity);
             Console.WriteLine($"The following record Id {recordId} [{date}|{quantity} {unitName}] for {tableName.Replace("_", " ").ToUpper()} has been updated");
             Console.WriteLine("\nPress any key to return to the Main Menu or press 1 to add another entry.");
@@ -208,7 +225,7 @@ class Program
         Console.Clear();
         ViewAllRecords(tableName, false);
 
-        var recordId = GetNumberInput("\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu.\n");
+        var recordId = GetNumberInput("\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu.\n", tableName);
 
         bool zeroRow = sqlCommands.SqlDeleteAction(tableName, recordId);
 
@@ -224,9 +241,10 @@ class Program
 
     private static void InsertRecord(string tableName)
     {
-        string date = GetDateInput();
+        Console.Clear();
+        string date = GetDateInput(tableName);
         string unitName = sqlCommands.SqlGetUnitName(tableName);
-        int quantity = GetNumberInput($"\n\nPlease insert number of {unitName} or other measure of your choice (no decimals allowed)\n\n");
+        int quantity = GetNumberInput($"\n\nPlease insert number of {unitName} or other measure of your choice (no decimals allowed)\n\n", tableName);
 
         sqlCommands.SqlInsertAction(tableName, date, quantity);
 
@@ -237,11 +255,11 @@ class Program
         if (userInput == "1") InsertRecord(tableName);
     }
 
-    private static int GetNumberInput(string message)
+    private static int GetNumberInput(string message, string tableName)
     {
         Console.WriteLine(message);
         string numberInput = Console.ReadLine();
-        if (numberInput == "0") GetUserInput();
+        if (numberInput == "0") GetUserInput(tableName, false);
         while (!Int32.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
         {
             Console.WriteLine("\n\nInvaild number. Try again.\n\n");
@@ -251,15 +269,23 @@ class Program
         return finalInput;
     }
 
-    private static string GetDateInput()
+    private static string GetDateInput(string tableName)
     {
+        int errorCount = 1;
         Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to Main Menu.\n\n");
         string dateInput = Console.ReadLine();
-        if (dateInput == "0") GetUserInput();
-        while (!DateTime.TryParseExact(dateInput, "dd-mm-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+        if (dateInput == "0") GetUserInput(tableName, false);
+        while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
         {
+            if (errorCount == 3)
+            {
+                Console.Clear();
+                errorCount = 0;
+            }
             Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to Main Menu or try again\n\n");
+            errorCount++;
             dateInput = Console.ReadLine();
+            if (dateInput == "0") GetUserInput(tableName, false);
         }
         return dateInput;
     }
@@ -314,13 +340,37 @@ class Program
         unitMeasurement = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(userInput);
 
         sqlCommands.sqlCreateTable(tableName, unitMeasurement);
-        randomData.GenerateRandomData(tableName,false);
+        randomData.GenerateRandomData(tableName, false);
         GetUserInput();
 
     }
 
-    private static void DropTables()
+    private static void DropTable(string tableName)
     {
+        Console.Clear();
+        Console.WriteLine($"Are you sure you want to delete {tableName.Replace("_", " ").ToUpper()}. Type yes to proceed with deleting all data and tables or any other key to return to the Main Menu");
+        string userInput = Console.ReadLine().ToLower().Trim();
+        if (userInput == "yes")
+        {
+            Console.WriteLine("You are about to delete all data, this is irrecoverable process. If you are sure Type DROP or any other key to return to the Main Menu.");
+            userInput = Console.ReadLine().Trim();
+            if (userInput == "DROP")
+            {
+
+                sqlCommands.SqlDropTables(tableName);
+
+                Console.WriteLine($"{tableName.Replace("_", " ").ToUpper()} has been removed. Press any key to return to Main Menu.");
+                Console.ReadLine();
+                GetUserInput("",true);
+            }
+
+        }
+
+    }
+
+    private static void DropAllTables()
+    {
+        List<string> tables = sqlCommands.SqlGetTables();
         Console.WriteLine($"Would you like to delete all tables and data? Type yes to proceed with deleting all data and tables or any other key to return to the Main Menu.");
         string userInput = Console.ReadLine().ToLower().Trim();
         if (userInput == "yes")
@@ -329,9 +379,13 @@ class Program
             userInput = Console.ReadLine().Trim();
             if (userInput == "DROP")
             {
-                //TODO
+                foreach (string table in tables)
+                {
+                    sqlCommands.SqlDropTables(table);
+                }
+                Console.WriteLine("All Tables Dropped.");
             }
-            
+
         }
 
     }

@@ -19,10 +19,18 @@ class SqlCommands
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
+            int checkQuery = 0;
 
             var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM {tableName})";
-            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+            try
+            {
+                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM {tableName})";
+                checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+            }
+            catch
+            {
+                checkQuery = 0;
+            }
 
             if (checkQuery == 1)
             {
@@ -252,5 +260,17 @@ class SqlCommands
             connection.Close();
         }
         return measurementUnit;
+    }
+
+    public void SqlDropTables(string tableName)
+    {
+        using(var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = $"DROP TABLE {tableName}";
+            tableCmd.ExecuteNonQuery();
+            connection.Close();
+        }
     }
 }
