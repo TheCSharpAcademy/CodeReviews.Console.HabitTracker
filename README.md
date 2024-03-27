@@ -1,9 +1,8 @@
-﻿# Console Habit Tracker
+# Console Habit Tracker
 A habit tracker console application is designed to help users track and manage their habits through a text-based interface in the console window
-
 Developed using C# and SQLite.
 
-# Requirements
+## Requirements
 - [x] This is an application where you’ll register one habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
 - [x] The application should store and retrieve data from a real database
@@ -16,7 +15,7 @@ Developed using C# and SQLite.
 - [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
 - [x] Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example:
 
-# Challenges
+## Challenges
 - [x] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
 - [x] Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. This is specially helpful during development so you don't have to reinsert data every time you create the database.
 - [x] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
