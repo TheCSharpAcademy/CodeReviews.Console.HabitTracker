@@ -1,23 +1,4 @@
-﻿/*
- * This is an application where you’ll register one habit.
- * This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
- * The application should store and retrieve data from a real database
- * When the application starts, it should create a sqlite database, if one isn’t present.
- * It should also create a table in the database, where the habit will be logged.
- * The app should show the user a menu of options.
- * The users should be able to insert, delete, update and view their logged habit.
- * You should handle all possible errors so that the application never crashes.
- * The application should only be terminated when the user inserts 0.
- * You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
- * Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example:
- * Example Read Me file: https://github.com/thags/ConsoleTimeLogger
- * -------------------------------------CHALLENGES---------------------------------------------------------------
- * Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit. !!!!COMPLETED!!!!
- * Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. 
-   This is specially helpful during development so you don't have to reinsert data every time you create the database.
- * Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
- */
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace habit_tracker;
 class Program
@@ -26,8 +7,17 @@ class Program
     static RandomData randomData = new();
     static void Main(string[] args)
     {
+        bool testingMode = true;
 
-        randomData.GenerateRandomData();
+        if (testingMode)
+        {
+            randomData.GenerateRandomData();
+        }
+        else
+        {
+            sqlCommands.SqlInitialize("drinking_water", "Glasses");
+        }
+
         GetUserInput();
     }
 
@@ -117,7 +107,7 @@ class Program
 
     private static void GenerateReports(string tableName)
     {
-        List<int> records = sqlCommands.sqlNumberOfDays(tableName);
+        List<int> records = sqlCommands.SqlReporting(tableName);
         int sumRecords = records.Sum();
         double averageRecords = records.Average();
         string averageFormat = string.Format("{0:N2}", averageRecords);
@@ -145,11 +135,24 @@ class Program
     private static string SelectTable()
     {
         ViewAllTables();
+
         List<string> tables = sqlCommands.SqlGetTables();
         string tableName = "";
+        string userInput;
         bool inputError = false;
+
+        if (tables.Count <= 0)
+        {
+            Console.Clear();
+            Console.WriteLine("There are no habit trackers to select.");
+            Console.WriteLine("Press any key to create a new tracker or type 0 to exit application.");
+            userInput = Console.ReadLine();
+            if (userInput == "0") Environment.Exit(0);
+            CreateNewHabit();
+        }
+
         Console.WriteLine("Please type the number of the table you would like to view/modify.\n");
-        string userInput = Console.ReadLine();
+        userInput = Console.ReadLine();
         while (!int.TryParse(userInput, out _))
         {
             inputError = true;
@@ -160,9 +163,10 @@ class Program
                 ViewAllTables();
                 Console.WriteLine($"\n{userInput} is not a valid request, value must be a number. Please try again.");
                 inputError = false;
-            }         
+            }
             userInput = Console.ReadLine();
         }
+
         int tableNumber = Convert.ToInt32(userInput);
         while (tableNumber > tables.Count || tableNumber <= 0)
         {
@@ -176,7 +180,6 @@ class Program
             }
             userInput = Console.ReadLine();
             tableNumber = Convert.ToInt32(userInput);
-
         }
         Console.Clear();
         return tableName = tables[tableNumber - 1];
@@ -186,20 +189,22 @@ class Program
     {
         List<string> tables = sqlCommands.SqlGetTables();
         int listNumber = 1;
+
         Console.Clear();
+
         Console.WriteLine("Current Available Tables:\n");
         foreach (string table in tables)
         {
             Console.WriteLine($"{listNumber} - {table}");
             listNumber++;
         }
+
         if (returnToMenu)
         {
             Console.WriteLine("\nPress any key to return to the Main Menu.");
             Console.ReadLine();
             Console.Clear();
         }
-
     }
 
     private static void UpdateRecord(string tableName, bool zeroRow = false)
@@ -232,9 +237,6 @@ class Program
             Console.Clear();
             if (userInput == "1") UpdateRecord(tableName);
         }
-
-
-        //GetUserInput();
     }
 
     private static void DeleteRecord(string tableName)
@@ -243,7 +245,6 @@ class Program
         ViewAllRecords(tableName, false);
 
         var recordId = GetNumberInput("\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu.\n", tableName);
-
         bool zeroRow = sqlCommands.SqlDeleteAction(tableName, recordId);
 
         if (zeroRow)
@@ -253,12 +254,12 @@ class Program
 
         Console.WriteLine($"\nRecord with Id {recordId} was deleted. \n\nPress any key to return to Main Menu.");
         Console.ReadLine();
-        //GetUserInput();
     }
 
     private static void InsertRecord(string tableName)
     {
         Console.Clear();
+
         string date = GetDateInput(tableName);
         string unitName = sqlCommands.SqlGetUnitName(tableName);
         int quantity = GetNumberInput($"\n\nPlease insert number of {unitName} or other measure of your choice (no decimals allowed)\n\n", tableName);
@@ -268,6 +269,7 @@ class Program
         Console.WriteLine($"The following [{date}|{quantity} {unitName}] record for {tableName.Replace("_", " ").ToUpper()} has been added");
         Console.WriteLine("\nPress any key to return to the Main Menu or press 1 to add another entry.");
         string userInput = Console.ReadLine();
+
         Console.Clear();
         if (userInput == "1") InsertRecord(tableName);
     }
@@ -275,8 +277,11 @@ class Program
     private static int GetNumberInput(string message, string tableName)
     {
         Console.WriteLine(message);
+
         string numberInput = Console.ReadLine();
+
         if (numberInput == "0") GetUserInput(tableName, false);
+
         while (!Int32.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
         {
             Console.WriteLine("\n\nInvaild number. Try again.\n\n");
@@ -292,6 +297,7 @@ class Program
         Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to Main Menu.\n\n");
         string dateInput = Console.ReadLine();
         if (dateInput == "0") GetUserInput(tableName, false);
+
         while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
         {
             if (errorCount == 3)
@@ -317,7 +323,6 @@ class Program
             Console.ReadLine();
             Console.Clear();
         }
-
     }
 
     private static void CreateNewHabit()
@@ -356,7 +361,7 @@ class Program
         userInput = Console.ReadLine().ToLower().Trim();
         unitMeasurement = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(userInput);
 
-        sqlCommands.sqlCreateTable(tableName, unitMeasurement);
+        sqlCommands.SqlCreateTable(tableName, unitMeasurement);
         randomData.GenerateRandomData(tableName, false);
         GetUserInput();
 
@@ -365,46 +370,53 @@ class Program
     private static void DropTable(string tableName)
     {
         Console.Clear();
-        Console.WriteLine($"Are you sure you want to delete {tableName.Replace("_", " ").ToUpper()}. Type yes to proceed with deleting all data and tables or any other key to return to the Main Menu");
+        Console.WriteLine($"Are you sure you want to delete {tableName.Replace("_", " ").ToUpper()}.");
+        Console.WriteLine("Type yes to proceed with deleting all data and tables or any other key to return to the Main Menu");
         string userInput = Console.ReadLine().ToLower().Trim();
+
         if (userInput == "yes")
         {
-            Console.WriteLine("You are about to delete all data, this is irrecoverable process. If you are sure Type DROP or any other key to return to the Main Menu.");
+            Console.Clear();
+            Console.WriteLine("You are about to delete all data, this is irrecoverable process.");
+            Console.WriteLine("If you are sure Type DROP or any other key to return to the Main Menu.");
             userInput = Console.ReadLine().Trim();
             if (userInput == "DROP")
             {
-
                 sqlCommands.SqlDropTables(tableName);
 
-                Console.WriteLine($"{tableName.Replace("_", " ").ToUpper()} has been removed. Press any key to return to Main Menu.");
+                Console.WriteLine($"{tableName.Replace("_", " ").ToUpper()} has been removed. Press any key to return to the Main Menu.");
                 Console.ReadLine();
-                GetUserInput("",true);
+                GetUserInput("", true);
             }
-
         }
-
     }
 
     private static void DropAllTables()
     {
         List<string> tables = sqlCommands.SqlGetTables();
-        Console.WriteLine($"Would you like to delete all tables and data? Type yes to proceed with deleting all data and tables or any other key to return to the Main Menu.");
+        Console.Clear();
+        Console.WriteLine($"Would you like to delete all tables and data?");
+        Console.WriteLine("Type yes to proceed with deleting all data and tables or any other key to return to the Main Menu.");
         string userInput = Console.ReadLine().ToLower().Trim();
+
         if (userInput == "yes")
         {
-            Console.WriteLine("You are about to delete all data, this is irrecoverable process. If you are sure Type DROP or any other key to return to the Main Menu.");
+            Console.Clear();
+            Console.WriteLine("You are about to delete all data, this is irrecoverable process.");
+            Console.WriteLine("If you are sure Type DROP or any other key to return to the Main Menu.");
             userInput = Console.ReadLine().Trim();
+
             if (userInput == "DROP")
             {
                 foreach (string table in tables)
                 {
                     sqlCommands.SqlDropTables(table);
                 }
-                Console.WriteLine("All Tables Dropped.");
+                Console.WriteLine("All Tables Dropped. Press any key to return to the Main Menu");
+                Console.ReadLine();
+                GetUserInput("",true);
             }
-
         }
-
     }
 
 }

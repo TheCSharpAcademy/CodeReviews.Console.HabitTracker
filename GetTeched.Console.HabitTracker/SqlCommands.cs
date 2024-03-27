@@ -194,7 +194,7 @@ class SqlCommands
         }
     }
 
-    public void sqlCreateTable(string tableName, string measurementUnit)
+    public void SqlCreateTable(string tableName, string measurementUnit)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -213,7 +213,7 @@ class SqlCommands
         }
     }
 
-    public List<int> sqlNumberOfDays(string tableName)
+    public List<int> SqlReporting(string tableName)
     {
         List<int> list = new List<int>();
         using (var connection = new SqliteConnection(connectionString))
