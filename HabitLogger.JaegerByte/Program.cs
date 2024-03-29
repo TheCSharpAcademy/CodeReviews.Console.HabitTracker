@@ -5,6 +5,7 @@ namespace HabitLogger.JaegerByte
     internal class Program
     {
         static SqliteConnection connection = new SqliteConnection(@"Data source=database.db");
+        static List<DatabaseEntry> entries = new List<DatabaseEntry>();
 
         static void Main()
         {
@@ -57,15 +58,19 @@ namespace HabitLogger.JaegerByte
                         break;
                     case ConsoleKey.D2:
                         Console.Clear();
+                        GetLog();
                         DeleteLog();
                         break;
                     case ConsoleKey.D3:
                         Console.Clear();
+                        GetLog();
                         UpdateLog();
                         break;
                     case ConsoleKey.D4:
                         Console.Clear();
                         GetLog();
+                        Console.WriteLine("press ANY key to get back to the menu");
+                        Console.ReadKey(true);
                         break;
                     case ConsoleKey.D0:
                         System.Environment.Exit(0);
@@ -113,7 +118,10 @@ namespace HabitLogger.JaegerByte
             Console.WriteLine("Delete log:");
             Console.WriteLine("Please insert Id and confirm with ENTER");
             int inputIndex;
-            if (Int32.TryParse(Console.ReadLine(), out inputIndex))
+            bool indexInput = Int32.TryParse(Console.ReadLine(), out inputIndex);
+            bool indexExists = entries.Any(item => item.Id == inputIndex);
+
+            if (indexInput&&indexExists)
             {
                 CommandDeleteLog(inputIndex);
                 Console.WriteLine("log deleted successfully!");
@@ -150,7 +158,7 @@ namespace HabitLogger.JaegerByte
             Console.WriteLine("Please insert the quantity als whole number and confirm with ENTER");
             int inputQuantity;
             Int32.TryParse(Console.ReadLine(), out inputQuantity);
-            if (DateTime.TryParseExact(inputDate, "dd-MM-yyyy", new CultureInfo("de-DE"), DateTimeStyles.None, out result) && inputQuantity > 0)
+            if (DateTime.TryParseExact(inputDate, "dd-MM-yyyy", new CultureInfo("de-DE"), DateTimeStyles.None, out result) && inputQuantity > 0 && entries.Any(item => item.Id == inputIndex))
             {
                 CommandUpdateLog(inputIndex, inputDate, inputQuantity);
                 Console.WriteLine("log updated successfully!");
@@ -176,11 +184,10 @@ namespace HabitLogger.JaegerByte
 
         static void GetLog()
         {
+            entries.Clear();
             string query = "SELECT * FROM pushups";
             SqliteCommand selectCommand = connection.CreateCommand();
             selectCommand.CommandText = query;
-
-            List<DatabaseEntry> entries = new List<DatabaseEntry>();
 
             connection.Open();
             SqliteDataReader reader = selectCommand.ExecuteReader();
@@ -201,8 +208,6 @@ namespace HabitLogger.JaegerByte
             else
             {
                 Console.WriteLine("No rows found");
-                Console.WriteLine("press ANY key to get back to the menu");
-                Console.ReadKey(true);
                 return;
             }
 
@@ -211,12 +216,9 @@ namespace HabitLogger.JaegerByte
             foreach (DatabaseEntry item in entries)
             {
                 Console.Write($"{item.Id}. ");
-                Console.Write($"{item.Date}");
+                Console.Write($"{item.Date} ");
                 Console.WriteLine($"{item.Quantity}");
             }
-
-            Console.WriteLine("press ANY key to get back to the menu");
-            Console.ReadKey(true);
         }
     }
 }
