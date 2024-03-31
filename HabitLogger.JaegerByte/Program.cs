@@ -118,10 +118,10 @@ namespace HabitLogger.JaegerByte
             Console.WriteLine("Delete log:");
             Console.WriteLine("Please insert Id and confirm with ENTER");
             int inputIndex;
-            bool indexInput = Int32.TryParse(Console.ReadLine(), out inputIndex);
+            bool indexInputParsed = Int32.TryParse(Console.ReadLine(), out inputIndex);
             bool indexExists = entries.Any(item => item.Id == inputIndex);
 
-            if (indexInput&&indexExists)
+            if (indexInputParsed && CheckIndexExists(inputIndex))
             {
                 CommandDeleteLog(inputIndex);
                 Console.WriteLine("log deleted successfully!");
@@ -150,8 +150,14 @@ namespace HabitLogger.JaegerByte
             Console.WriteLine("Update log:");
             Console.WriteLine("Please insert Id and confirm with ENTER");
             int inputIndex;
-            Int32.TryParse(Console.ReadLine(), out inputIndex);
-
+            bool indexInputParsed = Int32.TryParse(Console.ReadLine(), out inputIndex);
+            if (!indexInputParsed || !CheckIndexExists(inputIndex))
+            {
+                Console.WriteLine("invalid input!");
+                Console.WriteLine("press ANY key to get back to the menu");
+                Console.ReadKey(true);
+                return;
+            }
             Console.WriteLine("Please insert the date (dd-mm-yyyy) and confirm with ENTER");
             string inputDate = Console.ReadLine();
             DateTime result; // not used
@@ -219,6 +225,10 @@ namespace HabitLogger.JaegerByte
                 Console.Write($"{item.Date} ");
                 Console.WriteLine($"{item.Quantity}");
             }
+        }
+        public static bool CheckIndexExists(int inputIndex)
+        {
+            return entries.Any(item => item.Id == inputIndex);
         }
     }
 }
