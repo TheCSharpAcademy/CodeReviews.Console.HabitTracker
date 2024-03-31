@@ -119,7 +119,6 @@ namespace HabitLogger.JaegerByte
             Console.WriteLine("Please insert Id and confirm with ENTER");
             int inputIndex;
             bool indexInputParsed = Int32.TryParse(Console.ReadLine(), out inputIndex);
-            bool indexExists = entries.Any(item => item.Id == inputIndex);
 
             if (indexInputParsed && CheckIndexExists(inputIndex))
             {
