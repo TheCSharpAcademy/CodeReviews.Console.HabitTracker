@@ -8,7 +8,7 @@ The program allows users to log the time spent on a specific habit directly from
 - Update task details
 - Delete tasks from the database
 
-### Usage
+## Usage
 Follow the on-screen prompts to interact with the application. Use the provided options to create, read, update, and delete tasks.
 The application will perform these operations using SQLite as the underlying database engine.
 
