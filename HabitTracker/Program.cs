@@ -2,8 +2,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 
-
-string connectionString = @"Data Source=habit-tracker.db";
+var connectionString = @"Data Source=habit-tracker.db";
 
 using (var connection = new SqliteConnection(connectionString))
 {
@@ -28,7 +27,7 @@ static void DisplayMainMenu()
     Console.WriteLine("\nMAIN MENU\n");
     Console.WriteLine("What would you like to do?\n");
 
-    StringBuilder menuBuilder = new StringBuilder();
+    var menuBuilder = new StringBuilder();
     menuBuilder.AppendLine("Type 0 to Close the Application.");
     menuBuilder.AppendLine("Type 1 to View All Records.");
     menuBuilder.AppendLine("Type 2 to Insert a Record.");
@@ -43,12 +42,12 @@ static void DisplayMainMenu()
 void GetMenuOption()
 {
     Console.Clear();
-    bool closeApp = false;
+    var closeApp = false;
 
     while (closeApp == false)
     {
         DisplayMainMenu();
-        string? input = Console.ReadLine();
+        var input = Console.ReadLine();
         int option;
 
         while (!int.TryParse(input, out option) || option < 0 || option > 4)
@@ -82,8 +81,8 @@ void GetMenuOption()
 
 void InsertRecord()
 {
-    string? date = GetDateInput();
-    int quantity = GetNumberInput();
+    var date = GetDateInput();
+    var quantity = GetNumberInput();
 
     using var connection = new SqliteConnection(connectionString);
     connection.Open();
@@ -98,17 +97,16 @@ void InsertRecord()
 
 string? GetDateInput()
 {
-    bool isValid;
-
     Console.WriteLine(
         "\nPlease enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
-    string? dateInput = Console.ReadLine();
+    var dateInput = Console.ReadLine();
 
     if (dateInput == "0") GetMenuOption();
 
     while (!ValidateDateFormat(dateInput))
     {
-        Console.WriteLine("Invalid input format. Please enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
+        Console.WriteLine(
+            "Invalid input format.\nPlease enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
         dateInput = Console.ReadLine();
     }
 
@@ -117,8 +115,24 @@ string? GetDateInput()
 
 static bool ValidateDateFormat(string input)
 {
-    string pattern = @"^\d[0-9]\d[0-9]-\d[0-9]\d[0-9]-\d[0-9]\d[0-9]";
-    Regex regex = new Regex(pattern);
+    var pattern = @"^\d[0-9]\d[0-9]-\d[0-9]\d[0-9]-\d[0-9]\d[0-9]";
+    var regex = new Regex(pattern);
 
     return regex.IsMatch(input);
+}
+
+int GetNumberInput()
+{
+    Console.WriteLine(
+        "Please enter the number of times you pet the dog on this date or type 0 to return to the menu: ");
+    var input = Console.ReadLine();
+    var numberInput = 0;
+    
+    if (input == "0") GetMenuOption();
+
+    while (!int.TryParse(input, out numberInput))
+        Console.WriteLine(
+            "Invalid input format.\nPlease enter the number of times you pet the dog on this date or type 0 to return to the menu: ");
+
+    return numberInput;
 }

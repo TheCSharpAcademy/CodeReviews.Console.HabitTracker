@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath></OutputPath>
+        <OutputPath></OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0-preview.2.24128.4" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0-preview.2.24128.4"/>
     </ItemGroup>
 
 </Project>
