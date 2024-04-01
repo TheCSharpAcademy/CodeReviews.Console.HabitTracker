@@ -108,6 +108,7 @@ string? GetDateInput()
         Console.WriteLine(
             "Invalid input format.\nPlease enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
         dateInput = Console.ReadLine();
+        if (dateInput == "0") GetMenuOption();
     }
 
     return dateInput;
@@ -115,7 +116,7 @@ string? GetDateInput()
 
 static bool ValidateDateFormat(string input)
 {
-    var pattern = @"^\d[0-9]\d[0-9]-\d[0-9]\d[0-9]-\d[0-9]\d[0-9]";
+    var pattern = @"\d\d-\d\d-\d\d";
     var regex = new Regex(pattern);
 
     return regex.IsMatch(input);
@@ -131,8 +132,10 @@ int GetNumberInput()
     if (input == "0") GetMenuOption();
 
     while (!int.TryParse(input, out numberInput))
-        Console.WriteLine(
+    {Console.WriteLine(
             "Invalid input format.\nPlease enter the number of times you pet the dog on this date or type 0 to return to the menu: ");
-
+        input = Console.ReadLine();
+    }
+    
     return numberInput;
 }
