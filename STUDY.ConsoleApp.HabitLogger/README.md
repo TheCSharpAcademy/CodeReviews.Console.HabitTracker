@@ -1,3 +1,4 @@
+# Habit Tracker Console Application  
 A simple console application with C# to apply CRUD operations using sqlite.  
 
 ## Requirements
