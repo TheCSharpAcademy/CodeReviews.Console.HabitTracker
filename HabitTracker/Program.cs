@@ -1,5 +1,7 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
+
 
 string connectionString = @"Data Source=habit-tracker.db";
 
@@ -16,7 +18,6 @@ using (var connection = new SqliteConnection(connectionString))
             )";
 
     tableCmd.ExecuteNonQuery();
-
     connection.Close();
 }
 
@@ -39,7 +40,7 @@ static void DisplayMainMenu()
     Console.Write("Option: ");
 }
 
-static void GetMenuOption()
+void GetMenuOption()
 {
     Console.Clear();
     bool closeApp = false;
@@ -67,7 +68,7 @@ static void GetMenuOption()
                 // ViewAllRecords();
                 break;
             case 2:
-                // InsertRecord();
+                InsertRecord();
                 break;
             case 3:
                 // UpdateRecord();
@@ -77,4 +78,47 @@ static void GetMenuOption()
                 break;
         }
     }
+}
+
+void InsertRecord()
+{
+    string? date = GetDateInput();
+    int quantity = GetNumberInput();
+
+    using var connection = new SqliteConnection(connectionString);
+    connection.Open();
+    var tableCmd = connection.CreateCommand();
+
+    tableCmd.CommandText =
+        $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{date}', {quantity})";
+
+    tableCmd.ExecuteNonQuery();
+    connection.Close();
+}
+
+string? GetDateInput()
+{
+    bool isValid;
+
+    Console.WriteLine(
+        "\nPlease enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
+    string? dateInput = Console.ReadLine();
+
+    if (dateInput == "0") GetMenuOption();
+
+    while (!ValidateDateFormat(dateInput))
+    {
+        Console.WriteLine("Invalid input format. Please enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
+        dateInput = Console.ReadLine();
+    }
+
+    return dateInput;
+}
+
+static bool ValidateDateFormat(string input)
+{
+    string pattern = @"^\d[0-9]\d[0-9]-\d[0-9]\d[0-9]-\d[0-9]\d[0-9]";
+    Regex regex = new Regex(pattern);
+
+    return regex.IsMatch(input);
 }
