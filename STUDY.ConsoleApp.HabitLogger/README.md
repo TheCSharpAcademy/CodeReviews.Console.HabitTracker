@@ -1,4 +1,21 @@
-# STUDY.ConsoleApp.HabitLogger
+# ConsoleApp.HabitLogger
 
-This is a simple console application using CRUD operations with a simple database using sqlite.
+This is a simple console application with C# to apply CRUD operations with a simple database using sqlite.  
 
+# Requirements
+- This is an application where you’ll register one habit.
+- When the application starts, it should create a sqlite database, if one isn’t present.
+- Create a table in the database, where the habit will be logged.
+- The app should show the user a menu of options (insert, delete, update, view their logged habit an exit the application).  
+
+# Features
+- Using a lightweight database engine (sqlite) to store and read information.
+- Creating a new database if not exist.
+- Using a simple UI to let the user choose which operation.
+- Using Separation of Conserns to make the source code more organized and easy to maintain.  
+
+# Resources
+- **[Mr.cappuccinocodes](https://github.com/cappuccinocodes)** github.
+- **[TheC#Academy](https://thecsharpacademy.com/)** website.
+- **[Project tutorial](https://www.youtube.com/watch?v=d1JIJdDVFjs)** on YouTube.
+- **[Basics of sqlite tutorial](https://www.youtube.com/watch?v=HQKwgk6XkIA)** on YouTube.
