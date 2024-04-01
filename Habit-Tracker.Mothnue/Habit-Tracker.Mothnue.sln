@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habit-Tracker.Mothnue", "Habit-Tracker.Mothnue.csproj", "{3F2C0159-00FE-45FD-A156-2555298EF0DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habit-Tracker.Logic", "..\Habit-Tracker.Logic\Habit-Tracker.Logic.csproj", "{3B66A92D-5CC2-4ED7-AE20-E636F273A74C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F2C0159-00FE-45FD-A156-2555298EF0DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F2C0159-00FE-45FD-A156-2555298EF0DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F2C0159-00FE-45FD-A156-2555298EF0DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F2C0159-00FE-45FD-A156-2555298EF0DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B66A92D-5CC2-4ED7-AE20-E636F273A74C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B66A92D-5CC2-4ED7-AE20-E636F273A74C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B66A92D-5CC2-4ED7-AE20-E636F273A74C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B66A92D-5CC2-4ED7-AE20-E636F273A74C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D00AFC7-50AB-4E0A-8E03-5E2171B38258}
+	EndGlobalSection
+EndGlobal
