@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace STUDY.ConsoleApp.HabitLogger;
 
-internal class CRUD
+internal class CrudOperations
 {
     internal static void GetAllRecords()
     {

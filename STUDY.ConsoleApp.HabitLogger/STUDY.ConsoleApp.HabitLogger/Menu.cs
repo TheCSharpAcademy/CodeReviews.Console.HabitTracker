@@ -1,5 +1,4 @@
-﻿
-namespace STUDY.ConsoleApp.HabitLogger;
+﻿namespace STUDY.ConsoleApp.HabitLogger;
 
 internal class Menu
 {
@@ -27,16 +26,16 @@ internal class Menu
                     Environment.Exit(0);
                     break;
                 case "1":
-                    CRUD.GetAllRecords();
+                    CrudOperations.GetAllRecords();
                     break;
                 case "2":
-                    CRUD.Insert();
+                    CrudOperations.Insert();
                     break;
                 case "3":
-                    CRUD.Delete();
+                    CrudOperations.Delete();
                     break;
                 case "4":
-                    CRUD.Update();
+                    CrudOperations.Update();
                     break;
                 default:
                     Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
