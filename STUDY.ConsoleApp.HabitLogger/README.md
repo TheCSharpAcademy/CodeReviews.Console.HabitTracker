@@ -12,7 +12,7 @@ A simple console application with C# to apply CRUD operations using sqlite.
 - Using a lightweight database engine (sqlite) to store and read information.
 - Creating a new database if not exist.
 - Using a simple UI to let the user choose which operation.
-- Using Separation of Conserns to make the source code more organized and easy to maintain.  
+- Using Separation of Concerns to make the source code more organized.  
 
 ## Resources
 - **[Mr.cappuccinocodes](https://github.com/cappuccinocodes)** github.
