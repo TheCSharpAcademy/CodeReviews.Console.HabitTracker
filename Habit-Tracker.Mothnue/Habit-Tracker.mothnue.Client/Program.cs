@@ -1,4 +1,6 @@
-﻿namespace Mothnue
+﻿using Habit_Tracker.mothnue.Logic;
+
+namespace Mothnue
 {
     class Client
     {
