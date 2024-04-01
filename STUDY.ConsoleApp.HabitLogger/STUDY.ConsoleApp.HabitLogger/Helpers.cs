@@ -47,6 +47,9 @@ internal class Helpers
         Console.WriteLine($"{message}");
         string numberInput = Console.ReadLine();
 
+        if (numberInput == "0")
+            Menu.GetUserInput();
+
         while(!int.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
         {
             Console.WriteLine("\n\nInvalid number. Try again.\n\n");

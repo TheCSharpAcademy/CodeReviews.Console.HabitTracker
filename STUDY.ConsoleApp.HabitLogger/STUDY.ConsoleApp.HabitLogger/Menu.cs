@@ -8,7 +8,6 @@ internal class Menu
         bool closeApp = false;
         while (closeApp == false)
         {
-            Console.Clear();
             Console.WriteLine("MAIN MENU");
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine("\nType 0 to Close Application.");

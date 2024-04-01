@@ -6,9 +6,9 @@ namespace STUDY.ConsoleApp.HabitLogger;
 
 internal class CRUD
 {
-    
     internal static void GetAllRecords()
     {
+        Console.Clear();
         using (var connection = new SqliteConnection(Program.connectionString))
         {
             connection.Open();
@@ -42,8 +42,6 @@ internal class CRUD
             }
             Console.WriteLine("------------------------------------------\n");
 
-            Console.WriteLine("press any key to back to main menu");
-            Console.ReadKey();
         }
     }
     internal static void Insert()
@@ -83,8 +81,9 @@ internal class CRUD
             var rawCount = tableCmd.ExecuteNonQuery();
             if (rawCount == 0) 
             {
-                Console.WriteLine($"\n\nRecord with ID {recordID} doesn't exist.");
+                Console.Write($"\n\nRecord with ID {recordID} doesn't exist. Press Enter to try again: ");
                 connection.Close();
+                Console.ReadLine();
                 Delete();
             }
 
@@ -104,14 +103,15 @@ internal class CRUD
         {
             connection.Open();
 
-            var CheckCmd = connection.CreateCommand();
-            CheckCmd.CommandText = $"SELECT 1 FROM drinking_water WHERE Id = {recordID}";
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordID})";
 
-            int checkQuery = Convert.ToInt32(CheckCmd.ExecuteScalar());     
+            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());     
             if (checkQuery == 0)
             {
-                Console.WriteLine($"\n\nRecord with the ID {recordID} is not exist.");
+                Console.Write($"\n\nRecord with the ID {recordID} is not exist. Press Enter to try again: ");
                 connection.Close();
+                Console.ReadLine();
                 Update();
             }
             var date = Helpers.GetDateInput();
