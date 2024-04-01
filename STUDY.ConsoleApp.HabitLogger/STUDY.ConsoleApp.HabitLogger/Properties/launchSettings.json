@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "STUDY.ConsoleApp.HabitLogger": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\BackEndCourses\\Projects\\Study\\STUDY.ConsoleApp.HabitLogger\\STUDY.ConsoleApp.HabitLogger"
+    }
+  }
+}
