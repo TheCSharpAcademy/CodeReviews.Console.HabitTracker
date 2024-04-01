@@ -14,23 +14,47 @@ static void DisplayMainMenu()
     menuBuilder.AppendLine("Type 3 to Update a Record.");
     menuBuilder.AppendLine("Type 4 to Delete a Record.");
     menuBuilder.AppendLine("-----------------------------------");
-    
+
     Console.WriteLine(menuBuilder.ToString());
     Console.Write("Option: ");
 }
 
-static int GetMenuOption()
+static void GetMenuOption()
 {
-    DisplayMainMenu();
-    string? input = Console.ReadLine();
-    int option;
+    Console.Clear();
+    bool closeApp = false;
 
-    while (!int.TryParse(input, out option) || option < 0 || option > 4)
+    while (closeApp == false)
     {
-        Console.WriteLine("Invalid input. Please enter a valid option.");
-        Console.Write("Option: ");
-        input = Console.ReadLine();
-    }
+        DisplayMainMenu();
+        string? input = Console.ReadLine();
+        int option;
 
-    return option;
+        while (!int.TryParse(input, out option) || option < 0 || option > 4)
+        {
+            Console.WriteLine("Invalid input. Please enter a valid option.");
+            Console.Write("Option: ");
+            input = Console.ReadLine();
+        }
+
+        switch (option)
+        {
+            case 0:
+                Console.WriteLine("This application is now closing. Goodbye!");
+                closeApp = true;
+                break;
+            case 1:
+                // ViewAllRecords();
+                break;
+            case 2:
+                // InsertRecord();
+                break;
+            case 3:
+                // UpdateRecord();
+                break;
+            case 4:
+                // DeleteRecord();
+                break;
+        }
+    }
 }
