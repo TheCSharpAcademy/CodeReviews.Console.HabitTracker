@@ -40,4 +40,35 @@ So let’s go!
 - The purpose of this project was to introduce myself to the CRUD functionality. CRUD stands for Create, Read, Update, Delete and is the foundation for inputting and amending data within a database.
 - Users are able to use CRUD through a main menu interface that triggers different methods based on the user input.
 
-### Validation
+### Validation
+
+- This app contains multiple different ways of validating the data provided by the user such as checking a number range, trying to parse a date into a string and checking if the database contains a record before proceeding with any actions.
+
+## Lessons Learned
+
+Throughout the development of this project there were many new tools that I needed to learn to effectively complete the requirements. Below is a list of the lessons I learned:
+
+- Always plan the project from the start and break each requirement into smaller parts. I spent the best part of 3 hours just trying to write code without thinking how it might link into other functions.
+- Don't try and create validation from the start. It seems to be better to try and build the barebones of the project before trying to figure out how the user input might be validated.
+- Regular expressions are incredibly powerful but also incredibly complicated. Initially tried to validate date inputs using regex before finding a simpler way through TryParse.
+- Following on from the above point. KISS: Keep It Simple Stupid.
+- SQLite was new and finding good places on the internet to get examples of syntax use was challenging. I began using ChatGPT to get some examples and then made sure to read all the documentation that Rider provided on tooltips to understand what each function was doing.
+- Spend more time getting to know the IDE. I am using JetBrains Rider and needed to change the working directory of the project. This turned out to be very simple to do but took me over an hour to find the correct menu option.
+- DateTime is incredibly convoluted.
+
+## Areas to Improve
+
+- Become less reliant on YouTube videos and start to try things independently. This project initially started using the YouTube video available on The C Sharp Academy project page and then I tried my own ideas after getting a nudge from that video.
+- Need to start being comfortable with Object Oriented Programming. Do not currently feel comfortable creating classes for everything.
+- Finding time to commit entirely to coding exercises.
+- My SQL knowledge is very limited and I needed to keep visiting websites to write the correct scripts.
+
+## Resources
+
+- [Markdown Cheatsheet for Readme file](https://github.com/lifeparticle/Markdown-Cheatsheet)
+- [CSharp Academy Project Page](https://thecsharpacademy.com/project/12/habit-logger)
+- [YouTube video by CSharp Academy](https://youtu.be/d1JIJdDVFjs?si=S8jiMEhyH0FFbfe0)
+- [ChatGPT to generate examples](https://chat.openai.com/)
+- [Microsoft Learn - Sqlite](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=netcore-cli)
+- [Microsoft Learn - DateTime](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-8.0)
+- [W3 Schools - SQL](https://www.w3schools.com/sql/)
