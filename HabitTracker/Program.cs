@@ -271,7 +271,7 @@ void SeedDatabase()
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {quantity.Next(0,999)})";
+            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {quantity.Next(0,1000)})";
 
         tableCmd.ExecuteNonQuery();
         connection.Close();
@@ -281,13 +281,12 @@ void SeedDatabase()
 
 string GenerateSeedDate()
 {
-    Random day = new Random();
-    Random month = new Random();
-    Random year = new Random();
-    string seedDate = $"{year.Next(20, 24)}-{month.Next(1, 12).ToString().PadLeft(2,'0')}-{day.Next(1, 28).ToString().PadLeft(2,'0')}";
-
-    return seedDate;
-
+    Random random = new Random();
+    int year = random.Next(20, 25);
+    int month = random.Next(1, 13);
+    int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
+    return $"{year}-{month.ToString().PadLeft(2,'0')}-{day.ToString().PadLeft(2,'0')}";
+    
 }
 
 
