@@ -20,7 +20,7 @@ if (!File.Exists("habit-tracker.db"))
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
-    
+
     SeedDatabase();
 }
 
@@ -128,7 +128,6 @@ void ViewAllRecords()
             Console.WriteLine("\nNo rows in table to display.");
             Console.WriteLine("=======================================");
         }
-
     }
 }
 
@@ -197,21 +196,19 @@ void DeleteRecord()
         GetNumberInput("Please enter the record id number you wish to delete or type 0 to return to the main menu: ");
 
     using var connection = new SqliteConnection(connectionString);
-    {
-        connection.Open();
-        var tableCmd = connection.CreateCommand();
+    connection.Open();
+    var tableCmd = connection.CreateCommand();
 
-        tableCmd.CommandText =
-            $"DELETE FROM pet_the_dog WHERE Id = '{recordId}'";
+    tableCmd.CommandText =
+        $"DELETE FROM pet_the_dog WHERE Id = '{recordId}'";
 
-        var rowCount = tableCmd.ExecuteNonQuery();
+    var rowCount = tableCmd.ExecuteNonQuery();
 
-        Console.WriteLine(rowCount == 0
-            ? $"Record {recordId} does not exist in the database. Please try again."
-            : $"\nRecord ID {recordId} has been successfully deleted");
+    Console.WriteLine(rowCount == 0
+        ? $"Record {recordId} does not exist in the database. Please try again."
+        : $"\nRecord ID {recordId} has been successfully deleted");
 
-        connection.Close();
-    }
+    connection.Close();
 }
 
 void UpdateRecord()
@@ -219,7 +216,7 @@ void UpdateRecord()
     ViewAllRecords();
     var recordId =
         GetNumberInput("Please enter the record id number you wish to update or type 0 to return to the main menu: ");
-    
+
     using var connection = new SqliteConnection(connectionString);
     {
         connection.Open();
@@ -234,8 +231,8 @@ void UpdateRecord()
             connection.Close();
             UpdateRecord();
         }
-        
-        
+
+
         var tableCmd = connection.CreateCommand();
 
         var date = GetDateInput(
@@ -253,9 +250,9 @@ void UpdateRecord()
              """;
 
         tableCmd.ExecuteNonQuery();
-        
+
         Console.WriteLine($"Record Id {recordId} has been successfully updated.");
-        
+
         connection.Close();
     }
 }
@@ -263,7 +260,7 @@ void UpdateRecord()
 void SeedDatabase()
 {
     Random quantity = new Random();
-    
+
     for (int i = 0; i < 50; i++)
     {
         using var connection = new SqliteConnection(connectionString);
@@ -271,12 +268,11 @@ void SeedDatabase()
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {quantity.Next(0,1000)})";
+            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {quantity.Next(0, 1000)})";
 
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
-
 }
 
 string GenerateSeedDate()
@@ -285,8 +281,7 @@ string GenerateSeedDate()
     int year = random.Next(20, 25);
     int month = random.Next(1, 13);
     int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
-    return $"{year}-{month.ToString().PadLeft(2,'0')}-{day.ToString().PadLeft(2,'0')}";
-    
+    return $"{year}-{month.ToString().PadLeft(2, '0')}-{day.ToString().PadLeft(2, '0')}";
 }
 
 
