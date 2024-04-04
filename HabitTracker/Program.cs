@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
@@ -64,7 +65,7 @@ void GetMenuOption()
                 closeApp = true;
                 break;
             case 1:
-                // ViewAllRecords();
+                ViewAllRecords();
                 break;
             case 2:
                 InsertRecord();
@@ -138,4 +139,47 @@ int GetNumberInput()
     }
     
     return numberInput;
+}
+
+void ViewAllRecords()
+{
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText =
+            $"SELECT * FROM pet_the_dog";
+
+        List<DogPets> tableData = new();
+
+        SqliteDataReader reader = tableCmd.ExecuteReader();
+
+        while (reader.Read()) // returns a bool value. True if more rows, false if none
+        {
+            tableData.Add(new DogPets
+            {
+                Id = reader.GetInt32(0),
+                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-Gb")), // Parses string from SQlite to DateTime format. Couldn't get it to go in format yy-MM-dd
+                Quantity = reader.GetInt32(3)
+            });
+        }
+        
+        connection.Close();
+        
+        Console.WriteLine("\n==========Dog Petting Tracker==========");
+        foreach (var row in tableData)
+        {
+            Console.WriteLine($"{row.Id} - {row.Date: yyyy-MMM-dd} - No. of Dog Pets: {row.Quantity}"); // Was able to parse DateTime to new format here
+        }
+        Console.WriteLine("=======================================");
+
+    }
+}
+
+public class DogPets
+{
+    public int Id { get; set; }
+    public DateTime Date { get; set; }
+    public int Quantity { get; set; }
 }
