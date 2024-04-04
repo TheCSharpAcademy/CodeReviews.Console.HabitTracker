@@ -161,7 +161,7 @@ void ViewAllRecords()
             {
                 Id = reader.GetInt32(0),
                 Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-Gb")), // Parses string from SQlite to DateTime format. Couldn't get it to go in format yy-MM-dd
-                Quantity = reader.GetInt32(3)
+                Quantity = reader.GetInt32(2)
             });
         }
         
