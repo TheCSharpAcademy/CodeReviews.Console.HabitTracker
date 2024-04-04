@@ -1,25 +1,29 @@
 using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 
 var connectionString = @"Data Source=habit-tracker.db";
-
-using (var connection = new SqliteConnection(connectionString))
+if (!File.Exists("habit-tracker.db"))
 {
-    connection.Open();
-    var tableCmd = connection.CreateCommand();
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
 
-    tableCmd.CommandText =
-        @"CREATE TABLE IF NOT EXISTS pet_the_dog(
+        tableCmd.CommandText =
+            @"CREATE TABLE IF NOT EXISTS pet_the_dog(
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Date TEXT,
             Quantity INTEGER
             )";
 
-    tableCmd.ExecuteNonQuery();
-    connection.Close();
+        tableCmd.ExecuteNonQuery();
+        connection.Close();
+    }
+    
+    SeedDatabase();
 }
+
 
 GetMenuOption();
 
@@ -71,7 +75,7 @@ void GetMenuOption()
                 InsertRecord();
                 break;
             case 3:
-                // UpdateRecord();
+                UpdateRecord();
                 break;
             case 4:
                 DeleteRecord();
@@ -101,7 +105,7 @@ void ViewAllRecords()
                 tableData.Add(new DogPets
                 {
                     Id = reader.GetInt32(0),
-                    Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy",
+                    Date = DateTime.ParseExact(reader.GetString(1), "yy-MM-dd",
                         new CultureInfo(
                             "en-Gb")), // Parses string from Sqlite to DateTime format. Couldn't get it to go in format yy-MM-dd
                     Quantity = reader.GetInt32(2)
@@ -149,14 +153,14 @@ void InsertRecord()
     connection.Close();
 }
 
-string? GetDateInput(string message)
+string GetDateInput(string message)
 {
     Console.WriteLine(message);
     var dateInput = Console.ReadLine();
 
     if (dateInput == "0") GetMenuOption();
 
-    while (!ValidateDateFormat(dateInput))
+    while (!DateTime.TryParseExact(dateInput, "yy-MM-dd", new CultureInfo("en-Gb"), DateTimeStyles.None, out _))
     {
         Console.WriteLine(
             $"Invalid input format.\n{message}");
@@ -165,14 +169,6 @@ string? GetDateInput(string message)
     }
 
     return dateInput;
-}
-
-static bool ValidateDateFormat(string? input)
-{
-    var pattern = @"\d\d-\d\d-\d\d";
-    var regex = new Regex(pattern);
-
-    return input != null && regex.IsMatch(input);
 }
 
 int GetNumberInput(string message)
@@ -217,6 +213,83 @@ void DeleteRecord()
         connection.Close();
     }
 }
+
+void UpdateRecord()
+{
+    ViewAllRecords();
+    var recordId =
+        GetNumberInput("Please enter the record id number you wish to update or type 0 to return to the main menu: ");
+    
+    using var connection = new SqliteConnection(connectionString);
+    {
+        connection.Open();
+
+        var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM pet_the_dog WHERE Id = {recordId})";
+        int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+        if (checkQuery == 0)
+        {
+            Console.WriteLine($"\nNo record with Id {recordId} exists.");
+            connection.Close();
+            UpdateRecord();
+        }
+        
+        
+        var tableCmd = connection.CreateCommand();
+
+        var date = GetDateInput(
+            $"\nPlease enter a date to update record {recordId} (format: yy-mm-dd). Type 0 to return to the main menu: ");
+        var quantity =
+            GetNumberInput(
+                $"Please enter the number of times you pet the dog to update record {recordId} or type 0 to return to the menu: ");
+
+        tableCmd.CommandText =
+            $"""
+                         UPDATE pet_the_dog
+                         SET Quantity = {quantity},
+                             Date = '{date}'
+                         WHERE Id = '{recordId}'
+             """;
+
+        tableCmd.ExecuteNonQuery();
+        
+        Console.WriteLine($"Record Id {recordId} has been successfully updated.");
+        
+        connection.Close();
+    }
+}
+
+void SeedDatabase()
+{
+    Random quantity = new Random();
+    
+    for (int i = 0; i < 50; i++)
+    {
+        using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+
+        tableCmd.CommandText =
+            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {quantity.Next(0,999)})";
+
+        tableCmd.ExecuteNonQuery();
+        connection.Close();
+    }
+
+}
+
+string GenerateSeedDate()
+{
+    Random day = new Random();
+    Random month = new Random();
+    Random year = new Random();
+    string seedDate = $"{year.Next(20, 24)}-{month.Next(1, 12).ToString().PadLeft(2,'0')}-{day.Next(1, 28).ToString().PadLeft(2,'0')}";
+
+    return seedDate;
+
+}
+
 
 public class DogPets
 {
