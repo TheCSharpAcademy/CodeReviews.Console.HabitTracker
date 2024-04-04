@@ -218,43 +218,42 @@ void UpdateRecord()
         GetNumberInput("Please enter the record id number you wish to update or type 0 to return to the main menu: ");
 
     using var connection = new SqliteConnection(connectionString);
+
+    connection.Open();
+
+    var checkCmd = connection.CreateCommand();
+    checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM pet_the_dog WHERE Id = {recordId})";
+    int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+    if (checkQuery == 0)
     {
-        connection.Open();
-
-        var checkCmd = connection.CreateCommand();
-        checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM pet_the_dog WHERE Id = {recordId})";
-        int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-        if (checkQuery == 0)
-        {
-            Console.WriteLine($"\nNo record with Id {recordId} exists.");
-            connection.Close();
-            UpdateRecord();
-        }
-
-
-        var tableCmd = connection.CreateCommand();
-
-        var date = GetDateInput(
-            $"\nPlease enter a date to update record {recordId} (format: yy-mm-dd). Type 0 to return to the main menu: ");
-        var quantity =
-            GetNumberInput(
-                $"Please enter the number of times you pet the dog to update record {recordId} or type 0 to return to the menu: ");
-
-        tableCmd.CommandText =
-            $"""
-                         UPDATE pet_the_dog
-                         SET Quantity = {quantity},
-                             Date = '{date}'
-                         WHERE Id = '{recordId}'
-             """;
-
-        tableCmd.ExecuteNonQuery();
-
-        Console.WriteLine($"Record Id {recordId} has been successfully updated.");
-
+        Console.WriteLine($"\nNo record with Id {recordId} exists.");
         connection.Close();
+        UpdateRecord();
     }
+
+
+    var tableCmd = connection.CreateCommand();
+
+    var date = GetDateInput(
+        $"\nPlease enter a date to update record {recordId} (format: yy-mm-dd). Type 0 to return to the main menu: ");
+    var quantity =
+        GetNumberInput(
+            $"Please enter the number of times you pet the dog to update record {recordId} or type 0 to return to the menu: ");
+
+    tableCmd.CommandText =
+        $"""
+                     UPDATE pet_the_dog
+                     SET Quantity = {quantity},
+                         Date = '{date}'
+                     WHERE Id = '{recordId}'
+         """;
+
+    tableCmd.ExecuteNonQuery();
+
+    Console.WriteLine($"Record Id {recordId} has been successfully updated.");
+
+    connection.Close();
 }
 
 void SeedDatabase()
