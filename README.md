@@ -55,6 +55,7 @@ Throughout the development of this project there were many new tools that I need
 - SQLite was new and finding good places on the internet to get examples of syntax use was challenging. I began using ChatGPT to get some examples and then made sure to read all the documentation that Rider provided on tooltips to understand what each function was doing.
 - Spend more time getting to know the IDE. I am using JetBrains Rider and needed to change the working directory of the project. This turned out to be very simple to do but took me over an hour to find the correct menu option.
 - DateTime is incredibly convoluted.
+- Throwing and catching exceptions looks like it will be a crucial must know skill.
 
 ## Areas to Improve
 
