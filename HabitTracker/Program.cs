@@ -2,6 +2,8 @@ using System.Globalization;
 using System.Text;
 using Microsoft.Data.Sqlite;
 
+Random random = new Random();
+
 var connectionString = @"Data Source=habit-tracker.db";
 if (!File.Exists("habit-tracker.db"))
 {
@@ -18,7 +20,6 @@ if (!File.Exists("habit-tracker.db"))
             )";
 
         tableCmd.ExecuteNonQuery();
-        connection.Close();
     }
 
     SeedDatabase();
@@ -149,7 +150,6 @@ void InsertRecord()
         $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{date}', {quantity})";
 
     tableCmd.ExecuteNonQuery();
-    connection.Close();
 }
 
 string GetDateInput(string message)
@@ -178,7 +178,7 @@ int GetNumberInput(string message)
 
     if (input == "0") GetMenuOption();
 
-    while (!int.TryParse(input, out numberInput))
+    while (!int.TryParse(input, out numberInput) || numberInput < 0)
     {
         Console.WriteLine(
             $"Invalid input format.\n{message}");
@@ -207,8 +207,7 @@ void DeleteRecord()
     Console.WriteLine(rowCount == 0
         ? $"Record {recordId} does not exist in the database. Please try again."
         : $"\nRecord ID {recordId} has been successfully deleted");
-
-    connection.Close();
+    
 }
 
 void UpdateRecord()
@@ -252,14 +251,11 @@ void UpdateRecord()
     tableCmd.ExecuteNonQuery();
 
     Console.WriteLine($"Record Id {recordId} has been successfully updated.");
-
-    connection.Close();
+    
 }
 
 void SeedDatabase()
 {
-    Random quantity = new Random();
-
     for (int i = 0; i < 50; i++)
     {
         using var connection = new SqliteConnection(connectionString);
@@ -267,16 +263,14 @@ void SeedDatabase()
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {quantity.Next(0, 1000)})";
+            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{GenerateSeedDate()}', {random.Next(0, 1000)})";
 
         tableCmd.ExecuteNonQuery();
-        connection.Close();
     }
 }
 
 string GenerateSeedDate()
 {
-    Random random = new Random();
     int year = random.Next(20, 25);
     int month = random.Next(1, 13);
     int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
