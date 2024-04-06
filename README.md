@@ -72,3 +72,4 @@ Throughout the development of this project there were many new tools that I need
 - [Microsoft Learn - Sqlite](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=netcore-cli)
 - [Microsoft Learn - DateTime](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-8.0)
 - [W3 Schools - SQL](https://www.w3schools.com/sql/)
+- [Exceptions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions)
