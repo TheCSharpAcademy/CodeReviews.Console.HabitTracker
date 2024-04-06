@@ -152,7 +152,12 @@ void InsertRecord()
 
         tableCmd.ExecuteNonQuery();
     }
-    catch (InputZero) {}// If "0" received in either input functions then throw exception and return to menu via while loop
+    catch (InputZero)
+    {
+        Console.WriteLine("Returning to main menu..."); // If "0" received in either input functions then throw exception and return to menu via while loop
+    }
+
+    
 
 }
 
@@ -198,7 +203,8 @@ void DeleteRecord()
     try
     {
         var recordId =
-            GetNumberInput("Please enter the record id number you wish to delete or type 0 to return to the main menu: ");
+            GetNumberInput(
+                "Please enter the record id number you wish to delete or type 0 to return to the main menu: ");
 
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
@@ -213,7 +219,10 @@ void DeleteRecord()
             ? $"Record {recordId} does not exist in the database. Please try again."
             : $"\nRecord ID {recordId} has been successfully deleted");
     }
-    catch (InputZero) {};
+    catch (InputZero)
+    {
+        Console.WriteLine("Returning to main menu...");
+    }
 
 }
 
@@ -224,7 +233,8 @@ void UpdateRecord()
     try
     {
         var recordId =
-            GetNumberInput("Please enter the record id number you wish to update or type 0 to return to the main menu: ");
+            GetNumberInput(
+                "Please enter the record id number you wish to update or type 0 to return to the main menu: ");
 
         using var connection = new SqliteConnection(connectionString);
 
@@ -263,7 +273,10 @@ void UpdateRecord()
         Console.WriteLine($"Record Id {recordId} has been successfully updated.");
 
     }
-    catch (InputZero) {}
+    catch (InputZero)
+    {
+        Console.WriteLine("Returning to main menu...");
+    }
 }
 
 void SeedDatabase()
