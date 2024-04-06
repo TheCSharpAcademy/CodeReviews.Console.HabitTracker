@@ -135,21 +135,25 @@ void ViewAllRecords()
 void InsertRecord()
 {
     Console.Clear();
+    try
+    {
+        var date = GetDateInput(
+            "\nPlease enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
+        var quantity =
+            GetNumberInput(
+                "Please enter the number of times you pet the dog on this date or type 0 to return to the menu: ");
 
-    var date = GetDateInput(
-        "\nPlease enter a date for the record (format: yy-mm-dd). Type 0 to return to the main menu: ");
-    var quantity =
-        GetNumberInput(
-            "Please enter the number of times you pet the dog on this date or type 0 to return to the menu: ");
+        using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
 
-    using var connection = new SqliteConnection(connectionString);
-    connection.Open();
-    var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+            $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{date}', {quantity})";
 
-    tableCmd.CommandText =
-        $"INSERT INTO pet_the_dog (Date, Quantity) VALUES ('{date}', {quantity})";
+        tableCmd.ExecuteNonQuery();
+    }
+    catch (InputZero) {}// If "0" received in either input functions then throw exception and return to menu via while loop
 
-    tableCmd.ExecuteNonQuery();
 }
 
 string GetDateInput(string message)
@@ -157,7 +161,7 @@ string GetDateInput(string message)
     Console.WriteLine(message);
     var dateInput = Console.ReadLine();
 
-    if (dateInput == "0") GetMenuOption();
+    if (dateInput == "0") throw new InputZero();
 
     while (!DateTime.TryParseExact(dateInput, "yy-MM-dd", new CultureInfo("en-Gb"), DateTimeStyles.None, out _))
     {
@@ -176,7 +180,7 @@ int GetNumberInput(string message)
     var input = Console.ReadLine();
     int numberInput;
 
-    if (input == "0") GetMenuOption();
+    if (input == "0") throw new InputZero();
 
     while (!int.TryParse(input, out numberInput) || numberInput < 0)
     {
@@ -191,67 +195,75 @@ int GetNumberInput(string message)
 void DeleteRecord()
 {
     ViewAllRecords();
+    try
+    {
+        var recordId =
+            GetNumberInput("Please enter the record id number you wish to delete or type 0 to return to the main menu: ");
 
-    var recordId =
-        GetNumberInput("Please enter the record id number you wish to delete or type 0 to return to the main menu: ");
+        using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
 
-    using var connection = new SqliteConnection(connectionString);
-    connection.Open();
-    var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+            $"DELETE FROM pet_the_dog WHERE Id = '{recordId}'";
 
-    tableCmd.CommandText =
-        $"DELETE FROM pet_the_dog WHERE Id = '{recordId}'";
+        var rowCount = tableCmd.ExecuteNonQuery();
 
-    var rowCount = tableCmd.ExecuteNonQuery();
+        Console.WriteLine(rowCount == 0
+            ? $"Record {recordId} does not exist in the database. Please try again."
+            : $"\nRecord ID {recordId} has been successfully deleted");
+    }
+    catch (InputZero) {};
 
-    Console.WriteLine(rowCount == 0
-        ? $"Record {recordId} does not exist in the database. Please try again."
-        : $"\nRecord ID {recordId} has been successfully deleted");
-    
 }
 
 void UpdateRecord()
 {
     ViewAllRecords();
-    var recordId =
-        GetNumberInput("Please enter the record id number you wish to update or type 0 to return to the main menu: ");
 
-    using var connection = new SqliteConnection(connectionString);
-
-    connection.Open();
-
-    var checkCmd = connection.CreateCommand();
-    checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM pet_the_dog WHERE Id = {recordId})";
-    int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-    if (checkQuery == 0)
+    try
     {
-        Console.WriteLine($"\nNo record with Id {recordId} exists.");
-        connection.Close();
-        UpdateRecord();
+        var recordId =
+            GetNumberInput("Please enter the record id number you wish to update or type 0 to return to the main menu: ");
+
+        using var connection = new SqliteConnection(connectionString);
+
+        connection.Open();
+
+        var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM pet_the_dog WHERE Id = {recordId})";
+        int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+        if (checkQuery == 0)
+        {
+            Console.WriteLine($"\nNo record with Id {recordId} exists.");
+            connection.Close();
+            UpdateRecord();
+        }
+
+
+        var tableCmd = connection.CreateCommand();
+
+        var date = GetDateInput(
+            $"\nPlease enter a date to update record {recordId} (format: yy-mm-dd). Type 0 to return to the main menu: ");
+        var quantity =
+            GetNumberInput(
+                $"Please enter the number of times you pet the dog to update record {recordId} or type 0 to return to the menu: ");
+
+        tableCmd.CommandText =
+            $"""
+                         UPDATE pet_the_dog
+                         SET Quantity = {quantity},
+                             Date = '{date}'
+                         WHERE Id = '{recordId}'
+             """;
+
+        tableCmd.ExecuteNonQuery();
+
+        Console.WriteLine($"Record Id {recordId} has been successfully updated.");
+
     }
-
-
-    var tableCmd = connection.CreateCommand();
-
-    var date = GetDateInput(
-        $"\nPlease enter a date to update record {recordId} (format: yy-mm-dd). Type 0 to return to the main menu: ");
-    var quantity =
-        GetNumberInput(
-            $"Please enter the number of times you pet the dog to update record {recordId} or type 0 to return to the menu: ");
-
-    tableCmd.CommandText =
-        $"""
-                     UPDATE pet_the_dog
-                     SET Quantity = {quantity},
-                         Date = '{date}'
-                     WHERE Id = '{recordId}'
-         """;
-
-    tableCmd.ExecuteNonQuery();
-
-    Console.WriteLine($"Record Id {recordId} has been successfully updated.");
-    
+    catch (InputZero) {}
 }
 
 void SeedDatabase()
@@ -284,3 +296,5 @@ public class DogPets
     public DateTime Date { get; set; }
     public int Quantity { get; set; }
 }
+
+class InputZero : Exception {}
