@@ -2,7 +2,7 @@
   "profiles": {
     "HabitLogger.BBualdo": {
       "commandName": "Project",
-      "workingDirectory": "F:\\C#Academy\\HabitLogger.BBualdo\\DatabaseLibrary\\"
+      "workingDirectory": "F:\\C#Academy\\CodeReviews.Console.HabitTracker\\HabitLogger.BBualdo\\DatabaseLibrary\\"
     }
   }
 }

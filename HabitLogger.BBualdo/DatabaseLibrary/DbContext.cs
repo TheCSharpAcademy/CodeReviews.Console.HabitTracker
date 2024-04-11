@@ -212,6 +212,12 @@ public class DbContext
     {
       _Connection.Open();
 
+      string deleteDependentRecordsQuery = $"DELETE FROM record WHERE habit_id={habitToDelete.Id}";
+      using (var command = new SqliteCommand(deleteDependentRecordsQuery, _Connection))
+      {
+        command.ExecuteNonQuery();
+      }
+
       string deleteHabitQuery = $"DELETE FROM habit WHERE habit_id={habitToDelete.Id}";
 
       using (SqliteCommand deleteCommand = new SqliteCommand(deleteHabitQuery, _Connection))
