@@ -580,7 +580,7 @@ static List<HabitLog> GetHabitLogResults(string cs, string query)
                         Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-GB")),
                         Quantity = reader.GetInt32(2),
                         Type = reader.GetInt32(3)
-                    });;
+                    });
                 }
             }
             reader.Close();
