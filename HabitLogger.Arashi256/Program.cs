@@ -1,7 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -553,7 +551,7 @@ static List<Habit> GetHabitResults(string cs, string query)
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
                         Units = reader.GetString(2)
-                    });;
+                    });
                 }
             }
             reader.Close();
