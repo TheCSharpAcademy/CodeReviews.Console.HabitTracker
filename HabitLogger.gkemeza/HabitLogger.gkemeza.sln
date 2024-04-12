@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitLogger.gkemeza", "HabitLogger.gkemeza\HabitLogger.gkemeza.csproj", "{D0ED20C5-9D7E-4F2C-9DF2-E89C331C1069}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0ED20C5-9D7E-4F2C-9DF2-E89C331C1069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0ED20C5-9D7E-4F2C-9DF2-E89C331C1069}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0ED20C5-9D7E-4F2C-9DF2-E89C331C1069}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0ED20C5-9D7E-4F2C-9DF2-E89C331C1069}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77880124-4144-49D0-881B-88787A0D73D2}
+	EndGlobalSection
+EndGlobal
