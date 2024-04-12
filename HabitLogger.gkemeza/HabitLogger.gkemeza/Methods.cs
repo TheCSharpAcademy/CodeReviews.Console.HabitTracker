@@ -166,7 +166,6 @@ namespace HabitLogger
         public bool ValidId(int idNumber)
         {
             string connectionSource = "Data Source=HabitLogger.db";
-            string habitName;
 
             List<int> list = new List<int>();
 
