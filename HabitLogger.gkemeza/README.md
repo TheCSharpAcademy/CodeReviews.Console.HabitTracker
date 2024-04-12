@@ -57,6 +57,6 @@ and inserting a hundred records with randomly generated values.
 - Thoroughly check for invalid user input.
 - That Console.Clear() only clears visible output in the console.
 
-<h2>Resources used:</h2>
-- Many articles and videos from:
+## Resources used:
+- Many articles and videos from:  
   - Microsoft documentation, Google, AI, Youtube.
