@@ -1,10 +1,10 @@
-<h1>Habit Logger 📅</h1>
+# Habit Logger 📅
 
 - This is my first C# database console application.
 - The app tracks habits using basic CRUD operations.
 - Developed using ADO.NET, SQLite and Visual Studio.
 
-<h2>Requirements:</h2>
+## Requirements:
 
 1) The habits can't be tracked by time (ex. hours of sleep),  
 only by quantity (ex. number of water glasses a day).
@@ -24,7 +24,7 @@ for the first time, generating a few habits
 and inserting a hundred records with randomly generated values.
 11) Create a report functionality where the users can view specific information.
 
-<h2>Features:</h2>
+## Features:
 
 - SQLite database connection
   - The program uses an SQLite db connection to store and read information.
@@ -47,7 +47,7 @@ and inserting a hundred records with randomly generated values.
 - Basic reports of the chosen habit data:
   - ![image](https://github.com/gkemeza/HabitLogger/assets/148207780/5547f4ba-878e-4ecd-817d-2aeb6d3ccabd)
 
-<h2>Things learned:</h2>
+## Things learned:
 
 - Create/connect to a database.
 - Basic SQLite queries.
