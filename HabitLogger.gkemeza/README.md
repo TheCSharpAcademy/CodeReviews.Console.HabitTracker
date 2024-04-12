@@ -10,19 +10,19 @@
 only by quantity (ex. number of water glasses a day).
 2) When the application starts, it should create an SQLite database,  
 if one isn’t present.
-4) It should also create a table in the database, where the habit will be logged.
-5) Show the user a menu of options.
-6) The users should be able to insert, delete, update and view their logged habits.
-7) Handle all possible errors so that the application never crashes.
-8) The application should only be terminated when the user inserts 0.
-9) Only interact with the database using raw SQL.  
+3) It should also create a table in the database, where the habit will be logged.
+4) Show the user a menu of options.
+5) The users should be able to insert, delete, update and view their logged habits.
+6) Handle all possible errors so that the application never crashes.
+7) The application should only be terminated when the user inserts 0.
+8) Only interact with the database using raw SQL.  
 Don't use mappers such as Entity Framework.
-11) Let the users create their habits to track.  
+9) Let the users create their habits to track.  
 That will require them to choose the unit of measurement for each habit.
-13) Seed Data into the database automatically when the database gets created  
+10) Seed Data into the database automatically when the database gets created  
 for the first time, generating a few habits  
 and inserting a hundred records with randomly generated values.
-15) Create a report functionality where the users can view specific information.
+11) Create a report functionality where the users can view specific information.
 
 ## Features:
 
