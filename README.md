@@ -28,7 +28,7 @@ Developed using C# and SQLite.
 
 - A console based UI where users can navigate by entering the number of the desired function
 
-  - ![image](https://imgur.com/a/dhqi1v6)
+  - ![image](https://github.com/zen-pb/HabitTracker.zen-pb/assets/111935236/396411e3-ff44-4053-a455-501759e869e2)
 
 - CRUD DB functions
 
