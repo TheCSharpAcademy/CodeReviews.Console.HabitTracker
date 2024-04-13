@@ -5,7 +5,7 @@ My third C# console application.
 Console based CRUD application to track habits.
 Developed using C# and SQLite.
 
-# Given Requirements:
+## Given Requirements:
 
 - [x] This is an application where you’ll register one habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
@@ -19,7 +19,7 @@ Developed using C# and SQLite.
 - [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
 - [x] Your project needs to contain a Read Me file where you'll explain how your app works.
 
-# Features
+## Features
 
 - SQLite database connection
 
@@ -34,7 +34,7 @@ Developed using C# and SQLite.
 
   - From the main menu, users can Create, Read, Update or Delete habits.
 
-# Challenges
+## Challenges
 
 - I am using VS Code in Linux. I had to deal with using VS Code as my editor. Visual Studio is not available in Linux.
 - It was my first time using C# with SQLite. I had to learn how to connect SQLite to my C# project using NuGet in VS Code.
@@ -42,19 +42,19 @@ Developed using C# and SQLite.
 - NAMESPACES. I had to learn what namespaces are and what they do.
 - Relearning methodology and technology. I had to relearn both on how SQLite works and how to implement OOP to my project.
 
-# Lessons Learned
+## Lessons Learned
 
 - Main method is the way. Top-level statements are good for beginners or for those who are just learning the language. The Main method is definitely what I will be using now. I can organized my code the way I want it to be without confusion.
 - Namespaces. I learned how it works but still have some confusions left.
 - OOP is the best! I can't believe I didn't start using it before I got to the third project. I will be implementing it now on future projects.
 
-# Areas to Improve
+## Areas to Improve
 
 - Testing my application. There's too many things to test that I get bored on doing it. Maybe I'll let my friend test it. Wahhhhhhh.
 - Namespaces. I guess I just have to create more projects dealing with it so that I can understand namespaces further.
 
 
-# Resources Used
+## Resources Used
 
 - Main Method in C# [Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/main-command-line)
 - Add package [Microsoft Learn](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-dotnet-cli)
