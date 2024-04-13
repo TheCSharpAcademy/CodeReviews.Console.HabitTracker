@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace HabitTracker
 {
     internal class Menu

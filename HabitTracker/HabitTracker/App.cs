@@ -46,40 +46,39 @@ namespace HabitTracker
                 Console.WriteLine(ex.Message);
                 Console.ReadLine();
             }
-            
+
         }
 
         public static void InsertRecord()
         {
-            try {
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            try
+            {
+                using SQLiteConnection connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var cmd = new SQLiteCommand(connection);
+                Console.WriteLine("Enter the Intake(glasses/day) of water:");
+                var input = Console.ReadLine();
+                int waterIntake;
+                while (!int.TryParse(input, out waterIntake) || waterIntake <= 0)
                 {
-                    connection.Open();
-                    var cmd = new SQLiteCommand(connection);
-                    Console.WriteLine("Enter the Intake(glasses/day) of water:");
-                    var input = Console.ReadLine();
-                    int waterIntake;
-                    while (!int.TryParse(input, out waterIntake))
-                    {
-                        Console.WriteLine("Invalid input pls enter integer value.");
-                        input = Console.ReadLine();
-                    }
-                    Console.WriteLine("Enter the date in exact (\"yyyy/MM/dd\") format\nEg for 5th February 2024 input will be 2024/02/05 ");
-                    string inputDate = Console.ReadLine();
-                    string format = "yyyy/MM/dd";
-                    DateTime date;
-                    while(!DateTime.TryParseExact(inputDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
-                    {
-                        Console.WriteLine("Invalid date input.Enter the date in exact (\"yyyy/MM/dd\") format\nEg for 5th February 2024 input will be 2024/02/05 ");
-                        inputDate = Console.ReadLine();
-                    }
-                    cmd.CommandText = $"INSERT INTO trackerTable(WaterIntake, Date) VALUES({waterIntake}, '{date}')";
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    connection.Close();
-                    Console.WriteLine("Record inserted successfully.Press any key to continue.");
-                    Console.ReadLine();
+                    Console.WriteLine("Invalid input pls enter positive integer values.");
+                    input = Console.ReadLine();
                 }
+                Console.WriteLine("Enter the date in exact (\"yyyy/MM/dd\") format\nEg for 5th February 2024 input will be 2024/02/05 ");
+                string inputDate = Console.ReadLine();
+                string format = "yyyy/MM/dd";
+                DateTime date;
+                while (!DateTime.TryParseExact(inputDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                {
+                    Console.WriteLine("Invalid date input.Enter the date in exact (\"yyyy/MM/dd\") format\nEg for 5th February 2024 input will be 2024/02/05 ");
+                    inputDate = Console.ReadLine();
+                }
+                cmd.CommandText = $"INSERT INTO trackerTable(WaterIntake, Date) VALUES({waterIntake}, '{date}')";
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                Console.WriteLine("Record inserted successfully.Press any key to continue.");
+                Console.ReadLine();
+
             }
             catch (Exception ex)
             {
@@ -89,39 +88,37 @@ namespace HabitTracker
 
         }
 
-        public static void DeleteRecord() 
+        public static void DeleteRecord()
         {
             try
             {
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                using SQLiteConnection connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var cmd = new SQLiteCommand(connection);
+                Console.WriteLine("Enter the id of record you want to delete:");
+                var input = Console.ReadLine();
+                int id;
+                while (!int.TryParse(input, out id))
                 {
-                    connection.Open();
-                    var cmd = new SQLiteCommand(connection);
-                    Console.WriteLine("Enter the id of record you want to delete:");
-                    var input = Console.ReadLine();
-                    int id;
-                    while (!int.TryParse(input, out id))
-                    {
-                        Console.WriteLine("Invalid input pls enter integer value.");
-                        input = Console.ReadLine();
-                    }
-                    cmd.CommandText = @"SELECT COUNT(*) FROM trackerTable WHERE Id= $id";
-                    cmd.Parameters.AddWithValue("id", id);
-                    object result = cmd.ExecuteScalar();
-                    if (!(result != null && Convert.ToInt32(result) > 0))
-                    {
-                        Console.WriteLine("The given id is not present in the database.Press any key to continue.");
-                        Console.ReadLine();
-                        return;
-                    }
-                    cmd.CommandText = @"DELETE FROM trackerTable WHERE Id = $id";
-                    cmd.Parameters.AddWithValue("id", id);
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    connection.Close();
-                    Console.WriteLine("Record deleted successfully.Press any key to continue.");
-                    Console.ReadLine();
+                    Console.WriteLine("Invalid input pls enter integer value.");
+                    input = Console.ReadLine();
                 }
+                cmd.CommandText = @"SELECT COUNT(*) FROM trackerTable WHERE Id= $id";
+                cmd.Parameters.AddWithValue("id", id);
+                object result = cmd.ExecuteScalar();
+                if (!(result != null && Convert.ToInt32(result) > 0))
+                {
+                    Console.WriteLine("The given id is not present in the database.Press any key to continue.");
+                    Console.ReadLine();
+                    return;
+                }
+                cmd.CommandText = @"DELETE FROM trackerTable WHERE Id = $id";
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                Console.WriteLine("Record deleted successfully.Press any key to continue.");
+                Console.ReadLine();
+
             }
             catch (Exception ex)
             {
@@ -131,72 +128,67 @@ namespace HabitTracker
 
         }
 
-        public static void UpdateRecord() {
+        public static void UpdateRecord()
+        {
             try
             {
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                using SQLiteConnection connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var cmd = new SQLiteCommand(connection);
+                int id;
+                Console.WriteLine("Enter the id of record you want to Update:");
+                var input = Console.ReadLine();
+                while (!int.TryParse(input, out id))
                 {
-                    connection.Open();
-                    var cmd = new SQLiteCommand(connection);
-                    int id;
-                    Console.WriteLine("Enter the id of record you want to Update:");
-                    var input = Console.ReadLine();
-                    while (!int.TryParse(input, out id))
-                    {
-                        Console.WriteLine("Invalid input pls enter integer value.");
-                        input = Console.ReadLine();
-                    }
-
-                    cmd.CommandText = @"SELECT COUNT(*) FROM trackerTable WHERE Id= $id";
-                    cmd.Parameters.AddWithValue("id", id);
-                    object result = cmd.ExecuteScalar();
-                    if (!(result != null && Convert.ToInt32(result) > 0))
-                    {
-                        Console.WriteLine("The given id is not present in the database.Press any key to continue.");
-                        Console.ReadLine();
-                        return;
-                    }
-                    int UpdatedWaterIntake;
-                    Console.WriteLine("Enter the UpdatedWaterIntake of the record you want to Update:");
+                    Console.WriteLine("Invalid input pls enter integer value.");
                     input = Console.ReadLine();
-                    while (!int.TryParse(input, out UpdatedWaterIntake))
-                    {
-                        Console.WriteLine("Invalid input pls enter integer value.");
-                        input = Console.ReadLine();
-                    }
-                    cmd.CommandText = @"UPDATE trackerTable SET WaterIntake = $UpdatedWaterIntake WHERE Id = $id";
-                    cmd.Parameters.AddWithValue("id", id);
-                    cmd.Parameters.AddWithValue("UpdatedWaterIntake", UpdatedWaterIntake);
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    connection.Close();
-                    Console.WriteLine("Record updated successfully.Press any key to continue.");
-                    Console.ReadLine();
                 }
+
+                cmd.CommandText = @"SELECT COUNT(*) FROM trackerTable WHERE Id= $id";
+                cmd.Parameters.AddWithValue("id", id);
+                object result = cmd.ExecuteScalar();
+                if (!(result != null && Convert.ToInt32(result) > 0))
+                {
+                    Console.WriteLine("The given id is not present in the database.Press any key to continue.");
+                    Console.ReadLine();
+                    return;
+                }
+                int UpdatedWaterIntake;
+                Console.WriteLine("Enter the UpdatedWaterIntake of the record you want to Update:");
+                input = Console.ReadLine();
+                while (!int.TryParse(input, out UpdatedWaterIntake))
+                {
+                    Console.WriteLine("Invalid input pls enter integer value.");
+                    input = Console.ReadLine();
+                }
+                cmd.CommandText = @"UPDATE trackerTable SET WaterIntake = $UpdatedWaterIntake WHERE Id = $id";
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("UpdatedWaterIntake", UpdatedWaterIntake);
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                Console.WriteLine("Record updated successfully.Press any key to continue.");
+                Console.ReadLine();
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.ReadLine();
             }
-            
+
         }
 
-        public static void CreateDatabase() {
+        public static void CreateDatabase()
+        {
             if (!File.Exists(databasePath))
             {
                 SQLiteConnection.CreateFile(databasePath);
-                
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    var cmd = new SQLiteCommand(connection);
-
-                    cmd.CommandText = @"CREATE TABLE trackerTable(Id INTEGER PRIMARY KEY, WaterIntake INT, Date DATE)";
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    connection.Close();
-                }
+                using SQLiteConnection connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var cmd = new SQLiteCommand(connection);
+                cmd.CommandText = @"CREATE TABLE trackerTable(Id INTEGER PRIMARY KEY, WaterIntake INT, Date DATE)";
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
             }
         }
     }
