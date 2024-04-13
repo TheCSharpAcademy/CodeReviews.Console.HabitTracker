@@ -11,35 +11,34 @@ namespace HabitTracker
         {
             try
             {
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                using SQLiteConnection connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var cmd = new SQLiteCommand(connection);
+                cmd.CommandText = "SELECT * FROM trackerTable";
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
                 {
-                    connection.Open();
-                    var cmd = new SQLiteCommand(connection);
-                    cmd.CommandText = "SELECT * FROM trackerTable";
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    if (!reader.HasRows)
                     {
-                        if (!reader.HasRows)
-                        {
-                            Console.WriteLine("Database is empty. Nothing to see. Press any key to continue.");
-                            Console.ReadLine();
-                            return;
-                        }
-                        Console.WriteLine("Following is the list :\n");
-                        while (reader.Read())
-                        {
-                            int id = reader.GetInt32(0);
-                            int waterIntake = reader.GetInt32(1);
-                            string date = reader.GetString(2);
-                            int index = date.IndexOf(' ');
-                            date = date.Substring(0, index + 1);
-                            Console.WriteLine($"ID: {id} ,Intake(glasses/day): {waterIntake} ,Date: {date}\n");
-                        }
-                        Console.WriteLine("Press any key to continue.");
+                        Console.WriteLine("Database is empty. Nothing to see. Press any key to continue.");
                         Console.ReadLine();
+                        return;
                     }
-                    cmd.Dispose();
-                    connection.Close();
+                    Console.WriteLine("Following is the list :\n");
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(0);
+                        int waterIntake = reader.GetInt32(1);
+                        string date = reader.GetString(2);
+                        int index = date.IndexOf(' ');
+                        date = date.Substring(0, index + 1);
+                        Console.WriteLine($"ID: {id} ,Intake(glasses/day): {waterIntake} ,Date: {date}\n");
+                    }
+                    Console.WriteLine("Press any key to continue.");
+                    Console.ReadLine();
                 }
+                cmd.Dispose();
+                connection.Close();
+                
             }
             catch (Exception ex)
             {
