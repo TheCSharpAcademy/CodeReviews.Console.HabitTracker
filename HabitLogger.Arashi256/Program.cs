@@ -184,7 +184,8 @@ static void Reports(string cs)
 
 static void Report30Days(string cs)
 {
-    string query = "SELECT * FROM habit_logs WHERE DATE('now') >= DATE('20' || SUBSTR(Date_Logged, 7, 2) || '-' || SUBSTR(Date_Logged, 4, 2) || '-' || SUBSTR(Date_Logged, 1, 2), '-30 days')";
+    Console.Clear();
+    string query = "SELECT * FROM habit_logs WHERE Date_Logged BETWEEN strftime('%Y-%m-%d', 'now', '-30 days') AND strftime('%Y-%m-%d', 'now')";
     List<HabitLog> last30days = GetHabitLogResults(cs, query);
     if (last30days.Count > 0)
     {
@@ -204,6 +205,7 @@ static void Report30Days(string cs)
 
 static void AddNewHabitLog(string cs)
 {
+    Console.Clear();
     Habit currentHabit = GetHabitFromId(cs, GetCurrentHabitID(cs));
     string? date;
     date = GetLogDateInput();
@@ -223,6 +225,7 @@ static void AddNewHabitLog(string cs)
 
 static void DeleteHabitLog(string cs)
 {
+    Console.Clear();
     int? habit = GetCurrentHabitID(cs);
     ListAllHabitLogsForHabit(cs, habit);
     var recordId = GetNumberInput("Please type the Id of the record you want to delete or type 0 to go back to Main Menu");
@@ -237,6 +240,7 @@ static void DeleteHabitLog(string cs)
 
 static void UpdateHabitLog(string cs)
 {
+    Console.Clear();
     Habit currentHabit = GetHabitFromId(cs, GetCurrentHabitID(cs));
     ListAllHabitLogsForHabit(cs, currentHabit.Id);
     var recordId = GetNumberInput("Please type the Id of the record you like to update or type 0 to go back to Main Menu");
@@ -349,6 +353,7 @@ static void UpdateExistingHabit(string cs)
 
 static void ListAllHabits(string cs)
 {
+    Console.Clear();
     Console.WriteLine("List of current habits stored:-");
     List<Habit> habits = GetHabitResults(cs, "SELECT * FROM habits");
     if (habits.Count > 0)
@@ -362,6 +367,8 @@ static void ListAllHabits(string cs)
     {
         Console.WriteLine("No habits stored");
     }
+    Console.WriteLine("Press enter to continue");
+    Console.ReadLine();
 }
 
 static void SetCurrentHabit(string cs, int? Id)
@@ -530,6 +537,8 @@ static void ListAllHabitLogsForHabit(string cs, int? htype)
     {
         Console.WriteLine($"No habit logs stored for the habit: {currentHabit.Name}");
     }
+    Console.WriteLine("Press enter to continue");
+    Console.ReadLine();
 }
 
 static List<Habit> GetHabitResults(string cs, string query)
@@ -577,7 +586,7 @@ static List<HabitLog> GetHabitLogResults(string cs, string query)
                     tableData.Add(new HabitLog
                     {
                         Id = reader.GetInt32(0),
-                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-GB")),
+                        Date = DateTime.ParseExact(reader.GetString(1), "yyyy-MM-dd", CultureInfo.InvariantCulture),
                         Quantity = reader.GetInt32(2),
                         Type = reader.GetInt32(3)
                     });
@@ -737,7 +746,8 @@ static string GetRandomDate(int startYear, int endYear)
     TimeSpan timeSpan = endDate - startDate;
     TimeSpan randomSpan = new TimeSpan((long)(random.NextDouble() * timeSpan.Ticks));
     DateTime randomDate = startDate + randomSpan;
-    return randomDate.ToString("dd-MM-yy");
+    //return randomDate.ToString("dd-MM-yy");
+    return randomDate.ToString("yyyy-MM-dd");
 }
 
 public class HabitLog
