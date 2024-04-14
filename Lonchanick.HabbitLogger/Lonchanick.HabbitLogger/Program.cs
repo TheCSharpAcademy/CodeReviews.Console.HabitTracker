@@ -1,12 +1,7 @@
-﻿
+﻿using Lonchanick.HabbitLogger;
 
-
-
-
-using Lonchanick.HabbitLogger;
-
-string aux;
-int op;
+string UserInput;
+int menuOptionInputByUser;
 
 do
 {
@@ -18,12 +13,12 @@ do
     Console.WriteLine($"4) {Options.DeleteRecord}");
     Console.Write($"0) {Options.Exit}\t");
 
-    aux = Console.ReadLine();
+    UserInput = Console.ReadLine();
 
-    if (!int.TryParse(aux, out op))
-        op = -1;
+    if (!int.TryParse(UserInput, out menuOptionInputByUser))
+        menuOptionInputByUser = -1;
 
-    switch (op)
+    switch (menuOptionInputByUser)
     {
         case 1:
             Console.WriteLine("\tCreateNewRecord");
@@ -54,16 +49,15 @@ do
 
 } while (true);
 
-
 int GetValidInteger(string param)
 {
-    string aux = "";
+    string UserInput = string.Empty;
     int result;
 
-    while (!int.TryParse(aux, out result))
+    while (!int.TryParse(UserInput, out result))
     {
         Console.Write($"Type {param}: ");
-        aux = Console.ReadLine();
+        UserInput = Console.ReadLine();
     }
 
     return result;

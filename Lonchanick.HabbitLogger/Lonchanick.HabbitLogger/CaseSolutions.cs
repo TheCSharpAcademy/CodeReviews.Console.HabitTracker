@@ -10,9 +10,7 @@ internal class CaseSolutions
         var aux = Db.Select();
 
         if (aux is not null)
-        {
             PrintHabitTable(aux);
-        }
         else
             Console.WriteLine("There is no records yet!");
     }
@@ -20,9 +18,7 @@ internal class CaseSolutions
     public static void AddNewRecord()
     {
         var date = GetValidDateTime("Date (yyyy-MM-dddd)");
-
         var quantity = GetValidInteger("Quantity");
-
 
         bool response = Db.Insert(new Habit {DateField=date, Quantity=quantity });
         
@@ -35,9 +31,9 @@ internal class CaseSolutions
         {
             Console.WriteLine("There was a problem with the request.");
             Console.ReadLine();
-
         }
     }
+
     public static void Update()
     {
         var id = GetValidInteger("Type object \"Id\" to Update");
@@ -80,19 +76,19 @@ internal class CaseSolutions
         }
     }
 
-    static void PrintHabitTable(IEnumerable<Habit> h)
+    static void PrintHabitTable(IEnumerable<Habit> habit)
     {
         var table = new Table();
         table.AddColumn("Id");
         table.AddColumn("Date");
         table.AddColumn("Quantity");
 
-        foreach (var p in h)
+        foreach (var h in habit)
         {
             table.AddRow(
-                p.Id.ToString(),
-                p.DateField.ToString("yyyy-MM-dd"),
-                p.Quantity.ToString()
+                h.Id.ToString(),
+                h.DateField.ToString("yyyy-MM-dd"),
+                h.Quantity.ToString()
                 );
         }
 
@@ -114,16 +110,17 @@ internal class CaseSolutions
 
         return result;
     }
+
     static DateTime GetValidDateTime(string param)
     {
-        string aux = string.Empty;
+        string userInput = string.Empty;
         DateTime result;
 
         do
         {
             Console.Write($"{param}: ");
-            aux = Console.ReadLine();
-        } while (!DateTime.TryParse(aux, out result));
+            userInput = Console.ReadLine();
+        } while (!DateTime.TryParse(userInput, out result));
 
         return result;
     }
