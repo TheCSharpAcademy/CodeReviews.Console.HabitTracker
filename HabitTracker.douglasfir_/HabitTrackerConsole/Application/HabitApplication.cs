@@ -178,7 +178,7 @@ public class HabitApplication
             {
                 foreach (var habit in habits)
                 {
-                    bool result = _habitService.DeleteHabit(habit.HabitId);
+                   _habitService.DeleteHabit(habit.HabitId);
                 }
             });
 
