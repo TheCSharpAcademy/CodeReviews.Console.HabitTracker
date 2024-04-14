@@ -746,7 +746,6 @@ static string GetRandomDate(int startYear, int endYear)
     TimeSpan timeSpan = endDate - startDate;
     TimeSpan randomSpan = new TimeSpan((long)(random.NextDouble() * timeSpan.Ticks));
     DateTime randomDate = startDate + randomSpan;
-    //return randomDate.ToString("dd-MM-yy");
     return randomDate.ToString("yyyy-MM-dd");
 }
 
