@@ -7,13 +7,11 @@ internal class CaseSolutions
 {
     public static void ReadAllRecords()
     {
-        var aux = db.select();
+        var aux = Db.Select();
 
         if (aux is not null)
         {
-            printHabitTable(aux);
-            //foreach (var i in aux)
-            //    Console.WriteLine($"{i.Id} - {i.DateField.ToString("yyyy-MM-dd")} - {i.Quantity}");
+            PrintHabitTable(aux);
         }
         else
             Console.WriteLine("There is no records yet!");
@@ -26,7 +24,7 @@ internal class CaseSolutions
         var quantity = GetValidInteger("Quantity");
 
 
-        bool response = db.Insert(new Habit {DateField=date, Quantity=quantity });
+        bool response = Db.Insert(new Habit {DateField=date, Quantity=quantity });
         
         if(response)
         {
@@ -48,7 +46,7 @@ internal class CaseSolutions
 
         var quantity = GetValidInteger("Quantity");
 
-        bool response = db.Update(new Habit { Id= id, DateField = date, Quantity = quantity });
+        bool response = Db.Update(new Habit { Id= id, DateField = date, Quantity = quantity });
 
         if (response)
         {
@@ -67,7 +65,7 @@ internal class CaseSolutions
     {
         var id = GetValidInteger("Type object \"Id\" to Delete");
 
-        bool response = db.Delete(id);
+        bool response = Db.Delete(id);
 
         if (response)
         {
@@ -82,7 +80,7 @@ internal class CaseSolutions
         }
     }
 
-    static void printHabitTable(IEnumerable<Habit> h)
+    static void PrintHabitTable(IEnumerable<Habit> h)
     {
         var table = new Table();
         table.AddColumn("Id");

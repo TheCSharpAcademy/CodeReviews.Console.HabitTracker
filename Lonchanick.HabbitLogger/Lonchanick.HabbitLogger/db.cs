@@ -2,9 +2,9 @@
 
 namespace Lonchanick.HabbitLogger;
 
-internal class db
+internal class Db
 {
-    public static List<Habit> select()
+    public static List<Habit> Select()
     {
 
         string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
@@ -30,11 +30,6 @@ internal class db
                         // Read and process each row
                         while (reader.Read())
                         {
-                            // Access columns by index or column name
-                            //int id = reader.GetInt32(0);
-                            //DateTime dateField = reader.GetDateTime(1);
-                            //int quantity = reader.GetInt32(2);
-
                             HabitList.Add(
                                 new Habit
                                 {
