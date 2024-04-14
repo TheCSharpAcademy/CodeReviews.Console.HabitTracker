@@ -1,3 +1,4 @@
+
 # HabitTrackerConsole
 
 Habit Logger is a console-based application designed to help users track and manage their habits effectively. 
