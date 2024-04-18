@@ -268,7 +268,7 @@ static void PrintSummary()
 
         if (habitToSummarize is not null)
         {
-            var habitNameGroup = habitNamesGroup.SingleOrDefault(habit => habit.Key?.ToLower() == habitToSummarize.Trim().ToLower());
+            var habitNameGroup = habitNamesGroup.SingleOrDefault(habit => habit.Key == habitToSummarize);
             if (habitNameGroup is null)
             {
                 Console.WriteLine("Habit Name does not exist.");
