@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "habit-tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\anluko\\Desktop\\CSHARP PROJECTS\\habit-tracker\\"
+    }
+  }
+}
