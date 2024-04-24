@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "coding-tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\anluko\\Desktop\\CSHARP PROJECTS\\coding-tracker\\coding-tracker\\"
+    }
+  }
+}
