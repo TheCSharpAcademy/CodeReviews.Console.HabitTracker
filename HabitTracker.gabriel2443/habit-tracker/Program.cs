@@ -31,7 +31,7 @@ internal class Program
     {
         bool closeApp = false;
 
-        do
+        while (closeApp == false)
         {
             Console.WriteLine("\n\nMAIN MENU");
             Console.WriteLine("\nWhat would you like to do?");
@@ -47,7 +47,7 @@ internal class Program
             switch (command)
             {
                 case "0":
-                    Console.WriteLine("\nGoodbye!\n");
+                    Console.WriteLine("\nGoodbye...\n");
                     closeApp = true;
                     Environment.Exit(0);
                     break;
@@ -72,7 +72,7 @@ internal class Program
                     Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
                     break;
             }
-        } while (closeApp);
+        }
     }
 
     private static void GetAllRecords()
@@ -108,6 +108,7 @@ internal class Program
                 Console.WriteLine("No rows found");
             }
             connection.Close();
+
             Console.WriteLine("------------------------------------------\n");
 
             foreach (var dw in tableData)
@@ -137,7 +138,6 @@ internal class Program
         }
 
         Console.Clear();
-        Menu();
     }
 
     private static void Update()
@@ -150,12 +150,12 @@ internal class Program
             connection.Open();
 
             var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id={id})";
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {id})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
             if (checkQuery == 0)
             {
-                Console.WriteLine($"\n Record with Id{id} does not exist");
+                Console.WriteLine($"\n Record with Id {id} doesn't exist");
                 connection.Close();
                 Update();
             }
@@ -164,17 +164,16 @@ internal class Program
             var quantity = GetNumberInput("Please type the amount of drinking glasses you want to update");
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"UPDATE drinking_water SET Date = '{date}', Quantity={quantity} WHERE Id={id}";
+            tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE id = {id}";
             tableCmd.ExecuteNonQuery();
             connection.Close();
         }
-        Menu();
     }
 
     private static void Delete()
     {
+        Console.Clear();
         GetAllRecords();
-        Console.WriteLine("Please select a number to delete the row\n");
 
         var id = GetNumberInput("Please type the Id you want deleted from the record");
 
@@ -193,20 +192,18 @@ internal class Program
                 Delete();
             }
         }
-        Menu();
     }
 
     internal static string GetDateInput()
     {
-        Console.WriteLine("Please insert the date in this format: dd-mm-yy).Type 0 to return to main menu");
+        Console.WriteLine("Please insert the date in this format: dd-mm-yy).");
 
         var dateInput = Console.ReadLine();
-
-        if (dateInput == "0") Menu();
 
         while (!DateTime.TryParseExact(dateInput, "dd-mm-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
         {
             Console.WriteLine("\nInvalid date format, type 0 to return to main menu or try again");
+            if (dateInput == "0") Menu();
 
             dateInput = Console.ReadLine();
         }
@@ -220,11 +217,10 @@ internal class Program
 
         var numInput = Console.ReadLine();
 
-        if (numInput == "0") Menu();
-
         while (!Int32.TryParse(numInput, out _) || Convert.ToInt32(numInput) < 0)
         {
-            Console.WriteLine("Please enter a valid Number");
+            Console.WriteLine("Invalid number, please try again!");
+
             numInput = Console.ReadLine();
         }
 
