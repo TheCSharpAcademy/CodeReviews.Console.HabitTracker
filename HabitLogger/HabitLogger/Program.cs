@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Numerics;
 using Microsoft.Data.Sqlite;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
