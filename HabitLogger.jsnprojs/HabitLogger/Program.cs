@@ -35,12 +35,20 @@ class Program
 
             tableCmd.ExecuteNonQuery();
 
+            tableCmd.CommandText = $"SELECT COUNT(*) FROM Habits";
+            int habitsCount = Convert.ToInt32(tableCmd.ExecuteScalar());
             tableCmd.CommandText = $"SELECT COUNT(*) FROM Records";
-            int count = Convert.ToInt32(tableCmd.ExecuteScalar());
-            
-            if(count < 10)
+            int recordsCount = Convert.ToInt32(tableCmd.ExecuteScalar());
+
+            if (habitsCount == 0)
             {
-                GenerateRandomData();
+                GenerateDefaultHabits();
+
+            }
+            if(recordsCount == 0)
+            {
+                GenerateRandomRecords();
+
             }
             connection.Close();
         }
@@ -100,7 +108,31 @@ class Program
 
     }
 
-    private static void GenerateRandomData()
+    private static void GenerateDefaultHabits()
+    {
+        Console.Clear();
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            Random random = new();
+            string[] randomHabits = {"Water", "Soda", "Coke", "Tea", "Wine", "Milk" };
+            string[] randomUnits = { "Cups", "Cans", "Bottles" };
+
+            for (int i = 0; i < randomHabits.Length; i++)
+            {
+                tableCmd.CommandText =
+$"INSERT INTO Habits(Type, Unit) VALUES('{randomHabits[i]}', '{randomUnits[random.Next(randomUnits.Length)]}')";
+
+                tableCmd.ExecuteNonQuery();
+            }
+            connection.Close();
+        }
+    }
+
+    private static void GenerateRandomRecords()
     {
         Console.Clear();
 
@@ -114,8 +146,7 @@ class Program
             for (int i = 0; i < 100; i++)
             {
                 tableCmd.CommandText =
-$"INSERT INTO Records(Date, Quantity, Habits_Id) VALUES('{DateTime.TryParseExact($"{random.Next(1,32)}-{random.Next(1,13)-random.Next(1924, 2025)}", "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _)}', {random.Next(1, 100)}, {random.Next(1,4)})";
-
+$"INSERT INTO Records(Date, Quantity, Habits_Id) VALUES('{random.Next(1, 32)}-{random.Next(1, 13)}-{random.Next(1924, 2025)}', {random.Next(100)}, {random.Next(1,7)})";
                 tableCmd.ExecuteNonQuery();
             }
             connection.Close();
