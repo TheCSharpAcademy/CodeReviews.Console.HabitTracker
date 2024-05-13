@@ -436,15 +436,15 @@ $"INSERT INTO Records(Date, Quantity, Habits_Id) VALUES('{date}', {quantity}, {h
 
     internal static string GetDateInput()
     {
-        Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main manu.\n\n");
+        Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yyyy). Type 0 to return to main manu.\n\n");
 
         string dateInput = Console.ReadLine();
 
         if (dateInput == "0") GetUserInput();
 
-        while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
+        while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
         {
-            Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main manu or try again:\n\n");
+            Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yyyy). Type 0 to return to main manu or try again:\n\n");
             dateInput = Console.ReadLine();
         }
 
