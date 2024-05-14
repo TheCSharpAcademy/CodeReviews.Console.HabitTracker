@@ -1,4 +1,5 @@
 using System.Data.SQLite;
+using Nelson.Habit_Tracker.Models;
 
 namespace Nelson.Habit_Tracker.DataAccess
 {
@@ -6,6 +7,7 @@ namespace Nelson.Habit_Tracker.DataAccess
     {
         private const string DatabaseName = "habit_tracker.db";
         private const string ConnectionString = "Data Source=" + DatabaseName + ";Version=3;";
+        readonly List<Habit> databases = [];
 
         public void InitializeDatabase()
         {
@@ -25,7 +27,8 @@ namespace Nelson.Habit_Tracker.DataAccess
                         CREATE TABLE IF NOT EXISTS Habits (
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
                             Date TEXT,
-                            Name TEXT NOT NULL,
+                            Name TEXT,
+                            Measurement TEXT,
                             Quantity INTEGER
                         );";
 
@@ -33,17 +36,53 @@ namespace Nelson.Habit_Tracker.DataAccess
             command.ExecuteNonQuery();
         }
 
-        public void InsertToDatabase(string date, string name, int quantity)
+        public void GetFromDatabase()
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string createTableQuery = @"SELECT * FROM Habits";
+
+            using var command = new SQLiteCommand(createTableQuery, connection);
+
+            // Read the rows from the database
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var habit = new Habit
+                {
+                    Id = reader.GetInt32(0),
+                    Date = reader.GetDateTime(1),
+                    Name = reader.GetString(2),
+                    Measurement = reader.GetString(3),
+                    Quantity = reader.GetInt32(4)
+                };
+                databases.Add(habit);
+            }
+        }
+
+        public void InsertToDatabase(DateTime date, string name, string measure, int quantity)
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
 
             string createTableQuery = @$"
-                INSERT INTO Habits(Date, Name, Quantity)
-                VALUES ('{date}', '{name}', '{quantity}')";
+                INSERT INTO Habits(Date, Name, Measurement, Quantity)
+                VALUES ('{date}', '{name}', '{measure}', {quantity})";
 
             using var command = new SQLiteCommand(createTableQuery, connection);
             command.ExecuteNonQuery();
+        }
+
+        public void UpdateToDatabase(DateTime date, string name, string measure, int quantity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteFromDatabase(DateTime date, string name, string measure, int quantity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

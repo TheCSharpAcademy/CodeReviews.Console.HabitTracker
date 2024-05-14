@@ -1,3 +1,4 @@
+using System.Globalization;
 using Nelson.Habit_Tracker.UserConsoleInteraction;
 
 namespace Nelson.Habit_Tracker.Utils
@@ -5,13 +6,21 @@ namespace Nelson.Habit_Tracker.Utils
     public class DateValidator : IDateValidator
     {
         readonly IConsoleInteraction _consoleInteraction;
-        public string GetDateInput()
+
+        public DateValidator(IConsoleInteraction consoleInteraction)
+        {
+            _consoleInteraction = consoleInteraction;
+        }
+        
+        public DateTime GetDateInput()
         {
             _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy). Type ) to return ro main menu.");
 
             string dateInput = _consoleInteraction.GetUserInput();
 
-            return dateInput;
+            DateTime finalDate = DateTime.ParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"));
+
+            return finalDate;
         }
     }
 }

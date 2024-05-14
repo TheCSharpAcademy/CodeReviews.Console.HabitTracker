@@ -12,11 +12,14 @@ namespace Nelson.Habit_Tracker.UserConsoleInteraction
             Console.WriteLine("Type 3 to Update Habit");
             Console.WriteLine("Type 4 to Delete Habit");
             Console.WriteLine("----------------------------------------\n");
+            Console.Write("Input: ");
         }
 
         public void ShowMessage(string message)
         {
+            Thread.Sleep(500);
             Console.WriteLine(message);
+            Thread.Sleep(500);
         }
 
         public string GetUserInput()

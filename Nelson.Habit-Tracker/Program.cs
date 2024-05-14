@@ -1,5 +1,16 @@
 ﻿using Nelson.Habit_Tracker.DataAccess;
+using Nelson.Habit_Tracker.HabitApp;
+using Nelson.Habit_Tracker.UserConsoleInteraction;
+using Nelson.Habit_Tracker.Utils;
 
-DatabaseInitializer database = new();
+IConsoleInteraction consoleInteraction = new ConsoleInteraction();
 
-database.InitializeDatabase();
+IInputValidator inputValidator= new InputValidator(consoleInteraction);
+IDateValidator dateValidator = new DateValidator(consoleInteraction);
+
+IDatabaseInitializer databaseInitializer = new DatabaseInitializer();
+
+IHabitRepository habitRepository = new HabitRepository(consoleInteraction, inputValidator, dateValidator, databaseInitializer);
+var habitApp = new HabitApp(consoleInteraction, habitRepository, databaseInitializer);
+
+habitApp.RunApp();
