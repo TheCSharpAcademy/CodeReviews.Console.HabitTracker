@@ -1,3 +1,5 @@
+using Nelson.Habit_Tracker.Models;
+
 namespace Nelson.Habit_Tracker.DataAccess
 {
     public interface IHabitRepository
@@ -5,7 +7,7 @@ namespace Nelson.Habit_Tracker.DataAccess
         void DeleteHabit();
         void GetAllHabits();
         string GetUserInput();
-        void InsertHabit();
+        void InsertHabit(Habit habit);
         void UpdateHabit();
     }
 }

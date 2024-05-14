@@ -2,7 +2,7 @@ using System.Data.SQLite;
 
 namespace Nelson.Habit_Tracker.DataAccess
 {
-    public class DatabaseInitializer
+    public class DatabaseInitializer : IDatabaseInitializer
     {
         private const string DatabaseName = "habit_tracker.db";
         private const string ConnectionString = "Data Source=" + DatabaseName + ";Version=3;";
@@ -28,6 +28,19 @@ namespace Nelson.Habit_Tracker.DataAccess
                             Name TEXT NOT NULL,
                             Quantity INTEGER
                         );";
+
+            using var command = new SQLiteCommand(createTableQuery, connection);
+            command.ExecuteNonQuery();
+        }
+
+        public void InsertToDatabase(string date, string name, int quantity)
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string createTableQuery = @$"
+                INSERT INTO Habits(Date, Name, Quantity)
+                VALUES ('{date}', '{name}', '{quantity}')";
 
             using var command = new SQLiteCommand(createTableQuery, connection);
             command.ExecuteNonQuery();

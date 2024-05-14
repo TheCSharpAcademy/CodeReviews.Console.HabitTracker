@@ -1,4 +1,5 @@
 using Nelson.Habit_Tracker.DataAccess;
+using Nelson.Habit_Tracker.Models;
 using Nelson.Habit_Tracker.UserConsoleInteraction;
 
 namespace Nelson.Habit_Tracker.HabitApp
@@ -8,6 +9,7 @@ namespace Nelson.Habit_Tracker.HabitApp
         private readonly IConsoleInteraction _consoleInteraction;
         private readonly IHabitRepository _habitRepository;
         bool closeApp;
+        readonly Habit habit = new();
 
         public HabitApp(IConsoleInteraction consoleInteraction, IHabitRepository habitRepository)
         {
@@ -40,7 +42,7 @@ namespace Nelson.Habit_Tracker.HabitApp
                     _habitRepository.GetAllHabits();
                     break;
                 case "2":
-                    _habitRepository.InsertHabit();
+                    _habitRepository.InsertHabit(habit);
                     break;
                 case "3":
                     _habitRepository.UpdateHabit();
