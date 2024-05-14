@@ -1,2 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using Nelson.Habit_Tracker.DataAccess;
+
+DatabaseInitializer database = new();
+
+database.InitializeDatabase();
