@@ -19,17 +19,37 @@ namespace Nelson.Habit_Tracker.HabitApp
         {
             while (!closeApp)
             {
+                // Get user input
                 string userInput = _habitRepository.GetUserInput();
+
+                // Run command based on user input
+                SelectUserInput(userInput);
             }
         }
 
-        public string SelectUserInput(string input)
+        public void SelectUserInput(string input)
         {
             switch (input)
             {
                 case "0":
                     _consoleInteraction.ShowMessage("\nGoodbye!\n");
                     closeApp = true;
+                    break;
+                case "1":
+                    _consoleInteraction.ShowMessage("Getting all habits...");
+                    _habitRepository.GetAllHabits();
+                    break;
+                case "2":
+                    _habitRepository.InsertHabit();
+                    break;
+                case "3":
+                    _habitRepository.UpdateHabit();
+                    break;
+                case "4":
+                    _habitRepository.DeleteHabit();
+                    break;
+                default:
+                    _consoleInteraction.ShowMessage("\nInvalid input. Please type a number from 0 to 4.\n");
                     break;
             }
         }

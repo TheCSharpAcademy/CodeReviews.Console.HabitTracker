@@ -18,5 +18,10 @@ namespace Nelson.Habit_Tracker.UserConsoleInteraction
         {
             Console.WriteLine(message);
         }
+
+        public string GetUserInput()
+        {
+            return Console.ReadLine();
+        }
     }
 }
