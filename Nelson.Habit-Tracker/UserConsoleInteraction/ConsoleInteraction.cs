@@ -13,5 +13,10 @@ namespace Nelson.Habit_Tracker.UserConsoleInteraction
             Console.WriteLine("Type 4 to Delete Habit");
             Console.WriteLine("----------------------------------------\n");
         }
+
+        public void ShowMessage(string message)
+        {
+            Console.WriteLine(message);
+        }
     }
 }
