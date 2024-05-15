@@ -71,11 +71,6 @@ namespace Nelson.Habit_Tracker.DataAccess
                     };
                     databases.Add(habit);
                 }
-            }
-            else
-            {
-                _consoleInteraction.ShowMessage("There are no habits stored in the database.");
-            }
 
             // Display the rows
             _consoleInteraction.ShowMessage("---------------------------------------------");
@@ -84,6 +79,11 @@ namespace Nelson.Habit_Tracker.DataAccess
                 _consoleInteraction.ShowMessage($"{row.Id} - {row.Date:dd-MM-yyyy} - {row.Name} - {row.Measurement} - {row.Quantity}");
             }
             _consoleInteraction.ShowMessage("---------------------------------------------");
+            }
+            else
+            {
+                _consoleInteraction.ShowMessage("There are no habits stored in the database.");
+            }
         }
 
         public void InsertToDatabase(DateTime date, string name, string measure, int quantity)
@@ -104,9 +104,27 @@ namespace Nelson.Habit_Tracker.DataAccess
             throw new NotImplementedException();
         }
 
-        public void DeleteFromDatabase(DateTime date, string name, string measure, int quantity)
+        public void DeleteFromDatabase(int ID)
         {
-            throw new NotImplementedException();
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string createTableQuery = @$"
+                DELETE FROM Habits
+                WHERE Id = {ID}";
+
+            using var command = new SQLiteCommand(createTableQuery, connection);
+
+            int rowCount = command.ExecuteNonQuery();
+
+            if (rowCount > 0)
+            {
+                _consoleInteraction.ShowMessage("Habit deleted successfully.");
+            }
+            else
+            {
+                _consoleInteraction.ShowMessage($"Habit with ID {ID} does not exist.");
+            }
         }
     }
 }

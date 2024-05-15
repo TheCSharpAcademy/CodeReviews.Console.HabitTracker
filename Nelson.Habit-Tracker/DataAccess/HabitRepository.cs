@@ -47,7 +47,13 @@ namespace Nelson.Habit_Tracker.DataAccess
         }
         public void DeleteHabit()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit to delete or ");
+            _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit to delete or 0 to return to Main Menu:");
+
+            int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
+
+            if (id == 0) return;
+
+            _databaseInitializer.DeleteFromDatabase(id);
         }
     }
 }

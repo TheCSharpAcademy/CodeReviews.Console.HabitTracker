@@ -6,6 +6,6 @@ namespace Nelson.Habit_Tracker.DataAccess
         void GetFromDatabase();
         void InsertToDatabase(DateTime date, string name, string measure, int quantity);
         void UpdateToDatabase(DateTime date, string name, string measure, int quantity);
-        void DeleteFromDatabase(DateTime date, string name, string measure, int quantity);
+        void DeleteFromDatabase(int ID);
     }
 }
