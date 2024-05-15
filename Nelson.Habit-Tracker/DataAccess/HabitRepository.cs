@@ -28,7 +28,7 @@ namespace Nelson.Habit_Tracker.DataAccess
 
         public void GetAllHabits()
         {
-            throw new NotImplementedException();
+            _databaseInitializer.GetFromDatabase();
         }
 
         public void InsertHabit(Habit habit)
@@ -47,7 +47,7 @@ namespace Nelson.Habit_Tracker.DataAccess
         }
         public void DeleteHabit()
         {
-            throw new NotImplementedException();
+            _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit to delete or ");
         }
     }
 }

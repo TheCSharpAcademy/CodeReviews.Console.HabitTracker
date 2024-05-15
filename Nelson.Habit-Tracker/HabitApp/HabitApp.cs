@@ -56,9 +56,9 @@ namespace Nelson.Habit_Tracker.HabitApp
                 // case "3":
                 //     _habitRepository.UpdateHabit();
                 //     break;
-                // case "4":
-                //     _habitRepository.DeleteHabit();
-                //     break;
+                case "4":
+                    _habitRepository.DeleteHabit();
+                    break;
                 default:
                     _consoleInteraction.ShowMessage("\nInvalid input. Please type a number from 0 to 4.\n");
                     break;

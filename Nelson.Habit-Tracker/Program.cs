@@ -8,7 +8,7 @@ IConsoleInteraction consoleInteraction = new ConsoleInteraction();
 IInputValidator inputValidator= new InputValidator(consoleInteraction);
 IDateValidator dateValidator = new DateValidator(consoleInteraction);
 
-IDatabaseInitializer databaseInitializer = new DatabaseInitializer();
+IDatabaseInitializer databaseInitializer = new DatabaseInitializer(consoleInteraction);
 
 IHabitRepository habitRepository = new HabitRepository(consoleInteraction, inputValidator, dateValidator, databaseInitializer);
 var habitApp = new HabitApp(consoleInteraction, habitRepository, databaseInitializer);

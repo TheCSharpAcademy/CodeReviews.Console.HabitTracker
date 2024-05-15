@@ -14,11 +14,13 @@ namespace Nelson.Habit_Tracker.Utils
         
         public DateTime GetDateInput()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy). Type ) to return ro main menu.");
+            _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy). Type 0 to return ro main menu.");
 
             string dateInput = _consoleInteraction.GetUserInput();
 
-            DateTime finalDate = DateTime.ParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"));
+            DateTime finalDate = DateTime.ParseExact(dateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            finalDate = finalDate.Date;
 
             return finalDate;
         }

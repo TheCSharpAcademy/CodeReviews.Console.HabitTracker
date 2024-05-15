@@ -1,5 +1,7 @@
 using System.Data.SQLite;
+using System.Globalization;
 using Nelson.Habit_Tracker.Models;
+using Nelson.Habit_Tracker.UserConsoleInteraction;
 
 namespace Nelson.Habit_Tracker.DataAccess
 {
@@ -7,7 +9,13 @@ namespace Nelson.Habit_Tracker.DataAccess
     {
         private const string DatabaseName = "habit_tracker.db";
         private const string ConnectionString = "Data Source=" + DatabaseName + ";Version=3;";
+        private readonly IConsoleInteraction _consoleInteraction;
         readonly List<Habit> databases = [];
+
+        public DatabaseInitializer(IConsoleInteraction consoleInteraction)
+        {
+            _consoleInteraction = consoleInteraction;
+        }
 
         public void InitializeDatabase()
         {
@@ -48,18 +56,34 @@ namespace Nelson.Habit_Tracker.DataAccess
             // Read the rows from the database
             SQLiteDataReader reader = command.ExecuteReader();
 
-            while (reader.Read())
+            // Read all rows and add them to the list
+            if (reader.HasRows)
             {
-                var habit = new Habit
+                while (reader.Read())
                 {
-                    Id = reader.GetInt32(0),
-                    Date = reader.GetDateTime(1),
-                    Name = reader.GetString(2),
-                    Measurement = reader.GetString(3),
-                    Quantity = reader.GetInt32(4)
-                };
-                databases.Add(habit);
+                    var habit = new Habit
+                    {
+                        Id = reader.GetInt32(0),
+                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                        Name = reader.GetString(2),
+                        Measurement = reader.GetString(3),
+                        Quantity = reader.GetInt32(4)
+                    };
+                    databases.Add(habit);
+                }
             }
+            else
+            {
+                _consoleInteraction.ShowMessage("There are no habits stored in the database.");
+            }
+
+            // Display the rows
+            _consoleInteraction.ShowMessage("---------------------------------------------");
+            foreach (var row in databases)
+            {
+                _consoleInteraction.ShowMessage($"{row.Id} - {row.Date:dd-MM-yyyy} - {row.Name} - {row.Measurement} - {row.Quantity}");
+            }
+            _consoleInteraction.ShowMessage("---------------------------------------------");
         }
 
         public void InsertToDatabase(DateTime date, string name, string measure, int quantity)
@@ -69,7 +93,7 @@ namespace Nelson.Habit_Tracker.DataAccess
 
             string createTableQuery = @$"
                 INSERT INTO Habits(Date, Name, Measurement, Quantity)
-                VALUES ('{date}', '{name}', '{measure}', {quantity})";
+                VALUES ('{date.ToString("dd-MM-yyyy")}', '{name}', '{measure}', {quantity})";
 
             using var command = new SQLiteCommand(createTableQuery, connection);
             command.ExecuteNonQuery();
