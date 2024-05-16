@@ -14,11 +14,22 @@ namespace Nelson.Habit_Tracker.Utils
         
         public DateTime GetDateInput()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy).");
+            DateTime finalDate = DateTime.MinValue;
+            bool isValidDate = false;
 
-            string dateInput = _consoleInteraction.GetUserInput();
+            while (!isValidDate)
+            {
+                _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy).");
 
-            DateTime finalDate = DateTime.ParseExact(dateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                string dateInput = _consoleInteraction.GetUserInput();
+
+                isValidDate = DateTime.TryParseExact(dateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out finalDate);
+            
+                if (!isValidDate)
+                {
+                    _consoleInteraction.ShowMessage("\n\nPlease insert a valid date.");
+                }
+            }
 
             finalDate = finalDate.Date;
 

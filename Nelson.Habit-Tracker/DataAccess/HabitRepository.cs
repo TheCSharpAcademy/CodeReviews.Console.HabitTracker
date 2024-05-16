@@ -43,6 +43,9 @@ namespace Nelson.Habit_Tracker.DataAccess
 
         public void UpdateHabit()
         {
+            // Display records
+            _databaseInitializer.GetFromDatabase();
+            
             _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit you would like to update. Type 0 to return to Main Menu.");
 
             int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
