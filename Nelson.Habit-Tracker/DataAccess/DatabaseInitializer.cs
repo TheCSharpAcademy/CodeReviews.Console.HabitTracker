@@ -78,6 +78,7 @@ namespace Nelson.Habit_Tracker.DataAccess
             {
                 _consoleInteraction.ShowMessage($"{row.Id} - {row.Date:dd-MM-yyyy} - {row.Name} - {row.Measurement} - {row.Quantity}");
             }
+            databases.Clear();
             _consoleInteraction.ShowMessage("---------------------------------------------");
             }
             else

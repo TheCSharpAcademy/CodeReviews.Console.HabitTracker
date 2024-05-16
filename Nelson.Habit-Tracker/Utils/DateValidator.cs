@@ -19,11 +19,11 @@ namespace Nelson.Habit_Tracker.Utils
 
             while (!isValidDate)
             {
-                _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy).");
+                _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yy).");
 
                 string dateInput = _consoleInteraction.GetUserInput();
 
-                isValidDate = DateTime.TryParseExact(dateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out finalDate);
+                isValidDate = DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out finalDate);
             
                 if (!isValidDate)
                 {

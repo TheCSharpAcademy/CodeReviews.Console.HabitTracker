@@ -17,11 +17,20 @@ namespace Nelson.Habit_Tracker.Utils
             return finalInput;
         }
 
-        public string GetQualityInput()
+        public int GetQualityInput()
         {
             _consoleInteraction.ShowMessage("\n\nPlease insert the quantity of measure of your choice (no decimal allowed)");
 
-            return _consoleInteraction.GetUserInput();
+            string quality = _consoleInteraction.GetUserInput();
+            int finalInput = 0;
+
+            while (!int.TryParse(quality, out finalInput) || finalInput < 1)
+            {
+                _consoleInteraction.ShowMessage("\n\nPlease insert the quantity of measure of your choice (no decimal allowed)");
+                quality = _consoleInteraction.GetUserInput();
+            }
+
+            return finalInput;
         }
 
         public string GetNameInput()

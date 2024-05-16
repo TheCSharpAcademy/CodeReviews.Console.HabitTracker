@@ -36,7 +36,7 @@ namespace Nelson.Habit_Tracker.DataAccess
             habit.Date = _dateValidator.GetDateInput();
             habit.Name = _inputValidator.GetNameInput();
             habit.Measurement = _inputValidator.GetMeasurementInput();
-            habit.Quantity = _inputValidator.ConvertToInt(_inputValidator.GetQualityInput());
+            habit.Quantity = _inputValidator.GetQualityInput();
 
             _databaseInitializer.InsertToDatabase(habit.Date, habit.Name, habit.Measurement, habit.Quantity);
         }
@@ -45,7 +45,7 @@ namespace Nelson.Habit_Tracker.DataAccess
         {
             // Display records
             _databaseInitializer.GetFromDatabase();
-            
+
             _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit you would like to update. Type 0 to return to Main Menu.");
 
             int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
@@ -55,13 +55,16 @@ namespace Nelson.Habit_Tracker.DataAccess
             DateTime date = _dateValidator.GetDateInput();
             string name = _inputValidator.GetNameInput();
             string measure = _inputValidator.GetMeasurementInput();
-            int quantity = _inputValidator.ConvertToInt(_inputValidator.GetQualityInput());
+            int quantity = _inputValidator.GetQualityInput();
 
             _databaseInitializer.UpdateToDatabase(id, date, name, measure, quantity);
         }
 
         public void DeleteHabit()
         {
+            // Display records
+            _databaseInitializer.GetFromDatabase();
+
             _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit to delete or 0 to return to Main Menu:");
 
             int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
