@@ -26,11 +26,11 @@ Developed using C# and SQLite.
 
 - If no database exists, or the correct table does not exist they will be created on program start.
 
-* A console based UI where users can navigate by key presses
+- A console based UI where users can navigate by key presses
 
 - ![image](MainMenu.png)
 
-* CRUD DB functions
+- CRUD DB functions
 
 - From the main menu users can Create, Read, Update or Delete entries for whichever habit they want, entered in mm-DD-yyyy format.
 
