@@ -43,12 +43,12 @@ namespace Nelson.Habit_Tracker.HabitApp
             switch (input)
             {
                 case "0":
-                    _consoleInteraction.ShowMessage("\nGoodbye!\n");
+                    _consoleInteraction.ShowMessageTime("\nGoodbye!\n");
                     closeApp = true;
                     Environment.Exit(0);
                     break;
                 case "1":
-                    _consoleInteraction.ShowMessage("Getting all habits...");
+                    _consoleInteraction.ShowMessageTime("Getting all habits...");
                     _habitRepository.GetAllHabits();
                     break;
                 case "2":
@@ -61,7 +61,7 @@ namespace Nelson.Habit_Tracker.HabitApp
                     _habitRepository.DeleteHabit();
                     break;
                 default:
-                    _consoleInteraction.ShowMessage("\nInvalid input. Please type a number from 0 to 4.\n");
+                    _consoleInteraction.ShowMessageTime("\nInvalid input. Please type a number from 0 to 4.\n");
                     break;
             }
         }

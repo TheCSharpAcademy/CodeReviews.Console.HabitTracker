@@ -19,14 +19,14 @@ namespace Nelson.Habit_Tracker.Utils
 
         public int GetQualityInput()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease insert the quantity of measure of your choice (no decimal allowed)");
+            _consoleInteraction.ShowMessageTime("\n\nPlease insert the quantity of measure of your choice (no decimal allowed)");
 
             string quality = _consoleInteraction.GetUserInput();
             int finalInput = 0;
 
             while (!int.TryParse(quality, out finalInput) || finalInput < 1)
             {
-                _consoleInteraction.ShowMessage("\n\nPlease insert the quantity of measure of your choice (no decimal allowed)");
+                _consoleInteraction.ShowMessageTime("\n\nPlease insert the quantity of measure of your choice (no decimal allowed)");
                 quality = _consoleInteraction.GetUserInput();
             }
 
@@ -35,14 +35,14 @@ namespace Nelson.Habit_Tracker.Utils
 
         public string GetNameInput()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease insert the name of the habit: ");
+            _consoleInteraction.ShowMessageTime("\n\nPlease insert the name of the habit: ");
 
             return _consoleInteraction.GetUserInput();
         }
 
         public string? GetMeasurementInput()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease insert measure of your choice (litres, cups,...): ");
+            _consoleInteraction.ShowMessageTime("\n\nPlease insert measure of your choice (litres, cups,...): ");
 
             return _consoleInteraction.GetUserInput();
         }

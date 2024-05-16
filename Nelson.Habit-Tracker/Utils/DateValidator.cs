@@ -19,7 +19,7 @@ namespace Nelson.Habit_Tracker.Utils
 
             while (!isValidDate)
             {
-                _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yy).");
+                _consoleInteraction.ShowMessageTime("\n\nPlease insert the date: (Format: dd-MM-yy).");
 
                 string dateInput = _consoleInteraction.GetUserInput();
 

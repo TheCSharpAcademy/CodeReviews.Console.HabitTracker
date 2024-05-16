@@ -46,7 +46,7 @@ namespace Nelson.Habit_Tracker.DataAccess
             // Display records
             _databaseInitializer.GetFromDatabase();
 
-            _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit you would like to update. Type 0 to return to Main Menu.");
+            _consoleInteraction.ShowMessageTime("\n\nPlease type the ID of the habit you would like to update. Type 0 to return to Main Menu.");
 
             int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
 
@@ -65,7 +65,7 @@ namespace Nelson.Habit_Tracker.DataAccess
             // Display records
             _databaseInitializer.GetFromDatabase();
 
-            _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit to delete or 0 to return to Main Menu:");
+            _consoleInteraction.ShowMessageTime("\n\nPlease type the ID of the habit to delete or 0 to return to Main Menu:");
 
             int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
 

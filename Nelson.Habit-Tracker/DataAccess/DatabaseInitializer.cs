@@ -83,7 +83,7 @@ namespace Nelson.Habit_Tracker.DataAccess
             }
             else
             {
-                _consoleInteraction.ShowMessage("There are no habits stored in the database.");
+                _consoleInteraction.ShowMessageTime("There are no habits stored in the database.");
             }
         }
 
@@ -111,7 +111,7 @@ namespace Nelson.Habit_Tracker.DataAccess
 
             if (exists == 0)
             {
-                _consoleInteraction.ShowMessage($"\n\nHabit with ID {id} does not exist.\n\n");
+                _consoleInteraction.ShowMessageTime($"\n\nHabit with ID {id} does not exist.\n\n");
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace Nelson.Habit_Tracker.DataAccess
             using var tableCommand = new SQLiteCommand(createTableQuery, connection);
             tableCommand.ExecuteNonQuery();
 
-            _consoleInteraction.ShowMessage($"Habit with ID {id} updated successfully.");
+            _consoleInteraction.ShowMessageTime($"\n\nHabit with ID {id} updated successfully.");
         }
 
         public void DeleteFromDatabase(int ID)
@@ -141,11 +141,11 @@ namespace Nelson.Habit_Tracker.DataAccess
 
             if (rowCount > 0)
             {
-                _consoleInteraction.ShowMessage("Habit deleted successfully.");
+                _consoleInteraction.ShowMessageTime("Habit deleted successfully.");
             }
             else
             {
-                _consoleInteraction.ShowMessage($"Habit with ID {ID} does not exist.");
+                _consoleInteraction.ShowMessageTime($"Habit with ID {ID} does not exist.");
             }
         }
     }
