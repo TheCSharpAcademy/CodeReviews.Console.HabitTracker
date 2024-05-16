@@ -43,8 +43,20 @@ namespace Nelson.Habit_Tracker.DataAccess
 
         public void UpdateHabit()
         {
-            throw new NotImplementedException();
+            _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit you would like to update. Type 0 to return to Main Menu.");
+
+            int id = _inputValidator.ConvertToInt(_consoleInteraction.GetUserInput());
+
+            if (id == 0) return;
+
+            DateTime date = _dateValidator.GetDateInput();
+            string name = _inputValidator.GetNameInput();
+            string measure = _inputValidator.GetMeasurementInput();
+            int quantity = _inputValidator.ConvertToInt(_inputValidator.GetQualityInput());
+
+            _databaseInitializer.UpdateToDatabase(id, date, name, measure, quantity);
         }
+
         public void DeleteHabit()
         {
             _consoleInteraction.ShowMessage("\n\nPlease type the ID of the habit to delete or 0 to return to Main Menu:");

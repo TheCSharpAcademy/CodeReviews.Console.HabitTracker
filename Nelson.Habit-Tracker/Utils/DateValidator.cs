@@ -14,7 +14,7 @@ namespace Nelson.Habit_Tracker.Utils
         
         public DateTime GetDateInput()
         {
-            _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy). Type 0 to return to main menu.");
+            _consoleInteraction.ShowMessage("\n\nPlease insert the date: (Format: dd-MM-yyyy).");
 
             string dateInput = _consoleInteraction.GetUserInput();
 

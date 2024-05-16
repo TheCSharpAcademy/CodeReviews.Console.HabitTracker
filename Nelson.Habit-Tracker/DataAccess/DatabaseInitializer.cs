@@ -99,9 +99,30 @@ namespace Nelson.Habit_Tracker.DataAccess
             command.ExecuteNonQuery();
         }
 
-        public void UpdateToDatabase(DateTime date, string name, string measure, int quantity)
+        public void UpdateToDatabase(int id, DateTime date, string name, string measure, int quantity)
         {
-            throw new NotImplementedException();
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = $"SELECT EXISTS(SELECT 1 FROM Habits WHERE Id = {id})";
+            int exists = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+            if (exists == 0)
+            {
+                _consoleInteraction.ShowMessage($"\n\nHabit with ID {id} does not exist.\n\n");
+                return;
+            }
+
+            string createTableQuery = @$"
+                UPDATE Habits
+                SET Date = '{date.ToString("dd-MM-yyyy")}', Name = '{name}', Measurement = '{measure}', Quantity = {quantity}
+                WHERE Id = {id}";
+
+            using var tableCommand = new SQLiteCommand(createTableQuery, connection);
+            tableCommand.ExecuteNonQuery();
+
+            _consoleInteraction.ShowMessage($"Habit with ID {id} updated successfully.");
         }
 
         public void DeleteFromDatabase(int ID)

@@ -53,9 +53,9 @@ namespace Nelson.Habit_Tracker.HabitApp
                 case "2":
                     _habitRepository.InsertHabit(habit);
                     break;
-                // case "3":
-                //     _habitRepository.UpdateHabit();
-                //     break;
+                case "3":
+                    _habitRepository.UpdateHabit();
+                    break;
                 case "4":
                     _habitRepository.DeleteHabit();
                     break;
