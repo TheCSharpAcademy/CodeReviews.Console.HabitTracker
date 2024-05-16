@@ -4,6 +4,7 @@ namespace Nelson.Habit_Tracker.UserConsoleInteraction
     {
         void DisplayMenu();
         void ShowMessage(string message);
+        void ShowMessageTime(string message);
         string GetUserInput();
     }
 }

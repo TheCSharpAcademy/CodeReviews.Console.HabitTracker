@@ -15,11 +15,16 @@ namespace Nelson.Habit_Tracker.UserConsoleInteraction
             Console.Write("Input: ");
         }
 
-        public void ShowMessage(string message)
+        public void ShowMessageTime(string message)
         {
             Thread.Sleep(500);
             Console.WriteLine(message);
             Thread.Sleep(500);
+        }
+
+        public void ShowMessage(string message)
+        {
+            Console.WriteLine(message);
         }
 
         public string GetUserInput()

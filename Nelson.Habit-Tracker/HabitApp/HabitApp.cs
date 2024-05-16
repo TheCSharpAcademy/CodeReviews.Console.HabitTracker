@@ -45,6 +45,7 @@ namespace Nelson.Habit_Tracker.HabitApp
                 case "0":
                     _consoleInteraction.ShowMessage("\nGoodbye!\n");
                     closeApp = true;
+                    Environment.Exit(0);
                     break;
                 case "1":
                     _consoleInteraction.ShowMessage("Getting all habits...");
