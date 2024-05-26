@@ -75,7 +75,10 @@ internal class App
         string HabitDescription = Helpers.GetStringInput("Please enter new Habit Description");
         string HabitUnit = Helpers.GetStringInput("Please enter Habit Unit");
         dbContext.InsertHabit(HabitDescription, HabitUnit);
+        Console.WriteLine($"The New Habit ({HabitDescription}, {HabitUnit}) is created successfully.");
         UpdateData();
+        Console.WriteLine("Press any key to continue.");
+        Console.ReadLine();
     }
 
     private void UpdateHabitLog()
@@ -84,7 +87,7 @@ internal class App
         int quantity = Helpers.GetIntegerValue($"Enter Quantity new Quantity");
         string Date = Helpers.GetDateInput();
         int result = dbContext.UpdateHabitLog(id, Date, quantity);
-        if(result == 0)
+        if (result == 0)
         {
             Console.WriteLine($"The record with id: {id} is not found.");
             DeleteHabitLog();
@@ -92,6 +95,7 @@ internal class App
         else
         {
             Console.WriteLine($"The record with id: {id} is updated successfully.");
+            Console.WriteLine("Press any key to continue.");
             UpdateData();
             Console.ReadLine();
         }
@@ -101,7 +105,7 @@ internal class App
     {
         int id = Helpers.GetHabitLogId(habitLogs);
         var result = dbContext.DeleteHabitLog(id);
-        if(result == 0)
+        if (result == 0)
         {
             Console.WriteLine($"The record with id: {id} is not found.");
             DeleteHabitLog();
@@ -109,6 +113,7 @@ internal class App
         else
         {
             Console.WriteLine($"The record with id: {id} is deleted successfully.");
+            Console.WriteLine("Press any key to continue.");
             UpdateData();
             Console.ReadLine();
         }
@@ -122,6 +127,8 @@ internal class App
         Console.WriteLine($"You entered: {quantity}");
         string Date = Helpers.GetDateInput();
         dbContext.InsertHabitLog(Date, quantity, habit.Id);
+        Console.WriteLine($"New record ({habit.HabitDescription}, {Date}, {quantity}) is added successfully");
+        Console.WriteLine("Press any key to continue.");
         Console.ReadLine();
         UpdateData();
     }
