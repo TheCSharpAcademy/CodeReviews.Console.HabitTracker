@@ -34,23 +34,23 @@ Developed using C# and SQLite.
 	- Time and Dates inputted are checked to make sure they are in the correct and realistic format. 
 
 * View All Habit Logs by pressing 1
-	- ![image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/2fa6d659-6537-434a-a11f-79bcff90ae6e)
+	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/2fa6d659-6537-434a-a11f-79bcff90ae6e)
 * To log new Habit press 2
 	- First all the Habits are displayed so the users can enter a valid HabitId from the list
-		- ![image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/6a71eede-e1a2-4c76-b468-a4d011153892)
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/6a71eede-e1a2-4c76-b468-a4d011153892)
 	- Next User will enter Unit Quantity and a Valid date in yyyy-MM-dd format.
-		- ![image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/16a8dbf1-ccb2-409f-8e03-d73d92c099b6)
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/16a8dbf1-ccb2-409f-8e03-d73d92c099b6)
 * To delete a Record press 3
 	- Enter the Id from the list to delete the Habitlog.
-		- ![image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/487490c4-02c1-4452-91bf-67eb4efd3729)
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/487490c4-02c1-4452-91bf-67eb4efd3729)
 * To update a Record press 4
 	- Enter the Id from the list to update the Habitlog, next enter new quantity and Date to update it.
-		- ![image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/1fe98179-7d55-45d7-9524-58dc1fb0aef7)
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/1fe98179-7d55-45d7-9524-58dc1fb0aef7)
 * To view all Habit press 5
-	- [image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/8047004c-5b88-4f37-81f0-88c9bd1451ef)
+	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/8047004c-5b88-4f37-81f0-88c9bd1451ef)
 * To Enter a New Habit press 6
 	- User will entered Habit Description and Unit
-		- [image] (https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/0e966580-7ac8-402d-a89f-c4052806c80e)
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/0e966580-7ac8-402d-a89f-c4052806c80e)
 * Basic Report for current Year
 	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/b623a3e5-74b9-422e-8f5c-c47abd34d283)
 
