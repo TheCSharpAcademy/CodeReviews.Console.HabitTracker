@@ -52,32 +52,6 @@ internal class HabitTrackerDbContext
 
     }
 
-    // internal void ViewAllRecords()
-    // {
-    //     using var conn = new SqliteConnection(ConnectionString);
-    //     conn.Open();
-    //     var sql = @"select 
-    //                 h.id, h.habitDesc, t.desc 
-    //                 from 
-    //                 Habits h
-    //                 inner join HabitTypes t on h.habitTypeId = t.id;";
-    //     using var cmd = new SqliteCommand(sql, conn);
-    //     using var reader = cmd.ExecuteReader();
-    //     Console.Clear();
-    //     Console.WriteLine("List of Habits");
-    //     Console.WriteLine("-----------------------------------------------------------------");
-    //     Console.WriteLine("{0,-5} | {1, -15} | {2, -10}", "ID", "Type", "Habit");
-    //     Console.WriteLine("-----------------------------------------------------------------");
-    //     while (reader.Read())
-    //     {
-    //         Console.WriteLine("{0,-5} | {1, -15} | {2, -10}", reader["id"], reader["desc"], reader["habitDesc"]);
-    //         Console.WriteLine("-----------------------------------------------------------------");
-    //     }
-
-    //     Console.WriteLine("Press any key to continue.");
-    //     Console.ReadLine();
-    // }
-
     internal void SeedInitialData()
     {
         var random = new Random();
@@ -94,7 +68,7 @@ internal class HabitTrackerDbContext
         {
             habitId = random.Next(1,4);
             habitQuantity = random.Next(1, 13);
-            //date = $"{random.Next(2022,2025)}-{random.Next(1,13)}-{random.Next(1, 29)}";
+            // https://stackoverflow.com/questions/194863/random-date-in-c-sharp
             date = startDate.AddDays(random.Next(range)).ToString("yyyy-MM-dd");
             InsertHabitLog(date, habitQuantity, habitId);
         }
