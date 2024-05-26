@@ -37,19 +37,19 @@ internal static class Menu
     {
         Console.Clear();
         Console.WriteLine(@$"
-            Main Menu
+Main Menu
 
-            What would you like to do?
+What would you like to do?
 
-            Type 0 to Close Application
-            Type 1 to View All Records
-            Type 2 to Insert New Record 
-            Type 3 to Delete Record 
-            Type 4 to Update Record 
-            Type 5 to View All Habits
-            Type 6 to Insert New Habit
-            Type 7 to View {DateTime.UtcNow.Year} Report
-        ");
+Type 0 to Close Application
+Type 1 to View All Records
+Type 2 to Insert New Record 
+Type 3 to Delete Record 
+Type 4 to Update Record 
+Type 5 to View All Habits
+Type 6 to Insert New Habit
+Type 7 to View {DateTime.UtcNow.Year} Report
+");
         Console.WriteLine("----------------------------------\nSelect an Option\n");
         var userInput = Helpers.GetUserInput();
         return userInput;

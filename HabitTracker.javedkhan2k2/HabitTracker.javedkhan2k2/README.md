@@ -7,11 +7,15 @@ Developed using C# and SQLite.
 # Given Requirements:
 - [x] This is an application where you’ll register one habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
-- [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
-- [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
-- [x] The application should only be terminated when the user inserts 0. 
-- [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework
-- [x] Reporting Capabilities
+- [x] The application should store and retrieve data from a real database
+- [x] When the application starts, it should create a sqlite database, if one isn’t present.
+- [x] It should also create a table in the database, where the habit will be logged.
+- [x] The app should show the user a menu of options. 
+- [x] The users should be able to insert, delete, update and view their logged habit.
+- [x] You should handle all possible errors so that the application never crashes.
+- [x] The application should only be terminated when the user inserts 0.
+- [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
+- [x] Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example: 
 
 # Features
 
@@ -22,7 +26,7 @@ Developed using C# and SQLite.
 
 * A console based UI where users can navigate by key presses
  
- 	- ![image](https://user-images.githubusercontent.com/15159720/141688100-ec6130da-33d6-4a30-ad3c-1d7f546da58a.png)
+ 	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/c107b2bd-9f7a-4d07-905d-f6987275f480)
 
 * CRUD DB functions
 
