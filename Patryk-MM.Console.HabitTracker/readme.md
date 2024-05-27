@@ -5,7 +5,8 @@ Habit Tracker is a simple console application for tracking daily habits with num
 
 ## Features
 
-- **Create Habit**: Add a new habit with a specific date and quantity.
+- **Create Habit**: Create habits to track.
+- **Add Habit Entry**: Add a new habit entry with a specific date and quantity.
 - **View Habits**: Display a list of recorded habits in a tabular format.
 - **Update Habit**: Modify the date and quantity of an existing habit.
 - **Delete Habit**: Remove a habit entry from the tracker.
