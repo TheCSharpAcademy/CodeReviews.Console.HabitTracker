@@ -1,7 +1,7 @@
 # Habit Tracker
 
 Habit Tracker is a simple console application for tracking daily habits with numeric values. It allows users to create, view, update, and delete habits, as well as generate reports based on recorded data.
-![Habit Tracker Screenshot](screenshots/main_menu.jpg)
+![Habit Tracker Screenshot](Patryk-MM.Console.HabitTracker/Screenshots/main_menu.jpg)
 
 ## Features
 
