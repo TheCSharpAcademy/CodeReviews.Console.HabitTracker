@@ -29,4 +29,4 @@
 - [] Implement report functionality (e.g., yearly running count, total kms).
 
 ## Setup
-- [] Set the Working Directory to the main folder to ensure correct SQLite database location.
+- [x] Set the Working Directory to the main folder to ensure correct SQLite database location.
