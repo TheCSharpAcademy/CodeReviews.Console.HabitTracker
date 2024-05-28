@@ -1,8 +1,19 @@
 ﻿# TODO List
 
+## Habit Attributes
+- ID (unique identifier)
+- Name
+- Measurement
+- Quantity
+- Frequency
+- Date Created
+- Date Updated
+- Notes
+- Status
+
 ## Tasks
-- [] Create a SQLite database if not present at application start.
-    - [] Create a table in the database for habit logging.
+- [x] Create a SQLite database if not present at application start.
+    - [x] Create a table in the database for habit logging.
 - [] Implement user menu with options:
     - [] Insert a new habit record
     - [] Delete a habit record
