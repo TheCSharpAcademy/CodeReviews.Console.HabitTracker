@@ -1,0 +1,21 @@
+﻿# TODO List
+
+## Tasks
+- [] Create a SQLite database if not present at application start.
+    - [] Create a table in the database for habit logging.
+- [] Implement user menu with options:
+    - [] Insert a new habit record
+    - [] Delete a habit record
+    - [] Update a habit record
+    - [] View logged habits
+    - [] Insert test data
+    - [] Terminate the application only when the user inputs 0.
+- [] Store and retrieve habit data from the SQLite database. Implement CRUD operations using raw SQL.
+- [] Handle errors to prevent application crashes.
+- [] Include a ReadMe file explaining app functionality.
+
+## Challenges
+- [] Implement report functionality (e.g., yearly running count, total kms).
+
+## Setup
+- [] Set the Working Directory to the main folder to ensure correct SQLite database location.
