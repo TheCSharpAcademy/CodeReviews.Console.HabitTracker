@@ -14,8 +14,8 @@
 ## Tasks
 - [x] Create a SQLite database if not present at application start.
     - [x] Create a table in the database for habit logging.
-- [] Implement user menu with options:
-    - [] Insert a new habit record
+- [x] Implement user menu with options:
+    - [x] Insert a new habit record
     - [] Delete a habit record
     - [] Update a habit record
     - [] View logged habits

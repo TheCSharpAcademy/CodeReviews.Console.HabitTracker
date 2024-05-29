@@ -27,12 +27,12 @@ public class DatabaseManager
 
             if (!TableExists())
             {
-                Console.WriteLine("Database Table 'habits' does not exist. Creating table...");
+                Console.WriteLine($"Database Table {TableName} does not exist. Creating table...");
                 CreateTable();
             }
             else
             {
-                Console.WriteLine("Database and table 'habits' are OK! Continuing...");
+                Console.WriteLine($"Database and table {TableName} are OK! Continuing...");
                 Console.WriteLine(new string('-', 50));
             }
         }

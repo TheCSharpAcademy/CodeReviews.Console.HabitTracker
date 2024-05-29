@@ -25,7 +25,8 @@
             {
                 case Options.Insert:
                     // TODO: Add new Habit
-                    Console.WriteLine("Add new Habit");
+                    Habit habit = userIneraction.AddHabit();
+                    habitRepo.AddHabit(habit);
                     break;
                 case Options.Update:
                     // TODO: Update previous Habit
