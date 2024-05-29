@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Globalization;
+using Microsoft.Data.Sqlite;
 
 public class HabitRepository
 {
@@ -33,6 +34,31 @@ public class HabitRepository
             {
                 Console.WriteLine($"Database error: {ex.Message}");
             }
+        }
+    }
+
+    public void SeedDatabase(int amount)
+    {
+        string[] names = { "Drink Water", "Exercise", "Read Book", "Meditate", "Write Journal" };
+        string[] measurements = { "glasses", "minutes", "pages", "sessions", "entries" };
+        string[] frequencies = { "daily", "weekly", "monthly" };
+        string[] notes  = { "Stay hydrated", "Keep fit", "Expand knowledge", "Calm mind", "Reflect on the day" };
+        string[] statuses = { "Complete", "Ongoing", "Not Started" };
+
+        for (int i = 0; i < amount; i++)
+        {
+            Habit habit = new Habit
+            {
+                Name = names[Random.Shared.Next(0, names.Length)],
+                Measurement = measurements[Random.Shared.Next(0, measurements.Length)],
+                Quantity = Random.Shared.Next(1, 100),
+                Frequency = frequencies[Random.Shared.Next(0, frequencies.Length)],
+                DateCreated = DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                Notes = notes[Random.Shared.Next(0, notes.Length)],
+                Status = statuses[Random.Shared.Next(0, statuses.Length)]
+            };
+
+            AddHabit(habit);
         }
     }
 

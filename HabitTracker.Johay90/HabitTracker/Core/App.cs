@@ -72,7 +72,9 @@
 
     private void InsertTestHabits()
     {
-        Console.WriteLine("Insert test habits - Not yet implemented.");
+        int amount = 10;
+        _habitRepo.SeedDatabase(amount);
+        Console.WriteLine($"Inserted {amount} new random records");
     }
 
 }
