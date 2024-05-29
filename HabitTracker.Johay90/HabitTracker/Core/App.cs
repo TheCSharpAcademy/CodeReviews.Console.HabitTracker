@@ -1,48 +1,42 @@
 ﻿public class App
 {
-    private DatabaseManager dbManager;
-    private HabitRepository habitRepo;
-    private ConsoleInteraction userIneraction;
+    private readonly DatabaseManager _dbManager;
+    private HabitRepository _habitRepo;
+    private ConsoleInteraction _userInteraction;
 
     public App(string databasePath)
     {
-        dbManager = new DatabaseManager(databasePath);
+        _dbManager = new DatabaseManager(databasePath);
     }
 
     public void Run()
     {
-        dbManager.InitializeDatabase();
+        _dbManager.InitializeDatabase();
 
-        habitRepo = new HabitRepository(dbManager);
+        _habitRepo = new HabitRepository(_dbManager);
 
-        userIneraction = new ConsoleInteraction();
+        _userInteraction = new ConsoleInteraction();
 
         while (true)
         {
-            Options option = userIneraction.MainOptions();
+            Options option = _userInteraction.MainOptions();
 
             switch (option)
             {
                 case Options.Insert:
-                    // TODO: Add new Habit
-                    Habit habit = userIneraction.AddHabit();
-                    habitRepo.AddHabit(habit);
+                    AddNewHabit();
                     break;
                 case Options.Update:
-                    // TODO: Update previous Habit
-                    Console.WriteLine("Update previous Habit");
+                    UpdateHabit();
                     break;
                 case Options.Delete:
-                    // TODO: Delete a habit
-                    Console.WriteLine("Delete a habit");
+                    DeleteHabit();
                     break;
                 case Options.ViewAll:
-                    // TODO: View all habits
-                    Console.WriteLine("View all habits");
+                    ViewAllHabits();
                     break;
                 case Options.InsertTestData:
-                    // TODO: Insert test habits
-                    Console.WriteLine("Insert test habits");
+                    InsertTestHabits();
                     break;
                 case Options.Exit:
                     Console.WriteLine("Exiting application...");
@@ -52,6 +46,33 @@
                     throw new ArgumentOutOfRangeException();
             } 
         }
+    }
+
+    private void AddNewHabit()
+    {
+        Habit habit = _userInteraction.AddHabit();
+        _habitRepo.AddHabit(habit);
+        Console.WriteLine("Habit added successfully.");
+    }
+
+    private void UpdateHabit()
+    {
+        Console.WriteLine("Update previous Habit - Not yet implemented.");
+    }
+
+    private void DeleteHabit()
+    {
+        Console.WriteLine("Delete a habit - Not yet implemented.");
+    }
+
+    private void ViewAllHabits()
+    {
+        Console.WriteLine("View all habits - Not yet implemented.");
+    }
+
+    private void InsertTestHabits()
+    {
+        Console.WriteLine("Insert test habits - Not yet implemented.");
     }
 
 }
