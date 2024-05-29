@@ -86,4 +86,19 @@ public class ConsoleInteraction
         } while (invalidNumber);
         return res;
     }
+
+    public void DisplayAllHabits(List<Habit> habitList)
+    {
+        Console.WriteLine("Please resize your console window to view the table properly.");
+        Console.ReadKey();
+        Console.Clear();
+
+        Console.WriteLine($"{"ID",-5} {"Name",-20} {"Measurement",-15} {"Quantity",-10} {"Frequency",-10} {"Date Created",-20} {"Date Updated",-20} {"Notes",-30} {"Status",-10}");
+        Console.WriteLine(new string('-', 150));
+
+        foreach (var habit in habitList)
+        {
+            Console.WriteLine(habit);
+        }
+    }
 }

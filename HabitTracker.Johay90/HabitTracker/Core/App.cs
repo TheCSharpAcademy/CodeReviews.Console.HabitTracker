@@ -44,7 +44,7 @@
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            } 
+            }
         }
     }
 
@@ -67,7 +67,8 @@
 
     private void ViewAllHabits()
     {
-        Console.WriteLine("View all habits - Not yet implemented.");
+        List<Habit> habits = _habitRepo.GetAllHabits();
+        _userInteraction.DisplayAllHabits(habits);
     }
 
     private void InsertTestHabits()

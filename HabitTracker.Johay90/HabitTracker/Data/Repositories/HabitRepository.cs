@@ -62,6 +62,48 @@ public class HabitRepository
         }
     }
 
+    public List<Habit> GetAllHabits()
+    {
+        List<Habit> list = new List<Habit>();
+
+        using var connection = _dbManager.GetConnection();
+        try
+        {
+            connection.Open();
+            string query = "SELECT * FROM habits";
+            using (SqliteCommand cmd = new SqliteCommand(query, connection))
+            using (SqliteDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    list.Add(MapHabit(reader));
+                }
+            }
+        }
+        catch (SqliteException ex)
+        {
+            Console.WriteLine($"Database error: {ex.Message}");
+        }
+
+        return list;
+    }
+
+    private Habit MapHabit(SqliteDataReader reader)
+    {
+        return new Habit
+        {
+            Id = reader.GetInt32(0),
+            Name = reader.GetString(1),
+            Measurement = reader.GetString(2),
+            Quantity = reader.GetInt32(3),
+            Frequency = reader.GetString(4),
+            DateCreated = reader.GetString(5),
+            DateUpdated = (reader.IsDBNull(6) ? null : reader.GetString(6))!,
+            Notes = reader.GetString(7),
+            Status = reader.GetString(8)
+        };
+    }
+
     // TODO: Implement other repository methods (DeleteHabit, UpdateHabit, GetHabitById, GetAllHabits)
 
 }

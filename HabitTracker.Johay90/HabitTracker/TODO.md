@@ -18,8 +18,8 @@
     - [x] Insert a new habit record
     - [] Delete a habit record
     - [] Update a habit record
-    - [] View logged habits
-    - [] Insert test data
+    - [x] View logged habits
+    - [x] Insert test data
     - [] Terminate the application only when the user inputs 0.
 - [] Store and retrieve habit data from the SQLite database. Implement CRUD operations using raw SQL.
 - [] Handle errors to prevent application crashes.
