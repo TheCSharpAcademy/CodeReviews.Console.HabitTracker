@@ -62,7 +62,7 @@
 
     private void DeleteHabit()
     {
-        Console.WriteLine("Delete a habit - Not yet implemented.");
+        _habitRepo.DeleteHabit(GetById());
     }
 
     private void ViewAllHabits()
@@ -78,4 +78,14 @@
         Console.WriteLine($"Inserted {amount} new random records");
     }
 
+    private int GetById()
+    {
+        ViewAllHabits();
+        int id;
+        do
+        {
+            id = _userInteraction.SelectId();
+        } while (!_habitRepo.ValidHabit(id));
+        return id;
+    }
 }

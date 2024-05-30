@@ -21,8 +21,8 @@
     - [x] View logged habits
     - [x] Insert test data
     - [] Terminate the application only when the user inputs 0.
-- [] Store and retrieve habit data from the SQLite database. Implement CRUD operations using raw SQL.
-- [] Handle errors to prevent application crashes.
+- [x] Store and retrieve habit data from the SQLite database. Implement CRUD operations using raw SQL.
+- [x] Handle errors to prevent application crashes.
 - [] Include a ReadMe file explaining app functionality.
 
 ## Challenges

@@ -42,7 +42,7 @@ public class HabitRepository
         string[] names = { "Drink Water", "Exercise", "Read Book", "Meditate", "Write Journal" };
         string[] measurements = { "glasses", "minutes", "pages", "sessions", "entries" };
         string[] frequencies = { "daily", "weekly", "monthly" };
-        string[] notes  = { "Stay hydrated", "Keep fit", "Expand knowledge", "Calm mind", "Reflect on the day" };
+        string[] notes = { "Stay hydrated", "Keep fit", "Expand knowledge", "Calm mind", "Reflect on the day" };
         string[] statuses = { "Complete", "Ongoing", "Not Started" };
 
         for (int i = 0; i < amount; i++)
@@ -104,6 +104,46 @@ public class HabitRepository
         };
     }
 
-    // TODO: Implement other repository methods (DeleteHabit, UpdateHabit, GetHabitById, GetAllHabits)
+    public bool ValidHabit(int id)
+    {
+        using SqliteConnection connection = _dbManager.GetConnection();
+
+        try
+        {
+            connection.Open();
+            string query = $"SELECT COUNT(*) FROM habits WHERE id = {id}";
+            using (SqliteCommand cmd = new SqliteCommand(query, connection))
+            {
+                return (Int64)(cmd.ExecuteScalar() ?? false) > 0;
+            }
+        }
+        catch (SqliteException ex)
+        {
+            Console.WriteLine($"Database error: {ex.Message}");
+            return false;
+        }
+
+    }
+
+    public void DeleteHabit(int id)
+    {
+        using var connection = _dbManager.GetConnection();
+        try
+        {
+            connection.Open();
+            string query = "DELETE FROM habits WHERE id = @id;";
+            using (var cmd = new SqliteCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (SqliteException ex)
+        {
+            Console.WriteLine($"Database error: {ex.Message}");
+        }
+    }
+
+    // TODO: Implement other repository methods (UpdateHabit)
 
 }

@@ -101,4 +101,9 @@ public class ConsoleInteraction
             Console.WriteLine(habit);
         }
     }
+
+    public int SelectId()
+    {
+        return GetValidInt(1, int.MaxValue, "Choose a valid ID for selection.");
+    }
 }
