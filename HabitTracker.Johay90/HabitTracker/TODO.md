@@ -23,7 +23,7 @@
     - [x] Terminate the application only when the user inputs 0.
 - [x] Store and retrieve habit data from the SQLite database. Implement CRUD operations using raw SQL.
 - [x] Handle errors to prevent application crashes.
-- [] Include a ReadMe file explaining app functionality.
+- [x] Include a ReadMe file explaining app functionality.
 
 ## Challenges
 - [] Implement report functionality (e.g., yearly running count, total kms).

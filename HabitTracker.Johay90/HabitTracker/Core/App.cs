@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-public class App
+﻿public class App
 {
     private readonly DatabaseManager _dbManager;
     private HabitRepository _habitRepo;

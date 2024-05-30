@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-public class ConsoleInteraction
+﻿public class ConsoleInteraction
 {
     public Options MainOptions()
     {
