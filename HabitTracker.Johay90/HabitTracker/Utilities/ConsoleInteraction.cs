@@ -43,7 +43,6 @@ public class ConsoleInteraction
             Measurement = GetValidString(1, 75, "Please specify how you wish to measure your habit (e.g., km, glasses of water) (1-75 characters):"),
             Quantity = GetValidInt(1, 1000, "Please enter the quantity for your habit (1-1000):"),
             Frequency = GetValidString(1, 25, "Please specify the frequency of tracking this habit (e.g., daily, weekly) (1-25 characters):"),
-            DateCreated = DateTime.Now.ToString(CultureInfo.InvariantCulture),
             Notes = GetValidString(0, int.MaxValue, "Add any additional comments/notes (optional):"),
             Status = GetValidString(1, 15, "Please enter the current status of this habit (e.g., Complete, Ongoing) (1-15 characters):")
         };

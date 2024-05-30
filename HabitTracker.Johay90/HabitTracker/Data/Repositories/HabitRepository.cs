@@ -24,7 +24,7 @@ public class HabitRepository
                     cmd.Parameters.AddWithValue("@measurement", habit.Measurement);
                     cmd.Parameters.AddWithValue("@quantity", habit.Quantity);
                     cmd.Parameters.AddWithValue("@frequency", habit.Frequency);
-                    cmd.Parameters.AddWithValue("@date_created", habit.DateCreated);
+                    cmd.Parameters.AddWithValue("@date_created", DateTime.Now.ToString(CultureInfo.InvariantCulture));
                     cmd.Parameters.AddWithValue("@notes", habit.Notes);
                     cmd.Parameters.AddWithValue("@status", habit.Status);
                     cmd.ExecuteNonQuery();
@@ -144,6 +144,30 @@ public class HabitRepository
         }
     }
 
-    // TODO: Implement other repository methods (UpdateHabit)
+    public void UpdateHabit(Habit habit, int id)
+    {
+        using var connection = _dbManager.GetConnection();
+        try
+        {
+            connection.Open();
+            string query = "UPDATE habits SET name = @name, measurement = @measurement, quantity = @quantity, frequency = @frequency, date_updated = @date_updated, notes = @notes, status = @status WHERE id = @id;";
+            using (var cmd = new SqliteCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@name", habit.Name);
+                cmd.Parameters.AddWithValue("@measurement", habit.Measurement);
+                cmd.Parameters.AddWithValue("@quantity", habit.Quantity);
+                cmd.Parameters.AddWithValue("@frequency", habit.Frequency);
+                cmd.Parameters.AddWithValue("@date_updated", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                cmd.Parameters.AddWithValue("@notes", habit.Notes);
+                cmd.Parameters.AddWithValue("@status", habit.Status);
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (SqliteException ex)
+        {
+            Console.WriteLine($"Database error: {ex.Message}");
+        }
+    }
 
 }

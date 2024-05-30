@@ -1,8 +1,11 @@
-﻿public class App
+﻿using System.Linq;
+
+public class App
 {
     private readonly DatabaseManager _dbManager;
     private HabitRepository _habitRepo;
     private ConsoleInteraction _userInteraction;
+    private List<Habit> habits;
 
     public App(string databasePath)
     {
@@ -57,7 +60,10 @@
 
     private void UpdateHabit()
     {
-        Console.WriteLine("Update previous Habit - Not yet implemented.");
+        habits = _habitRepo.GetAllHabits();
+        int id = GetById();
+        Habit updatedHabit = _userInteraction.AddHabit();
+        _habitRepo.UpdateHabit(updatedHabit, id);
     }
 
     private void DeleteHabit()
@@ -67,7 +73,7 @@
 
     private void ViewAllHabits()
     {
-        List<Habit> habits = _habitRepo.GetAllHabits();
+        habits = _habitRepo.GetAllHabits();
         _userInteraction.DisplayAllHabits(habits);
     }
 

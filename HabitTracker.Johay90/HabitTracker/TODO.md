@@ -16,11 +16,11 @@
     - [x] Create a table in the database for habit logging.
 - [x] Implement user menu with options:
     - [x] Insert a new habit record
-    - [] Delete a habit record
-    - [] Update a habit record
+    - [x] Delete a habit record
+    - [x] Update a habit record
     - [x] View logged habits
     - [x] Insert test data
-    - [] Terminate the application only when the user inputs 0.
+    - [x] Terminate the application only when the user inputs 0.
 - [x] Store and retrieve habit data from the SQLite database. Implement CRUD operations using raw SQL.
 - [x] Handle errors to prevent application crashes.
 - [] Include a ReadMe file explaining app functionality.
