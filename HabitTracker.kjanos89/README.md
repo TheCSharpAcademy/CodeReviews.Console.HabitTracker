@@ -10,16 +10,7 @@ C# Console Application to Log Habits.
 - **CRUD operations**: Perform Create, Read, Update, and Delete operations.
 - **Error handling**: Manages and logs exceptions effectively to ensure smooth operation.
 
-## Getting Started
-
-Follow these steps to set up and run the project.
-
-### Prerequisites
-
-- .NET 6 SDK
-- SQLite
-
-### Installation
+### Installation and usage
 
 1. **Clone the repository:**
 
@@ -42,3 +33,8 @@ Follow these steps to set up and run the project.
    ```
 
 4. **Choose an option from the menu**
+
+- View records will show all records in the db.
+- Delete record will delete the record you choose by its id.
+- Update will update the solved issues on the chosen record.
+- With Insert record you can input new data.
