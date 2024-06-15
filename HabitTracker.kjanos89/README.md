@@ -1,31 +1,32 @@
-# ConsoleHabitTracker
-C# Console Application to Log Coding Habits.
-Developed using C# and SQLite.
+# Habit Tracker Console Application
 
+This is a C# console application designed to help you track your coding habits by date and the number of issues solved.
 
-# Given Requirements:
-- [x] This is an application where you’ll register one habit.
-- [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
-- [x] The application should store and retrieve data from a real database
-- [x] When the application starts, it should create a sqlite database, if one isn’t present.
-- [x] It should also create a table in the database, where the habit will be logged.
-- [x] The app should show the user a menu of options. 
-- [x] The users should be able to insert, delete, update and view their logged habit.
-- [x] You should handle all possible errors so that the application never crashes.
-- [x] The application should only be terminated when the user inserts 0.
-- [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
-- [x] Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example: 
+## Features
 
-# Features
+- **Track a habit by date and quantity**: Log your daily coding habits with ease.
+- **Create a SQLite database and table if it does not exist**: Automatically sets up the necessary database on the first run.
+- **CRUD operations**: Perform Create, Read, Update, and Delete operations on your habit records.
+- **Error handling**: Manages exceptions effectively to ensure smooth operation.
 
-* SQLite db with CRUD operations
+## Getting Started
 
-	- The application creates a database and table if there is none.
-	- If the database exists the program connects to it with every operation and closes the connection when the method is complete.
+These instructions will guide you on how to set up and run the project on your local machine.
 
-* CRUD db functions
+### Prerequisites
 
-	- Create a record by following instructions appearing on the screen and entering the information asked for. The record is saved automatically in the database.
-    - Update records in the db (number of issues solved).
-    - View records currently stored in the database.
-    - Delete records by ID.
+- [.NET 6 SDK]
+- [SQLite]
+
+### Installation
+
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/kjanos89/CodeReviews.Console.HabitTracker.git
+   cd habit-tracker
+2. **Restore dependencies just in case**
+    dotnet restore
+    dotnet build
+3. **Run the application**
+    dotnet run
+4. **Choose an option from the menu**
