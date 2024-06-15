@@ -1,17 +1,17 @@
-# Console Application
+# Habit Tracker Console Application
 
 A C# console application to help you track coding habits by date.
 
 ## Features
 
 - **Track a habit by date and quantity**: Log your daily coding habits with ease.
-- **Create a db and table if there is none**: Sets up the db on the first run.
+- **Create a db and table if there is none**: Sets up the database on the first run.
 - **CRUD operations**: Perform Create, Read, Update, and Delete operations.
-- **Error handling**: Manages and logs exceptions to ensure smooth operation.
+- **Error handling**: Manages and logs exceptions effectively to ensure smooth operation.
 
 ## Getting Started
 
-The instructions will guide you how to set up and run the project.
+Follow these steps to set up and run the project.
 
 ### Prerequisites
 
