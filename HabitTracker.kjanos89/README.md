@@ -1,7 +1,6 @@
+# Habit tracker
 
-# ConsoleHabitTracker
-
-C# Console Application to Log Habits.
+A console-based CRUD application to track various habits. Developed using C# and SQLite.
 
 ## Features
 
@@ -10,7 +9,7 @@ C# Console Application to Log Habits.
 - **CRUD operations**: Perform Create, Read, Update, and Delete operations.
 - **Error handling**: Manages and logs exceptions effectively to ensure smooth operation.
 
-### Installation and usage
+## Installation and usage
 
 1. **Clone the repository:**
 
