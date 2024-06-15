@@ -1,7 +1,7 @@
 # ConsoleHabitTracker
 C# Console Application to Log Habits.
 
-# Features
+## Features
 
 - **Track a habit by date and quantity**: Log your daily coding habits with ease.
 - **Create a db and table if there is none**: Sets up the database on the first run.
@@ -14,8 +14,8 @@ Follow these steps to set up and run the project.
 
 ### Prerequisites
 
-- [.NET 6 SDK]
-- [SQLite]
+- .NET 6 SDK
+- SQLite
 
 ### Installation
 
