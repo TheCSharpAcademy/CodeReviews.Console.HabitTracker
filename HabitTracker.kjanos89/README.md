@@ -1,4 +1,4 @@
-# Habit Tracker Console Application
+# Console Application
 
 A C# console application to help you track coding habits by date.
 
@@ -22,24 +22,21 @@ The instructions will guide you how to set up and run the project.
 
 1. **Clone the repository:**
 
-   ```
-   sh
+   ```sh
    git clone https://github.com/kjanos89/CodeReviews.Console.HabitTracker.git
    cd habit-tracker
    ```
 
 2. **Restore dependencies just in case**
 
-   ```
-   sh
+   ```sh
    dotnet restore
    dotnet build
    ```
 
 3. **Run the application**
 
-   ```
-   sh
+   ```sh
    dotnet run
    ```
 
