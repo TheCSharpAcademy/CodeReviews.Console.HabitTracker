@@ -1,3 +1,5 @@
+# Habit Tracker Console Application
+
 A C# console application to help you track coding habits by date.
 
 ## Features
@@ -25,12 +27,12 @@ The instructions will guide you how to set up and run the project.
    cd habit-tracker
 
 2. **Restore dependencies just in case**
-   
+
     dotnet restore
     dotnet build
 
 3. **Run the application**
-    
+
     dotnet run
 
 4. **Choose an option from the menu**
