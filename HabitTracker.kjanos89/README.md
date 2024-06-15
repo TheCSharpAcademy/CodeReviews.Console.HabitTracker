@@ -1,6 +1,5 @@
-# Habit Tracker Console Application
-
-A C# console application to help you track coding habits by date.
+# ConsoleHabitTracker
+C# Console Application to Log Habits.
 
 ## Features
 
