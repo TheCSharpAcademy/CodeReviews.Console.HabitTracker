@@ -220,7 +220,7 @@ static void PrintDeleteMenu()
         {
             PrintAllDocuments();
             continue;
-        };
+        }
 
         results.Close();
 

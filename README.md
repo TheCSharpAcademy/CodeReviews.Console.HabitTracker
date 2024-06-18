@@ -1,7 +1,7 @@
 # DrinkWater
 C# Console Application to track if you've been treating your body right.
 
-# Features
+## Features
 
 * SQLite database connection, ensure you have SQLite installed into your path
 
@@ -9,7 +9,7 @@ C# Console Application to track if you've been treating your body right.
 
 * CRUD DB functions (create, read, update, delete)
 
-# How to use
+## How to use
 
 * View All Habit Logs by entering V
 
