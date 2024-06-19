@@ -2,12 +2,12 @@
 {
     class Program
     {
-        private static string connectionString = "Data Source=habit_tracker.db";
+        private static readonly string connectionString = "Data Source=habit_tracker.db";
 
-        static void Main(string[] args)
+        static void Main()
         {
-            HabitTrackerApp app = new HabitTrackerApp(connectionString);
-            HabitTrackerApp.Run();
+            HabitTrackerApp app = new(connectionString);
+            app.Run();
         }
     }
 }

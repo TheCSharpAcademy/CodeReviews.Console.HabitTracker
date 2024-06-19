@@ -6,7 +6,7 @@ namespace HabitTracker
     {
         private readonly HabitRepository habitRepository = new(connectionString);
 
-        public static void Run()
+        public void Run()
         {
             while (true)
             {
@@ -20,7 +20,7 @@ namespace HabitTracker
                 switch (choice)
                 {
                     case 1:
-                        //InsertHabit();
+                        InsertHabit();
                         break;
                     case 2:
                         //ViewHabits();
@@ -38,6 +38,36 @@ namespace HabitTracker
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
+            }
+        }
+
+        private void InsertHabit()
+        {
+            try
+            {
+                Console.WriteLine("Enter habit name:");
+                string name = Console.ReadLine();
+
+                Console.WriteLine("Enter quantity:");
+                if (!int.TryParse(Console.ReadLine(), out int quantity))
+                {
+                    Console.WriteLine("Invalid quantity. Please enter a number.");
+                    return;
+                }
+
+                Habit newHabit = new()
+                {
+                    Name = name,
+                    Quantity = quantity,
+                    Date = DateTime.Now
+                };
+
+                habitRepository.InsertHabit(newHabit);
+                Console.WriteLine("Habit logged successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error inserting habit: {ex.Message}");
             }
         }
 
