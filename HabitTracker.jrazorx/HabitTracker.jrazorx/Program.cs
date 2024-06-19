@@ -7,7 +7,7 @@
         static void Main(string[] args)
         {
             HabitTrackerApp app = new HabitTrackerApp(connectionString);
-            app.Run();
+            //app.Run();
         }
     }
 }
