@@ -26,7 +26,7 @@ namespace HabitTracker
                         ViewHabits();
                         break;
                     case 3:
-                        //UpdateHabit();
+                        UpdateHabit();
                         break;
                     case 4:
                         //DeleteHabit();
@@ -90,6 +90,39 @@ namespace HabitTracker
             }
             
             Console.ReadLine();
+        }
+
+        private void UpdateHabit()
+        {
+            try
+            {
+                Console.WriteLine("Enter the date of the habit to update (yyyy-MM-dd):");
+                if (!DateTime.TryParseExact(Console.ReadLine(), "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime dateToUpdate))
+                {
+                    Console.WriteLine("Invalid date format. Please use yyyy-MM-dd.");
+                    return;
+                }
+
+                Console.WriteLine("Enter the new quantity:");
+                if (!int.TryParse(Console.ReadLine(), out int newQuantity))
+                {
+                    Console.WriteLine("Invalid quantity. Please enter a number.");
+                    return;
+                }
+
+                Habit habitToUpdate = new Habit
+                {
+                    Quantity = newQuantity,
+                    Date = dateToUpdate
+                };
+
+                habitRepository.UpdateHabit(habitToUpdate);
+                Console.WriteLine("Habit updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating habit: {ex.Message}");
+            }
         }
 
         private static void ShowMenu()

@@ -89,5 +89,36 @@ namespace HabitTracker
 
             return habits;
         }
+
+        public void UpdateHabit(Habit habit)
+        {
+            try
+            {
+                using (var connection = new SqliteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    var updateCommand = connection.CreateCommand();
+                    updateCommand.CommandText =
+                    @"
+                        UPDATE Habits
+                        SET Quantity = $quantity
+                        WHERE Date = $date
+                    ";
+                    updateCommand.Parameters.AddWithValue("$quantity", habit.Quantity);
+                    updateCommand.Parameters.AddWithValue("$date", habit.Date.ToString("yyyy-MM-dd"));
+
+                    int rowsAffected = updateCommand.ExecuteNonQuery();
+                    if (rowsAffected == 0)
+                    {
+                        Console.WriteLine("No habit found for the given date.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating habit: {ex.Message}");
+            }
+        }
     }
 }
