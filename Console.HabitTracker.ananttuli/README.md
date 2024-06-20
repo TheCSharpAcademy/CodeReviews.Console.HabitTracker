@@ -1,11 +1,13 @@
 # Habit tracker console application
 
-An application that helps users develop a habit by allowing them to easily log and track their behaviour.
+An application that helps users develop a habit by allowing them to
+easily log and track their behaviour.
 
 ## Features
 
 - Create habit log
-  - Users can create logs by entering quantity of habit (numerical value) and the time at which they did the activity aka log time.
+  - Users can create logs by entering quantity of habit (numerical value)
+    and the time at which they did the activity aka log time.
 - Display habit logs
 - Update logs
   - Users can update a habit log by habit ID (can be found when viewing logs)
@@ -23,18 +25,23 @@ To run this locally,he application can be run locally via command line:
 ## Stack/Database details
 
 - This C# console application uses ADO.NET to connect to an SQLite database.
-- When the application starts, it should create a sqlite database, if one isn’t present.
-- It should also create a table in the database, where the habit will be logged.
+- When the application starts, it should create a sqlite database,
+  if one isn’t present.
+- It should also create a table in the database, where the habit
+  will be logged.
 
 ## Code organization
 
-The source code has been organized into various modules/namespaces to maintain separation of concerns:
+The source code has been organized into various modules/namespaces to
+maintain separation of concerns:
 
 - `HabitTrackerProgram/Program.cs`
   - Entrypoint
 - `HabitTrackerProgram/Database`
-  - This contains a `Database` class to handle DB connections and `HabitRepository` to query the database for habit logs.
+  - Contains a `Database` class to handle DB connections
+  - `HabitLogRepository` to query the database for habit logs.
 - `HabitTrackerProgram/Model`
-  - This contains the `Habit` model which encapsulates data and business logic related to a habit log.
+  - Contains the `HabitLog` model which encapsulates the data and
+    business logic related to a habit log.
 - `HabitTrackerProgram/Util`
-  - This contains convenient utilities to allow code re-use across the application.
+  - Contains convenient utilities to allow code re-use across the application.
