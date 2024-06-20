@@ -79,14 +79,17 @@ public class HabitTracker
     private void ViewHabits()
     {
         Console.Clear();
+        Console.WriteLine("ID | Quantity | Date");
+        Console.WriteLine("--------------------------");
         var habits = _databaseManager.GetHabits();
         foreach (var habit in habits)
         {
-            Console.WriteLine($"ID: {habit.Id}, Quantity: {habit.Quantity}, Date: {habit.Date.ToShortDateString()}");
+            Console.WriteLine($"{habit.Id,2} | {habit.Quantity,8} | {habit.Date.ToShortDateString()}");
         }
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
     }
+
 
     private void UpdateHabit()
     {
