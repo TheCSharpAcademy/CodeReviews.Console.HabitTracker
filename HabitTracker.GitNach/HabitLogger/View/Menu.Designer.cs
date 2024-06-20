@@ -84,7 +84,6 @@
             dataGridView1.ShowEditingIcon = false;
             dataGridView1.Size = new Size(560, 392);
             dataGridView1.TabIndex = 5;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // materialButton3
             // 

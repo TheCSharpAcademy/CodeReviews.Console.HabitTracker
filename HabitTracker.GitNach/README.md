@@ -1,46 +1,68 @@
-# Habit Tracker
-
-## Description
-The Habit Tracker application is designed to help users log and track their habits efficiently. It allows users to manage habits by adding new ones, deleting existing ones, and inserting data associated with each habit into an SQLite database. The user interface is built using WinForms.
-
-## Features
-- **Add Habit:** Create and add new habits specifying their name and metric type.
-- **Delete Habit:** Remove existing habits from the database.
-- **Insert Habit Data:** Insert data related to habits, specifying the habit type and metric value.
-
-## Screenshots
-
-![HabitMenu](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/b4613813-e47b-4362-8aa2-0ab3fdd38713)
-
-*Figure 1: Main Menu - Here you can access buttons for creating, inserting, and deleting habits.*
-
-![image](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/194486e1-f39c-49f9-b45f-6c27d46f0bb6)
-
-*Figure 2: Create Habit - Specify the name and metric type (e.g., daily, weekly) for a new habit.*
-
-![image](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/734e9374-eb34-4f58-9cd2-9b2118a75716)
-
-*Figure 3: Insert Habit Data - Insert data for an existing habit, specifying the type and metric value.*
-
-## Usage
-1. **Creating a Habit:**
-   - Navigate to the "Create Habit" section from the main menu (Figure 1).
-   - Enter the name and select the metric type (Figure 2).
-   - Click "Create" to add the habit to the database.
-
-2. **Inserting Habit Data:**
-   - Go to the "Insert Data" section from the main menu (Figure 1).
-   - Choose the habit type from the dropdown menu and enter the metric value (Figure 3).
-   - Click "Insert" to store the data in the database.
-
-3. **Deleting a Habit:**
-   - In the main menu (Figure 1), select the habit you want to delete.
-   - Click on the "Delete" button to remove the selected habit from the database.
-
-## Technologies Used
-- C# for application logic
-- SQLite for database management
-- WinForms for user interface development
-- Requires the MaterialSkin NuGet package installation from VS
+# ConsoleHabitTracker
+C# Console Application to Log Habits.
+Console based CRUD application to log Habits.
+Developed using C# and SQLite.
 
 
+# Given Requirements:
+- [x] This is an application where you’ll register one habit.
+- [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
+- [x] The application should store and retrieve data from a real database
+- [x] When the application starts, it should create a sqlite database, if one isn’t present.
+- [x] It should also create a table in the database, where the habit will be logged.
+- [x] The app should show the user a menu of options. 
+- [x] The users should be able to insert, delete, update and view their logged habit.
+- [x] You should handle all possible errors so that the application never crashes.
+- [x] The application should only be terminated when the user inserts 0.
+- [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
+- [x] Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example: 
+
+# Features
+
+* SQLite database connection
+
+	- The program uses a SQLite db connection to store and read information. 
+	- If no database exists, or the correct table does not exist they will be created on program start.
+
+* A console based UI where users can navigate by key presses
+ 
+ 	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/c107b2bd-9f7a-4d07-905d-f6987275f480)
+
+* CRUD DB functions
+
+	- From the main menu users can Create, Read, Update or Delete entries for whichever date they want, entered in yyyy-MM-dd format. 
+	- Time and Dates inputted are checked to make sure they are in the correct and realistic format. 
+
+* View All Habit Logs by pressing 1
+	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/2fa6d659-6537-434a-a11f-79bcff90ae6e)
+* To log new Habit press 2
+	- First all the Habits are displayed so the users can enter a valid HabitId from the list
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/6a71eede-e1a2-4c76-b468-a4d011153892)
+	- Next User will enter Unit Quantity and a Valid date in yyyy-MM-dd format.
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/16a8dbf1-ccb2-409f-8e03-d73d92c099b6)
+* To delete a Record press 3
+	- Enter the Id from the list to delete the Habitlog.
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/487490c4-02c1-4452-91bf-67eb4efd3729)
+* To update a Record press 4
+	- Enter the Id from the list to update the Habitlog, next enter new quantity and Date to update it.
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/1fe98179-7d55-45d7-9524-58dc1fb0aef7)
+* To view all Habit press 5
+	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/8047004c-5b88-4f37-81f0-88c9bd1451ef)
+* To Enter a New Habit press 6
+	- User will entered Habit Description and Unit
+		- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/0e966580-7ac8-402d-a89f-c4052806c80e)
+* Basic Report for current Year
+	- ![image](https://github.com/javedkhan2k2/Csharpacademy/assets/48986371/b623a3e5-74b9-422e-8f5c-c47abd34d283)
+
+
+
+# Challenges
+	
+- [x] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
+- [x] Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. This is specially helpful during development so you don't have to reinsert data every time you create the database.
+- [x] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
+	
+# Areas to Improve
+ - Need to move back to main menu
+ - Still need to refactor the code to catch exceptions
+ - Using Async to interact with database

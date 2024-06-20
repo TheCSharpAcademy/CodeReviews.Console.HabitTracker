@@ -33,20 +33,7 @@ namespace HabitLogger.View
             FormsController.ChangeForm(new Menu());
         }
 
-        private void materialLabel1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void materialButton2_Click(object sender, EventArgs e)
         {

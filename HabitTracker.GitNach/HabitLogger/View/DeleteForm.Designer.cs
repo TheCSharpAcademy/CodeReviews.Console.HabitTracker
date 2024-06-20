@@ -51,7 +51,6 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(42, 23);
             textBox1.TabIndex = 1;
-            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // materialButton1
             // 

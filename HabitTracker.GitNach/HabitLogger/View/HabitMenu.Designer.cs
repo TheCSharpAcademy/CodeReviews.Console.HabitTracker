@@ -90,7 +90,6 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(171, 23);
             textBox1.TabIndex = 6;
-            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // label2
             // 
@@ -112,7 +111,6 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(96, 23);
             comboBox1.TabIndex = 8;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // materialButton2
             // 

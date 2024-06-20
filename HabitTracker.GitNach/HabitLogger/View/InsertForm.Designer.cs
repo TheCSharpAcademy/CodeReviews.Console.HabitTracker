@@ -60,7 +60,6 @@
             label2.Size = new Size(78, 26);
             label2.TabIndex = 2;
             label2.Text = "MetricValue:";
-            label2.Click += label2_Click;
             // 
             // textBox1
             // 
@@ -68,7 +67,6 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(121, 23);
             textBox1.TabIndex = 3;
-            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // materialButton1
             // 

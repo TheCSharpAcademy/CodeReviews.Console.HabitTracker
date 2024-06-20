@@ -27,7 +27,7 @@ namespace HabitLogger.View
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Green900, Primary.Green900, Primary.Blue500, Accent.LightBlue200, TextShade.WHITE);
 
 
-            //AddHardcodedHabit();
+            
             LoadHabits();
 
         }
@@ -85,11 +85,6 @@ namespace HabitLogger.View
             }
             DataBaseController.DeleteHabit(SelectedHabit.Id);
             LoadHabits();   
-
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
 
         }
     }

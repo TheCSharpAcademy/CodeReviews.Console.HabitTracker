@@ -13,10 +13,5 @@ namespace HabitLogger
             Refresh();
 
         }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            
-        }
     }
 }

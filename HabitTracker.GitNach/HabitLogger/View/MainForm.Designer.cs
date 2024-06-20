@@ -47,7 +47,6 @@
             Controls.Add(pnlMain);
             Name = "MainForm";
             Text = "Form1";
-            Load += MainForm_Load;
             ResumeLayout(false);
         }
 
