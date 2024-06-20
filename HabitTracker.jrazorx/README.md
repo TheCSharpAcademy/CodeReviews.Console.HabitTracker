@@ -7,13 +7,12 @@ This is a simple console application to track the habit of drinking water by qua
 ## Requirements
 
 - .NET 8.0
-- Visual Studio Community 2022
 - Microsoft.Data.Sqlite 8.0.6
 
 ## How to Run
 
 1. Clone the repository or download the source code.
-2. Open the solution in Visual Studio Community 2022.
+2. Open the solution.
 3. Restore the NuGet packages.
 4. Build and run the application.
 
