@@ -1,4 +1,4 @@
-# Habit tracker console application
+# Habit Tracker
 
 ## Summary
 
