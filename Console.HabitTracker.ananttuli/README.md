@@ -1,5 +1,7 @@
 # Habit tracker console application
 
+## Summary
+
 An application that helps users develop a habit by allowing them to
 easily log and track their behaviour.
 
@@ -38,7 +40,7 @@ maintain separation of concerns:
 - `HabitTrackerProgram/Program.cs`
   - Entrypoint
 - `HabitTrackerProgram/Database`
-  - Contains a `Database` class to handle DB connections
+  - Contains a `Connection` class to manage SQLite connection.
   - `HabitLogRepository` to query the database for habit logs.
 - `HabitTrackerProgram/Model`
   - Contains the `HabitLog` model which encapsulates the data and
