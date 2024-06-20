@@ -267,25 +267,25 @@ public class HabitTracker
         Console.Write("Enter habit ID to update: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
-            Console.Write("Enter new quantity of the habit: ");
-            if (int.TryParse(Console.ReadLine(), out int quantity))
+            var habitTypes = _databaseManager.GetHabitTypes();
+            Console.WriteLine("Available Habit Types:");
+            ViewHabitTypes(false, false);
+
+            Console.Write("Enter the ID of the habit type: ");
+            if (int.TryParse(Console.ReadLine(), out int habitTypeId))
             {
-                var habitTypes = _databaseManager.GetHabitTypes();
-                Console.WriteLine("Available Habit Types:");
-                ViewHabitTypes(false, false);
-
-                Console.Write("Enter the ID of the habit type: ");
-                if (int.TryParse(Console.ReadLine(), out int habitTypeId))
+                // Check if the habit type ID exists
+                bool habitTypeExists = habitTypes.Exists(ht => ht.Id == habitTypeId);
+                if (!habitTypeExists)
                 {
-                    // Check if the habit type ID exists
-                    bool habitTypeExists = habitTypes.Exists(ht => ht.Id == habitTypeId);
-                    if (!habitTypeExists)
-                    {
-                        Console.WriteLine("Habit type ID does not exist. Press any key to continue...");
-                        Console.ReadKey();
-                        return;
-                    }
+                    Console.WriteLine("Habit type ID does not exist. Press any key to continue...");
+                    Console.ReadKey();
+                    return;
+                }
 
+                Console.Write("Enter new quantity of the habit: ");
+                if (int.TryParse(Console.ReadLine(), out int quantity))
+                {
                     var habit = new Habit
                     {
                         Id = id,
@@ -305,12 +305,12 @@ public class HabitTracker
                 }
                 else
                 {
-                    Console.WriteLine("Invalid habit type ID. Press any key to continue...");
+                    Console.WriteLine("Invalid quantity. Press any key to continue...");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid quantity. Press any key to continue...");
+                Console.WriteLine("Invalid habit type ID. Press any key to continue...");
             }
         }
         else
@@ -319,6 +319,7 @@ public class HabitTracker
         }
         Console.ReadKey();
     }
+
 
     private void DeleteHabit()
     {
