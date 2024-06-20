@@ -164,7 +164,7 @@ public class DatabaseManager
             var command = connection.CreateCommand();
             command.CommandText = @"
             UPDATE Habits
-            SET Quantity = $quantity, Date = $date
+            SET Quantity = $quantity, Date = $date, HabitTypeId = $habitTypeId
             WHERE Id = $id";
             command.Parameters.AddWithValue("$id", habit.Id);
             command.Parameters.AddWithValue("$quantity", habit.Quantity);
