@@ -41,5 +41,6 @@ The Habit Tracker application is designed to help users log and track their habi
 - C# for application logic
 - SQLite for database management
 - WinForms for user interface development
+- Requires the MaterialSkin NuGet package installation from VS
 
 
