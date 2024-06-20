@@ -1,4 +1,4 @@
-![image](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/40485727-b08b-4f87-a993-4ec45bf8054c)# Habit Tracker
+# Habit Tracker
 
 ## Description
 The Habit Tracker application is designed to help users log and track their habits efficiently. It allows users to manage habits by adding new ones, deleting existing ones, and inserting data associated with each habit into an SQLite database. The user interface is built using WinForms.
@@ -11,12 +11,15 @@ The Habit Tracker application is designed to help users log and track their habi
 ## Screenshots
 
 ![HabitMenu](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/b4613813-e47b-4362-8aa2-0ab3fdd38713)
+
 *Figure 1: Main Menu - Here you can access buttons for creating, inserting, and deleting habits.*
 
 ![image](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/194486e1-f39c-49f9-b45f-6c27d46f0bb6)
+
 *Figure 2: Create Habit - Specify the name and metric type (e.g., daily, weekly) for a new habit.*
 
 ![image](https://github.com/GitNach/CodeReviews.Console.HabitTracker/assets/137569683/734e9374-eb34-4f58-9cd2-9b2118a75716)
+
 *Figure 3: Insert Habit Data - Insert data for an existing habit, specifying the type and metric value.*
 
 ## Usage
