@@ -74,15 +74,20 @@ public class DatabaseManager
             connection.Open();
             var command = connection.CreateCommand();
             command.CommandText = @"
-                UPDATE Habits
-                SET Quantity = $quantity, Date = $date
-                WHERE Id = $id";
+            UPDATE Habits
+            SET Quantity = $quantity, Date = $date
+            WHERE Id = $id";
             command.Parameters.AddWithValue("$id", habit.Id);
             command.Parameters.AddWithValue("$quantity", habit.Quantity);
             command.Parameters.AddWithValue("$date", habit.Date.ToString("yyyy-MM-dd"));
-            command.ExecuteNonQuery();
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 0)
+            {
+                throw new Exception("Habit ID does not exist.");
+            }
         }
     }
+
 
     public void DeleteHabit(int id)
     {
@@ -92,7 +97,12 @@ public class DatabaseManager
             var command = connection.CreateCommand();
             command.CommandText = "DELETE FROM Habits WHERE Id = $id";
             command.Parameters.AddWithValue("$id", id);
-            command.ExecuteNonQuery();
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 0)
+            {
+                throw new Exception("Habit ID does not exist.");
+            }
         }
     }
+
 }

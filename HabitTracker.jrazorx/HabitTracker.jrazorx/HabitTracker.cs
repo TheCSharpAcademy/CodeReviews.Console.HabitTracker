@@ -103,8 +103,15 @@ public class HabitTracker
                     Quantity = quantity,
                     Date = DateTime.Now
                 };
-                _databaseManager.UpdateHabit(habit);
-                Console.WriteLine("Habit updated successfully. Press any key to continue...");
+                try
+                {
+                    _databaseManager.UpdateHabit(habit);
+                    Console.WriteLine("Habit updated successfully. Press any key to continue...");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message + " Press any key to continue...");
+                }
             }
             else
             {
@@ -124,8 +131,15 @@ public class HabitTracker
         Console.Write("Enter habit ID to delete: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
-            _databaseManager.DeleteHabit(id);
-            Console.WriteLine("Habit deleted successfully. Press any key to continue...");
+            try
+            {
+                _databaseManager.DeleteHabit(id);
+                Console.WriteLine("Habit deleted successfully. Press any key to continue...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " Press any key to continue...");
+            }
         }
         else
         {
