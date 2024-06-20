@@ -20,7 +20,11 @@ This is a simple console application to track the habit of drinking water by qua
 
 1. When the application starts, it will create a SQLite database if one isn’t present.
 2. The main menu will be displayed with the following options:
-   - Insert Habit
+   - Create Habit Type
+   - View Habit Types
+   - Update Habit Type
+   - Delete Habit Type
+   - Create Habit
    - View Habits
    - Update Habit
    - Delete Habit
