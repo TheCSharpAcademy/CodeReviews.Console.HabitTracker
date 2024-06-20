@@ -1,13 +1,10 @@
-﻿namespace HabitTracker
-{
-    class Program
-    {
-        private static readonly string connectionString = "Data Source=habit_tracker.db";
+﻿using System;
 
-        static void Main()
-        {
-            HabitTrackerApp app = new(connectionString);
-            app.Run();
-        }
+class Program
+{
+    static void Main(string[] args)
+    {
+        var habitTracker = new HabitTracker();
+        habitTracker.Run();
     }
 }
