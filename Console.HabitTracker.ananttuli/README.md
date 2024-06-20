@@ -1,10 +1,7 @@
+# HabitTracker
 
-# Habito
-
-## Summary
-
-> An application that helps users develop a habit by allowing them to
-> easily log and track their behaviour.
+An application that helps users develop a habit by allowing them to
+easily log and track their behaviour.
 
 ## Features
 
