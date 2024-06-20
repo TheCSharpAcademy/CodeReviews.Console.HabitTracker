@@ -56,5 +56,38 @@ namespace HabitTracker
                 Console.WriteLine($"Error inserting habit: {ex.Message}");
             }
         }
+
+        public List<Habit> GetAllHabits()
+        {
+            List<Habit> habits = [];
+
+            try
+            {
+                using var connection = new SqliteConnection(connectionString);
+                connection.Open();
+
+                var selectCommand = connection.CreateCommand();
+                selectCommand.CommandText = "SELECT * FROM Habits";
+
+                using var reader = selectCommand.ExecuteReader();
+                while (reader.Read())
+                {
+                    habits.Add(new Habit
+                    {
+                        Id = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Quantity = reader.GetInt32(2),
+                        Date = DateTime.Parse(reader.GetString(3))
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving habits: {ex.Message}");
+                Console.ReadLine();
+            }
+
+            return habits;
+        }
     }
 }

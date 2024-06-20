@@ -4,7 +4,7 @@ namespace HabitTracker
 {
     public class HabitTrackerApp(string connectionString)
     {
-        private readonly HabitRepository habitRepository = new(connectionString);
+        private HabitRepository habitRepository = new(connectionString);
 
         public void Run()
         {
@@ -23,7 +23,7 @@ namespace HabitTracker
                         InsertHabit();
                         break;
                     case 2:
-                        //ViewHabits();
+                        ViewHabits();
                         break;
                     case 3:
                         //UpdateHabit();
@@ -69,6 +69,27 @@ namespace HabitTracker
             {
                 Console.WriteLine($"Error inserting habit: {ex.Message}");
             }
+        }
+
+        private void ViewHabits()
+        {
+            List<Habit> habits = habitRepository.GetAllHabits();
+
+            if (habits.Count == 0)
+            {
+                Console.WriteLine("No habits logged yet.");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.Clear();
+            Console.WriteLine("Logged Habits:");
+            foreach (var habit in habits)
+            {
+                Console.WriteLine($"- {habit.Date:yyyy-MM-dd}: {habit.Name} ({habit.Quantity})");
+            }
+            
+            Console.ReadLine();
         }
 
         private static void ShowMenu()
