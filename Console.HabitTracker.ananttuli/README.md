@@ -1,26 +1,23 @@
 # Habit Tracker
-
-## Summary
-
-* An application that helps users develop a habit by allowing them to
-  easily log and track their behaviour.
+An application that helps users develop a habit by allowing them to
+easily log and track their behaviour.
 
 ## Features
 
-### Create habit log
+### Create Habit Log
 
 * Users can create logs by entering quantity of habit (numerical value)
-  and the time at which they did the activity aka log time.
+and the time at which they did the activity aka log time.
 
-### Display habit logs
+### Display Habit Logs
 
 * Display all created logs.
 
-### Update logs
+### Update Logs
 
 * Users can update a habit log by habit ID (can be found when viewing logs)
 
-### Delete logs
+### Delete Logs
 
 * Users can delete a habit log by habit ID (can be found when viewing logs)
 
@@ -28,17 +25,17 @@
 
 To run this locally,he application can be run locally via command line:
 
-1. Clone this repository
-2. `cd HabitTrackerProgram`
-3. `dotnet run`
+* Clone this repository
+* `cd HabitTrackerProgram`
+* `dotnet run`
 
 ## Tech Stack
 
 * This C# console application uses ADO.NET to connect to an SQLite database.
 * When the application starts, it should create a sqlite database,
-  if one isn’t present.
+if one isn’t present.
 * It should also create a table in the database, where the habit
-  will be logged.
+will be logged.
 
 ## Code Organization
 
@@ -61,4 +58,4 @@ maintain separation of concerns:
 
 ### `HabitTrackerProgram/Util`
 
-* Contains convenient utilities to allow code re*use across the application.
+* Contains convenient utilities to allow code reuse across the application.
