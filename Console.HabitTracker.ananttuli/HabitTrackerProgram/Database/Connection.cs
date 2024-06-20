@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 
 namespace HabitTrackerProgram.Database
 {
-    public class Database
+    public class Connection
     {
         private static SqliteConnection? _connection;
 
@@ -12,7 +12,7 @@ namespace HabitTrackerProgram.Database
             {
                 _connection = new SqliteConnection("Data Source=database.db");
 
-                HabitRepository.CreateTable();
+                HabitLogRepository.CreateTable();
             }
             catch (SqliteException ex)
             {

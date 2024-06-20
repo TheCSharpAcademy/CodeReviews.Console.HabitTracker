@@ -16,7 +16,7 @@
 
         static void Init()
         {
-            Database.Database.Init();
+            Database.Connection.Init();
             ShowWelcomeScreen();
         }
 
@@ -32,19 +32,19 @@
                     Console.WriteLine(exitMessage);
                     return false;
                 case "1":
-                    Model.Habit.CreateHabit();
+                    Model.HabitLog.CreateHabitLog();
 
                     break;
                 case "2":
-                    Model.Habit.ViewHabitLogs();
+                    Model.HabitLog.ViewHabitLogs();
 
                     break;
                 case "3":
-                    Model.Habit.UpdateHabit();
+                    Model.HabitLog.UpdateHabitLog();
 
                     break;
                 case "4":
-                    Model.Habit.DeleteHabit();
+                    Model.HabitLog.DeleteHabitLog();
 
                     break;
                 default:

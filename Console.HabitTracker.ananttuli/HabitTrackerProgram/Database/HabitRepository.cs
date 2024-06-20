@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 
 namespace HabitTrackerProgram.Database
 {
-    public class HabitRepository
+    public class HabitLogRepository
     {
         public static string TableName
         {
@@ -16,7 +16,7 @@ namespace HabitTrackerProgram.Database
         {
             try
             {
-                using (SqliteConnection connection = Database.GetConnection())
+                using (SqliteConnection connection = Connection.GetConnection())
                 {
                     connection.Open();
 
@@ -39,13 +39,13 @@ namespace HabitTrackerProgram.Database
             }
         }
 
-        public static List<Model.Habit> ReadHabitsQuery()
+        public static List<Model.HabitLog> ReadHabitsQuery()
         {
-            List<Model.Habit> habits = new();
+            List<Model.HabitLog> habits = new();
 
             try
             {
-                using (SqliteConnection connection = Database.GetConnection())
+                using (SqliteConnection connection = Connection.GetConnection())
                 {
                     connection.Open();
 
@@ -62,7 +62,7 @@ namespace HabitTrackerProgram.Database
                             var quantity = reader.GetDecimal(reader.GetOrdinal("Quantity"));
                             var logTime = reader.GetDateTime(reader.GetOrdinal("LogTime"));
 
-                            habits.Add(new Model.Habit(id, quantity, logTime));
+                            habits.Add(new Model.HabitLog(id, quantity, logTime));
                         }
                     }
                 }
@@ -79,7 +79,7 @@ namespace HabitTrackerProgram.Database
         {
             try
             {
-                using (SqliteConnection connection = Database.GetConnection())
+                using (SqliteConnection connection = Connection.GetConnection())
                 {
                     connection.Open();
 
@@ -114,7 +114,7 @@ namespace HabitTrackerProgram.Database
         {
             try
             {
-                using (SqliteConnection connection = Database.GetConnection())
+                using (SqliteConnection connection = Connection.GetConnection())
                 {
                     connection.Open();
 
@@ -151,7 +151,7 @@ namespace HabitTrackerProgram.Database
         {
             try
             {
-                using (SqliteConnection connection = Database.GetConnection())
+                using (SqliteConnection connection = Connection.GetConnection())
                 {
                     connection.Open();
 

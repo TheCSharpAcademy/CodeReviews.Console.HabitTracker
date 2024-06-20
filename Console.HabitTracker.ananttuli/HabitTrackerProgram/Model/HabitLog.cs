@@ -1,21 +1,21 @@
-using HabitRepo = HabitTrackerProgram.Database.HabitRepository;
+using HabitLogRepo = HabitTrackerProgram.Database.HabitLogRepository;
 
 namespace HabitTrackerProgram.Model
 {
-    public class Habit
+    public class HabitLog
     {
         public int id;
         public decimal quantity;
         public DateTime logTime;
 
-        public Habit(int id, decimal quantity, DateTime logTime)
+        public HabitLog(int id, decimal quantity, DateTime logTime)
         {
             this.id = id;
             this.quantity = quantity;
             this.logTime = logTime;
         }
 
-        public static void CreateHabit()
+        public static void CreateHabitLog()
         {
             Console.WriteLine("\nEnter habit log details:");
 
@@ -23,10 +23,10 @@ namespace HabitTrackerProgram.Model
 
             DateTime logDateTime = Util.Input.TryReadInput("Date (E.g. 2024-01-01)", Util.Input.ParseDateTime);
 
-            HabitRepo.CreateHabit(quantity, logDateTime);
+            HabitLogRepo.CreateHabit(quantity, logDateTime);
         }
 
-        public static void UpdateHabit()
+        public static void UpdateHabitLog()
         {
             Console.WriteLine("\nEnter habit log details:");
 
@@ -36,25 +36,25 @@ namespace HabitTrackerProgram.Model
 
             DateTime logDateTime = Util.Input.TryReadInput("Date (E.g. 2024-01-01)", Util.Input.ParseDateTime);
 
-            HabitRepo.UpdateHabit(id, quantity, logDateTime);
+            HabitLogRepo.UpdateHabit(id, quantity, logDateTime);
         }
 
         public static void ViewHabitLogs()
         {
-            List<Habit> habits = HabitRepo.ReadHabitsQuery();
+            List<HabitLog> habits = HabitLogRepo.ReadHabitsQuery();
             Console.WriteLine($"\n\n\t\tID\t\tQuantity\t\tLogged At");
 
-            foreach (Habit habit in habits)
+            foreach (HabitLog habit in habits)
             {
                 Console.WriteLine($"\t\t{habit.id}\t\t{habit.quantity}\t\t{habit.logTime}");
             }
         }
 
-        public static void DeleteHabit()
+        public static void DeleteHabitLog()
         {
             int id = (int)Util.Input.TryReadInput("Enter Habit ID to delete", Util.Input.ParseDecimal);
 
-            HabitRepo.DeleteHabit(id);
+            HabitLogRepo.DeleteHabit(id);
         }
     }
 }
