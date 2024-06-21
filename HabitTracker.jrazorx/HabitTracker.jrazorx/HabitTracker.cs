@@ -81,27 +81,8 @@ public class HabitTracker
     {
         Console.Clear();
 
-        string name;
-        do
-        {
-            Console.Write("Enter the name of the habit: ");
-            name = Console.ReadLine();
-            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
-                Console.WriteLine("The name cannot be null or empty. Please try again.");
-            else
-                name = name.Trim().ToUpper();
-        } while (string.IsNullOrEmpty(name) || name.Trim().Length == 0);
-
-        string unit;
-        do
-        {
-            Console.Write("Enter the unit of measurement (e.g., glasses, minutes, etc.): ");
-            unit = Console.ReadLine();
-            if (string.IsNullOrEmpty(unit) || unit.Trim().Length == 0)
-                Console.WriteLine("The unit cannot be null or empty. Please try again.");
-            else
-                unit = unit.Trim().ToUpper();
-        } while (string.IsNullOrEmpty(unit) || unit.Trim().Length == 0);
+        string name = GetNonEmptyTrimmedUppercaseInputString("Enter the name of the habit: ", "The name cannot be null or empty. Please try again.");
+        string unit = GetNonEmptyTrimmedUppercaseInputString("Enter the unit of measurement (e.g., glasses, minutes, etc.): ", "The unit cannot be null or empty. Please try again.");
 
         _databaseManager.InsertHabitType(name, unit);
         Console.WriteLine("Habit type created successfully. Press any key to continue...");
@@ -123,7 +104,7 @@ public class HabitTracker
         if (waitForInputAtTheEnd)
         {
             Console.WriteLine("Press any key to continue...");
-            Console.ReadKey(); 
+            Console.ReadKey();
         }
     }
 
@@ -134,27 +115,8 @@ public class HabitTracker
         Console.Write("Enter habit type ID to update: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
-            string name;
-            do
-            {
-                Console.Write("Enter the new name of the habit: ");
-                name = Console.ReadLine();
-                if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
-                    Console.WriteLine("The name cannot be null or empty. Please try again.");
-                else
-                    name = name.Trim().ToUpper();
-            } while (string.IsNullOrEmpty(name) || name.Trim().Length == 0);
-
-            string unit;
-            do
-            {
-                Console.Write("Enter the new unit of measurement (e.g., glasses, minutes, etc.): ");
-                unit = Console.ReadLine();
-                if (string.IsNullOrEmpty(unit) || unit.Trim().Length == 0)
-                    Console.WriteLine("The unit cannot be null or empty. Please try again.");
-                else
-                    unit = unit.Trim().ToUpper();
-            } while (string.IsNullOrEmpty(unit) || unit.Trim().Length == 0);
+            string name = GetNonEmptyTrimmedUppercaseInputString("Enter the name of the habit: ", "The name cannot be null or empty. Please try again.");
+            string unit = GetNonEmptyTrimmedUppercaseInputString("Enter the unit of measurement (e.g., glasses, minutes, etc.): ", "The unit cannot be null or empty. Please try again.");
             try
             {
                 _databaseManager.UpdateHabitType(id, name, unit);
@@ -207,41 +169,27 @@ public class HabitTracker
             return;
         }
 
-        Console.WriteLine("Available Habit Types:");
-        ViewHabitTypes(false, false);
-
-        Console.Write("Enter the ID of the habit type: ");
-        if (int.TryParse(Console.ReadLine(), out int habitTypeId))
+        int habitTypeId = GetValidHabitTypeId(habitTypes);
+        if (habitTypeId == -1)
         {
-            // Check if the habit type ID exists
-            bool habitTypeExists = habitTypes.Exists(ht => ht.Id == habitTypeId);
-            if (!habitTypeExists)
-            {
-                Console.WriteLine("Habit type ID does not exist. Press any key to continue...");
-                Console.ReadKey();
-                return;
-            }
+            return;
+        }
 
-            Console.Write("Enter the quantity of the habit: ");
-            if (int.TryParse(Console.ReadLine(), out int quantity))
+        Console.Write("Enter the quantity of the habit: ");
+        if (int.TryParse(Console.ReadLine(), out int quantity))
+        {
+            var habit = new Habit
             {
-                var habit = new Habit
-                {
-                    Quantity = quantity,
-                    Date = DateTime.Now,
-                    HabitTypeId = habitTypeId
-                };
-                _databaseManager.InsertHabit(habit);
-                Console.WriteLine("Habit created successfully. Press any key to continue...");
-            }
-            else
-            {
-                Console.WriteLine("Invalid quantity. Press any key to continue...");
-            }
+                Quantity = quantity,
+                Date = DateTime.Now,
+                HabitTypeId = habitTypeId
+            };
+            _databaseManager.InsertHabit(habit);
+            Console.WriteLine("Habit created successfully. Press any key to continue...");
         }
         else
         {
-            Console.WriteLine("Invalid habit type ID. Press any key to continue...");
+            Console.WriteLine("Invalid quantity. Press any key to continue...");
         }
         Console.ReadKey();
     }
@@ -260,7 +208,7 @@ public class HabitTracker
         if (waitForInputAtTheEnd)
         {
             Console.WriteLine("Press any key to continue...");
-            Console.ReadKey(); 
+            Console.ReadKey();
         }
     }
 
@@ -273,49 +221,35 @@ public class HabitTracker
         if (int.TryParse(Console.ReadLine(), out int id))
         {
             var habitTypes = _databaseManager.GetHabitTypes();
-            Console.WriteLine("Available Habit Types:");
-            ViewHabitTypes(false, false);
-
-            Console.Write("Enter the ID of the habit type: ");
-            if (int.TryParse(Console.ReadLine(), out int habitTypeId))
+            int habitTypeId = GetValidHabitTypeId(habitTypes);
+            if (habitTypeId == -1)
             {
-                // Check if the habit type ID exists
-                bool habitTypeExists = habitTypes.Exists(ht => ht.Id == habitTypeId);
-                if (!habitTypeExists)
-                {
-                    Console.WriteLine("Habit type ID does not exist. Press any key to continue...");
-                    Console.ReadKey();
-                    return;
-                }
+                return;
+            }
 
-                Console.Write("Enter new quantity of the habit: ");
-                if (int.TryParse(Console.ReadLine(), out int quantity))
+            Console.Write("Enter new quantity of the habit: ");
+            if (int.TryParse(Console.ReadLine(), out int quantity))
+            {
+                var habit = new Habit
                 {
-                    var habit = new Habit
-                    {
-                        Id = id,
-                        Quantity = quantity,
-                        Date = DateTime.Now,
-                        HabitTypeId = habitTypeId
-                    };
-                    try
-                    {
-                        _databaseManager.UpdateHabit(habit);
-                        Console.WriteLine("Habit updated successfully. Press any key to continue...");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message + " Press any key to continue...");
-                    }
+                    Id = id,
+                    Quantity = quantity,
+                    Date = DateTime.Now,
+                    HabitTypeId = habitTypeId
+                };
+                try
+                {
+                    _databaseManager.UpdateHabit(habit);
+                    Console.WriteLine("Habit updated successfully. Press any key to continue...");
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Invalid quantity. Press any key to continue...");
+                    Console.WriteLine(ex.Message + " Press any key to continue...");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid habit type ID. Press any key to continue...");
+                Console.WriteLine("Invalid quantity. Press any key to continue...");
             }
         }
         else
@@ -371,5 +305,42 @@ public class HabitTracker
 
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
+    }
+
+    private int GetValidHabitTypeId(List<(int Id, string Name, string Unit)> habitTypes)
+    {
+        Console.WriteLine("Available Habit Types:");
+        ViewHabitTypes(false, false);
+
+        Console.Write("Enter the ID of the habit type: ");
+        if (int.TryParse(Console.ReadLine(), out int habitTypeId))
+        {
+            bool habitTypeExists = habitTypes.Exists(ht => ht.Id == habitTypeId);
+            if (!habitTypeExists)
+            {
+                Console.WriteLine("Habit type ID does not exist. Press any key to continue...");
+                Console.ReadKey();
+                return -1;
+            }
+            return habitTypeId;
+        }
+        Console.WriteLine("Invalid habit type ID. Press any key to continue...");
+        Console.ReadKey();
+        return -1;
+    }
+
+    private string GetNonEmptyTrimmedUppercaseInputString(string prompt, string errorMessage)
+    {
+        string input;
+        do
+        {
+            Console.Write(prompt);
+            input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input) || input.Trim().Length == 0)
+                Console.WriteLine(errorMessage);
+            else
+                input = input.Trim().ToUpper();
+        } while (string.IsNullOrEmpty(input) || input.Trim().Length == 0);
+        return input;
     }
 }
