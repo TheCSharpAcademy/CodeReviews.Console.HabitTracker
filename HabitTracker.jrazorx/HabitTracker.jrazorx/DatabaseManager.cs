@@ -250,4 +250,38 @@ public class DatabaseManager
         }
     }
 
+    public int GetHabitCountForYear(int year, int habitTypeId)
+    {
+        using (var connection = new SqliteConnection(ConnectionString))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT COUNT(*) 
+                FROM Habits 
+                WHERE strftime('%Y', Date) = $year 
+                AND HabitTypeId = $habitTypeId";
+            command.Parameters.AddWithValue("$year", year.ToString());
+            command.Parameters.AddWithValue("$habitTypeId", habitTypeId);
+            return Convert.ToInt32(command.ExecuteScalar());
+        }
+    }
+
+    public int GetTotalQuantityForYear(int year, int habitTypeId)
+    {
+        using (var connection = new SqliteConnection(ConnectionString))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT SUM(Quantity) 
+                FROM Habits 
+                WHERE strftime('%Y', Date) = $year 
+                AND HabitTypeId = $habitTypeId";
+            command.Parameters.AddWithValue("$year", year.ToString());
+            command.Parameters.AddWithValue("$habitTypeId", habitTypeId);
+            var result = command.ExecuteScalar();
+            return result == DBNull.Value ? 0 : Convert.ToInt32(result);
+        }
+    }
 }

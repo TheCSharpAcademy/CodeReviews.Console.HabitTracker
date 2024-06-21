@@ -4,10 +4,12 @@ using System.Collections.Generic;
 public class HabitTracker
 {
     private readonly DatabaseManager _databaseManager;
+    private readonly ReportManager _reportManager;
 
     public HabitTracker()
     {
         _databaseManager = new DatabaseManager();
+        _reportManager = new ReportManager(_databaseManager);
     }
 
     public void Run()
@@ -25,6 +27,7 @@ public class HabitTracker
             Console.WriteLine("6. View Habits");
             Console.WriteLine("7. Update Habit");
             Console.WriteLine("8. Delete Habit");
+            Console.WriteLine("9. Generate Yearly Report");
             Console.WriteLine("0. Exit");
             Console.Write("Select an option: ");
 
@@ -55,6 +58,9 @@ public class HabitTracker
                         break;
                     case 8:
                         DeleteHabit();
+                        break;
+                    case 9:
+                        GenerateYearlyReport();
                         break;
                     case 0:
                         return;
@@ -343,5 +349,20 @@ public class HabitTracker
             Console.WriteLine("Invalid ID. Press any key to continue...");
         }
         Console.ReadKey();
+    }
+
+    private void GenerateYearlyReport()
+    {
+        Console.Clear();
+        Console.Write("Enter the year for the report: ");
+        if (int.TryParse(Console.ReadLine(), out int year))
+        {
+            _reportManager.GenerateYearlyReport(year);
+        }
+        else
+        {
+            Console.WriteLine("Invalid year. Press any key to continue...");
+            Console.ReadKey();
+        }
     }
 }
