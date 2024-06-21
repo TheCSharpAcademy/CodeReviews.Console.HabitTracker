@@ -16,7 +16,7 @@ This Habit Tracker allows users to create, view, update, and delete habits. It u
 - Input validation for user entries
 - Automatic database and table creation on first run
 - Seed data generation for initial setup
-- Yearly report
+- Yearly report generation
 
 ## Requirements
 
@@ -30,7 +30,8 @@ The project consists of the following main components:
 1. `Program.cs`: The entry point of the application.
 2. `HabitTracker.cs`: Contains the main logic for the user interface and interaction.
 3. `DatabaseManager.cs`: Handles all database operations.
-4. `Habit.cs`: Defines the Habit model.
+4. `ReportManager.cs`: Manages report generation.
+5. `Habit.cs`: Defines the Habit model.
 
 ## Setup and Running
 
