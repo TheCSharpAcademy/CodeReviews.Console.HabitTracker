@@ -16,11 +16,11 @@ This Habit Tracker allows users to create, view, update, and delete habits. It u
 - Input validation for user entries
 - Automatic database and table creation on first run
 - Seed data generation for initial setup
+- Yearly report
 
 ## Requirements
 
 - .NET 8.0
-- Visual Studio Community 2022 (or compatible IDE)
 - SQLite
 
 ## Project Structure
@@ -54,6 +54,7 @@ Upon running the application, you'll be presented with a menu of options:
 6. View Habits
 7. Update Habit
 8. Delete Habit
+9. Generate Yearly Report
 0. Exit
 
 Select an option by entering the corresponding number and follow the prompts.
@@ -95,4 +96,4 @@ The application includes error handling to prevent crashes. In case of invalid i
 
 - [x] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
 - [x] Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values.
-- [ ] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?)
+- [x] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?)
