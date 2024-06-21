@@ -250,7 +250,7 @@ public class HabitTracker
         var habits = _databaseManager.GetHabits();
         foreach (var habit in habits)
         {
-            Console.WriteLine($"{habit.Id,2} | {habit.HabitTypeName,-10} | {habit.Quantity,8} | {habit.Unit,-8} | {habit.Date:dd/MM/yyyy}");
+            Console.WriteLine($"{habit.Id,3} | {habit.HabitTypeName,-10} | {habit.Quantity,8} | {habit.Unit,-8} | {habit.Date:dd/MM/yyyy}");
         }
         if (waitForInputAtTheEnd)
         {

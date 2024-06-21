@@ -9,6 +9,7 @@ public class DatabaseManager
     public DatabaseManager()
     {
         CreateDatabase();
+        SeedData();
     }
 
     private void CreateDatabase()
@@ -32,6 +33,60 @@ public class DatabaseManager
                 FOREIGN KEY (HabitTypeId) REFERENCES HabitTypes(Id)
             )";
             command.ExecuteNonQuery();
+        }
+    }
+
+    private void SeedData()
+    {
+        using (var connection = new SqliteConnection(ConnectionString))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            // Check if data already exists
+            command.CommandText = "SELECT COUNT(*) FROM HabitTypes";
+            int count = Convert.ToInt32(command.ExecuteScalar());
+
+            if (count == 0)
+            {
+                // Seed HabitTypes
+                var habitTypes = new[]
+                {
+                   ("WATER", "GLASSES"),
+                   ("EXERCISE", "MINUTES"),
+                   ("READING", "PAGES"),
+                   ("MEDITATION", "MINUTES")
+               };
+
+                foreach (var (name, unit) in habitTypes)
+                {
+                    command.CommandText = "INSERT INTO HabitTypes (Name, Unit) VALUES ($name, $unit)";
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("$name", name);
+                    command.Parameters.AddWithValue("$unit", unit);
+                    command.ExecuteNonQuery();
+                }
+
+                // Seed Habits
+                var random = new Random();
+                var startDate = DateTime.Now.AddDays(-100);
+
+                for (int i = 0; i < 100; i++)
+                {
+                    var habitTypeId = random.Next(1, 5); // Assuming 4 habit types
+                    var quantity = random.Next(1, 11); // Random quantity between 1 and 10
+                    var date = startDate.AddDays(i);
+
+                    command.CommandText = "INSERT INTO Habits (Quantity, Date, HabitTypeId) VALUES ($quantity, $date, $habitTypeId)";
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("$quantity", quantity);
+                    command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("$habitTypeId", habitTypeId);
+                    command.ExecuteNonQuery();
+                }
+
+                Console.WriteLine("Database seeded successfully.");
+            }
         }
     }
 
