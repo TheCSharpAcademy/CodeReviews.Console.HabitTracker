@@ -18,8 +18,6 @@ namespace HabitLogger.View
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Green900, Primary.Green900, Primary.Blue500, Accent.LightBlue200, TextShade.WHITE);
 
-
-
             LoadHabits();
 
         }
@@ -37,16 +35,11 @@ namespace HabitLogger.View
         private void LoadHabits()
         {
             List<Habit> habits = DataBaseController.GetHabits();
-            dataGridView1.DataSource = habits.Select(h => new
-            {
-                h.Id,
-                Habit = h.Type.Name,
-                h.Date,
-                h.MetricValue,
-                h.Type.Metric
-            }).ToList();
+            dataGridView1.DataSource = habits;
 
         }
+
+
 
         private void materialButton4_Click(object sender, EventArgs e)
         {
@@ -56,6 +49,11 @@ namespace HabitLogger.View
             }
             DataBaseController.DeleteHabit(SelectedHabit.Id);
             LoadHabits();
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
 
         }
     }

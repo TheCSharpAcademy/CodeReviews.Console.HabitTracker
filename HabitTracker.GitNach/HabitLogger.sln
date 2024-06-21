@@ -7,10 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HabitLogger", "HabitLogger\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		All|Any CPU = All|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE1EA74B-E977-401D-9666-1EB290D9840B}.All|Any CPU.ActiveCfg = Release|Any CPU
+		{BE1EA74B-E977-401D-9666-1EB290D9840B}.All|Any CPU.Build.0 = Release|Any CPU
 		{BE1EA74B-E977-401D-9666-1EB290D9840B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE1EA74B-E977-401D-9666-1EB290D9840B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE1EA74B-E977-401D-9666-1EB290D9840B}.Release|Any CPU.ActiveCfg = Release|Any CPU
