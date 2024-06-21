@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace HabitLogger.Model
+﻿namespace HabitLogger.Model
 {
     public class Habit
     {
