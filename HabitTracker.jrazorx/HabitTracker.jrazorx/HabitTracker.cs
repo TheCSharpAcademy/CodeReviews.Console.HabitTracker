@@ -354,15 +354,23 @@ public class HabitTracker
     private void GenerateYearlyReport()
     {
         Console.Clear();
-        Console.Write("Enter the year for the report: ");
-        if (int.TryParse(Console.ReadLine(), out int year))
+        int year;
+        while (true)
         {
-            _reportManager.GenerateYearlyReport(year);
+            Console.Write("Enter the year for the report: ");
+            if (int.TryParse(Console.ReadLine(), out year) && year > 0 && year <= DateTime.Now.Year)
+            {
+                break;
+            }
+            Console.WriteLine("Invalid year. Please enter a valid year (1-{0}).", DateTime.Now.Year);
         }
-        else
-        {
-            Console.WriteLine("Invalid year. Press any key to continue...");
-            Console.ReadKey();
-        }
+
+        Console.Clear();
+        Console.WriteLine($"Yearly Report for {year}");
+        Console.WriteLine("========================");
+        _reportManager.GenerateYearlyReport(year, true, false);
+
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
     }
 }

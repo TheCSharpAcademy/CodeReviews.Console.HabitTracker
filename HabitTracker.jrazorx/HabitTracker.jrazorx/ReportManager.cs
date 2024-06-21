@@ -7,9 +7,10 @@
         _databaseManager = databaseManager;
     }
 
-    public void GenerateYearlyReport(int year)
+    public void GenerateYearlyReport(int year, bool clearAtStart = true, bool waitForInputAtTheEnd = true)
     {
-        Console.Clear();
+        if (clearAtStart)
+            Console.Clear();
         Console.WriteLine($"Yearly Report for {year}");
         Console.WriteLine("------------------------");
 
@@ -26,7 +27,10 @@
             Console.WriteLine();
         }
 
-        Console.WriteLine("Press any key to continue...");
-        Console.ReadKey();
+        if (waitForInputAtTheEnd)
+        {
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey(); 
+        }
     }
 }
