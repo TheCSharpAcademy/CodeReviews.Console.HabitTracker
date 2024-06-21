@@ -48,27 +48,6 @@ namespace HabitLogger.View
 
         }
 
-
-
-        private void AddHardcodedHabit()
-        {
-            var habitType = new HabitType { Id = 1, Name = "Running", Metric = "Km" };  //Use this for adding an Habit with a new HabitType (if the HabitType already exists, it adds the Habit with the existing HabitType)
-
-            List<HabitType> habitTypes = DataBaseController.GetHabitTypes(); //For getting created habits and choosing by index
-
-
-
-            var habit = new Habit
-            {
-                Date = DateTime.Now,
-                MetricValue = 42,
-                Type = habitType,
-            };
-            DataBaseController.AddHabitType(habitType);
-            DataBaseController.AddHabit(habit);
-
-        }
-
         private void materialButton4_Click(object sender, EventArgs e)
         {
             if (SelectedHabit == null)
