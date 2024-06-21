@@ -1,16 +1,11 @@
 ﻿using HabitLogger.View;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitLogger.Controllers
 {
     public static class FormsController
     {
         private static MainForm? MainForm { get; set; }
-        private static ViewForm? ActiveForm { get; set; }    
+        private static ViewForm? ActiveForm { get; set; }
 
 
         public static void SetMainForm(MainForm mainform)
@@ -19,10 +14,10 @@ namespace HabitLogger.Controllers
             {
                 MainForm = mainform;
             }
-            
+
         }
 
-        public static void ChangeForm(ViewForm form) 
+        public static void ChangeForm(ViewForm form)
         {
             if (MainForm == null)
             {

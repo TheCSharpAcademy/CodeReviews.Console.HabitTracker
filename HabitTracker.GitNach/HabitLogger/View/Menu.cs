@@ -1,22 +1,14 @@
 ﻿using HabitLogger.Controllers;
 using HabitLogger.Model;
 using MaterialSkin;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace HabitLogger.View
 {
     public partial class Menu : ViewForm
     {
 
-        private Habit? SelectedHabit => dataGridView1.SelectedRows.Count > 0 ? dataGridView1.SelectedRows[0].DataBoundItem as Habit : null; 
+        private Habit? SelectedHabit => dataGridView1.SelectedRows.Count > 0 ? dataGridView1.SelectedRows[0].DataBoundItem as Habit : null;
 
         public Menu() : base()
         {
@@ -27,7 +19,7 @@ namespace HabitLogger.View
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Green900, Primary.Green900, Primary.Blue500, Accent.LightBlue200, TextShade.WHITE);
 
 
-            
+
             LoadHabits();
 
         }
@@ -79,12 +71,12 @@ namespace HabitLogger.View
 
         private void materialButton4_Click(object sender, EventArgs e)
         {
-            if (SelectedHabit == null) 
-            {  
-                return; 
+            if (SelectedHabit == null)
+            {
+                return;
             }
             DataBaseController.DeleteHabit(SelectedHabit.Id);
-            LoadHabits();   
+            LoadHabits();
 
         }
     }

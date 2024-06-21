@@ -1,13 +1,5 @@
 ﻿using HabitLogger.Model;
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitLogger.Controllers
 {
@@ -166,7 +158,7 @@ namespace HabitLogger.Controllers
 
 
                 string checkSql = "SELECT COUNT(1) FROM HabitType WHERE Name = @Name";
-                using(var checkCommand = new SQLiteCommand(checkSql, connection))
+                using (var checkCommand = new SQLiteCommand(checkSql, connection))
                 {
                     checkCommand.Parameters.AddWithValue("@Name", habitType.Name);
                     int count = Convert.ToInt32(checkCommand.ExecuteScalar());

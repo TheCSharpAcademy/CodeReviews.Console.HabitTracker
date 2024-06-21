@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using HabitLogger.Controllers;
+﻿using HabitLogger.Controllers;
 using HabitLogger.Model;
-using MaterialSkin.Controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HabitLogger.View
 {
@@ -24,7 +13,7 @@ namespace HabitLogger.View
         {
             InitializeComponent();
             InitializeComboBox();
-            
+
         }
 
 
@@ -42,7 +31,7 @@ namespace HabitLogger.View
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {   
+        {
             userHabit = comboBox1.SelectedItem as HabitType;
 
         }
@@ -57,13 +46,13 @@ namespace HabitLogger.View
                 return;
             }
 
-            if (userMetric <= 0 )
+            if (userMetric <= 0)
             {
                 MessageBox.Show("Please set a MetricValue greater than 0.");
                 return;
             }
 
-                List<HabitType> habitTypes = DataBaseController.GetHabitTypes();
+            List<HabitType> habitTypes = DataBaseController.GetHabitTypes();
 
             foreach (HabitType habitType in habitTypes)
             {
@@ -80,10 +69,10 @@ namespace HabitLogger.View
                     break;
                 }
             }
-            FormsController.ChangeForm(new Menu());   
-            
+            FormsController.ChangeForm(new Menu());
 
-            
+
+
         }
     }
 }
