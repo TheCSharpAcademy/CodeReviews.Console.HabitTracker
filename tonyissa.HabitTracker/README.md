@@ -1,9 +1,3 @@
-[
-    "# Head",
-    "## Item",
-    "### Detail"
-]
-
 # DrinkWater
 
 C# Console Application to track if you've been treating your body right.
