@@ -169,7 +169,7 @@ namespace Habit_Tracker
                     System.Console.WriteLine("No rows found");
 
                 }
-
+                //fixed?
                 connection.Close();
 
                 Console.WriteLine("-----------------------\n");
