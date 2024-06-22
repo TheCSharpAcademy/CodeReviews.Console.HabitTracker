@@ -1,3 +1,9 @@
+[
+    "# Head",
+    "## Item",
+    "### Detail"
+]
+
 # DrinkWater
 
 C# Console Application to track if you've been treating your body right.
@@ -21,4 +27,3 @@ C# Console Application to track if you've been treating your body right.
 * Delete an existing entry by entering D
 
 * Press 0 to exit the program
-[EOF]
