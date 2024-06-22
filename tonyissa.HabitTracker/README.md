@@ -1,4 +1,5 @@
 # DrinkWater
+
 C# Console Application to track if you've been treating your body right.
 
 ## Features
@@ -9,7 +10,7 @@ C# Console Application to track if you've been treating your body right.
 
 * CRUD DB functions (create, read, update, delete)
 
-## How to use
+### How to use
 
 * View All Habit Logs by entering V
 
@@ -20,3 +21,4 @@ C# Console Application to track if you've been treating your body right.
 * Delete an existing entry by entering D
 
 * Press 0 to exit the program
+[EOF]
