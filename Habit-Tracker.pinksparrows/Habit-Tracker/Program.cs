@@ -37,7 +37,7 @@ public class Program
         getInput();
     }
 
-    static void getInput()
+    static void GetInput()
     {
         string inputString = Console.ReadLine();
         int input;
