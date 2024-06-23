@@ -34,7 +34,7 @@ public class Program
         Console.WriteLine("Exit -> 0\n");
         Console.WriteLine("------------------------------------");
         Console.WriteLine("Please provide your input below:");
-        getInput();
+        GetInput();
     }
 
     static void GetInput()
