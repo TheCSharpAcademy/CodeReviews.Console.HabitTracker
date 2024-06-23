@@ -1,20 +1,23 @@
 # DrinkWater
+
 C# Console Application to track if you've been treating your body right.
 
 ## Features
-* SQLite database connection, ensure you have SQLite installed into your path
 
-* A console based UI where users can navigate by key presses
+- SQLite database connection, ensure you have SQLite installed into your path
 
-* CRUD DB functions (create, read, update, delete)
+- A console based UI where users can navigate by key presses
 
-## How to use
-* View All Habit Logs by entering V
+- CRUD DB functions (create, read, update, delete)
 
-* Insert a new entry by entering I
+## Usage
 
-* Update an existing entry by entering U
+- View All Habit Logs by entering V
 
-* Delete an existing entry by entering D
+- Insert a new entry by entering I
 
-* Press 0 to exit the program
+- Update an existing entry by entering U
+
+- Delete an existing entry by entering D
+
+- Press 0 to exit the program
