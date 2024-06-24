@@ -7,7 +7,7 @@
         _databaseManager = databaseManager;
     }
 
-    public void GenerateYearlyReport(int year, bool clearAtStart = true, bool waitForInputAtTheEnd = true)
+    public void GenerateYearlyReport(int year, bool clearAtStart = true)
     {
         if (clearAtStart)
             Console.Clear();
@@ -25,12 +25,6 @@
             Console.WriteLine($"  Times tracked: {count}");
             Console.WriteLine($"  Total {unit}: {totalQuantity}");
             Console.WriteLine();
-        }
-
-        if (waitForInputAtTheEnd)
-        {
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey(); 
         }
     }
 }

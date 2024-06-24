@@ -1,5 +1,19 @@
 ﻿using System;
 
+public enum MenuOption
+{
+    Exit = 0,
+    CreateHabitType,
+    ViewHabitTypes,
+    UpdateHabitType,
+    DeleteHabitType,
+    CreateHabit,
+    ViewHabits,
+    UpdateHabit,
+    DeleteHabit,
+    GenerateYearlyReport
+}
+
 public class HabitTracker
 {
     private readonly DatabaseManager _databaseManager;
@@ -13,9 +27,15 @@ public class HabitTracker
 
     public void Run()
     {
-        while (true)
+        DisplayMenu();
+    }
+
+    private void DisplayMenu()
+    {
+        bool exitRequested = false;
+
+        while (!exitRequested)
         {
-            Console.Clear();
             Console.Clear();
             Console.WriteLine("Habit Tracker Menu:");
             Console.WriteLine("1. Create Habit Type");
@@ -28,52 +48,63 @@ public class HabitTracker
             Console.WriteLine("8. Delete Habit");
             Console.WriteLine("9. Generate Yearly Report");
             Console.WriteLine("0. Exit");
-            Console.Write("Select an option: ");
 
-            if (int.TryParse(Console.ReadLine(), out int option))
+            MenuOption menuChoice = GetValidMenuChoice();
+
+            switch (menuChoice)
             {
-                switch (option)
-                {
-                    case 1:
-                        InsertHabitType();
-                        break;
-                    case 2:
-                        ViewHabitTypes();
-                        break;
-                    case 3:
-                        UpdateHabitType();
-                        break;
-                    case 4:
-                        DeleteHabitType();
-                        break;
-                    case 5:
-                        InsertHabit();
-                        break;
-                    case 6:
-                        ViewHabits();
-                        break;
-                    case 7:
-                        UpdateHabit();
-                        break;
-                    case 8:
-                        DeleteHabit();
-                        break;
-                    case 9:
-                        GenerateYearlyReport();
-                        break;
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Invalid option. Press any key to continue...");
-                        Console.ReadKey();
-                        break;
-                }
+                case MenuOption.CreateHabitType:
+                    InsertHabitType();
+                    break;
+                case MenuOption.ViewHabitTypes:
+                    ViewHabitTypes();
+                    break;
+                case MenuOption.UpdateHabitType:
+                    UpdateHabitType();
+                    break;
+                case MenuOption.DeleteHabitType:
+                    DeleteHabitType();
+                    break;
+                case MenuOption.CreateHabit:
+                    InsertHabit();
+                    break;
+                case MenuOption.ViewHabits:
+                    ViewHabits();
+                    break;
+                case MenuOption.UpdateHabit:
+                    UpdateHabit();
+                    break;
+                case MenuOption.DeleteHabit:
+                    DeleteHabit();
+                    break;
+                case MenuOption.GenerateYearlyReport:
+                    GenerateYearlyReport();
+                    break;
+                case MenuOption.Exit:
+                    exitRequested = true;
+                    break;
             }
-            else
+
+            if (!exitRequested)
             {
-                Console.WriteLine("Invalid input. Press any key to continue...");
+                Console.WriteLine("\nPress any key to return to the menu...");
                 Console.ReadKey();
             }
+        }
+    }
+
+    private static MenuOption GetValidMenuChoice()
+    {
+        MenuOption choice;
+        while (true)
+        {
+            Console.Write("\nEnter your choice: ");
+            if (Enum.TryParse(Console.ReadLine(), true, out choice) &&
+                Enum.IsDefined(typeof(MenuOption), choice))
+            {
+                return choice;
+            }
+            Console.WriteLine("Invalid input. Please enter a number between 0 and 9.");
         }
     }
 
@@ -85,12 +116,11 @@ public class HabitTracker
         string unit = GetNonEmptyTrimmedUppercaseInputString("Enter the unit of measurement (e.g., glasses, minutes, etc.): ", "The unit cannot be null or empty. Please try again.");
 
         _databaseManager.InsertHabitType(name, unit);
-        Console.WriteLine("Habit type created successfully. Press any key to continue...");
-        Console.ReadKey();
+        Console.WriteLine("Habit type created successfully.");
     }
 
 
-    private void ViewHabitTypes(bool clearAtStart = true, bool waitForInputAtTheEnd = true)
+    private void ViewHabitTypes(bool clearAtStart = true)
     {
         if (clearAtStart)
             Console.Clear();
@@ -101,17 +131,12 @@ public class HabitTracker
         {
             Console.WriteLine($"{Id,2} | {Name,-10} | {Unit}");
         }
-        if (waitForInputAtTheEnd)
-        {
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
     }
 
     private void UpdateHabitType()
     {
         Console.Clear();
-        ViewHabitTypes(false, false);
+        ViewHabitTypes(false);
         Console.Write("Enter habit type ID to update: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
@@ -120,42 +145,40 @@ public class HabitTracker
             try
             {
                 _databaseManager.UpdateHabitType(id, name, unit);
-                Console.WriteLine("Habit type updated successfully. Press any key to continue...");
+                Console.WriteLine("Habit type updated successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + " Press any key to continue...");
+                Console.WriteLine(ex.Message);
             }
         }
         else
         {
-            Console.WriteLine("Invalid ID. Press any key to continue...");
+            Console.WriteLine("Invalid ID.");
         }
-        Console.ReadKey();
     }
 
     private void DeleteHabitType()
     {
         Console.Clear();
-        ViewHabitTypes(false, false);
+        ViewHabitTypes(false);
         Console.Write("Enter habit type ID to delete: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
             try
             {
                 _databaseManager.DeleteHabitType(id);
-                Console.WriteLine("Habit type deleted successfully. Press any key to continue...");
+                Console.WriteLine("Habit type deleted successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + " Press any key to continue...");
+                Console.WriteLine(ex.Message);
             }
         }
         else
         {
-            Console.WriteLine("Invalid ID. Press any key to continue...");
+            Console.WriteLine("Invalid ID.");
         }
-        Console.ReadKey();
     }
 
     private void InsertHabit()
@@ -164,8 +187,7 @@ public class HabitTracker
         var habitTypes = _databaseManager.GetHabitTypes();
         if (habitTypes.Count == 0)
         {
-            Console.WriteLine("No habit types available. Please create a habit type first. Press any key to continue...");
-            Console.ReadKey();
+            Console.WriteLine("No habit types available. Please create a habit type first.");
             return;
         }
 
@@ -185,16 +207,15 @@ public class HabitTracker
                 HabitTypeId = habitTypeId
             };
             _databaseManager.InsertHabit(habit);
-            Console.WriteLine("Habit created successfully. Press any key to continue...");
+            Console.WriteLine("Habit created successfully.");
         }
         else
         {
-            Console.WriteLine("Invalid quantity. Press any key to continue...");
+            Console.WriteLine("Invalid quantity.");
         }
-        Console.ReadKey();
     }
 
-    private void ViewHabits(bool clearAtStart = true, bool waitForInputAtTheEnd = true)
+    private void ViewHabits(bool clearAtStart = true)
     {
         if (clearAtStart)
             Console.Clear();
@@ -205,18 +226,13 @@ public class HabitTracker
         {
             Console.WriteLine($"{habit.Id,3} | {habit.HabitTypeName,-10} | {habit.Quantity,8} | {habit.Unit,-8} | {habit.Date:dd/MM/yyyy}");
         }
-        if (waitForInputAtTheEnd)
-        {
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
     }
 
 
     private void UpdateHabit()
     {
         Console.Clear();
-        ViewHabits(false, false);
+        ViewHabits(false);
         Console.Write("Enter habit ID to update: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
@@ -240,48 +256,46 @@ public class HabitTracker
                 try
                 {
                     _databaseManager.UpdateHabit(habit);
-                    Console.WriteLine("Habit updated successfully. Press any key to continue...");
+                    Console.WriteLine("Habit updated successfully.");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message + " Press any key to continue...");
+                    Console.WriteLine(ex.Message);
                 }
             }
             else
             {
-                Console.WriteLine("Invalid quantity. Press any key to continue...");
+                Console.WriteLine("Invalid quantity.");
             }
         }
         else
         {
-            Console.WriteLine("Invalid ID. Press any key to continue...");
+            Console.WriteLine("Invalid ID.");
         }
-        Console.ReadKey();
     }
 
 
     private void DeleteHabit()
     {
         Console.Clear();
-        ViewHabits(false, false);
+        ViewHabits(false);
         Console.Write("Enter habit ID to delete: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
             try
             {
                 _databaseManager.DeleteHabit(id);
-                Console.WriteLine("Habit deleted successfully. Press any key to continue...");
+                Console.WriteLine("Habit deleted successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + " Press any key to continue...");
+                Console.WriteLine(ex.Message);
             }
         }
         else
         {
-            Console.WriteLine("Invalid ID. Press any key to continue...");
+            Console.WriteLine("Invalid ID.");
         }
-        Console.ReadKey();
     }
 
     private void GenerateYearlyReport()
@@ -301,16 +315,13 @@ public class HabitTracker
         Console.Clear();
         Console.WriteLine($"Yearly Report for {year}");
         Console.WriteLine("========================");
-        _reportManager.GenerateYearlyReport(year, true, false);
-
-        Console.WriteLine("Press any key to continue...");
-        Console.ReadKey();
+        _reportManager.GenerateYearlyReport(year, true);
     }
 
     private int GetValidHabitTypeId(List<(int Id, string Name, string Unit)> habitTypes)
     {
         Console.WriteLine("Available Habit Types:");
-        ViewHabitTypes(false, false);
+        ViewHabitTypes(false);
 
         Console.Write("Enter the ID of the habit type: ");
         if (int.TryParse(Console.ReadLine(), out int habitTypeId))
@@ -318,14 +329,13 @@ public class HabitTracker
             bool habitTypeExists = habitTypes.Exists(ht => ht.Id == habitTypeId);
             if (!habitTypeExists)
             {
-                Console.WriteLine("Habit type ID does not exist. Press any key to continue...");
+                Console.WriteLine("Habit type ID does not exist.");
                 Console.ReadKey();
                 return -1;
             }
             return habitTypeId;
         }
-        Console.WriteLine("Invalid habit type ID. Press any key to continue...");
-        Console.ReadKey();
+        Console.WriteLine("Invalid habit type ID.");
         return -1;
     }
 
