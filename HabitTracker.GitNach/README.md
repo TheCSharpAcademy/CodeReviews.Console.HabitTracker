@@ -8,6 +8,7 @@ HabitTracker is a simple C# WinForms application designed to help you manage and
 - **Delete Habits:** Remove existing habits from your list.
 - **Update Habits:** Modify details of existing habits.
 - **Display Habits:** View a list of all registered habits.
+- **Create Habits:** Create types of habits for new habits to be registered.
 
 ## How to Use
 
