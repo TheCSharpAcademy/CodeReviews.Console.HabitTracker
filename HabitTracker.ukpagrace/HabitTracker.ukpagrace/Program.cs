@@ -1,5 +1,6 @@
 ﻿using DatabaseLibrary;
 using UserInputLibrary;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 class HabitTracker
 {
     static DateTime start;
@@ -19,19 +20,7 @@ class HabitTracker
         GetUsersInput();
     }
 
-    public static void ShowMenu()
-    {
-        Console.WriteLine("Select an option");
-        Console.WriteLine("1 - Create Habit");
-        Console.WriteLine("2 - Insert");
-        Console.WriteLine("3 - See all tracked habit");
-        Console.WriteLine("4 - Update");
-        Console.WriteLine("5 - Delete");
-        Console.WriteLine("6 - List Habits");
-        Console.WriteLine("7 - See Report");
-        Console.WriteLine("8 - change habit table");
-        Console.WriteLine("0 - or 0 to Exit");
-    }
+
 
     public static void GetUsersInput()
     {
@@ -39,10 +28,8 @@ class HabitTracker
 
         while (!exit)
         {
-            ShowMenu();
-            var userInput = Console.ReadLine();
-            Console.Clear();
-            switch (userInput)
+            string option = userInput.GetMenuOption();
+            switch (option)
             {
                 case "1":
                     CreateHabit();
@@ -121,8 +108,18 @@ class HabitTracker
 
     static void CreateHabit()
     {
-        string newHabit = userInput.GetHabitInput("Enter Habit to Track, Note This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)");
+        string newHabit = userInput.GetHabitInput("Enter Habit to Track, Note This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day) or 9 to go back to menu");
+        if (newHabit == "menu")
+        {
+            GetUsersInput();
+            return;
+        }
         string unit = userInput.GetUnitInput();
+        if (unit == "menu")
+        {
+            GetUsersInput();
+            return;
+        }
         database.Create(newHabit, unit);
         Console.WriteLine("Created Sucessfully, Choose another option\n");
     }
@@ -130,7 +127,17 @@ class HabitTracker
     static void InsertHabit()
     {
         string date = userInput.GetDateInput();
-        int quantity = userInput.GetNumberInput("Enter only numeric quantity in any measurement(No decimal allowed)");
+        if(date == "menu")
+        {
+            GetUsersInput();
+            return;
+        }
+        int quantity = userInput.GetNumberInput("Enter only numeric quantity in any measurement(No decimal allowed) or 9 to go back to menu");
+        if (quantity ==  -1)
+        {
+            GetUsersInput();
+            return;
+        }
         database.Insert(habit, date, quantity);
         Console.Clear();
         Console.WriteLine("Record Inserted Sucessfully, Choose another option\n");
@@ -146,7 +153,11 @@ class HabitTracker
 
         if (tableData.Count > 0)
         {
-            int id = userInput.GetNumberInput("Enter the Id you want to update from the list");
+            int id = userInput.GetNumberInput("Enter the Id you want to update from the list or 9 to go back to menu");
+            if (id == -1) {
+                GetUsersInput();
+                return;
+            }
 
             if (!IdExists(id))
             {
@@ -156,7 +167,17 @@ class HabitTracker
             }
 
             string date = userInput.GetDateInput();
-            int quantity = userInput.GetNumberInput("Enter only numeric quantity in any measurement(No decimal allowed)");
+            if (date == "menu")
+            {
+                GetUsersInput();
+                return;
+            }
+            int quantity = userInput.GetNumberInput("Enter only numeric quantity in any measurement(No decimal allowed) or 9 to go back to menu");
+            if (quantity == -1)
+            {
+                GetUsersInput();
+                return;
+            }
             database.Update(habit, date, quantity, id);
             Console.Clear();
             Console.WriteLine("Updated Record, Choose another option\n");
@@ -168,7 +189,12 @@ class HabitTracker
         DisplayTable(habit);
         if (tableData.Count > 0)
         {
-            int id = userInput.GetNumberInput("Enter the Id you want to delete from the list");
+            int id = userInput.GetNumberInput("Enter the Id you want to delete from the list or 9 to go back to menu");
+            if (id == -1)
+            {
+                GetUsersInput();
+                return;
+            }
             if (!IdExists(id))
             {
                 Console.WriteLine("No item with the following id, please select an id from the table");
@@ -179,7 +205,7 @@ class HabitTracker
             Console.Clear();
             Console.WriteLine("Deleted Record, Choose another option\n");
         }
-  
+
     }
     public static bool IdExists(int id)
     {
@@ -203,26 +229,43 @@ class HabitTracker
 
     public static void ChangeTable()
     {
-        habit = "none";
-        UseTable();
+        ShowHabits();
+        habit = userInput.GetHabitInput("Enter a Habit to perform actions on");
+        if (habit == "menu")
+        {
+            GetUsersInput();
+            return;
+        }
+        Console.Clear();
+        while (!HabitExists(habit))
+        {
+            ShowHabits();
+            habit = userInput.GetHabitInput("No habit with the following habit with the following, Enter a valid habit or 9 to go back to menu");
+            if (habit == "menu")
+            {
+                GetUsersInput();
+                return;
+            }
+            Console.Clear();
+        }
     }
 
     public static void UseTable()
     {
         ShowHabits();
-        if(table.Count == 0)
+        if (table.Count == 0)
         {
             CreateHabit();
             UseTable();
         }
-        if(habit == "none")
-        { 
+        if (habit == "none")
+        {
             habit = userInput.GetHabitInput("Enter a Habit to perform actions on");
             Console.Clear();
             while (!HabitExists(habit))
             {
                 ShowHabits();
-                habit = userInput.GetHabitInput("No habit with the following habit with the following, Enter a valid habit");
+                habit = userInput.GetHabitInput("No habit with the following habit with the following");
                 Console.Clear();
             }
         }

@@ -98,15 +98,15 @@ namespace DatabaseLibrary
 
         public void Delete(string table, int id)
         {
-                var connection = new SqliteConnection(connectionString);
-                connection.Open();
+            var connection = new SqliteConnection(connectionString);
+            connection.Open();
 
-                var TableCommand = connection.CreateCommand();
-                TableCommand.CommandText = $"DELETE FROM {table} where Id={id}";
+            var TableCommand = connection.CreateCommand();
+            TableCommand.CommandText = $"DELETE FROM {table} where Id={id}";
 
-                TableCommand.ExecuteNonQuery();
-                connection.Close();
-            
+            TableCommand.ExecuteNonQuery();
+            connection.Close();
+
         }
 
         public void Analysis(string table)
@@ -132,10 +132,10 @@ namespace DatabaseLibrary
                 {
                     report.Add(
                         new ReportData
-                        { 
-                             Month = reader.GetString(0),
-                             EntryCount = reader.GetInt32(1),
-                             Achieved = reader.GetInt32(2)
+                        {
+                            Month = reader.GetString(0),
+                            EntryCount = reader.GetInt32(1),
+                            Achieved = reader.GetInt32(2)
                         }
                     );
                 }
