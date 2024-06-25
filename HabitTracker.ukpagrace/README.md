@@ -24,7 +24,7 @@ A habit tracker used to track uses habits, allowing them create habits and enter
 	-If No Database exist the uses will be prompted to create a table
 -	-Once the User creates the Table, the will be prompted to select a table for the remaining operations
 	-A console based UI, prompting the user to create a table
-	- ![Console UI](images/images1.png)
+	- ![Console UI](https://imgur.com/a/U1hgX32)
 	- ![Console UI](images/images2.png)
 - ** CRUD DB functions**
 	-A console based UI, Displaying crud operations
