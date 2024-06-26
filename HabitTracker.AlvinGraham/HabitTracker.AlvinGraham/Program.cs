@@ -37,7 +37,7 @@ void MainMenu()
 				GetRecords();
 				break;
 			case "Update Record":
-				//UpdateRecord();
+				UpdateRecord();
 				break;
 			case "Quit":
 				Console.WriteLine("Goodbye!");
@@ -47,6 +47,50 @@ void MainMenu()
 				Console.WriteLine("Invalid Choice. Please choose one of the above");
 				break;
 		}
+	}
+}
+
+void UpdateRecord()
+{
+	GetRecords();
+	var id = GetNumber("Please type the id of the record you want to update.");
+
+	string date = "";
+	bool updateDate = AnsiConsole.Confirm("Update date?");
+	if (updateDate)
+	{
+		date = GetDate("\nEnter the date (format : dd-mm-yy) or insert 0 to Go Back to Main Menu:\n");
+	}
+
+	int quantity = 0;
+	bool updateQuantity = AnsiConsole.Confirm("Update distance?");
+	if (updateQuantity)
+	{
+		quantity = GetNumber("\nPlease enter the number of meters walked (no deicmals or negatives allowed) or enter 0 to Go Back to Main Menu.");
+	}
+
+	string query;
+	if (updateDate && updateQuantity)
+	{
+		query = $"UPDATE walkingHabit SET Date = '{date}', Quantity = {quantity} WHERE Id = {id}";
+	}
+	else if (updateDate && !updateQuantity)
+	{
+		query = $"UPDATE walkingHabit SET Date = '{date}' WHERE Id = {id}";
+	}
+	else
+	{
+		query = $"UPDATE walkingHabit SET Quantity = '{quantity}' WHERE Id = {id}";
+	}
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var tableCmd = connection.CreateCommand();
+
+		tableCmd.CommandText = query;
+
+		tableCmd.ExecuteNonQuery();
 	}
 }
 
