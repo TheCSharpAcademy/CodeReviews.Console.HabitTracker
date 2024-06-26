@@ -31,7 +31,7 @@ void MainMenu()
 				AddRecord();
 				break;
 			case "Delete Record":
-				//DeleteRecord();
+				DeleteRecord();
 				break;
 			case "View Records":
 				GetRecords();
@@ -153,6 +153,25 @@ void ViewRecords(List<WalkingRecord> records)
 	}
 
 	AnsiConsole.Write(table);
+}
+
+void DeleteRecord()
+{
+	GetRecords();
+
+	var id = GetNumber("Please type the id of the record you want to delete.");
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		using (var command = connection.CreateCommand())
+		{
+			connection.Open();
+
+			command.CommandText =
+				$@"DELETE FROM walkingHabit WHERE ID = {id}";
+			command.ExecuteNonQuery();
+		}
+	}
 }
 
 void CreateDatabase()
