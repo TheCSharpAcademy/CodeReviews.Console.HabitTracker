@@ -34,7 +34,7 @@ void MainMenu()
 				//DeleteRecord();
 				break;
 			case "View Records":
-				//ViewRecords();
+				GetRecords();
 				break;
 			case "Update Record":
 				//UpdateRecord();
@@ -101,6 +101,60 @@ string GetDate(string message)
 	return dateInput;
 }
 
+void GetRecords()
+{
+	List<WalkingRecord> records = new();
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var tableCmd = connection.CreateCommand();
+		tableCmd.CommandText = "SELECT * FROM walkingHabit";
+
+		using (SqliteDataReader reader = tableCmd.ExecuteReader())
+		{
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+					try
+					{
+						records.Add(
+							new WalkingRecord(
+								reader.GetInt32(0),
+								DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+								reader.GetInt32(2)
+								)
+							);
+					}
+					catch (FormatException ex)
+					{
+						Console.WriteLine($"Error parsing date: {ex.Message}. Skipping this record.");
+					}
+			}
+			else
+			{
+				Console.WriteLine("No rows found");
+			}
+		}
+	}
+
+	ViewRecords(records);
+}
+
+void ViewRecords(List<WalkingRecord> records)
+{
+	var table = new Table();
+	table.AddColumn("Id");
+	table.AddColumn("Date");
+	table.AddColumn("Amount");
+
+	foreach (var record in records)
+	{
+		table.AddRow(record.Id.ToString(), record.Date.ToString(), record.Meters.ToString());
+	}
+
+	AnsiConsole.Write(table);
+}
+
 void CreateDatabase()
 {
 	using (SqliteConnection connection = new(connectionString))
@@ -118,3 +172,5 @@ void CreateDatabase()
 		}
 	}
 }
+
+record WalkingRecord(int Id, DateTime Date, int Meters);
