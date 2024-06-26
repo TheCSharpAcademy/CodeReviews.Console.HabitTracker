@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Spectre.Console;
+using System.Globalization;
 
 string connectionString = @"Data Source=habit-Tracker.db";
 
@@ -27,7 +28,7 @@ void MainMenu()
 		switch (userChoice)
 		{
 			case "Add Record":
-				//AddRecord();
+				AddRecord();
 				break;
 			case "Delete Record":
 				//DeleteRecord();
@@ -47,6 +48,57 @@ void MainMenu()
 				break;
 		}
 	}
+}
+
+void AddRecord()
+{
+	string date = GetDate("\nEnter the date (format - dd-mm-yy) or insert 0 to Go Back to Main Menu:\n");
+	int quantity = GetNumber("\nPlease enter number of meters waled (no decimals or negatives allowed) or enter 0 to Go Back to Main Menu:\n");
+	Console.Clear();
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var tableCmd = connection.CreateCommand();
+
+		tableCmd.CommandText = $"INSERT INTO walkingHabit(date, quantity) VALUES ('{date}', {quantity})";
+
+		tableCmd.ExecuteNonQuery();
+	}
+}
+
+int GetNumber(string message)
+{
+	Console.WriteLine(message);
+	string? numberInput = Console.ReadLine();
+
+	if (numberInput == "0")
+		MainMenu();
+
+	int outpout = 0;
+	while (!int.TryParse(numberInput, out outpout) || Convert.ToInt32(numberInput) < 0)
+	{
+		Console.WriteLine("\n\nInvalid number. Try again.\n\n");
+		numberInput = Console.ReadLine();
+	}
+
+	return outpout;
+}
+
+string GetDate(string message)
+{
+	Console.WriteLine(message);
+	string? dateInput = Console.ReadLine();
+
+	if (dateInput == "0")
+		MainMenu();
+
+	while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+	{
+		Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Please try again\n\n");
+		dateInput = Console.ReadLine();
+	}
+
+	return dateInput;
 }
 
 void CreateDatabase()
