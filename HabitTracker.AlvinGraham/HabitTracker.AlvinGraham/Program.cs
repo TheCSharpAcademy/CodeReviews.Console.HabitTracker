@@ -225,11 +225,22 @@ void CreateDatabase()
 		using (SqliteCommand tableCmd = connection.CreateCommand())
 		{
 			connection.Open();
+
 			tableCmd.CommandText =
-				@"CREATE TABLE IF NOT EXISTS walkingHabit (
+				@"CREATE TABLE IF NOT EXISTS records (
 					Id INTEGER PRIMARY KEY AUTOINCREMENT,
 					Date TEXT,
-					Quantity INTEGER
+					Quantity INTEGER,
+					HabitId INTEGER,
+					FOREIGN KEY(habitId) REFERENCES habits(Id) ON DELETE CASCADE
+				)";
+			tableCmd.ExecuteNonQuery();
+
+			tableCmd.CommandText =
+				@"CREATE TABLE IF NOT EXISTS habits (
+					Id INTEGER PRIMARY KEY AUTOINCREMENT,
+					Date TEXT,
+					MeasuerementUnit TEXT
 					)";
 			tableCmd.ExecuteNonQuery();
 		}
