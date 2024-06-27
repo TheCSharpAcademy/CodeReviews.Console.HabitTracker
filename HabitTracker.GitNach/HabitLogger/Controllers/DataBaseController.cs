@@ -72,18 +72,17 @@ namespace HabitLogger.Controllers
             }
         }
 
-        public static void UpdateItem(int id, Habit updatedHabit)
+        public static void UpdateItem(int id, int metricValue)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "UPDATE Habit SET Date = @Date, MetricValue = @MetricValue, TypeId = @TpeId WHERE Id = @Id";
+                string sql = "UPDATE Habit SET MetricValue = @MetricValue WHERE Id = @Id";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
-                    command.Parameters.AddWithValue("@Date", updatedHabit.Date.ToString("yyyy-MM-dd"));
-                    command.Parameters.AddWithValue("@MetricValue", updatedHabit.MetricValue);
-                    command.Parameters.AddWithValue("@TypeId", updatedHabit.MetricValue);
+                    command.Parameters.AddWithValue("@MetricValue", metricValue);
+
                     command.ExecuteNonQuery();
                 }
             }

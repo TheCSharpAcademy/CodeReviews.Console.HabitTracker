@@ -1,7 +1,6 @@
 ﻿using HabitLogger.Controllers;
 using HabitLogger.Model;
 using MaterialSkin;
-using System.Data;
 
 namespace HabitLogger.View
 {
@@ -52,6 +51,21 @@ namespace HabitLogger.View
 
         }
 
-        
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void materialButton2_Click(object sender, EventArgs e)
+        {
+            if (SelectedHabit == null)
+            {
+                return;
+            }
+            UpdateForm updateForm = new UpdateForm();
+            updateForm.ShowDialog(this);
+            DataBaseController.UpdateItem(SelectedHabit.Id, updateForm.NewMetricValue);
+            LoadHabits();
+        }
     }
 }

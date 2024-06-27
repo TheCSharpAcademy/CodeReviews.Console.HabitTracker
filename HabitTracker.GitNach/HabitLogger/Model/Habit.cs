@@ -1,4 +1,6 @@
-﻿namespace HabitLogger.Model
+﻿using System.ComponentModel;
+
+namespace HabitLogger.Model
 {
     public class Habit
     {
@@ -10,7 +12,7 @@
 
         public HabitType Type { get; set; }
 
-        public string MetricData => this.MetricValue.ToString() + " " +this.Type.Metric;
+        public string MetricData => this.MetricValue.ToString() + " " + this.Type.Metric;
 
     }
 }
