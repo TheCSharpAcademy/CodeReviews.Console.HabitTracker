@@ -1,6 +1,6 @@
 # HabitTracker
 
-HabitTracker is a simple C# WinForms application designed to help you 
+HabitTracker is a simple C# WinForms application designed to help you
 manage and track your daily habits.
 
 ## Features
@@ -31,7 +31,7 @@ manage and track your daily habits.
 
 ### Display Habits
 
-- All registered habits are displayed in a list within the main 
+- All registered habits are displayed in a list within the main
   application interface.
 
 ## Requirements
@@ -39,3 +39,4 @@ manage and track your daily habits.
 - Windows operating system.
 - .NET Framework 4.5 or higher.
 - Integrated Development Environment (IDE) compatible with C#.
+
