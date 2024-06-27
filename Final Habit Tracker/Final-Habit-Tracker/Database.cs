@@ -1,6 +1,5 @@
 using Microsoft.Data.Sqlite;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 
 namespace HabitLogger;
 

@@ -5,8 +5,8 @@ CRUD application for logging habits using C# and SQLite.
 
 ## Requirements
 
--  This is an application where you’ll register one habit.
--  This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day).
+- This is an application where you’ll register one habit.
+- This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day).
 - The application should store and retrieve data from a real database.
 - When the application starts, it should create a sqlite database, if one isn’t present. 
 - It should also create a table in the database, where the habit will be logged. 
@@ -25,19 +25,19 @@ CRUD application for logging habits using C# and SQLite.
 - Users navigate the menu by key presses
 - ![alt text](image-1.png)
 - Functions include:
-	- Searching the database. 
-		- Users can select column and input a search term.
-	    - ![alt text](image.png)
-	- Viewing all records.
-	- Inserting a record.
-		- Application ensures date is the correct format (dd-mm-yy).
-	- Updating records.
-		- Allows user to update specific columns.
-		- ![alt text](image-2.png)
-	- Deleting records.
-	- Deleting the database.
-		- Allows user to cancel the action if warranted.
-		- ![alt text](image-3.png)		
+  - Searching the database. 
+  - Users can select column and input a search term.
+    - ![alt text](image.png)
+  - Viewing all records.
+  - Inserting a record.
+	- Application ensures date is the correct format (dd-mm-yy).
+  - Updating records.
+	- Allows user to update specific columns.
+	- ![alt text](image-2.png)
+  - Deleting records.
+  - Deleting the database.
+	- Allows user to cancel the action if warranted.
+	- ![alt text](image-3.png)		
 <br>
 
 ## Challenges
