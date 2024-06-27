@@ -6,12 +6,12 @@
         {
             string dbFilename = "habit-tracker.db";
             bool requiresClosing = false;
-            bool seedRequired = !File.Exists(dbFilename);
+            bool databaseExists = File.Exists(dbFilename);
 
             Interface appInterface = new Interface();
             DatabaseController dbController = new($@"Data Source={dbFilename}");
 
-            dbController.InitializeDatabase(seedRequired);
+            dbController.InitializeDatabase(databaseExists);
 
             while (!requiresClosing)
             {

@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace HabitTracker
 {
+
     public class DatabaseController
     {
         /// <value>The connection string used to create the Sqlite connection</value>
@@ -33,16 +34,14 @@ namespace HabitTracker
             connection.Open();
 
             var loadQuery = connection.CreateCommand();
-            loadQuery.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name <> 'sqlite_sequence'";
+            loadQuery.CommandText = "SELECT HabitName, UnitName FROM Habits";
 
             using (var reader = loadQuery.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    string tableName = reader.GetString(0); // Get table name from reader
-
-                    // Retrieve the name of the third column in the table
-                    string unitName = GetHabitUnitName(connection, tableName);
+                    string tableName = reader.GetString(0);
+                    string unitName = reader.GetString(1);
 
                     habits.Add((tableName, unitName));
                 }
@@ -52,51 +51,13 @@ namespace HabitTracker
         }
 
         /// <summary>
-        /// Helper method that gets the name of the unit for the habit.
-        /// </summary>
-        /// <param name="connection">DB connection instance</param>
-        /// <param name="tableName">Name of the habit table</param>
-        /// <returns>Name of the measuring unit for the habit</returns>
-        /// <exception cref="Exception">Gets thrown in case the table has fewer than 3 cols.</exception>
-        internal string GetHabitUnitName(SqliteConnection connection, string tableName)
-        {
-            string? columnName = null;
-
-            // Query to get information about columns in the specified table
-            string query = $"PRAGMA table_info({tableName});";
-
-            using (var command = new SqliteCommand(query, connection))
-            {
-                using (var reader = command.ExecuteReader())
-                {
-                    // Move to the third row in the result set (index 2)
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (!reader.Read())
-                        {
-                            // Handle cases where the table has fewer than 3 columns
-                            throw new Exception($"Table '{tableName}' does not have at least 3 columns.");
-                        }
-                    }
-
-                    // Read the third column's name (second column in the result set)
-                    if (reader.HasRows)
-                    {
-                        columnName = reader.GetString(1); // Second column (name)
-                    }
-                }
-            }
-
-            return columnName!;
-        }
-
-        /// <summary>
         /// Method for initializing the DB. Creates the database with some mock habits and seeds the first habit.
         /// </summary>
-        public void InitializeDatabase(bool seedRequired)
+        public void InitializeDatabase(bool databaseExists)
         {
-            if (seedRequired)
+            if (!databaseExists)
             {
+                CreateTables();
                 Console.WriteLine("Database created. Seeding...");
                 SeedDatabase();
             }
@@ -111,6 +72,36 @@ namespace HabitTracker
             Console.ReadKey();
         }
 
+        internal void CreateTables()
+        {
+            connection.Open();
+            using (var habitsTable = connection.CreateCommand())
+            {
+                habitsTable.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS Habits (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                        HabitName TEXT, 
+                        UnitName TEXT
+                    )";
+                habitsTable.ExecuteNonQuery();
+            }
+
+            using (var loggedTable = connection.CreateCommand())
+            {
+                loggedTable.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS HabitsLogged (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                        HabitId INTEGER, 
+                        Date TEXT, 
+                        Quantity INTEGER,
+                        FOREIGN KEY (HabitId) REFERENCES Habits(Id)
+                    )";
+                loggedTable.ExecuteNonQuery();
+            }
+            connection.Close();
+        }
+
+
         /// <summary>
         /// Method that gathers information to be able to insert a new record into a specified habit table.
         /// </summary>
@@ -119,7 +110,7 @@ namespace HabitTracker
             string date = DateTime.Now.ToString("dd-MM-yyyy");
 
             Console.WriteLine("Which habit would you like to log?");
-            int selectedOption = SelectHabitFromDb();
+            int habitId = SelectHabitFromDb();
 
             Console.Write("Do you want to use today's date? (y/n):   ");
             var userResponse = Console.ReadLine();
@@ -143,27 +134,52 @@ namespace HabitTracker
                 }
             }
 
-            Console.WriteLine($"Enter amount of {this.habits[selectedOption].unitName} below.");
-            int measure = Interface.ParseSelection();
+            Console.WriteLine($"Enter amount of {FetchUnit(habitId)} below.");
+            int quantity = Interface.ParseSelection();
 
-            InsertRecord(this.habits[selectedOption], date, measure);
+            InsertRecord(habitId, date, quantity);
             Console.WriteLine("Insert successful. Press any key to continue.");
             Console.ReadKey();
+        }
+
+        internal string FetchUnit(int habitId)
+        {
+            string unitName = "units";
+
+            connection.Open();
+
+            using (var fetchQuery = connection.CreateCommand())
+            {
+                fetchQuery.CommandText = "SELECT UnitName FROM Habits WHERE Id = @habitId";
+                fetchQuery.Parameters.AddWithValue("@habitId", habitId);
+
+                using (var reader = fetchQuery.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        unitName = reader.GetString(0);
+                    }
+                }
+            }
+            connection.Close();
+
+            return unitName;
         }
 
         /// <summary>
         /// CRUD method for creating a new record in the specified table
         /// </summary>
-        /// <param name="habit">The habit tuple in the form of table and unit names</param>
+        /// <param name="habitId">The ID of the habit in the Habits table</param>
         /// <param name="date">The date of the record</param>
-        /// <param name="measure">Value of the unit that will be inserted</param>
-        internal void InsertRecord((string tableName, string unitsName) habit, string date, int measure)
+        /// <param name="quantity">Value of the unit that will be inserted</param>
+        internal void InsertRecord(int habitId, string date, int quantity)
         {
             connection.Open();
             var insertCmd = connection.CreateCommand();
-            insertCmd.CommandText = $"INSERT INTO {habit.tableName} (Date, {habit.unitsName}) VALUES (@date, @measure)";
+            insertCmd.CommandText = $"INSERT INTO HabitsLogged (HabitId, Date, Quantity) VALUES (@habitId, @date, @quantity)";
+            insertCmd.Parameters.AddWithValue("@habitId", habitId);
             insertCmd.Parameters.AddWithValue("@date", date);
-            insertCmd.Parameters.AddWithValue("@measure", measure);
+            insertCmd.Parameters.AddWithValue("@quantity", quantity);
 
             insertCmd.ExecuteNonQuery();
             connection.Close();
@@ -175,31 +191,32 @@ namespace HabitTracker
         internal void ViewRecords()
         {
             Console.WriteLine("Which habit records would you like to see?");
-            int selectedOption = SelectHabitFromDb();
-            string tableName = this.habits[selectedOption].habitName;
-            string unitName = this.habits[selectedOption].unitName;
+            int habitId = SelectHabitFromDb();
+            string unitName = FetchUnit(habitId);
 
-            var viewString = $"SELECT * FROM {tableName}";
+            var viewString = connection.CreateCommand();
 
-            try
+            viewString.CommandText = @"SELECT hl.Id, hl.Date, hl.Quantity FROM HabitsLogged hl JOIN Habits h ON hl.HabitId = h.Id WHERE h.Id = @habitId";
+
+            viewString.Parameters.AddWithValue("@habitId", habitId);
+
+            connection.Open();
+            using (var reader = viewString.ExecuteReader())
             {
-                connection.Open();
-                using var command = new SqliteCommand(viewString, connection);
-                using var reader = command.ExecuteReader();
-
                 Console.Clear();
-                Console.WriteLine($"HABIT RECORDS :  {tableName}");
-                Console.Write("------------------------------------------\n");
-                Console.WriteLine($"\tID\tDate\t\t{unitName}");
 
                 if (reader.HasRows)
                 {
+                    Console.WriteLine("HABIT RECORDS");
+                    Console.Write("------------------------------------------\n");
+                    Console.WriteLine($"\tID\tDate\t\t{unitName}");
+
                     while (reader.Read())
                     {
-                        var id = reader.GetInt32(0);
+                        var habitLogId = reader.GetInt32(0);
                         var date = reader.GetString(1);
-                        var unit = reader.GetString(2);
-                        Console.WriteLine($"\t{id}\t{date}\t{unit}");
+                        var quantity = reader.GetInt32(2);
+                        Console.WriteLine($"\t{habitLogId}\t{date}\t{quantity}");
                     }
 
                     Console.Write("------------------------------------------\n");
@@ -211,11 +228,9 @@ namespace HabitTracker
                     Console.WriteLine("No records found. Press any key to return.");
                     Console.ReadKey();
                 }
+
             }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            connection.Close();
         }
 
         /// <summary>
@@ -223,27 +238,25 @@ namespace HabitTracker
         /// </summary>
         internal void UpdateRecord()
         {
-            Console.WriteLine("Which habit table do you wish to update?");
-            var selectedHabitIndex = SelectHabitFromDb();
-            var table = this.habits[selectedHabitIndex].habitName;
-            var unit = this.habits[selectedHabitIndex].unitName;
+            Console.WriteLine("Which habit do you wish to update?");
+            var habitId = SelectHabitFromDb();
 
             Console.WriteLine("What is the ID of the record you wish to update?");
             var selectedRecordId = Interface.ParseSelection();
 
-            bool recordExists = DoesRecordExist(table, selectedRecordId);
+            bool recordExists = DoesRecordExist(selectedRecordId);
 
             if (recordExists)
             {
-                Console.Write("Insert the updated measure for this record: ");
+                Console.Write("Insert the updated quantity for this record: ");
                 var updatedMeasure = Interface.ParseSelection();
 
                 try
                 {
                     connection.Open();
                     var updateQuery = connection.CreateCommand();
-                    updateQuery.CommandText = $"UPDATE {table} SET {unit} = @{unit} WHERE Id = @id";
-                    updateQuery.Parameters.AddWithValue($"@{unit}", updatedMeasure);
+                    updateQuery.CommandText = $"UPDATE HabitsLogged SET Quantity = @quantity WHERE Id = @id";
+                    updateQuery.Parameters.AddWithValue($"@quantity", updatedMeasure);
                     updateQuery.Parameters.AddWithValue($"@id", selectedRecordId);
 
                     updateQuery.ExecuteNonQuery();
@@ -269,13 +282,11 @@ namespace HabitTracker
         {
             Console.WriteLine("Which habit table do you wish to delete from?");
             var selectedHabitIndex = SelectHabitFromDb();
-            var table = this.habits[selectedHabitIndex].habitName;
-            var unit = this.habits[selectedHabitIndex].unitName;
 
             Console.WriteLine("What is the ID of the record you wish to delete?");
             var selectedRecordId = Interface.ParseSelection();
 
-            bool recordExists = DoesRecordExist(table, selectedRecordId);
+            bool recordExists = DoesRecordExist(selectedRecordId);
 
             if (recordExists)
             {
@@ -283,7 +294,7 @@ namespace HabitTracker
                 {
                     connection.Open();
                     var deleteQuery = connection.CreateCommand();
-                    deleteQuery.CommandText = $"DELETE FROM {table} WHERE Id = @id";
+                    deleteQuery.CommandText = $"DELETE FROM HabitsLogged WHERE Id = @id";
                     deleteQuery.Parameters.AddWithValue($"@id", selectedRecordId);
 
                     deleteQuery.ExecuteNonQuery();
@@ -315,11 +326,14 @@ namespace HabitTracker
 
             this.connection.Open();
             var createCmd = connection.CreateCommand();
-            createCmd.CommandText = $"CREATE TABLE IF NOT EXISTS {habitName} (Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, {unitName} INTEGER)";
+            createCmd.CommandText = $"INSERT INTO Habits (HabitName, UnitName) VALUES (@habitName, @unitName)";
+            createCmd.Parameters.AddWithValue("@habitName", habitName);
+            createCmd.Parameters.AddWithValue("@unitName", unitName);
             createCmd.ExecuteNonQuery();
             this.connection.Close();
 
             habits.Add((habitName!, unitName!));
+
             Console.WriteLine("Habit created sucessfully. Press any key to continue.");
             Console.ReadKey();
         }
@@ -329,11 +343,21 @@ namespace HabitTracker
         /// </summary>
         internal void ViewHabits()
         {
-            for (int i = 0; i < habits.Count; i++)
-            {
-                Console.WriteLine($"{i}: {habits[i].Item1}");
+            connection.Open();
+            var habitsQuery = connection.CreateCommand();
+            habitsQuery.CommandText = "SELECT Id, HabitName FROM Habits";
 
+            using (var reader = habitsQuery.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int habitId = reader.GetInt32(0);
+                    string habitName = reader.GetString(1);
+                    Console.WriteLine($"{habitId}: {habitName}");
+                }
             }
+            connection.Close();
+
             Console.WriteLine("-----------------------------");
         }
 
@@ -351,7 +375,7 @@ namespace HabitTracker
             {
                 selectedOption = Interface.ParseSelection();
 
-                if (selectedOption >= habits.Count || selectedOption < 0)
+                if (selectedOption > habits.Count || selectedOption <= 0)
                 {
                     Console.WriteLine("This is not a valid choice.");
                     continue;
@@ -378,17 +402,17 @@ namespace HabitTracker
         }
 
         /// <summary>
-        /// Helper method for checking if the record of the specified ID exists in the habit table.
+        /// Helper method for checking if the record of the specified ID exists in the log table.
         /// </summary>
-        /// <param name="table">Name of the table to search in</param>
         /// <param name="id">ID of the record in form of an integer</param>
         /// <returns>True if the record does exist, false otherwise</returns>
-        internal bool DoesRecordExist(string table, int id)
+        internal bool DoesRecordExist(int id)
         {
             connection.Open();
 
             var existanceQuery = connection.CreateCommand();
-            existanceQuery.CommandText = $"SELECT * FROM {table} WHERE Id = {id}";
+            existanceQuery.CommandText = "SELECT * FROM HabitsLogged WHERE Id = @id";
+            existanceQuery.Parameters.AddWithValue("id", id);
             var foundRecord = existanceQuery.ExecuteScalar();
 
             connection.Close();
@@ -421,19 +445,21 @@ namespace HabitTracker
 
             foreach (var habit in seedHabits)
             {
-                createCmd.CommandText = $"CREATE TABLE IF NOT EXISTS {habit.habitName} (Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, {habit.unitName} INTEGER)";
+                createCmd.Parameters.Clear();
+                createCmd.CommandText = $"INSERT INTO Habits (HabitName, UnitName) VALUES (@habitName, @unitName)";
+                createCmd.Parameters.AddWithValue("@habitName", habit.habitName);
+                createCmd.Parameters.AddWithValue("@unitName", habit.unitName);
                 createCmd.ExecuteNonQuery();
             }
 
-            SeedTable(seedHabits[0]);
+            SeedTable();
             this.connection.Close();
         }
 
         /// <summary>
-        /// Helper method for seeding a concrete table with a 100 mock records
+        /// Helper method for seeding the table with a 100 mock records
         /// </summary>
-        /// <param name="habit"></param>
-        internal void SeedTable((string habitName, string unitName) habit)
+        internal void SeedTable()
         {
             int day = 01;
             int month = 06;
@@ -441,6 +467,7 @@ namespace HabitTracker
             for (int i = 0; i < 100; i++)
             {
                 var randomGenerator = new Random();
+                int habitId = randomGenerator.Next(1, 5);
                 int measure = randomGenerator.Next(1, 100);
                 string date = $"{day++}-{month}-2024";
 
@@ -450,7 +477,7 @@ namespace HabitTracker
                     month++;
                 }
 
-                InsertRecord(habit, date, measure);
+                InsertRecord(habitId, date, measure);
             }
         }
     }
