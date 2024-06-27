@@ -18,6 +18,9 @@ void MainMenu()
 			new SelectionPrompt<string>()
 			.Title("What would you like to do?")
 			.AddChoices(
+				"Add Habit",
+				"Delete Habit",
+				"Update Habit",
 				"Add Record",
 				"Delete Record",
 				"View Records",
@@ -27,6 +30,15 @@ void MainMenu()
 
 		switch (userChoice)
 		{
+			case "Add Habit":
+				AddHabit();
+				break;
+			case "Delete Habit":
+				DeleteHabit();
+				break;
+			case "Update Habit":
+				UpdateHabit();
+				break;
 			case "Add Record":
 				AddRecord();
 				break;
@@ -50,6 +62,155 @@ void MainMenu()
 	}
 }
 
+void UpdateHabit()
+{
+	GetHabits();
+	var id = GetNumber("Please type the id of the habit you want to update.");
+
+	string name = "";
+	bool updateName = AnsiConsole.Confirm("Update name?");
+	if (updateName)
+	{
+		name = AnsiConsole.Ask<string>("Habit's new name: ");
+		while (string.IsNullOrEmpty(name))
+		{
+			name = AnsiConsole.Ask<string>("Habbit's name can't be empty. Try again: ");
+		}
+	}
+
+	string unit = "";
+	bool updateUnit = AnsiConsole.Confirm("Update Unit of Measurement?");
+	if (updateUnit)
+	{
+		unit = AnsiConsole.Ask<string>("Habit's Unit of Measurement: ");
+		while (string.IsNullOrEmpty(unit))
+		{
+			unit = AnsiConsole.Ask<string>("Habit's unit of measurement can't be empty. Try Again: ");
+		}
+	}
+
+	string query;
+	if (updateName && updateUnit)
+	{
+		query = $"UPDATE habits SET Name = '{name}', MeasurementUnit = '{unit}' WHERE Id = {id}";
+	}
+	else if (updateName && !updateUnit)
+	{
+		query = $"UPDATE habits SET Name = '{name}' WHERE Id = {id}";
+	}
+	else
+	{
+		query = $"UPDATE habits SET MeasurementUnit = '{unit}' WHERE Id = {id}";
+	}
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var tableCmd = connection.CreateCommand();
+
+		tableCmd.CommandText = query;
+		tableCmd.ExecuteNonQuery();
+	}
+}
+
+void DeleteHabit()
+{
+	GetHabits();
+
+	var id = GetNumber("Please type the habit you want to delete.");
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		using (var command = connection.CreateCommand())
+		{
+			connection.Open();
+
+			command.CommandText =
+				$@"DELETE FROM habits WHERE Id = {id}";
+			command.ExecuteNonQuery();
+		}
+	}
+}
+
+void GetHabits()
+{
+	List<Habit> habits = new();
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var tableCmd = connection.CreateCommand();
+		tableCmd.CommandText = "SELECT * FROM Habits";
+
+		using (SqliteDataReader reader = tableCmd.ExecuteReader())
+		{
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+					try
+					{
+						habits.Add(
+							new Habit(
+								reader.GetInt32(0),
+								reader.GetString(1),
+								reader.GetString(2)
+								)
+							);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Error getting record: {ex.Message}.");
+					}
+			}
+			else
+			{
+				Console.WriteLine("No rows found");
+			}
+		}
+	}
+
+	ViewHabits(habits);
+}
+
+void ViewHabits(List<Habit> habits)
+{
+	var table = new Table();
+	table.AddColumn("Id");
+	table.AddColumn("Name");
+	table.AddColumn("Measurement Unit");
+
+	foreach (var habit in habits)
+	{
+		table.AddRow(habit.Id.ToString(), habit.Name.ToString(), habit.UnitOfMeasurement.ToString());
+	}
+
+	AnsiConsole.Write(table);
+}
+
+void AddHabit()
+{
+	var name = AnsiConsole.Ask<string>("Habit's name: ");
+	while (string.IsNullOrEmpty(name))
+	{
+		name = AnsiConsole.Ask<string>("Habit's name can't be empty. Try again: ");
+	}
+
+	var unit = AnsiConsole.Ask<string>("What is the habit's unit of measurement? ");
+	while (string.IsNullOrEmpty(unit))
+	{
+		unit = AnsiConsole.Ask<string>("Unit of measurement can't be empty. Try again: ");
+	}
+
+	using (var connection = new SqliteConnection(connectionString))
+	{
+		connection.Open();
+		var tableCmd = connection.CreateCommand();
+		tableCmd.CommandText = $"INSERT INTO habits(Name, MeasurementUnit) VALUES ('{name}', '{unit}')";
+
+		tableCmd.ExecuteNonQuery();
+	}
+}
+
 void UpdateRecord()
 {
 	GetRecords();
@@ -63,24 +224,24 @@ void UpdateRecord()
 	}
 
 	int quantity = 0;
-	bool updateQuantity = AnsiConsole.Confirm("Update distance?");
+	bool updateQuantity = AnsiConsole.Confirm("Update quantity?");
 	if (updateQuantity)
 	{
-		quantity = GetNumber("\nPlease enter the number of meters walked (no deicmals or negatives allowed) or enter 0 to Go Back to Main Menu.");
+		quantity = GetNumber("\nPlease enter the new quantity (no deicmals or negatives allowed) or enter 0 to Go Back to Main Menu.");
 	}
 
 	string query;
 	if (updateDate && updateQuantity)
 	{
-		query = $"UPDATE walkingHabit SET Date = '{date}', Quantity = {quantity} WHERE Id = {id}";
+		query = $"UPDATE records SET Date = '{date}', Quantity = {quantity} WHERE Id = {id}";
 	}
 	else if (updateDate && !updateQuantity)
 	{
-		query = $"UPDATE walkingHabit SET Date = '{date}' WHERE Id = {id}";
+		query = $"UPDATE records SET Date = '{date}' WHERE Id = {id}";
 	}
 	else
 	{
-		query = $"UPDATE walkingHabit SET Quantity = '{quantity}' WHERE Id = {id}";
+		query = $"UPDATE records SET Quantity = '{quantity}' WHERE Id = {id}";
 	}
 
 	using (var connection = new SqliteConnection(connectionString))
@@ -97,14 +258,18 @@ void UpdateRecord()
 void AddRecord()
 {
 	string date = GetDate("\nEnter the date (format - dd-mm-yy) or insert 0 to Go Back to Main Menu:\n");
-	int quantity = GetNumber("\nPlease enter number of meters waled (no decimals or negatives allowed) or enter 0 to Go Back to Main Menu:\n");
+
+	GetHabits();
+	int habitId = GetNumber("\nPlease enter the id of the habit for this record");
+	int quantity = GetNumber("\nPlease enter quantity (no decimals or negatives allowed) or enter 0 to Go Back to Main Menu:\n");
+
 	Console.Clear();
 	using (var connection = new SqliteConnection(connectionString))
 	{
 		connection.Open();
 		var tableCmd = connection.CreateCommand();
 
-		tableCmd.CommandText = $"INSERT INTO walkingHabit(date, quantity) VALUES ('{date}', {quantity})";
+		tableCmd.CommandText = $"INSERT INTO records (date, quantity, habitId) VALUES ('{date}', {quantity}, {habitId})";
 
 		tableCmd.ExecuteNonQuery();
 	}
@@ -147,12 +312,16 @@ string GetDate(string message)
 
 void GetRecords()
 {
-	List<WalkingRecord> records = new();
+	List<RecordWithHabit> records = new();
+
 	using (var connection = new SqliteConnection(connectionString))
 	{
 		connection.Open();
 		var tableCmd = connection.CreateCommand();
-		tableCmd.CommandText = "SELECT * FROM walkingHabit";
+		tableCmd.CommandText = @"
+	SELECT records.Id, records.Date, records.Quantity, records.HabitId, habits.Name AS HabitName, habits.MeasurementUnit
+	FROM records
+	INNER JOIN habits ON records.HabitId = habits.Id";
 
 		using (SqliteDataReader reader = tableCmd.ExecuteReader())
 		{
@@ -162,10 +331,12 @@ void GetRecords()
 					try
 					{
 						records.Add(
-							new WalkingRecord(
+							new RecordWithHabit(
 								reader.GetInt32(0),
 								DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-								reader.GetInt32(2)
+								reader.GetInt32(2),
+								reader.GetString(4),
+								reader.GetString(5)
 								)
 							);
 					}
@@ -184,16 +355,17 @@ void GetRecords()
 	ViewRecords(records);
 }
 
-void ViewRecords(List<WalkingRecord> records)
+void ViewRecords(List<RecordWithHabit> records)
 {
 	var table = new Table();
 	table.AddColumn("Id");
 	table.AddColumn("Date");
 	table.AddColumn("Amount");
+	table.AddColumn("Habit");
 
 	foreach (var record in records)
 	{
-		table.AddRow(record.Id.ToString(), record.Date.ToString(), record.Meters.ToString());
+		table.AddRow(record.Id.ToString(), record.Date.ToString(), $"{record.Quantity} {record.MeasurementUnit}", record.HabitName.ToString());
 	}
 
 	AnsiConsole.Write(table);
@@ -212,7 +384,7 @@ void DeleteRecord()
 			connection.Open();
 
 			command.CommandText =
-				$@"DELETE FROM walkingHabit WHERE ID = {id}";
+				$@"DELETE FROM records WHERE ID = {id}";
 			command.ExecuteNonQuery();
 		}
 	}
@@ -239,8 +411,8 @@ void CreateDatabase()
 			tableCmd.CommandText =
 				@"CREATE TABLE IF NOT EXISTS habits (
 					Id INTEGER PRIMARY KEY AUTOINCREMENT,
-					Date TEXT,
-					MeasuerementUnit TEXT
+					Name TEXT,
+					MeasurementUnit TEXT
 					)";
 			tableCmd.ExecuteNonQuery();
 		}
@@ -248,3 +420,5 @@ void CreateDatabase()
 }
 
 record WalkingRecord(int Id, DateTime Date, int Meters);
+record Habit(int Id, string Name, string UnitOfMeasurement);
+record RecordWithHabit(int Id, DateTime Date, int Quantity, string HabitName, string MeasurementUnit);
