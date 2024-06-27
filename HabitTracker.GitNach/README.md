@@ -25,8 +25,8 @@ manage and track your daily habits.
 
 ### Update Habit
 
-1. Double-click the habit you want to modify in the list.
-2. Modify the details of the habit in the popup form.
+1. Click the habit you want to modify in the list.
+2. Click update button and modify its value in the pop-up.
 3. Save the changes to update the habit.
 
 ### Display Habits
