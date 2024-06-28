@@ -188,16 +188,18 @@ namespace HabitTracker
         /// <summary>
         /// CRUD method for reading all records of a specified habit
         /// </summary>
-        internal void ViewRecords()
+        internal void ViewRecords(bool userInputRequired, int habitId = 1)
         {
-            Console.WriteLine("Which habit records would you like to see?");
-            int habitId = SelectHabitFromDb();
+            if (userInputRequired)
+            {
+                Console.WriteLine("Which habit records would you like to see?");
+                habitId = SelectHabitFromDb();
+            }
+
             string unitName = FetchUnit(habitId);
 
             var viewString = connection.CreateCommand();
-
             viewString.CommandText = @"SELECT hl.Id, hl.Date, hl.Quantity FROM HabitsLogged hl JOIN Habits h ON hl.HabitId = h.Id WHERE h.Id = @habitId";
-
             viewString.Parameters.AddWithValue("@habitId", habitId);
 
             connection.Open();
@@ -219,14 +221,20 @@ namespace HabitTracker
                         Console.WriteLine($"\t{habitLogId}\t{date}\t{quantity}");
                     }
 
-                    Console.Write("------------------------------------------\n");
-                    Console.WriteLine("Press any key to return.");
-                    Console.ReadKey();
+                    if (userInputRequired)
+                    {
+                        Console.Write("------------------------------------------\n");
+                        Console.WriteLine("Press any key to return.");
+                        Console.ReadKey();
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("No records found. Press any key to return.");
-                    Console.ReadKey();
+                    if (userInputRequired)
+                    {
+                        Console.WriteLine("No records found. Press any key to return.");
+                        Console.ReadKey();
+                    }
                 }
 
             }
@@ -240,6 +248,7 @@ namespace HabitTracker
         {
             Console.WriteLine("Which habit do you wish to update?");
             var habitId = SelectHabitFromDb();
+            ViewRecords(false, habitId);
 
             Console.WriteLine("What is the ID of the record you wish to update?");
             var selectedRecordId = Interface.ParseSelection();
@@ -282,6 +291,7 @@ namespace HabitTracker
         {
             Console.WriteLine("Which habit table do you wish to delete from?");
             var selectedHabitIndex = SelectHabitFromDb();
+            ViewRecords(false, selectedHabitIndex);
 
             Console.WriteLine("What is the ID of the record you wish to delete?");
             var selectedRecordId = Interface.ParseSelection();
@@ -318,11 +328,41 @@ namespace HabitTracker
         /// </summary>
         internal void CreateHabit()
         {
-            Console.Write("Insert a name for the new habit: ");
-            var habitName = Console.ReadLine();
+            bool canBeCreated = false;
+            string? habitName = null;
+            string? unitName = null;
 
-            Console.Write("\nInsert the unit of measurement of this habit (eg. 'Glasses' (of water each day)):  ");
-            var unitName = Console.ReadLine();
+            while (!canBeCreated)
+            {
+                Console.Write("Insert a name for the new habit: ");
+                habitName = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(habitName))
+                {
+                    Console.WriteLine("Habit name cannot be empty.");
+                    continue;
+                }
+
+                Console.Write("\nInsert the unit of measurement of this habit (eg. 'Glasses' (of water each day)):  ");
+                unitName = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(unitName))
+                {
+                    Console.WriteLine("Unit name cannot be empty.");
+                    continue;
+                }
+
+                bool habitExists = habits.Any(habit => habit.habitName == habitName);
+
+                if (habitExists)
+                {
+                    Console.WriteLine("This habit already exists. Please enter a different habit.");
+                }
+                else
+                {
+                    canBeCreated = true;
+                }
+            }
 
             this.connection.Open();
             var createCmd = connection.CreateCommand();
@@ -480,5 +520,6 @@ namespace HabitTracker
                 InsertRecord(habitId, date, measure);
             }
         }
+
     }
 }

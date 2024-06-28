@@ -61,7 +61,7 @@ namespace HabitTracker
                 case 0:
                     return true;
                 case 1:
-                    dbController.ViewRecords();
+                    dbController.ViewRecords(true);
                     return false;
                 case 2:
                     dbController.PrepareInsert();
