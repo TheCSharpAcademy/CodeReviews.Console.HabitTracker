@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System.ComponentModel; //For browsable attribute
 
 namespace HabitLogger.Model
 {
