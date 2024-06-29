@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Habit-Tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Jon\\Documents\\VSProjects\\Habit-Tracker\\Habit-Tracker\\"
+
+    }
+  }
+}
