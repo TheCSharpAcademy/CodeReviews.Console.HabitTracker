@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "HabitTracker": {
-      "commandName": "Project",
-      "workingDirectory": "../HabitTracker"
-    }
-  }
-}
