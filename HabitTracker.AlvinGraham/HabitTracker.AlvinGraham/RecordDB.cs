@@ -70,8 +70,6 @@ internal class RecordDB
 		}
 	}
 
-
-
 	internal static void GetRecords()
 	{
 		List<Utility.RecordWithHabit> records = new();
