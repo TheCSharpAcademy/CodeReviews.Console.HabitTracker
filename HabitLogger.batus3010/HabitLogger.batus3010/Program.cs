@@ -15,7 +15,7 @@ Type 2 to Insert Record.
 Type 3 to Delete Record
 Type 4 to Update Record.
 -----------------------------------");
-            dbContext db = new dbContext();
+            DBContext db = new DBContext();
 
 
             while (true)

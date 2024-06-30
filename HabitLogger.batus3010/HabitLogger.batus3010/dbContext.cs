@@ -2,11 +2,11 @@
 
 namespace HabitLogger.batus3010
 {
-    internal class dbContext
+    internal class DBContext
     {
         private string _connectionString = @"Data Source=habitDB.db";
 
-        public dbContext()
+        public DBContext()
         {
             InitializeDatabase();
         }
