@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\TheFinalBattle\ColoredConsole\ColoredConsole.csproj">
+    <ProjectReference Include="..\ColoredConsole\ColoredConsole.csproj">
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
