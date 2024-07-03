@@ -1,0 +1,16 @@
+erDiagram
+    habit ||--o{ habit_log : ""
+    habit 
+    {
+        int habit_id PK
+        string name
+        string measure
+        int is_active
+    }
+    habit_log 
+    {
+        int habit_log_id PK
+        int habit_id FK
+        string date
+        int quantity
+    }
