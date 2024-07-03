@@ -383,9 +383,9 @@ internal class MainMenuPage : BasePage
 
         // Configure table data.
         DataTable dataTable = new DataTable();
-        dataTable.Columns.Add("Name");//, typeof(string));
-        dataTable.Columns.Add("Measure");//, typeof(string));
-        dataTable.Columns.Add("IsActive");//, typeof(bool));
+        dataTable.Columns.Add("Name");
+        dataTable.Columns.Add("Measure");
+        dataTable.Columns.Add("IsActive");
         foreach (var x in habitReport)
         {
             dataTable.Rows.Add([x.Name, x.Measure, x.IsActive]);

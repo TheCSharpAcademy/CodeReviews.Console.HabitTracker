@@ -20,8 +20,6 @@ internal class SetHabitLogPage : BasePage
 
     internal static HabitLog? Show(Habit habit, HabitLog habitLog)
     {
-        HabitLog? nullHabitLog = null;
-
         Console.Clear();
 
         WriteHeader($"{PageTitle} ({habit.Name})");
