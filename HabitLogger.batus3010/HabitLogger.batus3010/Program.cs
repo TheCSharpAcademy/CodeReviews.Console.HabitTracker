@@ -67,7 +67,7 @@ Type 4 to Update Record.
 
                         if (db.IsIdInDatabase(id_update))
                         {
-                            db.UpdateDatabase(GetHabitInput());
+                            db.UpdateDatabase(GetHabitInput(), id_update);
                             ColoredConsole.ColoredConsole.WriteLine($"successfully updated habit {id_update}", ConsoleColor.Green);
                         }
                         else

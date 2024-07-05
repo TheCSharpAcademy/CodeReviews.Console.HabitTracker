@@ -43,31 +43,59 @@ namespace HabitLogger.batus3010
             }
         }
 
-        public void DeleteFromDatabase(int id)
+        public bool DeleteFromDatabase(int id)
         {
-            using (var connection = new SqliteConnection(_connectionString))
+
+            try
             {
-                connection.Open();
-                var deleteCmd = connection.CreateCommand();
-                deleteCmd.CommandText = @"DELETE FROM habit WHERE Id = @Id";
-                deleteCmd.Parameters.AddWithValue("@Id", id);
-                deleteCmd.ExecuteNonQuery();
-                connection.Close();
+                using (var connection = new SqliteConnection(_connectionString))
+                {
+                    connection.Open();
+                    var deleteCmd = connection.CreateCommand();
+                    deleteCmd.CommandText = @"DELETE FROM habit WHERE Id = @Id";
+                    deleteCmd.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = deleteCmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"An error occurred while deleting the record: {ex.Message}");
+
+                return false;
             }
         }
 
-        public void UpdateDatabase(Habit h)
+        public bool UpdateDatabase(Habit h, int id_update)
         {
-            using (var connection = new SqliteConnection(_connectionString))
+
+            if (!IsIdInDatabase(id_update))
             {
-                connection.Open();
-                var updateCmd = connection.CreateCommand();
-                updateCmd.CommandText = @"UPDATE habit SET Name = @Name, Quantity = @Quantity WHERE Id = @Id";
-                updateCmd.Parameters.AddWithValue("@Name", h.Name);
-                updateCmd.Parameters.AddWithValue("@Quantity", h.Quantity);
-                updateCmd.Parameters.AddWithValue("@Id", h.Id);
-                updateCmd.ExecuteNonQuery();
-                connection.Close();
+                Console.WriteLine($"Habit with ID {id_update} does not exist.");
+                return false;
+            }
+
+            try
+            {
+                using (var connection = new SqliteConnection(_connectionString))
+                {
+                    connection.Open();
+                    var updateCmd = connection.CreateCommand();
+                    updateCmd.CommandText = @"UPDATE habit SET Name = @Name, Quantity = @Quantity WHERE Id = @Id";
+                    updateCmd.Parameters.AddWithValue("@Name", h.Name);
+                    updateCmd.Parameters.AddWithValue("@Quantity", h.Quantity);
+                    updateCmd.Parameters.AddWithValue("@Id", id_update);
+
+                    int rowsAffected = updateCmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"An error occurred while updating the record: {ex.Message}");
+                return false;
             }
         }
 
