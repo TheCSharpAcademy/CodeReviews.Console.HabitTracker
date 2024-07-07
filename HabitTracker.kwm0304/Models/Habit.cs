@@ -7,7 +7,7 @@ public class Habit
   public string? UnitOfMeasurement { get; set; }
   public int Repetitions { get; set; }
   public DateTime StartedOn { get; set; }
-  public int DaysTracked { get; set; }
+  public int DaysTracked => CalculateDaysTracked();
   public Habit(){}
   public Habit(string name, string unitOfMeasurement)
   {
@@ -15,7 +15,6 @@ public class Habit
     UnitOfMeasurement = unitOfMeasurement;
     Repetitions = 0;
     StartedOn = DateTime.Today;
-    DaysTracked = CalculateDaysTracked();
   }
 
   private int CalculateDaysTracked()

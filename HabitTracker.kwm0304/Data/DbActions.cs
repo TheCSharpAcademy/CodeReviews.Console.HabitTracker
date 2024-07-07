@@ -23,8 +23,7 @@ public class DbActions
         HabitName TEXT NOT NULL,
         UnitOfMeasurement TEXT NOT NULL,
         Repetitions INTEGER NOT NULL,
-        StartedOn TEXT NOT NULL,
-        DaysTracked INTEGER NOT NULL
+        StartedOn TEXT NOT NULL
         )";
     command.CommandText = queryString;
     try
@@ -42,9 +41,31 @@ public class DbActions
     }
   }
   //GET ONE
-  public void GetHabit()
+  public Habit? GetHabitById(int id)
   {
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
 
+    using var command = connection.CreateCommand();
+    const string queryString = @"SELECT * FROM Habits WHERE HabitId = @habitId";
+    command.Parameters.AddWithValue("@habitId", id);
+    command.CommandText = queryString;
+    using var reader = command.ExecuteReader();
+    if (reader.Read())
+    {
+      return new Habit
+      {
+        HabitId = reader.GetInt32(0),
+        HabitName = reader.GetString(1),
+        UnitOfMeasurement = reader.GetString(2),
+        Repetitions = reader.GetInt32(3),
+        StartedOn = DateTime.Parse(reader.GetString(4))
+      };
+    }
+    else
+    {
+      return null;
+    }
   }
   //GET ALL
   public void GetHabits()
@@ -58,9 +79,13 @@ public class DbActions
     connection.Open();
     using var command = connection.CreateCommand();
     string queryString = @$"INSERT INTO Habits 
-    (HabitName, UnitOfMeasurement, Repetitions, StartedOn, DaysTracked)
+    (HabitName, UnitOfMeasurement, Repetitions, StartedOn)
     VALUES 
-    ({habit.HabitName}, {habit.UnitOfMeasurement}, {habit.Repetitions}, {habit.StartedOn:yyyy-MM-dd)}, {habit.DaysTracked})";
+    (@habitName, @unitOfMeasurement, @repititions, @startedOn, @daysTracked)";
+    command.Parameters.AddWithValue("@habitName", habit.HabitName);
+    command.Parameters.AddWithValue("@unitOfMeasurement", habit.UnitOfMeasurement);
+    command.Parameters.AddWithValue("@repititions", habit.Repetitions);
+    command.Parameters.AddWithValue("@startedOn", habit.StartedOn.ToString("yyyy-MM-dd"));
     command.CommandText = queryString;
     try
     {
