@@ -1,21 +1,24 @@
+using HabitTracker.kwm0304.Models;
 using Microsoft.Data.Sqlite;
 
 namespace HabitTracker.kwm0304.Data;
 
 public class DbActions
 {
-  private static readonly string dbFileName = "HabitDB.db"; 
-    //CREATE TABLE
-    public void CreateOnStart()
+  private static readonly string dbFileName = "HabitDB.db";
+  private static readonly string connectionString = $"Data Source={dbFileName}";
+  //CREATE TABLE
+  public void CreateOnStart()
+  {
+    if (!File.Exists(dbFileName))
     {
-      if (!File.Exists(dbFileName))
-      {
-       using (File.Create("HabitDB.db")){}
-      }
-        using var connection = new SqliteConnection($"Data Source={dbFileName}");
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = @"CREATE TABLE IF NOT EXISTS Habits(
+      using (File.Create("HabitDB.db")) { }
+    }
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
+
+    using var command = connection.CreateCommand();
+    const string queryString = @"CREATE TABLE IF NOT EXISTS Habits(
         HabitId INTEGER PRIMARY KEY,
         HabitName TEXT NOT NULL,
         UnitOfMeasurement TEXT NOT NULL,
@@ -23,46 +26,64 @@ public class DbActions
         StartedOn TEXT NOT NULL,
         DaysTracked INTEGER NOT NULL
         )";
-        try
-        {
-          command.ExecuteNonQuery();
-        }
-        catch (SqliteException e)
-        {
-          Console.WriteLine($"Error: {e.Message}");
-        }
-        finally
-        {
-          command.Dispose();
-          connection.Dispose();
-        }
-    }
-    //GET ONE
-    public void GetHabit()
+    command.CommandText = queryString;
+    try
     {
-
+      command.ExecuteNonQuery();
     }
-    //GET ALL
-    public void GetHabits()
+    catch (SqliteException e)
     {
-
+      Console.WriteLine($"Error: {e.Message}");
     }
-    //POST TO TABLE
-    public void AddHabit()
+    finally
     {
-
+      command.Dispose();
+      connection.Dispose();
     }
-    //UPDATE ONE
-    public void UpdateHabit()
+  }
+  //GET ONE
+  public void GetHabit()
+  {
+
+  }
+  //GET ALL
+  public void GetHabits()
+  {
+
+  }
+  //POST TO TABLE
+  public void InsertHabit(Habit habit)
+  {
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    string queryString = @$"INSERT INTO Habits 
+    (HabitName, UnitOfMeasurement, Repetitions, StartedOn, DaysTracked)
+    VALUES 
+    ({habit.HabitName}, {habit.UnitOfMeasurement}, {habit.Repetitions}, {habit.StartedOn:yyyy-MM-dd)}, {habit.DaysTracked})";
+    command.CommandText = queryString;
+    try
     {
-
-    }
-    //DELETE ONE
-    public void DeleteHabit()
+      command.ExecuteNonQuery();
+      Console.WriteLine($"New habit {habit.HabitName} added successfully");
+    } 
+    catch (SqliteException e)
     {
-
+      Console.WriteLine($"Error adding new habit:\n{e.Message}");
     }
-    
-    
+    finally
+    {
+      command.Dispose();
+      connection.Dispose();
+    }
+  }
 
+  public void UpdateHabit(int id)
+  {
+
+  }
+  public void DeleteHabit(int id)
+  {
+
+  }
 }
