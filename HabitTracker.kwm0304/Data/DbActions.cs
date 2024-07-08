@@ -76,7 +76,7 @@ public class DbActions
     connection.Open();
 
     using var command = connection.CreateCommand();
-    char string queryString = "SELECT * FROM Habits";
+    string queryString = "SELECT * FROM Habits";
     command.CommandText = queryString;
     using var reader = command.ExecuteReader();
     while (reader.Read())
@@ -112,7 +112,7 @@ public class DbActions
     {
       command.ExecuteNonQuery();
       Console.WriteLine($"New habit {habit.HabitName} added successfully");
-    } 
+    }
     catch (SqliteException e)
     {
       Console.WriteLine($"Error adding new habit:\n{e.Message}");
@@ -124,8 +124,67 @@ public class DbActions
     }
   }
 
-  public void UpdateHabit(int id)
+  public void UpdateHabitRepetitions(int addedReps, int id)
   {
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    string queryString = $"UPDATE Habits SET Repetitions = Repetitions + @addedReps WHERE HabitId = @habitId";
+    command.Parameters.AddWithValue("@addedReps", addedReps);
+    command.Parameters.AddWithValue("@habitId", id);
+    command.CommandText = queryString;
+    try
+    {
+      command.ExecuteNonQuery();
+      Console.WriteLine($"Habit repetitions successfully updated");
+    }
+    catch (SQLiteException e)
+    {
+      Console.WriteLine($"Error updating habit:\n{e.Message}");
+    }
+    finally
+    {
+      command.Dispose();
+      connection.Dispose();
+    }
+  }
+  public void UpdateHabitFields(string field, string newFieldName, int id)
+  {
+    Habit habitToUpdate = GetHabitById(id)!;
+    if (habitToUpdate == null)
+    {
+      Console.WriteLine("No habit found with this id");
+      return;
+    }
+    var validFields = new List<string>{"HabitName", "UnitOfMeasurement"};
+    if (!validFields.Contains(field))
+    {
+      Console.WriteLine("Invalid field name");
+      return;
+    }
+
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+
+    string queryString = $"UPDATE Habits SET {field} = @newFieldValue WHERE HabitId = @habitId";
+    command.Parameters.AddWithValue("@newFieldValue", newFieldName);
+    command.Parameters.AddWithValue("@habitId", id);
+    command.CommandText = queryString;
+    try
+    {
+      command.ExecuteNonQuery();
+      Console.WriteLine($"Habit {field} successfully updated to {newFieldName}");
+    }
+    catch (SQLiteException e)
+    {
+      Console.WriteLine($"Error updating habit:\n{e.Message}");
+    }
+    finally
+    {
+      command.Dispose();
+      connection.Dispose();
+    }
 
   }
   public void DeleteHabit(int id)
