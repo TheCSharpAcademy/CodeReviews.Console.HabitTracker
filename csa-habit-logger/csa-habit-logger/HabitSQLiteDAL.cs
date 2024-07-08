@@ -286,7 +286,7 @@ namespace csa_habit_logger
                         cmd.Parameters.AddWithValue("@amount", instance.Amount);
                         cmd.Parameters.AddWithValue("@dtime", (instance.DateTime - DateTime.UnixEpoch).TotalSeconds);
                         cmd.ExecuteNonQuery();
-                    };
+                    }
 
                     conn.Close();
                     return true;
