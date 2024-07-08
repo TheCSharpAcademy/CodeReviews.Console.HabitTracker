@@ -75,7 +75,7 @@ public partial class Program
                                                     .ConnectionString.Replace(ConfigurationManager.AppSettings["dbNamePlaceHolder"] ?? string.Empty,
                                                                                sqlDatabaseFileName);
 
-    static HabitSQLiteDAL dal = new HabitSQLiteDAL(sqlDatabaseFileName, connectionString);
+    static HabitSqLiteDAL dal = new HabitSqLiteDAL(sqlDatabaseFileName, connectionString);
 
 
     public static int GetUserIntResponse()

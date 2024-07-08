@@ -3,11 +3,11 @@ using System.Data.SQLite;
 
 namespace csa_habit_logger
 {
-    public class HabitSQLiteDAL
+    public class HabitSqLiteDAL
     {
         public string ConnectionString { get; private set; }
 
-        public HabitSQLiteDAL(string databaseName, string connString)
+        public HabitSqLiteDAL(string databaseName, string connString)
         {
             ConnectionString = connString;
 
@@ -148,7 +148,7 @@ namespace csa_habit_logger
 
                     string sqlCommandString = @"UPDATE habits " +
                                               @"SET name = @name, unit = @unit " +
-                                              @"WHERE id = @id";
+                                              @" WHERE id = @id";
                     SQLiteCommand cmd = new SQLiteCommand(sqlCommandString, conn);
                     cmd.Parameters.AddWithValue("@id", ID);
                     cmd.Parameters.AddWithValue("@name", newHabit.Name);
@@ -477,7 +477,6 @@ namespace csa_habit_logger
                 }
             }
 
-            List<NewHabitRecord> rec = new List<NewHabitRecord>();
             Habit? habit1 = GetHabitByName("squat");
             Habit? habit3 = GetHabitByName("water");
 
