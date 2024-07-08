@@ -3,8 +3,8 @@ namespace HabitTracker.kwm0304.Models;
 public class Habit
 {
   public int HabitId { get; set; }
-  public string? HabitName { get; set; }
-  public string? UnitOfMeasurement { get; set; }
+  public string HabitName { get; set; }
+  public string UnitOfMeasurement { get; set; }
   public int Repetitions { get; set; }
   public DateTime StartedOn { get; set; }
   public int DaysTracked => CalculateDaysTracked();

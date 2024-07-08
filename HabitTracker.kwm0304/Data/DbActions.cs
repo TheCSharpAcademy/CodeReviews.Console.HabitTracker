@@ -1,3 +1,4 @@
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using HabitTracker.kwm0304.Models;
 using Microsoft.Data.Sqlite;
@@ -9,12 +10,15 @@ public class DbActions
   private static readonly string dbFileName = "HabitDB.db";
   private static readonly string connectionString = $"Data Source={dbFileName}";
   //CREATE TABLE
-  public void CreateOnStart()
+  public void CreateDatabaseOnStart()
   {
     if (!File.Exists(dbFileName))
     {
       using (File.Create("HabitDB.db")) { }
     }
+  }
+  public void CreateTableOnStart()
+  {
     using SqliteConnection connection = new(connectionString);
     connection.Open();
 
@@ -102,7 +106,7 @@ public class DbActions
     string queryString = @$"INSERT INTO Habits 
     (HabitName, UnitOfMeasurement, Repetitions, StartedOn)
     VALUES 
-    (@habitName, @unitOfMeasurement, @repititions, @startedOn, @daysTracked)";
+    (@habitName, @unitOfMeasurement, @repititions, @startedOn, @daysTracked);";
     command.Parameters.AddWithValue("@habitName", habit.HabitName);
     command.Parameters.AddWithValue("@unitOfMeasurement", habit.UnitOfMeasurement);
     command.Parameters.AddWithValue("@repititions", habit.Repetitions);
@@ -129,7 +133,7 @@ public class DbActions
     using SqliteConnection connection = new(connectionString);
     connection.Open();
     using var command = connection.CreateCommand();
-    string queryString = $"UPDATE Habits SET Repetitions = Repetitions + @addedReps WHERE HabitId = @habitId";
+    string queryString = "UPDATE Habits SET Repetitions = Repetitions + @addedReps WHERE HabitId = @habitId";
     command.Parameters.AddWithValue("@addedReps", addedReps);
     command.Parameters.AddWithValue("@habitId", id);
     command.CommandText = queryString;
@@ -148,7 +152,7 @@ public class DbActions
       connection.Dispose();
     }
   }
-  public void UpdateHabitFields(string field, string newFieldName, int id)
+  public void UpdateHabitFields(string field, object newFieldValue, int id)
   {
     Habit habitToUpdate = GetHabitById(id)!;
     if (habitToUpdate == null)
@@ -156,7 +160,7 @@ public class DbActions
       Console.WriteLine("No habit found with this id");
       return;
     }
-    var validFields = new List<string>{"HabitName", "UnitOfMeasurement"};
+    var validFields = new List<string> { "HabitName", "UnitOfMeasurement", "Repetitions" };
     if (!validFields.Contains(field))
     {
       Console.WriteLine("Invalid field name");
@@ -168,13 +172,13 @@ public class DbActions
     using var command = connection.CreateCommand();
 
     string queryString = $"UPDATE Habits SET {field} = @newFieldValue WHERE HabitId = @habitId";
-    command.Parameters.AddWithValue("@newFieldValue", newFieldName);
+    command.Parameters.AddWithValue("@newFieldValue", newFieldValue);
     command.Parameters.AddWithValue("@habitId", id);
     command.CommandText = queryString;
     try
     {
       command.ExecuteNonQuery();
-      Console.WriteLine($"Habit {field} successfully updated to {newFieldName}");
+      Console.WriteLine($"Habit {field} successfully updated to {newFieldValue}");
     }
     catch (SQLiteException e)
     {
@@ -189,6 +193,25 @@ public class DbActions
   }
   public void DeleteHabit(int id)
   {
-
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    string queryString = "DELETE FROM Habits WHERE HabitId = @habitId";
+    command.Parameters.AddWithValue("@habitId", id);
+    command.CommandText = queryString;
+    try
+    {
+      command.ExecuteNonQuery();
+      Console.WriteLine("Habit successfully deleted");
+    }
+    catch (SqlException e)
+    {
+      Console.WriteLine($"Error updating habit:\n{e.Message}");
+    }
+    finally
+    {
+      command.Dispose();
+      connection.Dispose();
+    }
   }
 }
