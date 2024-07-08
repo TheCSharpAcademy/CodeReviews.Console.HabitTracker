@@ -1,3 +1,4 @@
+using System.Data.SQLite;
 using HabitTracker.kwm0304.Models;
 using Microsoft.Data.Sqlite;
 
@@ -68,9 +69,29 @@ public class DbActions
     }
   }
   //GET ALL
-  public void GetHabits()
+  public IEnumerable<Habit> GetHabits()
   {
+    var habits = new List<Habit>();
+    using SQLiteConnection connection = new(connectionString);
+    connection.Open();
 
+    using var command = connection.CreateCommand();
+    char string queryString = "SELECT * FROM Habits";
+    command.CommandText = queryString;
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+      var habit = new Habit
+      {
+        HabitId = reader.GetInt32(0),
+        HabitName = reader.GetString(1),
+        UnitOfMeasurement = reader.GetString(2),
+        Repetitions = reader.GetInt32(3),
+        StartedOn = DateTime.Parse(reader.GetString(4))
+      };
+      habits.Add(habit);
+    }
+    return habits;
   }
   //POST TO TABLE
   public void InsertHabit(Habit habit)
