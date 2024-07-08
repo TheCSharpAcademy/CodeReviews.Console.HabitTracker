@@ -25,6 +25,8 @@ Used libs: ConsoleTables, Dapper instead ADO.NET, Microsoft.Data.Sqlite
 # Description of how the app works:
 
 - Select default habit or register new habit...
+  - ![image](https://github.com/echoblade100/HabitTracker/assets/149004548/d7fe0953-cbe3-4cdc-8c39-3d3a2374df80)
+
 
 # Resources Used
 - Docs for libs:
