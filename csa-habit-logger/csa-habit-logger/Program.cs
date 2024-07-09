@@ -10,51 +10,21 @@ while (!exit)
 {
     Console.Clear();
     Console.WriteLine("Habit Tracker");
-    Console.WriteLine("C - Add Habit instance");
-    Console.WriteLine("R - View Habits intances");
-    Console.WriteLine("E - Edit Habit instance");
-    Console.WriteLine("S - Remove Habit instance");
-    Console.WriteLine("C - Add Habit");
-    Console.WriteLine("R - View Habits");
-    Console.WriteLine("U - Update Habit");
-    Console.WriteLine("D - Delete Habit");
+    Console.WriteLine("R - Add, view, edit and delete logged records");
+    Console.WriteLine("H - Add, view, edit and delete habits");
     Console.WriteLine("Q - Quit");
 
     ConsoleKeyInfo key = Console.ReadKey();
 
     switch (key.KeyChar)
     {
-        case 'a':
-        case 'A':
-            AddAHabit();
-            break;
-        case 'd':
-        case 'D':
-            DeleteAHabit();
-            break;
-        case 'v':
-        case 'V':
-            ViewHabits();
-            break;
-        case 'u':
-        case 'U':
-            UpdateAHabit();
-            break;
-        case 'c':
-        case 'C':
-            AddAHabitInstance();
-            break;
         case 'r':
         case 'R':
-            ViewHabitInstances();
+            HabitRecordsSubMenu();
             break;
-        case 'e':
-        case 'E':
-            UpdateAHabitInstance();
-            break;
-        case 's':
-        case 'S':
-            DeleteAHabitInstance();
+        case 'H':
+        case 'h':
+            HabitsSubMenu();
             break;
         case 'q':
         case 'Q':
@@ -104,7 +74,7 @@ public partial class Program
             resp = Console.ReadLine();
         }
 
-        return resp;
+        return resp.Trim();
     }
 
     public static bool GetUserBoolResponse()
@@ -140,13 +110,11 @@ public partial class Program
         Console.WriteLine("Add a new habit");
 
         Console.WriteLine("Enter Habit name");
-        string name = GetUserStringResponse().Trim();
+        string name = GetUserStringResponse();
 
-        if (name == "0")
+        if (name.Equals("0"))
         {
-            Console.WriteLine("Exit");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            return;
         }
 
         Console.WriteLine("Enter Habit unit");
@@ -245,7 +213,7 @@ public partial class Program
         Console.ReadKey();
     }
 
-    public static void AddAHabitInstance()
+    public static void AddAHabitInstance(DateTime? inputDateTime)
     {
         Console.Clear();
 
@@ -254,10 +222,24 @@ public partial class Program
         Console.WriteLine("Enter Habit name");
         string name = GetUserStringResponse();
 
-        Console.WriteLine("Enter date & time (YYYY-MM-DD HH:MM:SS)");
-        string dtime = GetUserStringResponse();
+        if (name.Equals("0"))
+        {
+            return;
+        }
+
         DateTime dt = DateTime.Now;
-        bool timeOk = DateTime.TryParse(dtime, out dt);
+        bool timeOk = true;
+
+        if (inputDateTime is null)
+        {
+            Console.WriteLine("Enter date & time (YYYY-MM-DD HH:MM:SS)");
+            string dtime = GetUserStringResponse();
+            timeOk = DateTime.TryParse(dtime, out dt);
+        }
+        else
+        {
+            dt = inputDateTime.Value;
+        }
 
         Console.Write("Enter amount: ");
         int amount = GetUserIntResponse();
@@ -384,4 +366,103 @@ public partial class Program
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
     }
+
+    public static void HabitsSubMenu()
+    {
+        bool exit = false;
+
+        while (!exit)
+        {
+            Console.Clear();
+            Console.WriteLine("Habits");
+            Console.WriteLine("C - Add Habit");
+            Console.WriteLine("R - View Habits");
+            Console.WriteLine("U - Update Habit");
+            Console.WriteLine("D - Delete Habit");
+            Console.WriteLine("Q - Back to main menu");
+
+            ConsoleKeyInfo key = Console.ReadKey();
+
+            switch (key.KeyChar)
+            {
+                case 'c':
+                case 'C':
+                    AddAHabit();
+                    break;
+                case 'd':
+                case 'D':
+                    DeleteAHabit();
+                    break;
+                case 'r':
+                case 'R':
+                    ViewHabits();
+                    break;
+                case 'u':
+                case 'U':
+                    UpdateAHabit();
+                    break;
+                case 'q':
+                case 'Q':
+                case '0':
+                    Console.Clear();
+                    exit = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static void HabitRecordsSubMenu()
+    {
+        bool exit = false;
+
+        while (!exit)
+        {
+            Console.Clear();
+            Console.WriteLine("Habit Tracker");
+            Console.WriteLine("C - Log habit");
+            Console.WriteLine("N - Log habit now");
+            Console.WriteLine("R - View habit logs");
+            Console.WriteLine("U - Update habit log");
+            Console.WriteLine("D - Remove a habit log record");
+            Console.WriteLine("Q - Return to main menu");
+
+            ConsoleKeyInfo key = Console.ReadKey();
+
+            switch (key.KeyChar)
+            {
+                case 'c':
+                case 'C':
+                    AddAHabitInstance(null);
+                    break;
+                case 'n':
+                case 'N':
+                    AddAHabitInstance(DateTime.Now);
+                    break;
+                case 'r':
+                case 'R':
+                    ViewHabitInstances();
+                    break;
+                case 'u':
+                case 'U':
+                    UpdateAHabitInstance();
+                    break;
+                case 'd':
+                case 'D':
+                    DeleteAHabitInstance();
+                    break;
+                case 'q':
+                case 'Q':
+                case '0':
+                    Console.Clear();
+                    Console.WriteLine("Quit");
+                    exit = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
 }
