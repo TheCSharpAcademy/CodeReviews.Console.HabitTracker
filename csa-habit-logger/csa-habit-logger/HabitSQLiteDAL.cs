@@ -80,11 +80,10 @@ namespace csa_habit_logger
 
                         string? unit = reader["unit"].ToString() ?? string.Empty;
 
-                        reader.Close();
-
                         habit = new Habit(id, name, unit);
                     }
 
+                    reader.Close();
                     conn.Close();
 
                     return habit;
@@ -122,10 +121,10 @@ namespace csa_habit_logger
 
                         string? unit = reader["unit"].ToString() ?? string.Empty;
 
-                        reader.Close();
-
                         habit = new Habit(id, habitName, unit);
                     }
+
+                    reader.Close();
 
                     conn.Close();
 
@@ -242,7 +241,8 @@ namespace csa_habit_logger
 
                 string getTablesSQLString = "SELECT name FROM sqlite_master WHERE type='table' AND name='habits';";
                 SQLiteCommand getTableCommand = new SQLiteCommand(getTablesSQLString, conn);
-                if (!getTableCommand.ExecuteReader().HasRows)
+                SQLiteDataReader reader = getTableCommand.ExecuteReader();
+                if (!reader.HasRows)
                 {
                     string createTableString = "CREATE TABLE habits (" +
                                                     "id INTEGER NOT NULL," +
@@ -252,10 +252,12 @@ namespace csa_habit_logger
                     SQLiteCommand cmd = new SQLiteCommand(createTableString, conn);
                     cmd.ExecuteNonQuery();
                 }
+                reader.Close();
 
                 getTablesSQLString = "SELECT name FROM sqlite_master WHERE type='table' AND name='records';";
                 getTableCommand = new SQLiteCommand(getTablesSQLString, conn);
-                if (!getTableCommand.ExecuteReader().HasRows)
+                reader = getTableCommand.ExecuteReader();
+                if (!reader.HasRows)
                 {
                     string createTableString = "CREATE TABLE records (" +
                                                     "id INTEGER NOT NULL," +
@@ -267,6 +269,7 @@ namespace csa_habit_logger
                     SQLiteCommand cmd = new SQLiteCommand(createTableString, conn);
                     cmd.ExecuteNonQuery();
                 }
+                reader.Close();
 
                 conn.Close();
             }
