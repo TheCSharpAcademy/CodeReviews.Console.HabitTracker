@@ -15,7 +15,7 @@ public class Database
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS logged_habits(
-                        Id INTEGER PRIMARY_KEY,
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Date TEXT,
                         Habit TEXT,
                         Quantity INTEGER,
@@ -92,7 +92,6 @@ public class Database
 
     internal static void Insert()
     {
-        int id = Convert.ToInt32(User.GetNumber("\nEnter Id"));
         string? date = User.GetDate();
         string? habit = User.GetString("\nEnter habit.");
         int quantity = Convert.ToInt32(User.GetNumber("\nEnter quantity."));
@@ -104,7 +103,7 @@ public class Database
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText = $@"INSERT INTO logged_habits (Id, Date, Habit, Quantity, Measurement)
-                                    VALUES ({id}, '{date}', '{habit}', {quantity}, '{measurement}')";
+                                    VALUES ('{date}', '{habit}', {quantity}, '{measurement}')";
 
             try
             {
@@ -238,7 +237,7 @@ public class Database
 
         while (!closeMenu)
         {
-            Console.WriteLine("Press 0 to return to Main Menu.");
+            Console.WriteLine("\nPress 0 to return to Main Menu.");
             Console.WriteLine("\nSelect column to update:");
             Console.WriteLine("1. Date");
             Console.WriteLine("2. Habit");
@@ -420,7 +419,6 @@ public class Database
                                     SET {column} = {numberValue}
                                     WHERE Id = {id}";
                         tableCmd.ExecuteNonQuery();
-                        Console.Clear();
                         Console.WriteLine($"Record {id} updated.");
                     }
                 }
@@ -462,7 +460,6 @@ public class Database
                                     SET {column} = '{value}'
                                     WHERE Id = {id}";
                         tableCmd.ExecuteNonQuery();
-                        Console.Clear();
                         Console.WriteLine($"Record {id} updated.");
                     }
                 }
