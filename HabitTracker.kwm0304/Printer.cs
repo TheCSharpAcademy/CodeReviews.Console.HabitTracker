@@ -71,8 +71,6 @@ public class Printer
     return response;
   }
 
-
-
   private static void DisplayHabits()
   {
     var table = new Table();

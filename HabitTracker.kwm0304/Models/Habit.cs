@@ -8,7 +8,7 @@ public class Habit
   public int Repetitions { get; set; }
   public DateTime StartedOn { get; set; }
   public int DaysTracked => CalculateDaysTracked();
-  public Habit(){}
+  public Habit() { }
   public Habit(string name, string unitOfMeasurement)
   {
     HabitName = name;
@@ -16,13 +16,20 @@ public class Habit
     Repetitions = 0;
     StartedOn = DateTime.Today;
   }
+  public Habit(string name, string unitOfMeasurement, DateTime startedOn, int repetitions)
+  {
+    HabitName = name;
+    UnitOfMeasurement = unitOfMeasurement;
+    StartedOn = startedOn;
+    Repetitions = repetitions;
+  }
 
   public int CalculateDaysTracked()
   {
     return (DateTime.Today - StartedOn).Days;
   }
-    public override string ToString()
-    {
-        return $"{HabitName} {Repetitions} {UnitOfMeasurement} {StartedOn:MM/dd/yyyy}";
-    }
+  public override string ToString()
+  {
+    return $"{HabitName} {Repetitions} {UnitOfMeasurement} {StartedOn:MM/dd/yyyy}";
+  }
 }

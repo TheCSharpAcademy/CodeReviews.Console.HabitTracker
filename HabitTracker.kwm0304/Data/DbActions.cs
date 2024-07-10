@@ -98,7 +98,7 @@ public class DbActions
     return habits;
   }
   //POST TO TABLE
-  public static void InsertHabit(Habit habit)
+  public  void InsertHabit(Habit habit)
   {
     using SqliteConnection connection = new(connectionString);
     connection.Open();

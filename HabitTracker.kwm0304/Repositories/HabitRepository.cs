@@ -6,15 +6,19 @@ namespace HabitTracker.kwm0304.Repositories;
 public class HabitRepository
 {
   private readonly DbActions _dbActions;
+  private readonly Mocks _mocks;
   public HabitRepository()
   {
     _dbActions = new DbActions();
     _dbActions.CreateDatabaseOnStart();
     _dbActions.CreateTableOnStart();
+    _mocks = new Mocks(_dbActions);
+    _mocks.GenerateMocks();
+
   }
   public void CreateHabit(Habit habit)
   {
-    DbActions.InsertHabit(habit);
+    _dbActions.InsertHabit(habit);
   }
   public Habit GetHabit(int habitId)
   {
