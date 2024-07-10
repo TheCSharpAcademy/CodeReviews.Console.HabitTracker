@@ -18,12 +18,13 @@ CHALLENGES:
 - Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?)
   SQL allows you to ask very interesting things from your database.
  */
-namespace HabitTracker.kwm0304;
 
-class Program
+using HabitTracker.kwm0304;
+string userOption;
+Utils utils = new();
+do
 {
-  static void Main(string[] args)
-  {
-    
-  }
+  userOption = Printer.PrintMainMenu() ?? string.Empty;
+  utils.HandleMainMenuChoice(userOption);
 }
+while (true);

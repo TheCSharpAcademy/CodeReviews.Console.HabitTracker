@@ -98,18 +98,18 @@ public class DbActions
     return habits;
   }
   //POST TO TABLE
-  public void InsertHabit(Habit habit)
+  public static void InsertHabit(Habit habit)
   {
     using SqliteConnection connection = new(connectionString);
     connection.Open();
     using var command = connection.CreateCommand();
     string queryString = @$"INSERT INTO Habits 
-    (HabitName, UnitOfMeasurement, Repetitions, StartedOn)
-    VALUES 
-    (@habitName, @unitOfMeasurement, @repititions, @startedOn, @daysTracked);";
+  (HabitName, UnitOfMeasurement, Repetitions, StartedOn)
+  VALUES 
+  (@habitName, @unitOfMeasurement, @repetitions, @startedOn);";
     command.Parameters.AddWithValue("@habitName", habit.HabitName);
     command.Parameters.AddWithValue("@unitOfMeasurement", habit.UnitOfMeasurement);
-    command.Parameters.AddWithValue("@repititions", habit.Repetitions);
+    command.Parameters.AddWithValue("@repetitions", habit.Repetitions);
     command.Parameters.AddWithValue("@startedOn", habit.StartedOn.ToString("yyyy-MM-dd"));
     command.CommandText = queryString;
     try
@@ -127,6 +127,7 @@ public class DbActions
       connection.Dispose();
     }
   }
+
 
   public void UpdateHabitRepetitions(int addedReps, int id)
   {

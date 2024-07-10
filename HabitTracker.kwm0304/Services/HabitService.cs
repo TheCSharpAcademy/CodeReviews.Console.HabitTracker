@@ -12,11 +12,17 @@ public class HabitService
   }
   public void CreatHabit(string name, string unitOfMeasurement)
   {
+    Console.WriteLine("Entering CreateHabit method.");
     if (IsEntryValid(name, unitOfMeasurement))
     {
-      Habit habit = new Habit(name, unitOfMeasurement);
+      Habit habit = new(name, unitOfMeasurement);
+      Console.WriteLine($"Creating habit: {habit.HabitName}, {habit.UnitOfMeasurement}");
       _repository.CreateHabit(habit);
+      Utils.habitList.Add(habit);
       Console.WriteLine("Habit successfully created");
+    }
+    else {
+      Console.WriteLine("Invalid habit entry");
     }
   }
   public void GetHabitById(int habitId)
@@ -37,32 +43,63 @@ public class HabitService
     }
 
   }
-  public void GetAllHabits()
+  public Habit? GetHabitFromList()
   {
     var habitList = _repository.GetHabits();
     if (habitList != null && habitList.Any())
     {
-      int index = 0;
-      var table = new Table();
-      table.Title("[yellow3_1]All Habits[/]");
-      table.Border(TableBorder.Heavy);
-      table.AddColumns("Id", "Name", "Repetitions", "Unit of Measurement", "Started On");
-      foreach (Habit habit in habitList)
-      {
-        table.AddRow(index.ToString(), habit.HabitName, habit.Repetitions.ToString(), habit.UnitOfMeasurement, habit.StartedOn.ToString("yyyy-MM-dd"));
-      }
-      AnsiConsole.Write(table);
+      Habit habit = AnsiConsole.Prompt(
+        new SelectionPrompt<Habit>()
+        .Title("Select the habit you would like to view/edit: ")
+        .AddChoices(habitList)
+      );
+      return habit;
     }
     else
     {
       AnsiConsole.WriteLine("No habits found");
+      return null;
     }
   }
+
+  public void AddRepetitionsToHabit(Habit habit, int addedReps)
+  {
+    if (habit != null)
+    {
+      int id = habit.HabitId;
+      _repository.UpdateHabitRepetitions(addedReps, id);
+    }
+  }
+  public void EditHabbit(string field, object newValue, int habitId)
+  {
+    //string field, object newFieldValue, int id
+    try
+    {
+      _repository.UpdateHabitFields(field, newValue, habitId);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error: {e.Message}");
+    }
+  }
+  
+  public void DeleteHabit(int id)
+  {
+    try
+    {
+      _repository.DeleteHabit(id);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error: {e.Message}");
+    }
+  }
+
   public static bool IsEntryValid(string name, string unitOfMeasurement)
   {
     if (!string.IsNullOrEmpty(name)
     && !string.IsNullOrEmpty(unitOfMeasurement)
-    && name.Length < 3 && name.Length <= 20
+    && name.Length > 3 && name.Length <= 20
     && unitOfMeasurement.Length <= 5)
     {
       return true;

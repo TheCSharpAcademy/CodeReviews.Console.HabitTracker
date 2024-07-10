@@ -21,4 +21,8 @@ public class Habit
   {
     return (DateTime.Today - StartedOn).Days;
   }
+    public override string ToString()
+    {
+        return $"{HabitName} {Repetitions} {UnitOfMeasurement} {StartedOn:MM/dd/yyyy}";
+    }
 }
