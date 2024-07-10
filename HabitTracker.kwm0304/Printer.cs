@@ -54,7 +54,7 @@ public class Printer
     string action = AnsiConsole.Prompt(
       new SelectionPrompt<string>()
       .Title("What would you like to do?")
-      .AddChoices("Add repetitions", "Edit habit", "Delete habit", "Back to habit list", "Back to main menu")
+      .AddChoices("Add repetitions", "Edit habit", "Delete habit", "Generate Report", "Back to habit list", "Back to main menu")
     );
     return action;
   }
@@ -114,10 +114,10 @@ public class Printer
   {
     if (field != "Repetitions")
     {
-      return AnsiConsole.Prompt(
-        new TextPrompt<object>("What would you like to change it to?")
-
+      string choice = AnsiConsole.Prompt(
+        new TextPrompt<string>("What would you like to change it to?")
       );
+      return (object)choice;
     }
     else
     {
@@ -145,5 +145,19 @@ public class Printer
       new TextPrompt<int>("To exit the program, type 0 and press Enter")
     );
     return response;
+  }
+  public static void PrintReports(List<int> projectionsList, string name, string unit)
+  {
+    if (projectionsList[0] != 0)
+    {
+    AnsiConsole.MarkupLine($"{name} Report");
+    AnsiConsole.WriteLine($"You are averaging {projectionsList[0]} {unit} per week");
+    AnsiConsole.WriteLine($"You are averaging {projectionsList[1]} {unit} per month");
+    AnsiConsole.WriteLine($"You are averaging {projectionsList[2]} {unit} per year");
+    }
+    else
+    {
+      AnsiConsole.WriteLine("Cannot generate report before a full day.");
+    }
   }
 }

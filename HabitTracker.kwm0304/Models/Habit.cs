@@ -17,7 +17,7 @@ public class Habit
     StartedOn = DateTime.Today;
   }
 
-  private int CalculateDaysTracked()
+  public int CalculateDaysTracked()
   {
     return (DateTime.Today - StartedOn).Days;
   }

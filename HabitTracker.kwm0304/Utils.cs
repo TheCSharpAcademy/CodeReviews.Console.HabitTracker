@@ -7,9 +7,11 @@ public class Utils
 {
   public static List<Habit> habitList = new List<Habit>();
   private readonly HabitService _service;
+  private readonly HabitReport _report;
   public Utils()
   {
     _service = new HabitService();
+    _report = new HabitReport(_service);
   }
   public void HandleMainMenuChoice(string choice)
   {
@@ -28,7 +30,6 @@ public class Utils
           Environment.Exit(exitResponse);
         }
         break;
-
     }
   }
 
@@ -43,6 +44,8 @@ public class Utils
   private void HandleHabitAction(string action, Habit habit)
   {
     int habitId = habit.HabitId;
+    string name = habit.HabitName;
+    string unit = habit.UnitOfMeasurement;
     switch (action)
     {
       case "Add repetitions":
@@ -54,6 +57,11 @@ public class Utils
         object newFieldVal = Printer.EditValuePrompt(attribute);
         _service.EditHabbit(attribute, newFieldVal, habitId);
         break;
+        case "Generate Report":
+        List<int> reportNums = _report.GenerateReports(habitId);
+        Printer.PrintReports(reportNums, name, unit);
+        break;
+
       case "Delete habit":
         bool confirmDelete = Printer.ConsoleConfirmation();
         if (confirmDelete)
@@ -70,7 +78,4 @@ public class Utils
     string unitOfMeasurement = Printer.HabitAttributePrompt($"What is the abbreviated unit of measurement for {name}?");
     _service.CreatHabit(name, unitOfMeasurement);
   }
-
-
-
 }

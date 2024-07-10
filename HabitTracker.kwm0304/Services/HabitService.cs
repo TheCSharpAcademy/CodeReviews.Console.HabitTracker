@@ -21,7 +21,8 @@ public class HabitService
       Utils.habitList.Add(habit);
       Console.WriteLine("Habit successfully created");
     }
-    else {
+    else
+    {
       Console.WriteLine("Invalid habit entry");
     }
   }
@@ -41,7 +42,18 @@ public class HabitService
     {
       AnsiConsole.WriteLine("No habit found with this id");
     }
-
+  }
+  public Habit? GetHabit(int habitId)
+  {
+    try
+    {
+      return _repository.GetHabit(habitId);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error: {e.Message}");
+      return null;
+    }
   }
   public Habit? GetHabitFromList()
   {
@@ -82,7 +94,7 @@ public class HabitService
       Console.WriteLine($"Error: {e.Message}");
     }
   }
-  
+
   public void DeleteHabit(int id)
   {
     try
