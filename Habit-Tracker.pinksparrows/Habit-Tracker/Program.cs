@@ -17,6 +17,15 @@ public class Program
         connection = new SQLiteConnection(connectionString);
         connection.Open();
 
+        string createHabitsTable = @"
+        CREATE TABLE IF NOT EXISTS Habits (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            HabitName TEXT NOT NULL,
+            Unit TEXT NOT NULL
+        );";
+        var cmd = new SQLiteCommand(createHabitsTable, connection);
+        cmd.ExecuteNonQuery();
+
         Console.WriteLine("Database initialized.");
     }
 
@@ -34,7 +43,7 @@ public class Program
         Console.WriteLine("Exit -> 0\n");
         Console.WriteLine("------------------------------------");
         Console.WriteLine("Please provide your input below:");
-        getInput();
+        GetInput();
     }
 
     static void GetInput()
@@ -94,7 +103,7 @@ public class Program
         }
     }
 
-    public static void InsertMenu()
+    static void InsertMenu()
     {
         Console.Clear();
         Clock();
@@ -106,98 +115,112 @@ public class Program
             Console.WriteLine("Invalid input. Please enter a valid name.");
             return;
         }
-        else
+
+        Console.WriteLine("What is the unit for this habit (e.g., minutes, times, liters)?");
+        string unit = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(unit))
         {
-            Console.WriteLine($"You will be logging {habitName}. Press any key to confirm.");
-            Console.ReadKey(true);
-
-
-            Console.WriteLine("What will be your quantity? (ex. Amount Drank)");
-            string habitQuantity = Console.ReadLine();
-
-            if (string.IsNullOrEmpty(habitQuantity))
-            {
-                Console.WriteLine("Invalid input. Please enter a valid quantity.");
-                return;
-            }
-
-            Console.WriteLine($"You will be logging {habitName} with quantity {habitQuantity}. Press any key to confirm.");
-            Console.ReadKey(true);
-            Console.WriteLine($"Creating {habitName} habit...");
-            InsertHabit(habitName, habitQuantity);
+            Console.WriteLine("Invalid input. Please enter a valid unit.");
+            return;
         }
 
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = "INSERT INTO Habits (HabitName, Unit) VALUES (@habitName, @unit);";
+        cmd.Parameters.AddWithValue("@habitName", habitName);
+        cmd.Parameters.AddWithValue("@unit", unit);
+        cmd.ExecuteNonQuery();
 
-
+        Console.WriteLine($"Habit '{habitName}' with unit '{unit}' created.");
     }
-    public static void DeleteMenu()
+
+    static void UpdateMenu()
     {
         Console.Clear();
         Clock();
-        Console.WriteLine("What habit would you want to delete?");
-        Console.WriteLine("List of currently existing tables:");
+        Console.WriteLine("List of currently existing habits:");
         Console.WriteLine("-----------------------------------------");
         TableList();
-        Console.WriteLine("What would you like to delete? All tables are case-sensitive!\nEnter the name below:");
-        string habitName = Console.ReadLine();
+        Console.WriteLine("Enter the ID of the habit you want to update:");
 
-        if (TableExists(habitName))
+        string habitIdInput = Console.ReadLine();
+        if (!int.TryParse(habitIdInput, out int habitId))
         {
-            DeleteHabit(habitName);
-        } 
+            Console.WriteLine("Invalid input. Please enter a valid ID.");
+            Console.ReadKey();
+            UpdateMenu();
+            return;
+        }
+
+        Console.WriteLine("What would you like to update? Enter 'Name' or 'Unit':");
+        string updateField = Console.ReadLine();
+
+        if (updateField.Equals("Name", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("Enter the new name:");
+            string newName = Console.ReadLine();
+            UpdateHabitName(habitId, newName);
+        }
+        else if (updateField.Equals("Unit", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("Enter the new unit:");
+            string newUnit = Console.ReadLine();
+            UpdateHabitUnit(habitId, newUnit);
+        }
         else
         {
-            Console.WriteLine("Invalid name, press any key to try again.");
+            Console.WriteLine("Invalid choice. Please type either 'Name' or 'Unit'.");
             Console.ReadKey();
-            DeleteMenu();
+            UpdateMenu();
         }
 
         Console.WriteLine("Press any key to return to the main menu!");
         Console.ReadKey();
         Menu();
-
     }
-    public static void ViewMenu()
+
+    static void DeleteMenu()
+    {
+        Console.Clear();
+        Clock();
+        Console.WriteLine("List of currently existing habits:");
+        Console.WriteLine("-----------------------------------------");
+        TableList();
+        Console.WriteLine("Enter the habit ID to delete:");
+
+        string habitIdInput = Console.ReadLine();
+        if (!int.TryParse(habitIdInput, out int habitId))
+        {
+            Console.WriteLine("Invalid input. Please enter a valid ID.");
+            Console.ReadKey();
+            DeleteMenu();
+            return;
+        }
+
+        DeleteHabit(habitId);
+
+        Console.WriteLine("Press any key to return to the main menu!");
+        Console.ReadKey();
+        Menu();
+    }
+
+    static void ViewMenu()
     {
 
         Console.Clear();
         Clock();
-        Console.WriteLine("List of currently existing tables:");
+        Console.WriteLine("List of currently existing habits:");
         Console.WriteLine("----------------------------------------");
         TableList();
         Console.WriteLine("\nIf you would like to change this list, please press any key to return to the main menu!");
     }
-    private static void UpdateMenu()
-    {
-        Console.Clear();
-        Clock();
-        Console.WriteLine("What habit would you want to update");
-        Console.WriteLine("List of currently existing tables:");
-        Console.WriteLine("-----------------------------------------");
-        TableList();
-        Console.WriteLine("What habit would you like to Update? All tables are case-sensitive!\nEnter the name below:");
-        string habitName = Console.ReadLine();
-        if (TableExists(habitName))
-        {
-            UpdateHabit(habitName);
-        } 
-        else
-        {
-            Console.WriteLine("This does not exist. Press a key to return.");
-            Console.ReadKey();
-        }
-
-        Console.WriteLine("Press any key to return to the main menu!");
-        Console.ReadKey();
-        Menu();
-    }
 
 
-    private static bool TableExists(string tableName)
+    static bool TableExists(string tableName)
     {
         var tableCmd = connection.CreateCommand();
 
-        tableCmd.CommandText = $"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}';";
+        tableCmd.CommandText = $"SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
         tableCmd.Parameters.AddWithValue("@tableName", tableName);
 
         using (var reader = tableCmd.ExecuteReader())
@@ -205,162 +228,113 @@ public class Program
             return reader.Read();
         }
     }
-    private static void TableList()
-    {
 
+    static void TableList()
+    {
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence';";
+        tableCmd.CommandText = "SELECT * FROM Habits;";
 
         using (var reader = tableCmd.ExecuteReader())
         {
             while (reader.Read())
             {
-                string tableName = reader.GetString(0);
-                Console.Write($"-{tableName}\t");
-                
-
-                var quantityCmd = connection.CreateCommand();
-                quantityCmd.CommandText = $"SELECT Quantity FROM \"{tableName}\";";
-
-                try
-                {
-                    using (var quantityReader = quantityCmd.ExecuteReader())
-                    {
-                        while (quantityReader.Read())
-                        {
-                            int quantity = quantityReader.GetInt32(0);
-
-                            Console.Write($"\t\tQuantity: {quantity}\n");
-                            Console.WriteLine("----------------------------------------");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error reading Quantity from {tableName}: {ex.Message}");
-                }
+                Console.WriteLine($"\nID: {reader["Id"]}\tName: {reader["HabitName"]}\tUnit: {reader["Unit"]}\n");
             }
         }
     }
 
-    public static void InsertHabit(string habitName, string habitQuantity)
-        {
-            var tableCmd = connection.CreateCommand();
+    static void ReorderHabitIds(int deletedId)
+    {
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = @"
+        UPDATE Habits
+        SET Id = Id - 1
+        WHERE Id > @deletedId;
+    ";
+        cmd.Parameters.AddWithValue("@deletedId", deletedId);
+        cmd.ExecuteNonQuery();
 
-            string createTableQuery = $@"
-                CREATE TABLE IF NOT EXISTS ""{habitName}"" (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Quantity INTEGER NOT NULL
-                );";
-
-            tableCmd.CommandText = createTableQuery;
-            tableCmd.ExecuteNonQuery();
-
-            string insertQuantityQuery = $@"
-                INSERT INTO ""{habitName}"" (Quantity)
-                VALUES (@habitQuantity);";
-
-        tableCmd.CommandText = insertQuantityQuery;
-        tableCmd.Parameters.AddWithValue("@habitQuantity", habitQuantity);
-        tableCmd.ExecuteNonQuery();
-
-        Console.WriteLine($"Habit table '{habitName}' created with initial quantity {habitQuantity}.");
+        cmd.CommandText = "UPDATE sqlite_sequence SET seq = (SELECT MAX(Id) FROM Habits) WHERE name = 'Habits';";
+        cmd.ExecuteNonQuery();
     }
-    public static void InsertQuantity(string habitName, string habitQuantity)
+
+
+    static void InsertQuantity(string habitName, int habitQuantity)
     {
         var tableCmd = connection.CreateCommand();
 
         string createTableQuery = $@"
-                INSERT INTO {habitName} (Quantity)
-                VALUES (@{habitQuantity});";
+            INSERT INTO {habitName} (Quantity)
+            VALUES (@habitQuantity);";
 
         tableCmd.CommandText = createTableQuery;
+        tableCmd.Parameters.AddWithValue("@habitQuantity", habitQuantity);
         tableCmd.ExecuteNonQuery();
 
-        Console.WriteLine($"Habit quantity ({habitQuantity})");
+        Console.WriteLine($"Habit quantity ({habitQuantity}) inserted.");
     }
 
 
-    public static void DeleteHabit(string habitName)
-        {
-            if (string.IsNullOrEmpty(habitName)) { 
-            Console.WriteLine("Invalid input. Please enter a valid name.");
-            }
 
-            else
-            {
-                var tableCmd = connection.CreateCommand();
-
-                tableCmd.CommandText = $@"DROP TABLE IF EXISTS ""{habitName}"";";
-                tableCmd.ExecuteNonQuery();
-
-                Console.WriteLine($"Habit '{habitName}' deleted.");
-            }
-        }
-    private static void UpdateHabit(string habitName)
+    static void DeleteHabit(int habitId)
     {
-        if (string.IsNullOrEmpty(habitName))
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = "DELETE FROM Habits WHERE Id = @habitId;";
+        cmd.Parameters.AddWithValue("@habitId", habitId);
+        int rowsAffected = cmd.ExecuteNonQuery();
+
+        if (rowsAffected > 0)
         {
-            Console.WriteLine("Invalid input. Please enter a valid name.");
+            Console.WriteLine($"Habit with ID '{habitId}' deleted.");
+            ReorderHabitIds(habitId);
         }
         else
         {
-            Console.WriteLine($"What would you like to update? You may type either 'Name' or 'Quantity'");
-            string habitChoice = Console.ReadLine();
-
-            if (habitChoice.Equals("Name", StringComparison.OrdinalIgnoreCase))
-            {
-                UpdateName(habitName);
-            }
-            else if (habitChoice.Equals("Quantity", StringComparison.OrdinalIgnoreCase))
-            {
-                UpdateQuantity(habitName);
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Please type either 'Name' or 'Quantity'.");
-                Console.ReadKey();
-            }
+            Console.WriteLine($"Habit with ID '{habitId}' not found.");
         }
     }
 
 
 
-    private static void UpdateName(string habitName)
+static void UpdateHabitName(int habitId, string newName)
+{
+    var cmd = connection.CreateCommand();
+    cmd.CommandText = "UPDATE Habits SET HabitName = @newName WHERE Id = @habitId;";
+    cmd.Parameters.AddWithValue("@newName", newName);
+    cmd.Parameters.AddWithValue("@habitId", habitId);
+    int rowsAffected = cmd.ExecuteNonQuery();
+
+    if (rowsAffected > 0)
     {
-        Console.WriteLine("What would you like to rename it to?");
-        string newTable = Console.ReadLine();
-        var tableCmd = connection.CreateCommand();
-
-        tableCmd.CommandText = $@"ALTER TABLE ""{habitName}"" RENAME TO ""{newTable}"";";
-        tableCmd.ExecuteNonQuery();
-
-        Console.WriteLine($"Habit is now called '{newTable}'");
+        Console.WriteLine($"Habit ID '{habitId}' name updated to '{newName}'.");
     }
-
-    private static void UpdateQuantity(string habitName)
+    else
     {
-        Console.WriteLine("Please enter new quantity amount.");
-        string newQuantityStr = Console.ReadLine();
-
-        if (!int.TryParse(newQuantityStr, out int newQuantity))
-        {
-            Console.WriteLine("Invalid input. Please enter a valid integer for quantity.");
-            return;
-        }
-
-        var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $@"UPDATE ""{habitName}"" SET Quantity = @newQuantity WHERE Id = (SELECT Id FROM ""{habitName}"" LIMIT 1);";
-        tableCmd.Parameters.AddWithValue("@newQuantity", newQuantity);
-
-        tableCmd.ExecuteNonQuery();
-
-        Console.WriteLine($"Habit quantity is now '{newQuantity}'");
+        Console.WriteLine($"Habit ID '{habitId}' not found.");
     }
+}
 
-    private static void Clock()
+static void UpdateHabitUnit(int habitId, string newUnit)
+{
+    var cmd = connection.CreateCommand();
+    cmd.CommandText = "UPDATE Habits SET Unit = @newUnit WHERE Id = @habitId;";
+    cmd.Parameters.AddWithValue("@newUnit", newUnit);
+    cmd.Parameters.AddWithValue("@habitId", habitId);
+    int rowsAffected = cmd.ExecuteNonQuery();
+
+    if (rowsAffected > 0)
+    {
+        Console.WriteLine($"Habit ID '{habitId}' unit updated to '{newUnit}'.");
+    }
+    else
+    {
+        Console.WriteLine($"Habit ID '{habitId}' not found.");
+    }
+}
+
+static void Clock()
     {
         Console.WriteLine($"Date and Time: {DateTime.Now.ToString("MM/dd/yyyy h:mm tt")}");
     }
 
-    }
+}
