@@ -14,7 +14,9 @@ public class DbActions
   {
     if (!File.Exists(dbFileName))
     {
-      using (File.Create("HabitDB.db")) { }
+      using (File.Create("HabitDB.db")) {
+        //file created, don't take any more action
+      }
     }
   }
   public void CreateTableOnStart()
