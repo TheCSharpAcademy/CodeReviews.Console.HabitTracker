@@ -61,7 +61,9 @@ public class Utils
         List<int> reportNums = _report.GenerateReports(habitId);
         Printer.PrintReports(reportNums, name, unit);
         break;
-
+      case "Back to habit list":
+      HandleViewHabits();
+      break;
       case "Delete habit":
         bool confirmDelete = Printer.ConsoleConfirmation();
         if (confirmDelete)
