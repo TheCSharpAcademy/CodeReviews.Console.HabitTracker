@@ -9,7 +9,7 @@ public class DbActions
 {
   private static readonly string dbFileName = "HabitDB.db";
   private static readonly string connectionString = $"Data Source={dbFileName}";
-  //CREATE TABLE
+  //ON START
   public void CreateDatabaseOnStart()
   {
     if (!File.Exists(dbFileName))
@@ -28,7 +28,8 @@ public class DbActions
         HabitName TEXT NOT NULL,
         UnitOfMeasurement TEXT NOT NULL,
         Repetitions INTEGER NOT NULL,
-        StartedOn TEXT NOT NULL
+        StartedOn TEXT NOT NULL,
+        IsMock INTEGER NOT NULL DEFAULT 0
         )";
     command.CommandText = queryString;
     try
@@ -64,7 +65,8 @@ public class DbActions
         HabitName = reader.GetString(1),
         UnitOfMeasurement = reader.GetString(2),
         Repetitions = reader.GetInt32(3),
-        StartedOn = DateTime.Parse(reader.GetString(4))
+        StartedOn = DateTime.Parse(reader.GetString(4)),
+        IsMock = reader.GetInt32(5) == 1
       };
     }
     else
@@ -91,26 +93,28 @@ public class DbActions
         HabitName = reader.GetString(1),
         UnitOfMeasurement = reader.GetString(2),
         Repetitions = reader.GetInt32(3),
-        StartedOn = DateTime.Parse(reader.GetString(4))
+        StartedOn = DateTime.Parse(reader.GetString(4)),
+        IsMock = reader.GetInt32(5) == 1
       };
       habits.Add(habit);
     }
     return habits;
   }
-  //POST TO TABLE
-  public  void InsertHabit(Habit habit)
+  //POST 
+  public void InsertHabit(Habit habit)
   {
     using SqliteConnection connection = new(connectionString);
     connection.Open();
     using var command = connection.CreateCommand();
     string queryString = @$"INSERT INTO Habits 
-  (HabitName, UnitOfMeasurement, Repetitions, StartedOn)
+  (HabitName, UnitOfMeasurement, Repetitions, StartedOn, IsMock)
   VALUES 
-  (@habitName, @unitOfMeasurement, @repetitions, @startedOn);";
+  (@habitName, @unitOfMeasurement, @repetitions, @startedOn, @isMock);";
     command.Parameters.AddWithValue("@habitName", habit.HabitName);
     command.Parameters.AddWithValue("@unitOfMeasurement", habit.UnitOfMeasurement);
     command.Parameters.AddWithValue("@repetitions", habit.Repetitions);
     command.Parameters.AddWithValue("@startedOn", habit.StartedOn.ToString("yyyy-MM-dd"));
+    command.Parameters.AddWithValue("@isMock", habit.IsMock ? 1 : 0);
     command.CommandText = queryString;
     try
     {
@@ -127,8 +131,7 @@ public class DbActions
       connection.Dispose();
     }
   }
-
-
+//UPDATE
   public void UpdateHabitRepetitions(int addedReps, int id)
   {
     using SqliteConnection connection = new(connectionString);
@@ -190,8 +193,8 @@ public class DbActions
       command.Dispose();
       connection.Dispose();
     }
-
   }
+  //DELETE
   public void DeleteHabit(int id)
   {
     using SqliteConnection connection = new(connectionString);
@@ -208,6 +211,28 @@ public class DbActions
     catch (SqlException e)
     {
       Console.WriteLine($"Error updating habit:\n{e.Message}");
+    }
+    finally
+    {
+      command.Dispose();
+      connection.Dispose();
+    }
+  }
+  public void DeleteMocks()
+  {
+    using SqliteConnection connection = new(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    const string queryString = "DELETE FROM Habits WHERE IsMock = 1";
+    command.CommandText = queryString;
+    try
+    {
+      int affectedRows = command.ExecuteNonQuery();
+      Console.WriteLine($"Mock habits successfully deleted, {affectedRows} rows affected.");
+    }
+    catch (SqliteException e)
+    {
+      Console.WriteLine($"Error deleting mock habits:\n{e.Message}");
     }
     finally
     {

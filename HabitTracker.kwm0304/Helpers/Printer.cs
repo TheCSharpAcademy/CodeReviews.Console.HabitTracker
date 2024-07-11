@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using HabitTracker.kwm0304.Models;
 using Spectre.Console;
 
-namespace HabitTracker.kwm0304;
+namespace HabitTracker.kwm0304.Helpers;
 
 public class Printer
 {
@@ -14,7 +14,6 @@ public class Printer
     PrintHeader();
     return PrintMenuOptions();
   }
-
   private static string PrintMenuOptions()
   {
     string choice = AnsiConsole.Prompt(
@@ -24,18 +23,6 @@ public class Printer
     );
     return choice;
   }
-
-  private static void DisplayCurrentHabitsMenu()
-  {
-    DisplayHabits();
-    throw new NotImplementedException();
-  }
-
-  private static bool IsValidOption(string response)
-  {
-    throw new NotImplementedException();
-  }
-
   private static void PrintHeader()
   {
     AnsiConsole.WriteLine(@"
@@ -70,20 +57,6 @@ public class Printer
     }
     return response;
   }
-
-  private static void DisplayHabits()
-  {
-    var table = new Table();
-    table.Title("Habits");
-    table.Border(TableBorder.Heavy);
-    table.AddColumns("Id", "Name", "Repetitions", "Unit of Measurement", "Started On");
-    foreach (var habit in Utils.habitList)
-    {
-      table.AddRow($"{habit.HabitId}, {habit.HabitName}, {habit.Repetitions}, {habit.UnitOfMeasurement}, {habit.StartedOn}");
-    }
-    AnsiConsole.Write(table);
-  }
-
   public static int AddRepetitionsPrompt()
   {
     return AnsiConsole.Prompt(
@@ -148,14 +121,17 @@ public class Printer
   {
     if (projectionsList[0] != 0)
     {
-    AnsiConsole.MarkupLine($"{name} Report");
-    AnsiConsole.WriteLine($"You are averaging {projectionsList[0]} {unit} per week");
-    AnsiConsole.WriteLine($"You are averaging {projectionsList[1]} {unit} per month");
-    AnsiConsole.WriteLine($"You are averaging {projectionsList[2]} {unit} per year");
+      AnsiConsole.MarkupLine($"{name} Report");
+      AnsiConsole.WriteLine($"You are averaging {projectionsList[0]} {unit} per week");
+      AnsiConsole.WriteLine($"You are averaging {projectionsList[1]} {unit} per month");
+      AnsiConsole.WriteLine($"You are averaging {projectionsList[2]} {unit} per year");
+      Console.WriteLine("\nPress any key to return to the main menu...");
+      Console.ReadKey();
     }
     else
     {
       AnsiConsole.WriteLine("Cannot generate report before a full day.");
+      Thread.Sleep(2000);
     }
   }
 }

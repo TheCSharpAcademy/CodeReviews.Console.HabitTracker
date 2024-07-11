@@ -12,6 +12,10 @@ public class HabitRepository
     _dbActions = new DbActions();
     _dbActions.CreateDatabaseOnStart();
     _dbActions.CreateTableOnStart();
+    _dbActions.DeleteMocks();
+    
+    
+    Thread.Sleep(3000);
     _mocks = new Mocks(_dbActions);
     _mocks.GenerateMocks();
 

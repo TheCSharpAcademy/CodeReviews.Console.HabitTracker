@@ -33,9 +33,11 @@ public class Mocks
         HabitName = EntryName + entryNum,
         UnitOfMeasurement = EntryUnitofMeasurement + i.ToString(),
         StartedOn = RandomDate(),
-        Repetitions = RandomRepetition()
+        Repetitions = RandomRepetition(),
+        IsMock = true
       };
       _actions.InsertHabit(habit);
+      Console.WriteLine("IsMock Value " + habit.IsMock);
       Console.WriteLine($"Creating mock habit {i}");
     }
   }

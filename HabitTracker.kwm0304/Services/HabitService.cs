@@ -1,6 +1,8 @@
 using HabitTracker.kwm0304.Models;
 using HabitTracker.kwm0304.Repositories;
+using HabitTracker.kwm0304.Helpers;
 using Spectre.Console;
+
 namespace HabitTracker.kwm0304.Services;
 
 public class HabitService
@@ -73,7 +75,6 @@ public class HabitService
       return null;
     }
   }
-
   public void AddRepetitionsToHabit(Habit habit, int addedReps)
   {
     if (habit != null)
@@ -94,7 +95,6 @@ public class HabitService
       Console.WriteLine($"Error: {e.Message}");
     }
   }
-
   public void DeleteHabit(int id)
   {
     try
@@ -106,7 +106,6 @@ public class HabitService
       Console.WriteLine($"Error: {e.Message}");
     }
   }
-
   public static bool IsEntryValid(string name, string unitOfMeasurement)
   {
     if (!string.IsNullOrEmpty(name)

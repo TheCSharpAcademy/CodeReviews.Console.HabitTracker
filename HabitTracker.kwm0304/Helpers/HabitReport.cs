@@ -2,7 +2,7 @@ using HabitTracker.kwm0304.Models;
 using HabitTracker.kwm0304.Repositories;
 using HabitTracker.kwm0304.Services;
 
-namespace HabitTracker.kwm0304;
+namespace HabitTracker.kwm0304.Helpers;
 
 public class HabitReport
 {
