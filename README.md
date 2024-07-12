@@ -2,7 +2,7 @@
 
 An application in which you can register one habit and track by day the number of approaches per day to complete it.
 
-Used libs: ConsoleTables, Dapper instead ADO.NET, Microsoft.Data.Sqlite
+Used libs: ConsoleTables, Microsoft.Data.Sqlite(ADO.NET)
 
 # Fulfillment of requirements: 
 - [x] This is an application where you’ll register one habit.
@@ -19,8 +19,8 @@ Used libs: ConsoleTables, Dapper instead ADO.NET, Microsoft.Data.Sqlite
 
 # Fulfillment of challenges:
 - [x] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
-- [ ] Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. This is specially helpful during development so you don't have to reinsert data every time you create the database.
-- [ ] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
+- [x] Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. This is specially helpful during development so you don't have to reinsert data every time you create the database.
+- [x] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
 
 # Description of how the app works:
 
@@ -30,8 +30,8 @@ Used libs: ConsoleTables, Dapper instead ADO.NET, Microsoft.Data.Sqlite
 
 # Resources Used
 - Docs for libs:
-  - [ConsoleTables](https://github.com/khalidabuhakmeh/ConsoleTables)
-  - Dapper
-  - Microsoft.Data.Sqlite
+- [ConsoleTables](https://github.com/khalidabuhakmeh/ConsoleTables)
+- Dapper?
+- [Microsoft.Data.Sqlite overview ADO.NET](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=visual-studio)
 - [SQL As Understood By SQLite](https://www.sqlite.org/lang.html)
 - Various StackOverflow articles
