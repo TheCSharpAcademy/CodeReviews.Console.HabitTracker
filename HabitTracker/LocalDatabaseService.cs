@@ -45,7 +45,7 @@ namespace HabitTracker
                 $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 $"Name TEXT NOT NULL," +
                 $"MeasurementMethod TEXT NOT NULL);";
-            CreateTable(Constants.TableHabits, newTableSql.ToString());
+            CreateTable(Constants.TableHabits, newTableSql);
         }
 
         private void CreateTableHabitRecords()
@@ -57,7 +57,7 @@ namespace HabitTracker
                 $"NumberOfApproachesPerDay INTEGER NOT NULL," +
                 $"HabitId INTEGER," +
                 $"FOREIGN KEY(HabitId) REFERENCES {Constants.TableHabits}(Id) ON DELETE CASCADE);";
-            CreateTable(Constants.TableHabitRecords, newTableSql.ToString());
+            CreateTable(Constants.TableHabitRecords, newTableSql);
         }
 
         private void CreateTable(string tableName, string newTableSql)
