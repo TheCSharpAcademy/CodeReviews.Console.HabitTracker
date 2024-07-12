@@ -24,9 +24,22 @@ Used libs: ConsoleTables, Microsoft.Data.Sqlite(ADO.NET)
 
 # Description of how the app works:
 
-- Select default habit or register new habit...
-  - ![image](https://github.com/echoblade100/HabitTracker/assets/149004548/d7fe0953-cbe3-4cdc-8c39-3d3a2374df80)
-
+- Select default habit or register new habit:
+  - ![image](https://github.com/user-attachments/assets/5c8c850b-bb8b-4cab-8a7d-e3fed1cfab2b)
+  - If you choose `n`, fill in the details for the new habit.
+  - If you choose `s`, then by id, select one of the existing ones.
+  - Or just skip by pressing `Enter`, in this case the last created habit will be selected.
+- Main menu
+  - ![image](https://github.com/user-attachments/assets/13b075e2-18e0-445a-8594-4b35ff29ab1a)
+  - Type `0` to Close Application - will close the application
+  - Type `1` to View all Records - will show in table form all current records for the current habit
+  - Type `2` to Insert Record
+    - The first step is to enter the date in the required format. The second step is to enter the number of approaches.
+  - Type `3` to Update Record
+    - The first step is to enter exist Id. The second step is to enter the number of approaches.
+  - Type `4` to Delete Record - enter Id to delete.
+  - Type `5` to Get Report - show the report as a table.
+    - ![image](https://github.com/user-attachments/assets/62310bfc-7f31-4bdb-81d1-b873bc157412)
 
 # Resources Used
 - [ConsoleTables](https://github.com/khalidabuhakmeh/ConsoleTables)
