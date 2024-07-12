@@ -29,9 +29,13 @@ Used libs: ConsoleTables, Microsoft.Data.Sqlite(ADO.NET)
 
 
 # Resources Used
-- Docs for libs:
 - [ConsoleTables](https://github.com/khalidabuhakmeh/ConsoleTables)
 - Dapper?
+  - [.NET 7.0 + Dapper + SQLite - CRUD API Tutorial in ASP.NET Core](https://jasonwatmore.com/net-7-dapper-sqlite-crud-api-tutorial-in-aspnet-core)
+  - [How to use SQLite with Dapper (In ASP.NET Core 3.1)](https://dotnetcorecentral.com/blog/how-to-use-sqlite-with-dapper/)
+- [SQL Exercises |w3schools](https://www.w3schools.com/sql/sql_exercises.asp)
+- [Create, read, update and delete |wiki](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)
+- [Structured Query Language (SQL) |wiki](https://en.wikipedia.org/wiki/SQL)
 - [Microsoft.Data.Sqlite overview ADO.NET](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=visual-studio)
 - [SQL As Understood By SQLite](https://www.sqlite.org/lang.html)
 - Various StackOverflow articles
