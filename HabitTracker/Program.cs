@@ -8,15 +8,15 @@ namespace HabitTracker
         private static Habit _habit = null!;
         static void Main(string[] args)
         {
-            //_dbService = new LocalDatabaseService("Data Source=habitTracker.sqlite");
+            //_dbService = new LocalDatabaseService("Data Source=habitTracker.sqlite"); //for move to Dapper
             _dbService = new LocalDatabaseAdoService("Data Source=habitTracker.sqlite");
 
             Console.WriteLine("Habit Tracker");
-            Console.WriteLine("Create custom habit or use default(Habit of doing eye exercises. Measurement: number of eye exercises per day.)?");
-            Console.WriteLine("Please, type \"n\" for new habit or skip by \"Enter\":");
+            Console.WriteLine("Create custom habit or use default?");
+            Console.WriteLine("Please, type \"n\" for new habit, type \"s\" for select habit or skip by \"Enter\":");
             try
             {
-                string input = Helpers.InputStringWithRegexValidation($"^(n|)$", "Wrong input. Please, type \"n\" for new habit or skip by \"Enter\":");
+                string input = Helpers.InputStringWithRegexValidation("^(s|n|)$", "Wrong input. Please, type \"n\" for new habit, type \"s\" for select habit or skip by \"Enter\":");
                 if (input == "n")
                 {
                     Console.WriteLine("Habit name (example - trips to the gym):");
@@ -27,6 +27,23 @@ namespace HabitTracker
 
                     _habit = new Habit() { Name = inputHabitName, MeasurementMethod = inputHabitMeasurement };
                     _habit = _dbService.CreateHabit(_habit);
+                    MainMenu();
+                }
+                else if (input == "s")
+                {
+                    ViewAllHabits();
+                    Console.WriteLine("Enter Id to select habit:");
+                    int id = Helpers.InputNumberWithValidation(1, int.MaxValue);
+                    Habit? habit = _dbService.GetHabitById(id);
+                    if (habit == null)
+                    {
+                        Console.WriteLine("Find an existing habit Id. Try select again.");
+                        Console.WriteLine();
+                        Main([]);
+                    }
+                    Console.Clear();
+
+                    _habit = habit!;
                     MainMenu();
                 }
                 else
@@ -60,6 +77,7 @@ namespace HabitTracker
                 Console.WriteLine("\tType 2 to Insert Record");
                 Console.WriteLine("\tType 3 to Update Record");
                 Console.WriteLine("\tType 4 to Delete Record");
+                Console.WriteLine("\tType 5 to Get Report");
                 Console.WriteLine("------------------------");
 
                 int input = Helpers.InputNumberWithValidation();
@@ -89,6 +107,11 @@ namespace HabitTracker
                         Console.WriteLine("<<Delete Record>>");
                         DeleteRecord();
                         break;
+                    case 5:
+                        Console.Clear();
+                        Console.WriteLine("<<Get Report>>");
+                        GetReport();
+                        break;
                     default:
                         Console.Clear();
                         Console.WriteLine("Please enter the number corresponding to the menu item:");
@@ -108,7 +131,7 @@ namespace HabitTracker
                 DateTime.Now.AddYears(-1),
                 DateTime.Now,
                 "Wrong input. Input record date in format (month-day-year):");
-            if (_dbService.IsExistDateRecord(date))
+            if (_dbService.IsExistDateRecord(date, _habit.Id))
             {
                 Console.WriteLine("There is already an entry with the same date. Сhoose another date.");
                 return;
@@ -125,6 +148,21 @@ namespace HabitTracker
 
             _dbService.CreateHabitRecord(habitRecord, _habit.Id);
             Console.Clear();
+        }
+
+        public static void ViewAllHabits()
+        {
+            var habits = _dbService.GetAllHabits();
+
+            var table = new ConsoleTable("Id", "Name", "MeasurementMethod");
+            table.Configure(o => { o.EnableCount = false; });
+            foreach (var habit in habits)
+            {
+                table.AddRow(habit.Id, habit.Name, habit.MeasurementMethod);
+            }
+
+            table.Write(Format.Default);
+            Console.WriteLine();
         }
 
         public static void ViewAllRecords()
@@ -184,6 +222,40 @@ namespace HabitTracker
                 return;
             }
             Console.Clear();
+        }
+
+        public static void GetReport()
+        {
+            Console.WriteLine($"/// Habit - {_habit.Name} \\\\\\");
+            var habitRecords = _dbService.GetAllHabitRecords(_habit.Id).OrderBy(x => x.Date);
+            if (habitRecords.Count() == 0)
+            {
+                Console.WriteLine("No records yet...");
+                Console.WriteLine();
+                return;
+            }
+
+            var habitRecordsForThisYear = habitRecords.Where(x => x.Date.Year == DateTime.Now.Year);
+            var habitRecordsForThisMonth = habitRecords.Where(x => x.Date.Month == DateTime.Now.Month);
+            Dictionary<string, int> reports = new Dictionary<string, int>() { 
+                { "Approaches all time", habitRecords.Sum(x => x.NumberOfApproachesPerDay) },
+                { "Number of approaches per year", habitRecordsForThisYear.Sum(x => x.NumberOfApproachesPerDay) },
+                { "Number of approaches this month", habitRecordsForThisMonth.Sum(x => x.NumberOfApproachesPerDay) },
+                { "Number of approaches today", habitRecords.Last().NumberOfApproachesPerDay },
+                { "Habit records for all time", habitRecords.Count() },
+                { "Records for the year", habitRecordsForThisYear.Count() },
+                { "Records for this month", habitRecordsForThisMonth.Count() },
+            };
+
+            var table = new ConsoleTable("Criterion", "Number");
+            table.Configure(o => { o.EnableCount = false; });
+            foreach (var report in reports)
+            {
+                table.AddRow(report.Key, report.Value);
+            }
+
+            table.Write(Format.Default);
+            Console.WriteLine();
         }
     }
 }
