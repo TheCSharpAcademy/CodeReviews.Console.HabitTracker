@@ -8,9 +8,6 @@ namespace HabitTracker
         private readonly string _connectionString;
         private SqliteConnection? _connection;
 
-        private readonly string _tableHabits = "habits";
-        private readonly string _tableHabitRecords = "habit_records";
-
         public LocalDatabaseService(string connectionString)
         {
             _connectionString = connectionString;
@@ -44,23 +41,23 @@ namespace HabitTracker
         private void CreateTableHabits()
         {
             string newTableSql =
-                $"CREATE TABLE IF NOT EXISTS {_tableHabits} (" +
+                $"CREATE TABLE IF NOT EXISTS {Constants.TableHabits} (" +
                 $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 $"Name TEXT NOT NULL," +
                 $"MeasurementMethod TEXT NOT NULL);";
-            CreateTable(_tableHabits, newTableSql.ToString());
+            CreateTable(Constants.TableHabits, newTableSql.ToString());
         }
 
         private void CreateTableHabitRecords()
         {
             string newTableSql =
-                $"CREATE TABLE IF NOT EXISTS {_tableHabitRecords} (" +
+                $"CREATE TABLE IF NOT EXISTS {Constants.TableHabitRecords} (" +
                 $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 $"Date TEXT NOT NULL," +
                 $"NumberOfApproachesPerDay INTEGER NOT NULL," +
                 $"HabitId INTEGER," +
-                $"FOREIGN KEY(HabitId) REFERENCES {_tableHabits}(Id) ON DELETE CASCADE);";
-            CreateTable(_tableHabitRecords, newTableSql.ToString());
+                $"FOREIGN KEY(HabitId) REFERENCES {Constants.TableHabits}(Id) ON DELETE CASCADE);";
+            CreateTable(Constants.TableHabitRecords, newTableSql.ToString());
         }
 
         private void CreateTable(string tableName, string newTableSql)
@@ -84,50 +81,50 @@ namespace HabitTracker
         // Habits
         public Habit CreateHabit(Habit obj)
         {
-            string createQuery = $"INSERT INTO {_tableHabits} (Name, MeasurementMethod) VALUES ('{obj.Name}', '{obj.MeasurementMethod}') RETURNING *;";
+            string createQuery = $"INSERT INTO {Constants.TableHabits} (Name, MeasurementMethod) VALUES ('{obj.Name}', '{obj.MeasurementMethod}') RETURNING *;";
             return _connection!.Query<Habit>(createQuery).First();
         }
 
         public Habit GetLastHabit()
         {
-            string getLastQuery = $"SELECT * FROM {_tableHabits} ORDER BY Id DESC LIMIT 1;";
+            string getLastQuery = $"SELECT * FROM {Constants.TableHabits} ORDER BY Id DESC LIMIT 1;";
             return _connection!.Query<Habit>(getLastQuery).First();
         }
 
         // HabitRecords
         public HabitRecord CreateHabitRecord(HabitRecord obj, int habitId)
         {
-            string createQuery = $"INSERT INTO {_tableHabitRecords} (Date, NumberOfApproachesPerDay, HabitId) VALUES ('{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{habitId}') RETURNING *;";
+            string createQuery = $"INSERT INTO {Constants.TableHabitRecords} (Date, NumberOfApproachesPerDay, HabitId) VALUES ('{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{habitId}') RETURNING *;";
             return _connection!.Query<HabitRecord>(createQuery).First();
         }
 
         public IEnumerable<HabitRecord> GetAllHabitRecords(int habitId)
         {
-            string getAllQuery = $"SELECT * FROM {_tableHabitRecords} WHERE HabitId={habitId};";
+            string getAllQuery = $"SELECT * FROM {Constants.TableHabitRecords} WHERE HabitId={habitId};";
             return _connection!.Query<HabitRecord>(getAllQuery);
         }
 
         public bool IsExistDateRecord(DateTime date)
         {
-            string isExistDateQuery = $"SELECT * FROM {_tableHabitRecords} WHERE Date='{date}';";
+            string isExistDateQuery = $"SELECT * FROM {Constants.TableHabitRecords} WHERE Date='{date}';";
             return _connection!.Query<HabitRecord>(isExistDateQuery).ToArray().Length > 0;
         }
 
         public HabitRecord? GetHabitRecordById(int id, int habitId)
         {
-            string isExistDateQuery = $"SELECT * FROM {_tableHabitRecords} WHERE Id={id} AND HabitId={habitId};";
+            string isExistDateQuery = $"SELECT * FROM {Constants.TableHabitRecords} WHERE Id={id} AND HabitId={habitId};";
             return _connection!.Query<HabitRecord>(isExistDateQuery).FirstOrDefault();
         }
 
         public HabitRecord UpdateHabitRecord(HabitRecord obj)
         {
-            string updateQuery = $"REPLACE INTO {_tableHabitRecords} (Id, Date, NumberOfApproachesPerDay, HabitId) VALUES ({obj.Id}, '{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{obj.HabitId}') RETURNING *;";
+            string updateQuery = $"REPLACE INTO {Constants.TableHabitRecords} (Id, Date, NumberOfApproachesPerDay, HabitId) VALUES ({obj.Id}, '{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{obj.HabitId}') RETURNING *;";
             return _connection!.Query<HabitRecord>(updateQuery).First();
         }
 
         public HabitRecord? DeleteHabitRecord(int id, int habitId)
         {
-            string deleteQuery = $"DELETE FROM {_tableHabitRecords} WHERE Id={id} AND HabitId={habitId} RETURNING *;";
+            string deleteQuery = $"DELETE FROM {Constants.TableHabitRecords} WHERE Id={id} AND HabitId={habitId} RETURNING *;";
             return _connection!.Query<HabitRecord>(deleteQuery).FirstOrDefault();
         }
     }

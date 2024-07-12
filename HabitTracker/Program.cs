@@ -4,11 +4,12 @@ namespace HabitTracker
 {
     class Program
     {
-        private static LocalDatabaseService _dbService = null!;
+        private static LocalDatabaseAdoService _dbService = null!;
         private static Habit _habit = null!;
         static void Main(string[] args)
         {
-            _dbService = new LocalDatabaseService("Data Source=habitTracker.sqlite");
+            //_dbService = new LocalDatabaseService("Data Source=habitTracker.sqlite");
+            _dbService = new LocalDatabaseAdoService("Data Source=habitTracker.sqlite");
 
             Console.WriteLine("Habit Tracker");
             Console.WriteLine("Create custom habit or use default(Habit of doing eye exercises. Measurement: number of eye exercises per day.)?");
@@ -30,7 +31,7 @@ namespace HabitTracker
                 }
                 else
                 {
-                    _habit = _dbService.GetLastHabit();
+                    _habit = _dbService.GetLastHabit()!;
                     MainMenu();
                 }
             }
