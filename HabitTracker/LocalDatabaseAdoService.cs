@@ -26,10 +26,33 @@ namespace HabitTracker
                 _connection.Open();
 
                 CreateTables();
+                FillInWithMockData();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void FillInWithMockData()
+        {
+            Habit[] fewHabits = { 
+                new Habit() { Id = 1, Name = "drink water", MeasurementMethod = "number of water glasses a day" },
+                new Habit() { Id = 2, Name = "doing eye exercises", MeasurementMethod = "number of eye exercises a day" },
+                new Habit() { Id = 3, Name = "do push-ups", MeasurementMethod = "number of push-ups a day" },
+            };
+            Random rnd = new Random();
+            foreach (var habit in fewHabits)
+            {
+                Habit createdHabit;
+                if (GetHabitById(habit.Id) == null)
+                {
+                    createdHabit = CreateHabit(habit);
+                    for (int i = 1; i <= 120; i++)
+                    {
+                        CreateHabitRecord(new HabitRecord() { Date = DateTime.Now.AddDays(-i), NumberOfApproachesPerDay = rnd.Next(100) }, createdHabit.Id);
+                    }
+                }
             }
         }
 
@@ -169,6 +192,25 @@ namespace HabitTracker
             return ExecuteReaderHabits(getLastQuery).FirstOrDefault();
         }
 
+        public Habit? GetHabitById(int id)
+        {
+            string getLastQuery =
+                @$"
+                    SELECT * FROM {Constants.TableHabits} 
+                    WHERE Id={id};
+                ";
+            return ExecuteReaderHabits(getLastQuery).FirstOrDefault();
+        }
+
+        public IEnumerable<Habit> GetAllHabits()
+        {
+            string getAllQuery =
+                @$"
+                    SELECT * FROM {Constants.TableHabits};
+                ";
+            return ExecuteReaderHabits(getAllQuery);
+        }
+
         // HabitRecords
         public HabitRecord CreateHabitRecord(HabitRecord obj, int habitId)
         {
@@ -191,12 +233,12 @@ namespace HabitTracker
             return ExecuteReaderHabitRecords(getAllQuery);
         }
 
-        public bool IsExistDateRecord(DateTime date)
+        public bool IsExistDateRecord(DateTime date, int habitId)
         {
             string isExistDateQuery = 
                 @$"
                     SELECT * FROM {Constants.TableHabitRecords} 
-                    WHERE Date='{date}';
+                    WHERE Date='{date}' AND HabitId={habitId};
                 ";
             return ExecuteReaderHabitRecords(isExistDateQuery).Count > 0;
         }
