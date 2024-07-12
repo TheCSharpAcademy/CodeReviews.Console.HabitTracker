@@ -1,4 +1,4 @@
-# Habit Logger
+# Habit Tracker
 
 An application in which you can register one habit and track by day the number of approaches per day to complete it.
 
