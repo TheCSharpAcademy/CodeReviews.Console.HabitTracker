@@ -94,15 +94,23 @@ class Program
         RunQuery($"DELETE FROM {viewRecords.Item1} WHERE Id = {id}");
     } // end of RemoveRecord method
 
+    // returns a tuple containing the table name, a list of dates, and a list of measurments
     static Tuple<string, List<string>, List<string>> ViewRecords()
     {
         Console.WriteLine("Which Habit would you like to view?");
         Tuple<List<string>, List<string>> habitsTable = DisplayHabits();
+        if (habitsTable.Item1.Count == 0)
+        {
+            Console.Clear();
+            Console.WriteLine("No Habits to view. Press enter to return");
+            Console.ReadLine();
+            MainMenu();
+        }
         int response = GetValidResponse(habitsTable.Item1.Count);
         string habit = habitsTable.Item1[response - 1];
         string measurement = habitsTable.Item2[response - 1];
 
-        Tuple<List<string>, List<string>> results = SelectData("SELECT * FROM " + habit);
+        Tuple<List<string>, List<string>> results = SelectData("SELECT * FROM \"" + habit + "\"");
         for (int i = 0; i < results.Item1.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {results.Item1[i].PadRight(10)} {$"{results.Item2[i]} {measurement}".PadLeft(10)}");
@@ -119,7 +127,7 @@ class Program
 
         // create a new table to contain the habits records
         string query = @"
-            CREATE TABLE IF NOT EXISTS " + name + @" (
+            CREATE TABLE IF NOT EXISTS """ + name + @""" (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Date TEXT NOT NULL,
                 Quantity TEXT NOT NULL
@@ -133,6 +141,13 @@ class Program
     {
         Console.WriteLine("Which Habit would you like to remove?");
         Tuple<List<string>, List<string>> habitsTable = DisplayHabits();
+        if (habitsTable.Item1.Count == 0)
+        {
+            Console.Clear();
+            Console.WriteLine("No Habits to Remove. Press enter to return");
+            Console.ReadLine();
+            return;
+        }
         int response = GetValidResponse(habitsTable.Item1.Count);
 
         int id = GetID($"SELECT Id FROM Habits LIMIT 1 OFFSET {response - 1}");
@@ -144,6 +159,13 @@ class Program
     {
         Console.WriteLine("Which Habit would you like to modify?");
         Tuple<List<string>, List<string>> habitsTable = DisplayHabits();
+        if (habitsTable.Item1.Count == 0)
+        {
+            Console.Clear();
+            Console.WriteLine("No Habits to Modify. Press enter to return");
+            Console.ReadLine();
+            return;
+        }
         int response = GetValidResponse(habitsTable.Item1.Count);
 
         Console.WriteLine("What is the name of the Habit?");
@@ -153,6 +175,7 @@ class Program
 
         int id = GetID($"SELECT Id FROM Habits LIMIT 1 OFFSET {response - 1}");
         RunQuery($"UPDATE Habits SET Habit = '{name}', Quantity = '{quantity}' WHERE Id = {id};");
+        RunQuery($"ALTER TABLE \"" + habitsTable.Item1[response - 1] + $"\" RENAME TO {name}");
     } // end of ViewRecords method
 
     static Tuple<List<string>, List<string>> DisplayHabits()
@@ -183,7 +206,6 @@ class Program
 
     static string CleanResponse(string? response)
     {
-        Console.Clear();
         if (response == null)
             return "";
 
@@ -199,16 +221,19 @@ class Program
     static int GetValidResponse(int max)
     {
         int response;
-        Int32.TryParse(CleanResponse(Console.ReadLine()), out response);
-        while (!(response > 0) || !(response <= max))
+        while (true)
         {
             Int32.TryParse(CleanResponse(Console.ReadLine()), out response);
-            Console.WriteLine("enter the number of one of the listed options or menu to return to the menu");
+            if (response > 0 && response <= max)
+                break;
+            else
+                Console.WriteLine("enter the number of one of the listed options or menu to return to the menu");
         }
         return response;
     } // end of GetValidResponse method
 
     // database methods
+    // gets the id of the row the user selected
     static int GetID(string query)
     {
 
@@ -231,7 +256,7 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error has occured: {ex.Message}");
+            Console.WriteLine($"An error has occured: {ex.Message} in GetID");
         }
         return id;
     } // end of GetID method
@@ -254,7 +279,7 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error has occured: {ex.Message}");
+            Console.WriteLine($"An error has occured: {ex.Message} in RunQuery");
         }
     } // end of RunQuery method
 
@@ -283,7 +308,7 @@ class Program
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"An error has occured: {ex.Message}");
+            Console.WriteLine($"An error has occured: {ex.Message} in SelectData");
         }
         return new Tuple<List<string>, List<string>>(results1, results2);
     } // end of SelectData method
