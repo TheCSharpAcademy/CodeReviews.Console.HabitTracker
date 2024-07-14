@@ -22,7 +22,6 @@
     * Creates a new database if one doesnt exist
     * Creates and modifies new databases for each habit
   * Console UI that allows users to interact with the program by pressing keys
-      * (image)
   * CRUD Database functionality
       * Create, Modify, or Delete Habits and their SQL Tables
       * Create, Modify, or Delete Records from a Habits Table
