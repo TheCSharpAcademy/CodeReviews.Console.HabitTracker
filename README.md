@@ -1,7 +1,6 @@
 # Console HabitTracker
   
-  Basic CRUD Application using C# and SQLite3\n
-  Made using Visual Studio and VScode
+  Basic CRUD Application using C# and SQLite3. Made using Visual Studio and VScode
   
 # Given Requirments:
   - [x] This is an application where you’ll register one habit.
