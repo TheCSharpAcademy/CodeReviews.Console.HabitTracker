@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IbraheemKarim.HabitLogger", "IbraheemKarim.HabitLogger\IbraheemKarim.HabitLogger.csproj", "{932063BA-90BC-4286-8F1E-C8C5E67352DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{932063BA-90BC-4286-8F1E-C8C5E67352DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{932063BA-90BC-4286-8F1E-C8C5E67352DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{932063BA-90BC-4286-8F1E-C8C5E67352DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{932063BA-90BC-4286-8F1E-C8C5E67352DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2A9A091-D50B-4AB2-840D-B62DA33A83CA}
+	EndGlobalSection
+EndGlobal
