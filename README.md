@@ -37,6 +37,6 @@
   * I went into the project with no plan and while it didnt go that badly it was not the best way and would have been faster to take a moment to plan it out
 
 # Resources Used
-  * {MS docs for SQLite and C#} (https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli)
+  * [MS docs for SQLite and C#] (https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli)
   * Multiple Stack Overflow articles for different issues I ran into and SQLite
   * SQLite and C# documentation
