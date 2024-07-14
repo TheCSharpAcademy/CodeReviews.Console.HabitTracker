@@ -1,8 +1,8 @@
 # Console HabitTracker
-  
+  ```
   Basic CRUD Application using C# and SQLite3
   Made using Visual Studio and VScode
-  
+  ```
 # Given Requirments:
   - [x] This is an application where you’ll register one habit.
   - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
