@@ -13,7 +13,7 @@
   - [x] You should handle all possible errors so that the application never crashes.
   - [x] The application should only be terminated when the user inserts 0.
   - [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework.
-  - [x] Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example:
+  - [x] Your project needs to contain a Read Me file where you'll explain how your app works.
 
 # Features
   * SQLite Database
