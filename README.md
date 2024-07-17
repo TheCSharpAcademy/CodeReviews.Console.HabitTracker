@@ -1,6 +1,6 @@
 # Habit Tracker
 
-Console based CRUD application to track habit.
+Console-based CRUD application to track habits.
 Developed using C#.
 Library used: [Terminal.Gui](https://gui-cs.github.io/Terminal.Gui/index.html) and [SQlite](https://www.nuget.org/packages/System.Data.SQLite/)
 
@@ -45,7 +45,7 @@ Library used: [Terminal.Gui](https://gui-cs.github.io/Terminal.Gui/index.html) a
 
 * Create habit
 
-	- Create habit with your goals and measurement you want (optional)
+	- Create habit with the goals and measurements you want (optional)
 	- ![HabitTrackerCreate](https://github.com/user-attachments/assets/05882023-420c-4096-804e-e005481e2d14)
 
 * Filter/Search habit
@@ -56,18 +56,18 @@ Library used: [Terminal.Gui](https://gui-cs.github.io/Terminal.Gui/index.html) a
 
 # Challenges
 	
-- Learning to navigate the Terminal-Gui library was a challenge as it require to read the API documentation in details
+- Learning to navigate the Terminal-Gui library was a challenge as it requires to read the API documentation in detail
 - Structuring the code in an object-oriented way took a lot of time to understand
-- There was a lot of SQL related error encounter when creating this application, mostly because validation of data wasn't done beforehand
-- Deciding how to display the data is a difficult choice. At first I wanted to display them in a list. Later I found out table form is supported and ultimately made more sense.
+- There were a lot of SQL related errors encounter when creating this application, mostly because validation of data wasn't done beforehand
+- Deciding how to display the data is a difficult choice. At first, I wanted to display them in a list. Later I found out table form is supported and ultimately made more sense.
 	
 # Lessons Learned
-- I learnt how to navigate a big code base and properly read API documentation. Granted Terminal.Gui is a well supported open source project, so it was very helpful and rewarding.
-- I learnt how to dynamically create instance on run-time and setup custom attribute classes. This help reduce development time if future changes and additional feature are needed.
-- I learnt basic SQL syntax, CRUD operation, and some query for looking up specific data.
-- Be consistent. Navigating a library was out of comfort zone for me and I am glad I kept on with it.
+- I learned how to navigate a big code base and properly read API documentation. Granted Terminal.Gui is a well-supported open source project, so it was very helpful and rewarding.
+- I learned how to dynamically create instances on run-time and set up custom attribute classes. This helps reduce development time if future changes and additional features are needed.
+- I learned basic SQL syntax, CRUD operation, and some queries for looking up specific data.
+- Be consistent. Navigating a library was out of my comfort zone for me and I am glad I kept on with it.
 
 # Areas to Improve
-- Object-oriented concept: There are come concept of OOP that are not coming natural for me like Inheritance. A lot of time I wasn't sure why do I need to inherit the class.
-- Speed: This application took longer to complete than expected. There are VSCode optimization I can learn (like keyboard shortcut I don't know yet). I also wish to put more time per day in future project.
-- Overall, this application can do a lot more and is made to be easy to create new features. But currently I wish to move on and learn different things.
+- Object-oriented concept: Some OOP concepts like Inheritance do not come naturally to me. A lot of time I wasn't sure why do I need to inherit the class.
+- Speed: This application took longer to complete than expected. There are VSCode optimizations I can learn (like keyboard shortcuts I don't know yet). I also wish to put more time per day into future projects.
+- Overall, this application can do a lot more and is made to make it easy to create new features. But currently, I wish to move on and learn different things.
