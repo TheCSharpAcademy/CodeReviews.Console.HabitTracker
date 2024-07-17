@@ -5,7 +5,7 @@ namespace TerminalGUILibrary
     public class MainMenu : Window
     {
         public static bool isSeeded;
-        public static bool isStart = false;
+        public static bool isStart;
         public MainMenu()
         {
             Title = "Habit Tracker (Ctrl+Q to quit)";

@@ -22,13 +22,6 @@ namespace TerminalGUILibrary.Feature
 				ReadOnly = true,
 			};
 
-            currDate.MouseClick += (e) => {
-                MessageBox.Query(
-                    "Change Date?",
-                    "Enter date: ____/__/__",
-                    "Ok");
-            };
-
             var currDayOfWeek = new Label (DateTime.Now.DayOfWeek.ToString()) {
 				X = Pos.Right (currDate) + 1,
                 Y = 2,
