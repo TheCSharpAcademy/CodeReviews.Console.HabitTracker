@@ -8,7 +8,6 @@ namespace HabitTracker
         private static Habit _habit = null!;
         static void Main(string[] args)
         {
-            //_dbService = new LocalDatabaseService("Data Source=habitTracker.sqlite"); //for move to Dapper
             _dbService = new LocalDatabaseAdoService("Data Source=habitTracker.sqlite");
 
             Console.WriteLine("Habit Tracker");
@@ -57,10 +56,6 @@ namespace HabitTracker
                 Console.WriteLine(ex.Message);
                 Main([]); // restart after crash
             }
-            finally
-            {
-                _dbService.CloseConnection();
-            }
         }
 
         public static void MainMenu()
@@ -99,11 +94,13 @@ namespace HabitTracker
                         break;
                     case 3:
                         Console.Clear();
+                        ViewAllRecords();
                         Console.WriteLine("<<Update Record>>");
                         UpdateRecord();
                         break;
                     case 4:
                         Console.Clear();
+                        ViewAllRecords();
                         Console.WriteLine("<<Delete Record>>");
                         DeleteRecord();
                         break;
@@ -123,14 +120,16 @@ namespace HabitTracker
         public static void InsertRecord()
         {
             string datePattern = "MM-dd-yyyy";
-            Console.WriteLine("Record date in format (month-day-year).");
-            Console.WriteLine("Constraints: no older than 1 year, no more than the current day. :");
+            string message = 
+                $"Write the date in the following format: month-day-year. Example: \"12-30-2023\".{Environment.NewLine}" +
+                $"Restrictions:{Environment.NewLine}- date from the past no more than 3 years relative to the current date;{Environment.NewLine}- dates from the future cannot be used.";
+            Console.WriteLine(message);
 
             DateTime date = Helpers.InputDataWithValidation(
                 datePattern,
-                DateTime.Now.AddYears(-1),
+                DateTime.Now.AddYears(-3),
                 DateTime.Now,
-                "Wrong input. Input record date in format (month-day-year):");
+                $"Wrong input. {message}");
             if (_dbService.IsExistDateRecord(date, _habit.Id))
             {
                 Console.WriteLine("There is already an entry with the same date. Сhoose another date.");
