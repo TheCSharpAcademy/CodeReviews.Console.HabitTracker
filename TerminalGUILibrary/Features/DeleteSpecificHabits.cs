@@ -167,30 +167,7 @@ namespace TerminalGUILibrary.Feature
                     tableView.SetNeedsDisplay();
                 }
             };
-
                 Application.Run(activatedWindow);
-                // try
-                // {
-                //     connection.ExecuteDbCommand
-                // (
-                //     "InsertHabit",
-                //     0,
-                //     "",
-                //     habitTextField.Text.ToString(),
-                //     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                //     deadlineTextField.Text.ToString(),
-                //     Convert.ToInt64(goalTextField.Text),
-                //     goalTypeComboBox.Text.ToString(),
-                //     Convert.ToInt64(goalCompletionTextField.Text),
-                //     goalMeasurementTextField.Text.ToString()
-                // );
-                // }
-                // catch (Exception ex)
-                // {
-                //     MessageBox.ErrorQuery(60, 20, "Failed to create habit", ex.Message, "Ok");
-                //     return;
-                // }
-                // MessageBox.Query("Success", "Opening new page", "Ok");
             };
 
             var clearButton = new Button("Clear")
