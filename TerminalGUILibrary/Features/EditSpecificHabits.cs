@@ -59,7 +59,6 @@ namespace TerminalGUILibrary.Feature
                 Height = Dim.Fill(2),
                 Width = Dim.Percent(40),
                 HideDropdownListOnClick = true,
-                ReadOnly = true,
             };
             Win.Add(goalTypeComboBox);
 
@@ -183,6 +182,38 @@ namespace TerminalGUILibrary.Feature
 
                     if (okPressed)
                     {
+                        bool validDate = DateTime.TryParse(dialogTextField.Text.ToString(), out DateTime parsedDeadline);
+                        bool validGoal = long.TryParse(dialogTextField.Text.ToString(), out long parsedGoal);
+                        if
+                        (
+                            (columnName == "CreationDate" || columnName == "DeadlineDate")
+                            && !validDate
+                            && dialogTextField.Text.ToString() != ""
+                        )
+                        {
+                            MessageBox.ErrorQuery("Error", "Date must be a valid date", "Ok");
+                            return;
+                        }
+                        if
+                        (
+                            (columnName == "GoalProgress" || columnName == "Goal" || columnName == "GoalCompletion")
+                            && ( !validGoal || parsedGoal < 0 )
+                            && dialogTextField.Text.ToString() != ""
+                        )
+                        {
+                            MessageBox.ErrorQuery("Error", "Field must be a positive number", "Ok");
+                            return;
+                        }
+                        if
+                        (
+                            columnName == "GoalCompletion"
+                            && (parsedGoal != 0 || parsedGoal != 1)
+                            && dialogTextField.Text.ToString() != ""
+                        )
+                        {
+                            MessageBox.ErrorQuery("Error", "Goal Completion can only be 0 or 1", "Ok");
+                            return;
+                        }
                         long newValueID = 0;
                         string? newValue = null;
 

@@ -81,13 +81,46 @@ namespace TerminalGUILibrary.Feature
 
                 if (okPressed)
                 {
+                    bool validDate = DateTime.TryParse(dialogTextField.Text.ToString(), out DateTime parsedDeadline);
+                    bool validGoal = long.TryParse(dialogTextField.Text.ToString(), out long parsedGoal);
+                    if
+                    (
+                        (columnName == "CreationDate" || columnName == "DeadlineDate")
+                        && !validDate
+                        && dialogTextField.Text.ToString() != ""
+                    )
+                    {
+                        MessageBox.ErrorQuery("Error", "Date must be a valid date", "Ok");
+                        return;
+                    }
+                    if
+                    (
+                        (columnName == "GoalProgress" || columnName == "Goal" || columnName == "GoalCompletion")
+                        && (!validGoal || parsedGoal < 0)
+                        && dialogTextField.Text.ToString() != ""
+                    )
+                    {
+                        MessageBox.ErrorQuery("Error", "Field must be a positive number", "Ok");
+                        return;
+                    }
+                    if
+                    (
+                        columnName == "GoalCompletion"
+                        && (parsedGoal != 0 || parsedGoal != 1)
+                        && dialogTextField.Text.ToString() != ""
+                    )
+                    {
+                        MessageBox.ErrorQuery("Error", "Goal Completion can only be 0 or 1", "Ok");
+                        return;
+                    }
+
                     long newValueID = 0;
                     string? newValue = null;
 
                     try
                     {
                         e.Table.Rows[e.Row][e.Col] = string.IsNullOrWhiteSpace(dialogTextField.Text.ToString()) ? DBNull.Value : (object)dialogTextField.Text;
-                        newValueID =  (long)e.Table.Rows[e.Row][0];
+                        newValueID = (long)e.Table.Rows[e.Row][0];
                         newValue = dialogTextField.Text.ToString();
                     }
                     catch (Exception ex)

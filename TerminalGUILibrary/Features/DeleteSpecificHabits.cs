@@ -59,7 +59,6 @@ namespace TerminalGUILibrary.Feature
                 Height = Dim.Fill(2),
                 Width = Dim.Percent(40),
                 HideDropdownListOnClick = true,
-                ReadOnly = true,
             };
             Win.Add(goalTypeComboBox);
 

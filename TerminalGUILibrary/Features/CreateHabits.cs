@@ -132,7 +132,6 @@ namespace TerminalGUILibrary.Feature
                 var validGoalCompletion = long.TryParse(goalCompletionTextField.Text.ToString(), out long parsedGoalCompletion);
                 long? goalCompletion = validGoalCompletion ? parsedGoalCompletion : (long?)null;
 
-
                 if (habitTextField.Text.ToString() == "")
                 {
                     MessageBox.ErrorQuery("Error", "Habit cannot be empty", "Ok");
@@ -151,6 +150,11 @@ namespace TerminalGUILibrary.Feature
                 if (!validGoal && goalTextField.Text.ToString() != "")
                 {
                     MessageBox.ErrorQuery("Error", "Goal must be a number", "Ok");
+                    return;
+                }
+                if (parsedGoal < 0)
+                {
+                    MessageBox.ErrorQuery("Error", "Goal must be a positive number", "Ok");
                     return;
                 }
                 if (goalCompletion != 0 && goalCompletion != 1 && goalCompletionTextField.Text.ToString() != "")
