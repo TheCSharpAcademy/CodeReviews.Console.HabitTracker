@@ -5,7 +5,6 @@ namespace HabitTracker
     public class LocalDatabaseAdoService
     {
         private readonly string _connectionString;
-        private SqliteConnection? _connection;
 
         public LocalDatabaseAdoService(string connectionString)
         {
@@ -15,16 +14,8 @@ namespace HabitTracker
 
         private void Init()
         {
-            if (_connection != null)
-            {
-                return;
-            }
-
             try
             {
-                _connection = new SqliteConnection(_connectionString);
-                _connection.Open();
-
                 CreateTables();
                 FillInWithMockData();
             }
@@ -95,12 +86,14 @@ namespace HabitTracker
                     SELECT name FROM sqlite_master 
                     WHERE type='table' AND name = '{tableName}';
                 ";
-            SqliteCommand command = _connection!.CreateCommand();
+            using var connection = OpenConnection();
+            SqliteCommand command = connection.CreateCommand();
             command.CommandText = tableExistQuery;
-            SqliteDataReader reader = command.ExecuteReader();
+            using SqliteDataReader reader = command.ExecuteReader();
 
             string? tableExists = null;
-            if (reader.HasRows && reader.Read()) {
+            if (reader.HasRows && reader.Read())
+            {
                 tableExists = reader.GetValue(0).ToString();
             }
 
@@ -109,24 +102,24 @@ namespace HabitTracker
                 return;
             }
 
-            command = _connection!.CreateCommand();
+            command = connection.CreateCommand();
             command.CommandText = newTableSql;
             command.ExecuteNonQuery();
         }
 
-        public void CloseConnection()
+        private SqliteConnection OpenConnection()
         {
-            if (_connection != null)
-            {
-                _connection.Close();
-            }
+            SqliteConnection connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            return connection;
         }
 
         private List<Habit> ExecuteReaderHabits(string sql)
         {
-            SqliteCommand command = _connection!.CreateCommand();
+            using var connection = OpenConnection();
+            SqliteCommand command = connection.CreateCommand();
             command.CommandText = sql;
-            SqliteDataReader reader = command.ExecuteReader();
+            using SqliteDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
                 List<Habit> habits = new List<Habit>();
@@ -147,9 +140,10 @@ namespace HabitTracker
 
         private List<HabitRecord> ExecuteReaderHabitRecords(string sql)
         {
-            SqliteCommand command = _connection!.CreateCommand();
+            using var connection = OpenConnection();
+            SqliteCommand command = connection.CreateCommand();
             command.CommandText = sql;
-            SqliteDataReader reader = command.ExecuteReader();
+            using SqliteDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
                 List<HabitRecord> habitRecords = new List<HabitRecord>();
