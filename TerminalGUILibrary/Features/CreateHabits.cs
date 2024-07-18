@@ -26,7 +26,7 @@ namespace TerminalGUILibrary.Feature
             {
                 X = Pos.Right(habitLabel),
                 Y = 2,
-                Width = Dim.Fill(),
+                Width = Dim.Percent(50),
             };
             Win.Add(habitTextField);
 
@@ -63,23 +63,53 @@ namespace TerminalGUILibrary.Feature
             {
                 X = Pos.Right(goalLabel),
                 Y = 6,
-                Width = Dim.Fill(),
+                Width = Dim.Percent(10),
             };
             Win.Add(goalTextField);
+
+            var goalMeasurementLabel = new Label("Goal Measurement(ex: km for jogging): ")
+            {
+                X = 2,
+                Y = 8,
+            };
+            Win.Add(goalMeasurementLabel);
+
+            var goalMeasurementTextField = new TextField("")
+            {
+                X = Pos.Right(goalMeasurementLabel),
+                Y = 8,
+                Width = Dim.Percent(50),
+            };
+            Win.Add(goalMeasurementTextField);
+
+            var goalCompletionLabel = new Label("Goal Completion(0 means incomplete, 1 means completed): ")
+            {
+                X = 2,
+                Y = 10,
+            };
+            Win.Add(goalCompletionLabel);
+
+            var goalCompletionTextField = new TextField("")
+            {
+                X = Pos.Right(goalCompletionLabel),
+                Y = 10,
+                Width = Dim.Percent(10),
+            };
+            Win.Add(goalCompletionTextField);
 
             var goalTypeLabel = new Label("Goal Type: ")
             {
                 X = 2,
-                Y = 8,
+                Y = 12,
             };
             Win.Add(goalTypeLabel);
 
             var goalTypeComboBox = new ComboBox("")
             {
                 X = Pos.Right(goalTypeLabel),
-                Y = 8,
+                Y = 12,
                 Height = Dim.Fill(3),
-                Width = Dim.Percent(40),
+                Width = Dim.Percent(10),
                 HideDropdownListOnClick = true
             };
             Win.Add(goalTypeComboBox);
@@ -87,40 +117,17 @@ namespace TerminalGUILibrary.Feature
             var items = new List<string>() { "Daily", "Weekly", "Monthly", "Yearly" };
             goalTypeComboBox.SetSource(items);
 
-            var goalMeasurementLabel = new Label("Goal Measurement(ex: km for jogging): ")
+            var goalTypeTipsLabel = new Label("(click the down arrow to select)")
             {
-                X = 2,
-                Y = 10,
-            };
-            Win.Add(goalMeasurementLabel);
-
-            var goalMeasurementTextField = new TextField("")
-            {
-                X = Pos.Right(goalMeasurementLabel),
-                Y = 10,
-                Width = Dim.Fill(),
-            };
-            Win.Add(goalMeasurementTextField);
-
-            var goalCompletionLabel = new Label("Goal Completion(0 means incomplete, 1 means completed): ")
-            {
-                X = 2,
+                X = Pos.Right(goalTypeComboBox),
                 Y = 12,
             };
-            Win.Add(goalCompletionLabel);
-
-            var goalCompletionTextField = new TextField("")
-            {
-                X = Pos.Right(goalCompletionLabel),
-                Y = 12,
-                Width = Dim.Fill(),
-            };
-            Win.Add(goalCompletionTextField);
+            Win.Add(goalTypeTipsLabel);
 
             var addButton = new Button("Add")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(goalCompletionTextField) + 2,
+                Y = Pos.Bottom(goalTypeLabel) + 2,
             };
             Win.Add(addButton);
 

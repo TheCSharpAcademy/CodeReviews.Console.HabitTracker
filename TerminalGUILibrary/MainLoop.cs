@@ -21,7 +21,7 @@ namespace TerminalGUILibrary
             ColorScheme = _colorScheme = Colors.Base;
             MenuBar = new MenuBar(new MenuBarItem[]
             {
-                new MenuBarItem("_File", new MenuItem[]
+                new MenuBarItem("_Quit", new MenuItem[]
                 {
                     new MenuItem("_Quit", "", () => {
                         _selectedFeature = null;
@@ -94,7 +94,10 @@ namespace TerminalGUILibrary
             Application.Run<HabitTrackerTopLevel>();
             Application.Shutdown();
 
-            return _selectedFeature;
+            var selectedFeature = _selectedFeature;
+            _selectedFeature = null;
+
+            return selectedFeature;
         }
 
         void CategoryListView_SelectedChanged(ListViewItemEventArgs e)

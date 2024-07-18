@@ -48,14 +48,14 @@ namespace TerminalGUILibrary.Feature
             var goalTypeLabel = new Label("Goal Type: ")
             {
                 X = 2,
-                Y = 6,
+                Y = 8,
             };
             Win.Add(goalTypeLabel);
 
             var goalTypeComboBox = new ComboBox("")
             {
                 X = Pos.Right(goalTypeLabel),
-                Y = 6,
+                Y = 8,
                 Height = Dim.Fill(2),
                 Width = Dim.Percent(40),
                 HideDropdownListOnClick = true,
@@ -65,17 +65,24 @@ namespace TerminalGUILibrary.Feature
             var items = new List<string>() { "Daily", "Weekly", "Monthly", "Yearly" };
             goalTypeComboBox.SetSource(items);
 
+            var goalTypeTipsLabel = new Label("(click the down arrow to select)")
+            {
+                X = Pos.Right(goalTypeComboBox),
+                Y = 8,
+            };
+            Win.Add(goalTypeTipsLabel);
+
             var goalCompletionLabel = new Label("Goal Completion(0 means incomplete, 1 means completed): ")
             {
                 X = 2,
-                Y = 8,
+                Y = 6,
             };
             Win.Add(goalCompletionLabel);
 
             var goalCompletionTextField = new TextField("")
             {
                 X = Pos.Right(goalCompletionLabel),
-                Y = 8,
+                Y = 6,
                 Width = Dim.Fill(),
             };
             Win.Add(goalCompletionTextField);
@@ -83,7 +90,7 @@ namespace TerminalGUILibrary.Feature
             var searchButton = new Button("Search")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(goalCompletionTextField) + 2,
+                Y = Pos.Bottom(goalTypeLabel) + 2,
             };
             Win.Add(searchButton);
 
@@ -172,7 +179,7 @@ namespace TerminalGUILibrary.Feature
             var clearButton = new Button("Clear")
             {
                 X = Pos.Right(searchButton) + 2,
-                Y = Pos.Bottom(goalCompletionTextField) + 2,
+                Y = Pos.Bottom(goalTypeLabel) + 2,
             };
             Win.Add(clearButton);
 
