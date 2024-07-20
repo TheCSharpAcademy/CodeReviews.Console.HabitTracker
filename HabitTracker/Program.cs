@@ -213,13 +213,15 @@ namespace HabitTracker
         {
             Console.WriteLine("Enter record Id for delete:");
             int id = Helpers.InputNumberWithValidation(1, int.MaxValue);
-            HabitRecord? habitRecord = _dbService.DeleteHabitRecord(id, _habit.Id);
-            if (habitRecord == null)
+            
+            if (_dbService.GetHabitRecordById(id, _habit.Id) == null)
             {
                 Console.WriteLine("Find an existing habit record Id. Try delete again.");
                 Console.WriteLine();
                 return;
             }
+            _dbService.DeleteHabitRecord(id, _habit.Id);
+
             Console.Clear();
         }
 
