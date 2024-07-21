@@ -35,13 +35,12 @@ namespace HabitTracker
             Random rnd = new Random();
             foreach (var habit in fewHabits)
             {
-                Habit createdHabit;
                 if (GetHabitById(habit.Id) == null)
                 {
-                    createdHabit = CreateHabit(habit);
+                    CreateHabit(habit);
                     for (int i = 1; i <= 120; i++)
                     {
-                        CreateHabitRecord(new HabitRecord() { Date = DateTime.Now.AddDays(-i), NumberOfApproachesPerDay = rnd.Next(100) }, createdHabit.Id);
+                        CreateHabitRecord(new HabitRecord() { Date = DateTime.Now.AddDays(-i), NumberOfApproachesPerDay = rnd.Next(100) }, habit.Id);
                     }
                 }
             }
@@ -206,15 +205,14 @@ namespace HabitTracker
         }
 
         // HabitRecords
-        public HabitRecord CreateHabitRecord(HabitRecord obj, int habitId)
+        public void CreateHabitRecord(HabitRecord obj, int habitId)
         {
             string createQuery = 
                 @$"
                     INSERT INTO {Constants.TableHabitRecords} (Date, NumberOfApproachesPerDay, HabitId) 
-                    VALUES ('{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{habitId}') 
-                    RETURNING *;
+                    VALUES ('{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{habitId}');
                 ";
-            return ExecuteReaderHabitRecords(createQuery).First();
+            ExecuteReaderHabitRecords(createQuery);
         }
 
         public IEnumerable<HabitRecord> GetAllHabitRecords(int habitId)
@@ -247,26 +245,24 @@ namespace HabitTracker
             return ExecuteReaderHabitRecords(getHabitRecordByIdQuery).FirstOrDefault();
         }
 
-        public HabitRecord UpdateHabitRecord(HabitRecord obj)
+        public void UpdateHabitRecord(HabitRecord obj)
         {
             string updateQuery = 
                 @$"
                     REPLACE INTO {Constants.TableHabitRecords} (Id, Date, NumberOfApproachesPerDay, HabitId) 
-                    VALUES ({obj.Id}, '{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{obj.HabitId}') 
-                    RETURNING *;
+                    VALUES ({obj.Id}, '{obj.Date}', '{obj.NumberOfApproachesPerDay}', '{obj.HabitId}');
                 ";
-            return ExecuteReaderHabitRecords(updateQuery).First();
+            ExecuteReaderHabitRecords(updateQuery);
         }
 
-        public HabitRecord? DeleteHabitRecord(int id, int habitId)
+        public void DeleteHabitRecord(int id, int habitId)
         {
             string deleteQuery = 
                 @$"
                     DELETE FROM {Constants.TableHabitRecords} 
-                    WHERE Id={id} AND HabitId={habitId} 
-                    RETURNING *;
+                    WHERE Id={id} AND HabitId={habitId};
                 ";
-            return ExecuteReaderHabitRecords(deleteQuery).FirstOrDefault();
+            ExecuteReaderHabitRecords(deleteQuery);
         }
     }
 }
