@@ -18,7 +18,8 @@ namespace HabitTrackingDatabase
                     CREATE TABLE IF NOT EXISTS habits(
                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                        habit_name TEXT NOT NULL,
-                       quantity INTEGER NOT NULL
+                       quantity INTEGER NOT NULL,
+                       date TEXT NOT NULL
                     );";
 
                 using (var command = new SQLiteCommand(createTableQuery, connection))
@@ -42,11 +43,12 @@ namespace HabitTrackingDatabase
                     int index = random.Next(habitList.Count);
                     string habitName = habitList[index];
                     int quantity = random.Next(1, 6);
-                    string insertQuery = "INSERT INTO habits (habit_name, quantity) VALUES (@habit_name, @quantity)";
+                    string insertQuery = "INSERT INTO habits (habit_name, quantity, date) VALUES (@habit_name, @quantity, @date)";
                     using(var command = new SQLiteCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@habit_name", habitName);
                         command.Parameters.AddWithValue("@quantity", quantity);
+                        command.Parameters.AddWithValue("@date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         command.ExecuteNonQuery();
                     }
 
@@ -58,7 +60,7 @@ namespace HabitTrackingDatabase
         public void ViewHabits()
         {
             Console.WriteLine("YOUR HABITS");
-            Console.WriteLine("-----------------------");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------");
             using (var connection = new SQLiteConnection("Data Source= habits.db"))
             {
                 connection.Open();
@@ -67,17 +69,17 @@ namespace HabitTrackingDatabase
                 {
                     using(var reader = command.ExecuteReader())
                     { 
-                        Console.WriteLine("ID\tHabit\tQuantity");
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine("ID\tHabit\t\t\tQuantity\t\t\tDate");
+                        Console.WriteLine("-----------------------------------------------------------------------------------------------");
                         while (reader.Read())
                         {
-                            Console.WriteLine($"{reader["id"]}\t{reader["habit_name"]}\t{reader["quantity"]}");
+                            Console.WriteLine($"{reader["id"]}\t{reader["habit_name"]}\t\t\t{reader["quantity"]}\t\t\t{reader["date"]}");
                         }
                     } 
 
                 }
             }
-            Console.WriteLine("-----------------------\n");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------\n");
         }
 
         public void InsertHabits()
@@ -102,12 +104,13 @@ namespace HabitTrackingDatabase
             {
                 connection.Open();
 
-                string insertQuery = "INSERT INTO habits (habit_name, quantity) VALUES(@habit_name, @quantity)";
+                string insertQuery = "INSERT INTO habits (habit_name, quantity, date) VALUES(@habit_name, @quantity, @date)";
                 
                 using(var command = new SQLiteCommand(insertQuery, connection))
                 {
                     command.Parameters.AddWithValue("@habit_name", habitName);
                     command.Parameters.AddWithValue("@quantity", habitQuantity);
+                    command.Parameters.AddWithValue("@date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                     command.ExecuteNonQuery();
                 }
             }
@@ -194,21 +197,38 @@ namespace HabitTrackingDatabase
         public void ReportHabit()
         {
             Console.WriteLine("\nChoose the option for which report is to be generated: ");
-            Console.WriteLine("1. Which habit you spend maximum time on and how much?");
+            Console.WriteLine("1. View a specific habit");
             Console.WriteLine("2. How much time/quantity you spend on a specific habit?");
             Console.WriteLine("3. Habits with quantities greater than a specific value?");
+            Console.WriteLine("4. Which habit you spend maximum time on and how much?");
+            Console.WriteLine("5. Which day you were most active?");
             Console.Write("\nEnter choice: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
                 case "1":
-                    MaximumTimeQuery();
+                    int id;
+                    while (true)
+                    {
+                        Console.Write("Enter id: ");
+                        if (int.TryParse(Console.ReadLine(), out id))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Enter valid integer");
+                        }
+                    }
+                    ViewSpecificRow(id);
                     break;
+
                 case "2":
                     Console.Write("Enter habit: ");
                     string? habit_name = Console.ReadLine();
                     TimeSpentOnHabitQuery(habit_name);
                     break;
+
                 case "3":
                     int quantity;
                     while (true)
@@ -224,6 +244,14 @@ namespace HabitTrackingDatabase
                         }
                     }
                     GreaterThanValueQuery(quantity);
+                    break;
+
+                case "4":
+                    MaximumTimeQuery();
+                    break;
+
+                case "5":
+                    MostActiveDay();
                     break;
 
                 default:
@@ -295,8 +323,6 @@ namespace HabitTrackingDatabase
         {
             try
             {
-
-
                 using (var connection = new SQLiteConnection("Data Source= habits.db"))
                 {
                     connection.Open();
@@ -325,6 +351,68 @@ namespace HabitTrackingDatabase
             catch(Exception ex)
             {
                 Console.WriteLine("Opps error occured: " + ex.Message + "\n");
+            }
+        }
+
+        void ViewSpecificRow(int id)
+        {
+            using (var connection = new SQLiteConnection("Data Source= habits.db"))
+            {
+                connection.Open();
+                string viewQuery = "SELECT * FROM habits WHERE id = @id";
+                using (var command = new SQLiteCommand(viewQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    using(var reader = command.ExecuteReader())
+                    {
+                        Console.WriteLine("-----------------------------------------------------------------------------------------------");
+                        Console.WriteLine("ID\tHabit\t\t\tQuantity\t\t\tDate");
+                        Console.WriteLine("-----------------------------------------------------------------------------------------------");
+
+                        if(reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                Console.WriteLine($"{reader[0]}\t{reader[1]}\t\t\t{reader[2]}\t\t\t{reader[3]}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No Habits Found");
+                        }
+                        Console.WriteLine("-----------------------------------------------------------------------------------------------\n");
+                    }
+                }
+            }
+
+        }
+        void MostActiveDay()
+        {
+            using(var connnection = new SQLiteConnection("Data Source = habits.db"))
+            {
+                connnection.Open();
+                string query = @"
+                    SELECT SUBSTR(date, 1, 10), COUNT(date) AS frequency
+                    FROM habits 
+                    GROUP BY SUBSTR(date, 1, 10)
+                    ORDER BY frequency DESC
+                    LIMIT 1;
+                    ";
+                using(var command = new SQLiteCommand(query, connnection))
+                {
+                    using(var reader = command.ExecuteReader())
+                    {
+                        Console.WriteLine("-------------------------------------------");
+                        Console.WriteLine("Date\t\t# times logged in");
+                        Console.WriteLine("-------------------------------------------");
+                        while (reader.Read())
+                        {
+                            Console.WriteLine($"{reader[0]}\t{reader[1]}");
+
+                        }
+                        Console.WriteLine("-------------------------------------------\n");
+                    }
+                }
             }
         }
     }
