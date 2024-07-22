@@ -67,7 +67,9 @@ namespace HabitTracker
 
         void AddHabit()
         {
+            string habit = "";
             bool alreadyExists = true;
+            bool validInput = false;
 
             Console.Clear();
             Console.WriteLine("Add a habit.");
@@ -79,13 +81,32 @@ namespace HabitTracker
                 if (userInput != null)
                 {
                     string habitName = userInput.ToLower().Replace(" ", "_");
+                    habit = userInput;
 
                     try
                     {
                         DateTime date = DateTime.Now.Date;
                         string dateString = date.ToString("yyyy-MM-dd");
 
-                        db.Insert(name: habitName, dateToday: dateString);
+                        db.Checker(name: habitName);
+
+                        Console.Write($"How many of \"{habit}\" did you do today?: ");
+
+                        do
+                        {
+                            userInput = Console.ReadLine();
+                            validInput = int.TryParse(userInput, out int number);
+
+                            if (userInput != null)
+                            {
+                                if (validInput)
+                                {
+                                    db.Insert(name: habitName, dateToday: dateString, quantity: number);
+                                }
+
+                            }
+                        } while (validInput == false);
+
                         Console.WriteLine("Habit added!");
                         alreadyExists = false;
                     }
