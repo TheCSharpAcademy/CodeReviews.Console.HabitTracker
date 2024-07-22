@@ -60,9 +60,9 @@ class Program
         Tuple<string, List<string>, List<string>> viewRecords = ViewRecords();
 
         Console.WriteLine("What is the records date?");
-        string date = CleanResponse(Console.ReadLine());
+        string date = CheckDate();
         Console.WriteLine("What is the quantity");
-        string quantity = CleanResponse(Console.ReadLine());
+        string quantity = CheckNumber();
 
         RunQuery($"INSERT INTO {viewRecords.Item1} (Date, Quantity) VALUES ('{date}','{quantity}');");
     } // end of LogRecord method
@@ -74,9 +74,9 @@ class Program
         int response = GetValidResponse(viewRecords.Item2.Count);
 
         Console.WriteLine("What is the records date?");
-        string date = CleanResponse(Console.ReadLine());
+        string date = CheckDate();
         Console.WriteLine("What is the quantity");
-        string quantity = CleanResponse(Console.ReadLine());
+        string quantity = CheckNumber();
 
         string query = $"SELECT Id FROM {viewRecords.Item1} LIMIT 1 OFFSET {response - 1}";
         int id = GetID(query);
@@ -217,6 +217,24 @@ class Program
 
         return cleanResponse;
     } // end of CleanResponse method
+
+    static string CheckDate()
+    {
+        DateTime date;
+        while (!DateTime.TryParse(CleanResponse(Console.ReadLine()), out date))
+            Console.WriteLine("Please enter a valid date");
+
+        return $"{date}";
+    } // end of CheckDate method
+
+    static string CheckNumber()
+    {
+        int number;
+        while (!int.TryParse(CleanResponse(Console.ReadLine()), out number) || number <= 0)
+            Console.WriteLine("Please enter a valid number");
+
+        return $"{number}";
+    } // end of CheckNumber method
 
     static int GetValidResponse(int max)
     {
