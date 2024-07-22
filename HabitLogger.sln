@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HabitLogger.Console", "HabitLogger.Console\HabitLogger.csproj", "{9AE237A8-F7BB-4DDF-9877-B28A6CBCDF5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB", "DB\DB.csproj", "{A8D852C2-C649-43A4-BED8-BF07D1DD3EC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{545E4710-4A8E-4EC7-AF21-F0CD9D0360D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9AE237A8-F7BB-4DDF-9877-B28A6CBCDF5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AE237A8-F7BB-4DDF-9877-B28A6CBCDF5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AE237A8-F7BB-4DDF-9877-B28A6CBCDF5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AE237A8-F7BB-4DDF-9877-B28A6CBCDF5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8D852C2-C649-43A4-BED8-BF07D1DD3EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D852C2-C649-43A4-BED8-BF07D1DD3EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D852C2-C649-43A4-BED8-BF07D1DD3EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8D852C2-C649-43A4-BED8-BF07D1DD3EC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{545E4710-4A8E-4EC7-AF21-F0CD9D0360D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545E4710-4A8E-4EC7-AF21-F0CD9D0360D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545E4710-4A8E-4EC7-AF21-F0CD9D0360D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545E4710-4A8E-4EC7-AF21-F0CD9D0360D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2EDCB504-099A-4AE1-97D9-0A357447B16B}
+	EndGlobalSection
+EndGlobal
