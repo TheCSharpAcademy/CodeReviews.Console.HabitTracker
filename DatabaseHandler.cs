@@ -29,13 +29,8 @@ namespace HabitTracker
             command.ExecuteNonQuery();
         }
 
-        public void Insert(string name, string dateToday, int quantity = 0)
+        public void Insert(string name, string dateToday, int quantity)
         {
-            if (CheckIfNameExists(name))
-            {
-                throw new IOException("Habit already exists! Try again:");
-            }
-
             using var connection = new SqliteConnection(this.dbSource);
             using var command = connection.CreateCommand();
 
@@ -49,6 +44,15 @@ namespace HabitTracker
             command.Parameters.AddWithValue("@quantity", quantity);
 
             command.ExecuteNonQuery();
+        }
+
+
+        public void Checker(string name)
+        {
+            if (CheckIfNameExists(name))
+            {
+                throw new IOException("Habit already exists! Try again:");
+            }
         }
 
 
