@@ -232,6 +232,33 @@ public class DbContext
         return null;
     }
 
+    public void DeleteHabit(int id)
+    {
+        using var conn = new SqliteConnection(connString);
+
+        var command = conn.CreateCommand();
+        command.CommandText = @"
+            DELETE FROM habits 
+            WHERE
+                id = @ID;
+        ";
+
+        command.Parameters.Add("@ID", SqliteType.Integer);
+
+        command.Parameters["@ID"].Value = id;
+
+        try
+        {
+            conn.Open();
+            command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+    }
+
     public void UpdateHabit(Habit updatedHabit)
     {
         using var conn = new SqliteConnection(connString);

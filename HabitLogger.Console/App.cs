@@ -96,11 +96,9 @@ public class App(DbContext dbContext)
 
     private void UpdateHabits()
     {
-        // display habits for user to see them all
         var habits = db.GetAllHabitEntries();
         UI.DisplayResultsNoExit(habits);
 
-        // ask user for integer id to select habit to update
         Habit? habit = null;
         int id = -1;
         while (habit == null)
@@ -128,13 +126,18 @@ public class App(DbContext dbContext)
 
     private void DeleteHabits()
     {
-        // display habits for user to see them all
+        var habitStrings = db.GetAllHabitEntries();
+        UI.DisplayResultsNoExit(habitStrings);
 
-        // ask user for integer id to delete
+        Habit? habit = null;
+        int id = -1;
+        while (habit == null)
+        {
+            id = UI.GetUserIntResponseNoClear("Enter the id of the habit you wish to delete");
+            habit = db.GetHabitEntryById(id);
+        }
 
-        // display habit to delete, ask for confirmation
-
-        // delete habit from database
+        db.DeleteHabit(id);
     }
 
 }

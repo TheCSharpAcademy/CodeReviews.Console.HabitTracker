@@ -145,19 +145,18 @@ public static class UI
             columnWidths[i] = results.Max(row => row[i].Length);
         }
 
-        // Print headers with underlines
         for (int i = 0; i < results[0].Length; i++)
         {
             Console.Write(results[0][i].PadRight(columnWidths[i]) + " ");
         }
         Console.WriteLine();
+
         for (int i = 0; i < results[0].Length; i++)
         {
             Console.Write(new string('-', columnWidths[i]) + " ");
         }
         Console.WriteLine();
 
-        // Print table content
         for (int row = 1; row < results.Count; row++)
         {
             for (int col = 0; col < results[row].Length; col++)
@@ -197,7 +196,6 @@ public static class UI
             columnWidths[i] = results.Max(row => row[i].Length);
         }
 
-        // Print headers with underlines
         for (int i = 0; i < results[0].Length; i++)
         {
             Console.Write(results[0][i].PadRight(columnWidths[i]) + " ");
@@ -209,7 +207,6 @@ public static class UI
         }
         Console.WriteLine();
 
-        // Print table content
         for (int row = 1; row < results.Count; row++)
         {
             for (int col = 0; col < results[row].Length; col++)
