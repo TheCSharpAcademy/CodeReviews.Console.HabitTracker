@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitLoggerConsole": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\aleks\\Desktop\\CSharpProjects\\CodeReviews.Console.HabitTracker\\HabitTracker.Wolfieeex\\HabitLoggerConsole"
+    }
+  }
+}
