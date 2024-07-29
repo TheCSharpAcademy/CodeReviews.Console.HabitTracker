@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "habit-tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Ra'ees\\Documents\\C# Projects\\Habit-Tracker\\habit-tracker\\habit-tracker"
+    }
+  }
+}
