@@ -52,6 +52,7 @@ internal class DatabaseServices
                 @"
                     SELECT * 
                     FROM habits
+                    WHERE id = 1
                 ";
 
             using (var reader = command.ExecuteReader())

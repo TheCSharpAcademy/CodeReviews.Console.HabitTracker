@@ -41,11 +41,8 @@ void ValidateUserInput(string userSelectionString)
             case 2: InsertRecord(); break;
             case 3: DeleteRecord(); break;
             case 4: UpdateRecord(); break;
+            default: Console.Clear(); GetUserInput(); break;
         }
-    }
-    else
-    {
-        GetUserInput();
     }
 }
 
@@ -54,6 +51,7 @@ void ValidateUserInput(string userSelectionString)
 void ViewRecord()
 {
     databaseServices.GetFromDatabase();
+    GetUserInput();
 }
 
 
