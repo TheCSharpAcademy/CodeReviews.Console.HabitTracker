@@ -22,7 +22,7 @@ namespace HabitLogger
                 string input = Console.ReadLine() ?? "Unknown input";
                 try
                 {
-                    int inp = Int32.Parse(input);
+                    Int32.Parse(input);
                 }
                 catch (FormatException)
                 {
@@ -90,7 +90,7 @@ namespace HabitLogger
             string inp = Console.ReadLine() ?? "Unknown input";
             try
             {
-                int input = Int32.Parse(inp);
+                Int32.Parse(inp);
             }
             catch (FormatException)
             {
