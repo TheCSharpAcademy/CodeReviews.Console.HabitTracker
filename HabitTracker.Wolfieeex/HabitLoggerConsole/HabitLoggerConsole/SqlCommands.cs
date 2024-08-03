@@ -147,7 +147,55 @@ internal class SqlCommands
     }
     internal static void Update()
     {
-        throw new NotImplementedException();
+        bool executeProgram = true;
+        while (executeProgram)
+        {
+            var idMap = GetAllRecords(false);
+
+            if (idMap == null)
+            {
+                Console.Write("There are no records to update! Please press any key to return to the main menu: ");
+                Console.ReadKey();
+                return;
+            }
+
+            int lastRowId = idMap.Count;
+            int selectedRow = 0;
+            Console.WriteLine("Choose which record to update by selecting its index number");
+            InsertExitPrompt(exitChar);
+            bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
+            if (shouldExit)
+            {
+                return;
+            }
+
+            int rowCount = idMap[selectedRow];
+            using (var connection = new SqliteConnection(Program.connectionString))
+            {
+                connection.Open();
+
+                string date = GetDateInput();
+                if (date.ToLower() == exitChar.ToString().ToLower())
+                {
+                    return;
+                }
+
+                int sets = 0;
+                shouldExit = Program.AssignSelectionInput(ref sets, 1, 999, skipSelection: exitChar);
+                if (shouldExit)
+                {
+                    return;
+                }
+
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = $"UPDATE going_to_gym SET Date = '{date}', Sets = '{sets}' WHERE Id = '{rowCount}'";
+
+                connection.Close();
+            }
+
+            Console.Clear();
+            Console.WriteLine($"Record with index {selectedRow} has been updated.");
+        }
     }
 
     private static string GetDateInput()
