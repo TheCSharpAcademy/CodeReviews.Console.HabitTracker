@@ -67,7 +67,7 @@ public class Program
                     break;
                 case 1:
                     Console.Clear();
-                    SqlCommands.GetAllRecords();
+                    SqlCommands.GetAllRecords(true);
                     break;
                 case 2:
                     Console.Clear();
@@ -85,7 +85,7 @@ public class Program
         }
     }
 
-    static void AssignSelectionInput(ref int input, int rangeMin, int rangeMax)
+    internal static bool AssignSelectionInput(ref int input, int rangeMin, int rangeMax, char? skipSelection = null)
     {
         bool inputChecksNotComplete = true;
         while (inputChecksNotComplete)
@@ -102,6 +102,10 @@ public class Program
             int numericOutput = -1;
             if (!int.TryParse(Input, out numericOutput))
             {
+                if (Input.ToLower() == skipSelection.ToString().ToLower())
+                {
+                    return true;
+                }
                 ReenterLine("Your input must be a valid integer number.");
                 continue;
             }
@@ -118,6 +122,7 @@ public class Program
             input = numericOutput;
             inputChecksNotComplete = false;
         }
+        return false;
 
         void ReenterLine(string reason)
         {
