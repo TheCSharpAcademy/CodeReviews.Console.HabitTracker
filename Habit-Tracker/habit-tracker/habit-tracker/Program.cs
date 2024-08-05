@@ -240,6 +240,11 @@ namespace Habit_Tracker
 
             var recordId = GetNumberInput("\n\nPlease type Id of the record you would like to update. Type 0 to go back to Main Menu.\n\n");
 
+            if (recordId == 0)
+            {
+                return;
+            }
+
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
@@ -254,6 +259,7 @@ namespace Habit_Tracker
                     Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
                     connection.Close();
                     Update();
+                    return;
                 }
 
                 string habit_name = GetStringInput("\nPlease enter the name of the updated habit");
@@ -273,13 +279,10 @@ namespace Habit_Tracker
                 var updateHabitsInfoCmd = connection.CreateCommand();
                 updateHabitsInfoCmd.CommandText = $"UPDATE habits_info SET Quantity = @Quantity, DATE = @Date WHERE Habits_id = @RecordId";
                 updateHabitsInfoCmd.Parameters.AddWithValue("@Quantity", quantity);
-                updateHabitsInfoCmd.Parameters.AddWithValue("Date", date);
+                updateHabitsInfoCmd.Parameters.AddWithValue("@Date", date);
                 updateHabitsInfoCmd.Parameters.AddWithValue("@RecordId", recordId);
 
                 updateHabitsInfoCmd.ExecuteNonQuery();
-
-
-                connection.Close();
             }
 
         }
