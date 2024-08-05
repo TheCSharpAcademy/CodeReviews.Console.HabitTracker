@@ -323,10 +323,11 @@ namespace Habit_Tracker
         internal static string GetStringInput(string message)
         {
             string userInput;
+            int testNumeric;
             Console.WriteLine(message);
             userInput = Console.ReadLine();
 
-            while (string.IsNullOrWhiteSpace(userInput))
+            while (string.IsNullOrWhiteSpace(userInput) || int.TryParse(userInput, out testNumeric))
             {
                     Console.WriteLine("\n\nInvalid input. Try again.\n\n");
                     userInput = Console.ReadLine();
