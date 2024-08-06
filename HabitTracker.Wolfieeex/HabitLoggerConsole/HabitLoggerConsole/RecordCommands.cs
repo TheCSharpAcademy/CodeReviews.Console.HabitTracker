@@ -5,7 +5,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitLoggerConsole;
 
-internal class SqlCommands
+internal class RecordCommands
 {
     private static char exitChar = 'E';
 
@@ -85,7 +85,7 @@ internal class SqlCommands
         Console.Clear();
 
         int numberOfSets = 0;
-        Console.WriteLine("Please insert number of sets perfromed during the exercise: ");
+        Console.WriteLine("Please insert number of sets perfromed during the exercise.");
         InsertExitPrompt(exitChar);
 
         bool shouldExitToMenu = Program.AssignSelectionInput(ref numberOfSets, 0, 999, skipSelection: exitChar);
@@ -121,7 +121,7 @@ internal class SqlCommands
 
             int lastRowId = idMap.Count;
             int selectedRow = 0;
-            Console.WriteLine("Choose which record to delete by selecting its index number");
+            Console.WriteLine("Choose which record to delete by selecting its index number.");
             InsertExitPrompt(exitChar);
             bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
             if (shouldExit)
@@ -161,7 +161,7 @@ internal class SqlCommands
 
             int lastRowId = idMap.Count;
             int selectedRow = 0;
-            Console.WriteLine("Choose which record to update by selecting its index number");
+            Console.WriteLine("Choose which record to update by selecting its index number.");
             InsertExitPrompt(exitChar);
             bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
             if (shouldExit)
@@ -174,21 +174,27 @@ internal class SqlCommands
             {
                 connection.Open();
 
+                Console.WriteLine();
                 string date = GetDateInput();
                 if (date.ToLower() == exitChar.ToString().ToLower())
                 {
+                    connection.Close();
                     return;
                 }
 
                 int sets = 0;
+                Console.WriteLine("\nPlease insert number of sets perfromed during the exercise.");
+                InsertExitPrompt(exitChar);
                 shouldExit = Program.AssignSelectionInput(ref sets, 1, 999, skipSelection: exitChar);
                 if (shouldExit)
                 {
+                    connection.Close();
                     return;
                 }
 
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText = $"UPDATE going_to_gym SET Date = '{date}', Sets = '{sets}' WHERE Id = '{rowCount}'";
+                tableCmd.ExecuteNonQuery();
 
                 connection.Close();
             }
@@ -231,4 +237,11 @@ public class GoingToGym
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public int Sets { get; set; }
+}
+
+public enum MeasurementType
+{
+    km,
+    inch,
+
 }
