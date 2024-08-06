@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.JoeW980": {
+      "commandName": "Project",
+      "workingDirectory": ".\\"
+    }
+  }
+}
