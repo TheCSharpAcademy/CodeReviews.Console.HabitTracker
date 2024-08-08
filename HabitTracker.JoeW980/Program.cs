@@ -78,7 +78,7 @@ while (!endAPp)
                 Console.WriteLine("Invalid number - Returning to Main Menu");
                 break;
             }
-            db.insert(userHabit, userQuantity);
+            db.Insert(userHabit, userQuantity);
             Console.WriteLine($"Added {userQuantity} {userHabit.Unit} to {userHabit.HabitName}");
             break;
 

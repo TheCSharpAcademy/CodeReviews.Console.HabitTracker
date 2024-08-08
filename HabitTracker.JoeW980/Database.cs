@@ -156,7 +156,7 @@ internal class Database
         return new Report(totalQuantity, totalRecords);
     }
 
-    public void insert(Habit habit, int quantity)
+    public void Insert(Habit habit, int quantity)
     {
         using var cmd = new SQLiteCommand(DbConnection);
         cmd.CommandText = $"INSERT INTO {habit.HabitName}(Quantity, Datetime) VALUES ({quantity}, '{DateTime.UtcNow}')";                      
