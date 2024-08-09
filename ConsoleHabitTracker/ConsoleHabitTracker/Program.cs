@@ -17,53 +17,53 @@ class Program
             connection.Open();
 
             // Create a table
-            string createTableQuery = "CREATE TABLE IF NOT EXISTS habits (Id INTEGER PRIMARY KEY AUTOINCREMENT, HabitName TEXT NOT NULL, Quantity INTEGER);";
-            
+            string createTableQuery =
+                "CREATE TABLE IF NOT EXISTS habits (Id INTEGER PRIMARY KEY AUTOINCREMENT, HabitName TEXT NOT NULL, Quantity INTEGER);";
+
             using (SQLiteCommand command = new SQLiteCommand(createTableQuery, connection))
             {
                 command.ExecuteNonQuery();
             }
-            
+
+
+            while (endProgram)
+            {
+                DisplayMenu();
+                var selection = Console.ReadKey().KeyChar;
+
+
+                switch (selection)
+                {
+                    case '0':
+                        Console.WriteLine("\n\nClosing application");
+                        endProgram = false;
+                        break;
+                    case '1':
+                        Console.WriteLine("\n\nView All Records");
+                        Console.ReadLine();
+                        break;
+                    case '2':
+                        Console.WriteLine("\n\nAdd a Record");
+                        Console.ReadLine();
+                        break;
+                    case '3':
+                        Console.WriteLine("\n\nDelete a Record");
+                        Console.ReadLine();
+                        break;
+                    case '4':
+                        Console.WriteLine("\n\nEdit a Record");
+                        Console.ReadLine();
+                        break;
+                    default:
+                        Console.WriteLine("\n\nInvalid Selection press enter to try again");
+                        Console.ReadLine();
+                        // selection = Console.ReadKey().KeyChar;
+                        break;
+                }
+            }
+
             connection.Close();
         }
-        
-        while (endProgram)
-        {       
-            DisplayMenu();
-            var selection = Console.ReadKey().KeyChar;
-            
-            
-            switch (selection)
-            {
-                case '0':
-                    Console.WriteLine("\n\nClosing application");
-                    endProgram = false;
-                    break;
-                case '1':
-                    Console.WriteLine("\n\nView All Records");
-                    Console.ReadLine();
-                    break;
-                case '2':
-                    Console.WriteLine("\n\nAdd a Record");
-                    Console.ReadLine();
-                    break;
-                case '3':
-                    Console.WriteLine("\n\nDelete a Record");
-                    Console.ReadLine();
-                    break;
-                case '4':
-                    Console.WriteLine("\n\nEdit a Record");
-                    Console.ReadLine();
-                    break;
-                default:
-                    Console.WriteLine("\n\nInvalid Selection press enter to try again"); 
-                    Console.ReadLine();
-                    // selection = Console.ReadKey().KeyChar;
-                    break;
-
-            }
-        }
-       
     }
 
     static void DisplayMenu()
