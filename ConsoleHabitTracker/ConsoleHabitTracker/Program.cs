@@ -1,15 +1,38 @@
-﻿namespace ConsoleHabitTracker;
+﻿using System.Diagnostics;
+using System.Data.SQLite;
+
+namespace ConsoleHabitTracker;
 
 class Program
 {
     static void Main(string[] args)
     {
-        DisplayMenu();
-        var selection = Console.ReadKey().KeyChar;
         var endProgram = true;
 
-        while (endProgram)
+        string connectionString = "Data Source = habitDatabase.db; Version=3;";
+
+        using (SQLiteConnection connection = new SQLiteConnection(connectionString))
         {
+            // Open the connection
+            connection.Open();
+
+            // Create a table
+            string createTableQuery = "CREATE TABLE IF NOT EXISTS habits (Id INTEGER PRIMARY KEY AUTOINCREMENT, HabitName TEXT NOT NULL, Quantity INTEGER);";
+            
+            using (SQLiteCommand command = new SQLiteCommand(createTableQuery, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+            
+            connection.Close();
+        }
+        
+        while (endProgram)
+        {       
+            DisplayMenu();
+            var selection = Console.ReadKey().KeyChar;
+            
+            
             switch (selection)
             {
                 case '0':
@@ -19,32 +42,23 @@ class Program
                 case '1':
                     Console.WriteLine("\n\nView All Records");
                     Console.ReadLine();
-                    DisplayMenu();
-                    selection = Console.ReadKey().KeyChar;
                     break;
                 case '2':
                     Console.WriteLine("\n\nAdd a Record");
                     Console.ReadLine();
-                    DisplayMenu();
-                    selection = Console.ReadKey().KeyChar;
                     break;
                 case '3':
                     Console.WriteLine("\n\nDelete a Record");
                     Console.ReadLine();
-                    DisplayMenu();
-                    selection = Console.ReadKey().KeyChar;
                     break;
                 case '4':
                     Console.WriteLine("\n\nEdit a Record");
                     Console.ReadLine();
-                    DisplayMenu();
-                    selection = Console.ReadKey().KeyChar;
                     break;
                 default:
                     Console.WriteLine("\n\nInvalid Selection press enter to try again"); 
                     Console.ReadLine();
-                    DisplayMenu();
-                    selection = Console.ReadKey().KeyChar;
+                    // selection = Console.ReadKey().KeyChar;
                     break;
 
             }
