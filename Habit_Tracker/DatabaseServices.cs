@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using Spectre.Console;
 
 namespace Habit_Logger_Application;
 
@@ -62,7 +63,7 @@ internal class DatabaseServices
                     var habitName = reader.GetString(2);
                     var habitCount = reader.GetString(1);
 
-                    Console.WriteLine($"\n\nFor {habitName} your current Count is - {habitCount}");
+                    AnsiConsole.Markup($"[fuchsia]\n\nFor {habitName} your current Count is - {habitCount}\n\n\n[/]");
                 }
             }
         }

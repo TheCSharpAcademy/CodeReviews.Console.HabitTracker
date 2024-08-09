@@ -1,5 +1,6 @@
 ﻿
 using Habit_Logger_Application;
+using Spectre.Console;
 
 UserHabit userHabit = new();
 DatabaseServices databaseServices = new();
@@ -70,7 +71,7 @@ void InsertRecord()
     userHabit.HabitCounter = 0;
 
     databaseServices.PostToDatabase(userHabit);
-    Console.WriteLine("\n\nYour habit has been recorded\n\n\n");
+    AnsiConsole.Markup("[green]\n\nYour habit has been recorded\n\n\n[/]");
 
     GetUserInput();
 }
@@ -101,7 +102,7 @@ void UpdateRecord()
     if (int.TryParse(userHabitCountInput, out int result))
     {
         databaseServices.UpdateToDatabase(result);
-        Console.WriteLine($"\n\nYour habit count has been updated to {result}");
+        AnsiConsole.Markup($"[green]\n\nYour habit count has been updated to {result}\n\n[/]");
         GetUserInput();
     }
     else
