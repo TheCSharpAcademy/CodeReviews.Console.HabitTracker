@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data;
+using System.Diagnostics;
 using System.Data.SQLite;
 
 namespace ConsoleHabitTracker;
@@ -9,23 +10,42 @@ class Program
     {
         var endProgram = true;
 
-        string connectionString = "Data Source = habitDatabase.db; Version=3;";
+        string connectionString = "Data Source = habits.db; Version=3;";
 
         using (SQLiteConnection connection = new SQLiteConnection(connectionString))
         {
             // Open the connection
             connection.Open();
+            if (connection.State != ConnectionState.Open)
+            {
+                Console.WriteLine("Failed to connect to the database.");
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Connected to the database.");
+            }
+
 
             // Create a table
             string createTableQuery =
-                "CREATE TABLE IF NOT EXISTS habits (Id INTEGER PRIMARY KEY AUTOINCREMENT, HabitName TEXT NOT NULL, Quantity INTEGER);";
-
+                "CREATE TABLE IF NOT EXISTS habitsTable (Id INTEGER PRIMARY KEY AUTOINCREMENT, HabitName TEXT NOT NULL, Quantity INTEGER, Units TEXT);";
+            
+            
+            
             using (SQLiteCommand command = new SQLiteCommand(createTableQuery, connection))
             {
                 command.ExecuteNonQuery();
             }
-
-
+            
+            // prepoulated data
+            string insertDataQuery = $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('jumping', 27, 'minutes'),('swimming', 15, 'miles'), ('drink water', 7, 'glasses'), ('biking', 4, 'miles');";
+           
+            using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+            
             while (endProgram)
             {
                 DisplayMenu();
@@ -40,10 +60,26 @@ class Program
                         break;
                     case '1':
                         Console.WriteLine("\n\nView All Records");
+                        string selectDataQuery = "SELECT * FROM habitsTable;";
+
+                        using (SQLiteCommand command = new SQLiteCommand(selectDataQuery, connection))
+                        {
+                            using (SQLiteDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    Console.WriteLine($"Id: {reader["Id"]},\tHabitName: {reader["HabitName"]},\t\tQuantity: {reader["Quantity"]}, \tUnits: {reader["Units"]}");
+                                }
+                            }
+                        }
                         Console.ReadLine();
                         break;
                     case '2':
                         Console.WriteLine("\n\nAdd a Record");
+                        
+                        AddNewHabbit(connection);
+
+                        Console.WriteLine("New entry added, press enter to continue");
                         Console.ReadLine();
                         break;
                     case '3':
@@ -63,6 +99,25 @@ class Program
             }
 
             connection.Close();
+        }
+    }
+
+    private static void AddNewHabbit(SQLiteConnection connection)
+    {
+        string insertDataQuery;
+        Console.WriteLine("Enter Habit Name");
+        string? habitName = Console.ReadLine();
+                        
+        Console.WriteLine("Enter Quantity complete");
+        string? quantity = Console.ReadLine();
+
+        Console.WriteLine("Enter type of Units tracked");
+        string? units = Console.ReadLine();
+                        
+        insertDataQuery = $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('{habitName}', {quantity}, '{units}');";
+        using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
+        {
+            command.ExecuteNonQuery();
         }
     }
 
