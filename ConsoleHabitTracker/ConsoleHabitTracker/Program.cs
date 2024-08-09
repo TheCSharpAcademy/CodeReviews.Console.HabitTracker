@@ -60,25 +60,13 @@ class Program
                         break;
                     case '1':
                         Console.WriteLine("\n\nView All Records");
-                        string selectDataQuery = "SELECT * FROM habitsTable;";
-
-                        using (SQLiteCommand command = new SQLiteCommand(selectDataQuery, connection))
-                        {
-                            using (SQLiteDataReader reader = command.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    Console.WriteLine($"Id: {reader["Id"]},\tHabitName: {reader["HabitName"]},\t\tQuantity: {reader["Quantity"]}, \tUnits: {reader["Units"]}");
-                                }
-                            }
-                        }
+                        ViewRecords(connection);
+                        Console.WriteLine("Press enter to continue");
                         Console.ReadLine();
                         break;
                     case '2':
                         Console.WriteLine("\n\nAdd a Record");
-                        
                         AddNewHabbit(connection);
-
                         Console.WriteLine("New entry added, press enter to continue");
                         Console.ReadLine();
                         break;
@@ -102,6 +90,27 @@ class Program
         }
     }
 
+    private static void ViewRecords(SQLiteConnection connection)
+    {
+        string selectDataQuery = "SELECT * FROM habitsTable;";
+
+        using (SQLiteCommand command = new SQLiteCommand(selectDataQuery, connection))
+        {
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                int idWidth = 4;
+                int habitNameWidth = 20;
+                int quantityWidth = 10;
+                int unitsWidth = 10;
+
+                while (reader.Read())
+                {
+                    Console.WriteLine($"Id: {reader["Id"], -4} HabitName: {reader["HabitName"], -20} Quantity: {reader["Quantity"], -10} Units: {reader["Units"],-10}");
+                }
+            }
+        }
+    }
+
     private static void AddNewHabbit(SQLiteConnection connection)
     {
         string insertDataQuery;
@@ -109,7 +118,23 @@ class Program
         string? habitName = Console.ReadLine();
                         
         Console.WriteLine("Enter Quantity complete");
-        string? quantity = Console.ReadLine();
+        string? entry = Console.ReadLine();
+        int quantity=-1;
+        bool validEntry = false;
+        while (!validEntry)
+        {
+            if (int.TryParse(entry, out int validQuantity))
+            {
+                quantity = validQuantity;
+                validEntry = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Entry please enter a numerical quantity");
+                entry = Console.ReadLine();
+            }
+        }
+
 
         Console.WriteLine("Enter type of Units tracked");
         string? units = Console.ReadLine();
