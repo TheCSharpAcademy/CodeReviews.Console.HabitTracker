@@ -13,10 +13,10 @@ Set Exit command to E rather than 0.
 
 ## How to Run Dev
 
-Open solution in Visual Studio
-Build the project to ensure there are no compilation errors. Clicking on "Build" in the menu bar, then "Build Solution".
-Run the application. Clicking the "Start" button (green arrow) on the toolbar.
-Follow the prompts supplied in the console to play games.
+- Open solution in Visual Studio
+- Build the project to ensure there are no compilation errors. Clicking on "Build" in the menu bar, then "Build Solution".
+- Run the application. Clicking the "Start" button (green arrow) on the toolbar.
+- Follow the prompts supplied in the console to log habits.
 
 ## MIT License
 
