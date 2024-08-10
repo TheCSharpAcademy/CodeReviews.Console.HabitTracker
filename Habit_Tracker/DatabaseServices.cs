@@ -53,18 +53,17 @@ internal class DatabaseServices
                 @"
                     SELECT * 
                     FROM habits
-                    WHERE id = 1
                 ";
 
             using (var reader = command.ExecuteReader())
             {
-                while (reader.Read())
-                {
-                    var habitName = reader.GetString(2);
-                    var habitCount = reader.GetString(1);
+                var habitCount = reader.GetString(1);
+                var habitName = reader.GetString(2);
+                AnsiConsole.Markup($"[fuchsia]\n\nFor {habitName} your current Count is - {habitCount}\n\n[/]");
+                //while (reader.Read())
+                //{
 
-                    AnsiConsole.Markup($"[fuchsia]\n\nFor {habitName} your current Count is - {habitCount}\n\n\n[/]");
-                }
+                //}
             }
         }
     }

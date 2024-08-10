@@ -2,7 +2,7 @@
   "profiles": {
     "Habit_Logger_Application": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\nathanj\\source\\repos\\Habit_Logger_Application\\"  
+      "workingDirectory": "C:\\Users\\nathanj\\source\\repos\\CodeReviews.Console.HabitTracker\\Habit_Tracker"
     }
   }
 }
