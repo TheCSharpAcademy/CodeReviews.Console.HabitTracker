@@ -234,14 +234,16 @@ internal class RecordCommands
 
 public class GoingToGym
 {
-    public int Id { get; set; }
-    public DateTime Date { get; set; }
-    public int Sets { get; set; }
-}
-
-public enum MeasurementType
-{
-    km,
-    inch,
-
+    public int Id
+    {
+        get; set;
+    }
+    public DateTime Date
+    {
+        get; set;
+    }
+    public int Sets
+    {
+        get; set;
+    }
 }

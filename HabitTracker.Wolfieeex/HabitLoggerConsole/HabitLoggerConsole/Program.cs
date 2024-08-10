@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
-using HabitLoggerConsole;
-using System;
+using System.Text.RegularExpressions;
 
 namespace HabitLoggerConsole;
 
@@ -16,16 +15,6 @@ public class Program
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
-                //var tableCmd = connection.CreateCommand();
-
-                //tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS going_to_gym (
-                //                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                //                        Date TEXT,
-                //                        Sets TEXT
-                //                        )";
-
-                //tableCmd.ExecuteNonQuery();
-
                 connection.Close();
             }
             try
@@ -158,6 +147,48 @@ public class Program
                 }
             }
         }     
+    }
+
+    internal static bool AssingNameInput(ref string input, string failCommand, char? exitChar = null, bool excludeSymbols = false)
+    {
+        while (true)
+        {
+            string? userInput = Console.ReadLine();
+            if (!string.IsNullOrEmpty(userInput))
+            {
+                if (excludeSymbols)
+                {
+                    if (userInput.Any(ch => (! char.IsLetterOrDigit(ch)) && ch != ' '))
+                    {
+                        Console.SetCursorPosition(0, Console.CursorTop - 1);
+                        Console.Write($"{new string(' ', Console.BufferWidth)}");
+                        Console.SetCursorPosition(0, Console.CursorTop);
+                        Console.Write("No special characters are allowed in your input! Please, try again: ");
+                        continue;
+                    }
+                }
+                if (userInput.ToLower() == exitChar.ToString().ToLower())
+                {
+                    return true;
+                }
+                userInput = Regex.Replace(userInput, @"^\s+", "");
+                userInput = Regex.Replace(userInput, @"\s+$", "");
+                userInput = Regex.Replace(userInput, @"\s\s+", " ");
+                userInput = Regex.Replace(userInput, @"\s\s+", " ");
+                userInput = userInput.ToLower();
+                userInput = userInput.Replace(" ", "_");
+                input = userInput;
+                break;
+            }
+            else
+            {
+                Console.SetCursorPosition(0, Console.CursorTop - 1);
+                Console.Write($"{new string(' ', Console.BufferWidth)}");
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write(failCommand);
+            }
+        }
+        return false;
     }
 
     internal static bool AssignSelectionInput(ref int input, int rangeMin, int rangeMax, char? skipSelection = null)
