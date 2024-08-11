@@ -8,8 +8,6 @@ setupDatabase.InitializeDatabase();
 setupDatabase.SeedData();
 #endif
 
-bool continueRunning = true;
-
 UserInterface userInterface = new UserInterface();
 
 userInterface.DisplayHabitMenu();
