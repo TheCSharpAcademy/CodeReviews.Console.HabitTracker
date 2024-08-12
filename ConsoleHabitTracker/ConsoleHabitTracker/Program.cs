@@ -26,38 +26,39 @@ class Program
                 Console.WriteLine("Connected to the database.");
             }
 
-            string checkTableQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name='habitsTable';"; 
+            string checkTableQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name='habitsTable';";
             var tableExists = false;
-            
-            using (SQLiteCommand command = new SQLiteCommand(checkTableQuery, connection)) 
-            { 
-                using (SQLiteDataReader reader = command.ExecuteReader()) 
-                { 
-                    tableExists = reader.HasRows; 
-                } 
+
+            using (SQLiteCommand command = new SQLiteCommand(checkTableQuery, connection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    tableExists = reader.HasRows;
+                }
             }
-            
+
             // if tabe doesn't exit Create a table
 
             if (!tableExists)
             {
                 string createTableQuery =
                     "CREATE TABLE habitsTable (Id INTEGER PRIMARY KEY AUTOINCREMENT, HabitName TEXT NOT NULL, Quantity INTEGER, Units TEXT);";
-            
+
                 using (SQLiteCommand command = new SQLiteCommand(createTableQuery, connection))
                 {
                     command.ExecuteNonQuery();
                 }
-            
+
                 // prepoulated data
-                string insertDataQuery = $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('jumping', 27, 'minutes'),('swimming', 15, 'miles'), ('drink water', 7, 'glasses'), ('biking', 4, 'miles');";
-           
+                string insertDataQuery =
+                    $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('jumping', 27, 'minutes'),('swimming', 15, 'miles'), ('drink water', 7, 'glasses'), ('biking', 4, 'miles');";
+
                 using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
                 {
                     command.ExecuteNonQuery();
                 }
             }
-            
+
             while (endProgram)
             {
                 DisplayMenu();
@@ -84,32 +85,33 @@ class Program
                     case '3':
                         Console.WriteLine("\n\nDelete a Record");
                         ViewRecords(connection);
-                        
-                        Console.WriteLine("Which record ID would you like to delete");
-                        string? entry = Console.ReadLine().ToLower();
 
-                        while (entry == null)
+                        Console.WriteLine("Which record ID would you like to delete");
+                        var entry = Console.ReadLine()?.ToLower();
+
+                        // while (entry == null)
+                        while (string.IsNullOrWhiteSpace(entry) || !CheckEntryExists(connection, entry))
                         {
                             Console.WriteLine("invalid entry please try again or press E to exit");
-                            entry = Console.ReadLine().ToLower();
+                            entry = Console.ReadLine()?.ToLower();
                         }
 
-                        if (entry == "e")
+                        if (entry.ToLower() == "e")
                         {
-                                Console.WriteLine("Exiting program");
-                                return;
+                            Console.WriteLine("Exiting program");
+                            return;
                         }
                         else
                         {
                             Console.WriteLine($"Deleting record ID {entry}");
                             string deleteRecord = $"DELETE FROM habitsTable WHERE Id == {entry};";
-                            
+
                             using (SQLiteCommand command = new SQLiteCommand(deleteRecord, connection))
                             {
                                 command.ExecuteNonQuery();
                             }
                         }
-                        
+
                         break;
                     case '4':
                         Console.WriteLine("\n\nEdit a Record");
@@ -126,20 +128,55 @@ class Program
         }
     }
 
+    public static bool CheckEntryExists(SQLiteConnection connection, string id)
+    {
+        if (int.TryParse(id, out var result))
+        {
+            string query = "SELECT COUNT(*) FROM habitsTable WHERE Id = @result;";
+
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@result", id);
+
+                // ExecuteScalar returns the first column of the first row in the result set
+                int count = Convert.ToInt32(command.ExecuteScalar());
+
+                return count > 0;
+            }
+        }
+        return false;
+    }
+
     private static void ViewRecords(SQLiteConnection connection)
     {
         string selectDataQuery = "SELECT * FROM habitsTable;";
-
+        var habits = new List<Habit>();
         using (SQLiteCommand command = new SQLiteCommand(selectDataQuery, connection))
         {
             using (SQLiteDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    Console.WriteLine($"Id: {reader["Id"], -4} HabitName: {reader["HabitName"], -20} Quantity: {reader["Quantity"], -10} Units: {reader["Units"],-10}");
+                    habits.Add(new Habit
+                    {
+                        Id = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Quantity = reader.GetInt32(2),
+                        Units = reader.GetString(3),
+                    });
+                    Console.WriteLine(
+                        $"Id: {reader["Id"],-4} HabitName: {reader["HabitName"],-20} Quantity: {reader["Quantity"],-10} Units: {reader["Units"],-10}");
                 }
             }
         }
+    }
+
+    public class Habit
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Quantity { get; set; }
+        public string Units { get; set; }
     }
 
     private static void AddNewHabbit(SQLiteConnection connection)
@@ -147,10 +184,10 @@ class Program
         string insertDataQuery;
         Console.WriteLine("Enter Habit Name");
         string? habitName = Console.ReadLine();
-                        
+
         Console.WriteLine("Enter Quantity complete");
         string? entry = Console.ReadLine();
-        int quantity=-1;
+        int quantity = -1;
         bool validEntry = false;
         while (!validEntry)
         {
@@ -168,8 +205,9 @@ class Program
 
         Console.WriteLine("Enter type of Units tracked");
         string? units = Console.ReadLine();
-                        
-        insertDataQuery = $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('{habitName}', {quantity}, '{units}');";
+
+        insertDataQuery =
+            $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('{habitName}', {quantity}, '{units}');";
         using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
         {
             command.ExecuteNonQuery();
