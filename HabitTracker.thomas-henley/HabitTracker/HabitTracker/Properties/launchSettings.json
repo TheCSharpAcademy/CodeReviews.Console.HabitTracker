@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\thoma\\repos\\cs-academy\\CodeReviews.Console.HabitTracker\\HabitTracker.thomas-henley\\HabitTracker\\HabitTracker"
+    }
+  }
+}
