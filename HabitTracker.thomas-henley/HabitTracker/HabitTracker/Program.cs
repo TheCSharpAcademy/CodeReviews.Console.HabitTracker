@@ -2,4 +2,4 @@
 
 HabitTracker habitTracker = new();
 
-habitTracker.StartCLI();
+HabitTracker.StartCLI();
