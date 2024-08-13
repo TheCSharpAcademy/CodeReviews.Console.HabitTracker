@@ -55,7 +55,7 @@ public class Program
             Console.Write("\nYour input: ");
 
             int userInput = -1;
-            AssignSelectionInput(ref userInput, 0, 4);
+            AssignSelectionInput(ref userInput, 0, 5);
 
             switch (userInput)
             {
@@ -117,7 +117,7 @@ public class Program
                 Console.Write("\nYour input: ");
 
                 int userInput = -1;
-                AssignSelectionInput(ref userInput, 0, 4);
+                AssignSelectionInput(ref userInput, 0, 5);
 
                 switch (userInput)
                 {
