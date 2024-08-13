@@ -19,7 +19,7 @@ internal class DatabaseServices
                 id INTEGER PRIMARY KEY, 
                 habitcount INTEGER,     
                 habitname TEXT
-            );  
+            );
         ";
         command.ExecuteNonQuery();
     }
@@ -32,9 +32,18 @@ internal class DatabaseServices
 
         using var command = connection.CreateCommand();
         command.CommandText =
+        @"
+        INSERT INTO habits (habitcount, habitname)
+        VALUES (0, '')
+        ";
+
+        command.ExecuteNonQuery();
+
+        command.CommandText =
             @"
-                INSERT INTO habits (habitcount, habitname)
-                VALUES ($habitcount, $habitname)
+            UPDATE habits
+            SET habitcount = $habitcount, habitname = $habitname
+            WHERE ID = 1
             ";
         command.Parameters.AddWithValue("$habitcount", habit.HabitCounter);
         command.Parameters.AddWithValue("$habitname", habit.HabitName);
@@ -57,13 +66,16 @@ internal class DatabaseServices
 
             using (var reader = command.ExecuteReader())
             {
-                var habitCount = reader.GetString(1);
-                var habitName = reader.GetString(2);
-                AnsiConsole.Markup($"[fuchsia]\n\nFor {habitName} your current Count is - {habitCount}\n\n[/]");
-                //while (reader.Read())
-                //{
-
-                //}
+                if (!reader.Read())
+                {
+                    AnsiConsole.Markup("[fuchsia]\nDatabase is empty\n\n[/]");
+                }
+                else
+                {
+                    var habitCount = reader.GetString(1);
+                    var habitName = reader.GetString(2);
+                    AnsiConsole.Markup($"[fuchsia]\n\nFor {habitName} your current Count is - {habitCount}\n\n[/]");
+                }
             }
         }
     }
@@ -78,7 +90,6 @@ internal class DatabaseServices
             command.CommandText =
                 @"
                     DELETE FROM habits
-                    WHERE id = 1
                 ";
             command.ExecuteNonQuery();
         }
@@ -93,8 +104,9 @@ internal class DatabaseServices
             using var command = connection.CreateCommand();
             command.CommandText =
                 @"
-                    INSERT INTO habits (habitcount)
-                    VALUES ($habitcount)
+                    UPDATE habits
+                    SET habitcount = ($habitcount)
+                    WHERE ID = 1
                 ";
             command.Parameters.AddWithValue("$habitcount", habitCount);
 
@@ -102,3 +114,5 @@ internal class DatabaseServices
         }
     }
 }
+
+
