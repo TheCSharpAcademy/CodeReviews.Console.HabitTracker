@@ -13,7 +13,7 @@ internal class HabitTracker
         // check for/create database
     }
 
-    public void Start()
+    public void StartCLI()
     {
         Console.WriteLine("Welcome to the Habit Tracker!\n\n");
 
