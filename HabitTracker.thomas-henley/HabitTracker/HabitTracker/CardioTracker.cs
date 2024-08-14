@@ -2,11 +2,17 @@
 
 internal class CardioTracker
 {
+    readonly HabitDbHelper dbHelper;
+
+    public CardioTracker()
+    {
+        dbHelper = new HabitDbHelper();
+    }
 
     /// <summary>
     /// Entry point for running the Habit Tracker from the CLI.
     /// </summary>
-    public static void StartCLI()
+    public void StartCLI()
     {
         InitializeDatabase();
         Console.WriteLine("Welcome to the Habit Tracker!\n\n");
@@ -68,14 +74,14 @@ internal class CardioTracker
             Console.ReadLine();
         }
     }
-    private static void InitializeDatabase()
+    private void InitializeDatabase()
     {
         Console.WriteLine("Initializing database...");
-        HabitDbHelper.InitializeDB();
-        if (HabitDbHelper.IsDbEmpty())
+        dbHelper.InitializeDB();
+        if (dbHelper.IsDbEmpty())
         {
             Console.WriteLine("Populating dummy data...");
-            HabitDbHelper.PopulateDB();
+            dbHelper.PopulateDB();
         }
         Console.WriteLine("Done.\n\n");
     }
@@ -83,9 +89,9 @@ internal class CardioTracker
     /// <summary>
     /// Prints all the database entries to the console.
     /// </summary>
-    public static void ViewAllRecords()
+    public void ViewAllRecords()
     {
-        var heartPoints = HabitDbHelper.GetAllRecords();
+        var heartPoints = dbHelper.GetAllRecords();
 
         Console.WriteLine("Your cardio activity so far:");
 
@@ -98,14 +104,14 @@ internal class CardioTracker
     /// <summary>
     /// CLI method to insert new cardio entry into the database.
     /// </summary>
-    private static void InsertRecord()
+    private void InsertRecord()
     {
         Console.WriteLine("Please insert the date (Format: dd-mm-yy):");
         string date = GetDateInput();
         Console.WriteLine("\nPlease insert the number of heart points for the day:");
         int quantity = GetNumberInput();
 
-        HabitDbHelper.Insert(date, quantity);
+        dbHelper.Insert(date, quantity);
     }
 
     /// <summary>
@@ -147,7 +153,7 @@ internal class CardioTracker
     /// <summary>
     /// Asks the user for the ID number of a record they wish to delete.
     /// </summary>
-    internal static void DeleteRecord()
+    internal void DeleteRecord()
     {
         Console.WriteLine("Enter the ID of the record you would like to delete, or 0 to return to the main menu.");
         int userChoice = GetNumberInput();
@@ -157,13 +163,13 @@ internal class CardioTracker
             return;
         }
 
-        HabitDbHelper.Delete(userChoice);
+        dbHelper.Delete(userChoice);
     }
 
     /// <summary>
     /// Allows the user to modify an existing record.
     /// </summary>
-    internal static void UpdateRecord()
+    internal void UpdateRecord()
     {
         Console.WriteLine("Enter the ID of the record you would like to update, or 0 to return to the main menu.");
         int userChoice = GetNumberInput();
@@ -173,7 +179,7 @@ internal class CardioTracker
             return;
         }
 
-        if (HabitDbHelper.TryGetById(userChoice, out var entry))
+        if (dbHelper.TryGetById(userChoice, out var entry))
         {
             Console.WriteLine($"Current data: << {entry!.Display()} >>");
             Console.WriteLine("Please enter the new date (Format: dd-mm-yy):\n");
@@ -181,7 +187,7 @@ internal class CardioTracker
             Console.WriteLine("Please enter the new number of heart points:");
             int newQuantity = GetNumberInput();
 
-            HabitDbHelper.Update(userChoice, newDate, newQuantity);
+            dbHelper.Update(userChoice, newDate, newQuantity);
         }
 
         Console.WriteLine("Invalid ID. Please try again.");
@@ -189,17 +195,17 @@ internal class CardioTracker
 
     }
 
-    internal static void ViewTotalDays()
+    internal void ViewTotalDays()
     {
-        Console.WriteLine($"\nTotal days of exercise: {HabitDbHelper.GetTotalDays()}\n");
+        Console.WriteLine($"\nTotal days of exercise: {dbHelper.GetTotalDays()}\n");
     }
 
-    internal static void ViewTotalHeartPoints()
+    internal void ViewTotalHeartPoints()
     {
-        Console.WriteLine($"\nTotal heart points: {HabitDbHelper.GetTotalPoints()}\n");
+        Console.WriteLine($"\nTotal heart points: {dbHelper.GetTotalPoints()}\n");
     }
 
-    internal static void ViewTotalHeartPointsByYear()
+    internal void ViewTotalHeartPointsByYear()
     {
         Console.WriteLine("View total heart points for which year? (Format: yy):");
 
@@ -209,6 +215,6 @@ internal class CardioTracker
             Console.WriteLine("Invalid year. Please use a positive two digit number.");
             year = GetNumberInput();
         }
-        Console.WriteLine($"\nTotal heart points for year {year:00}: {HabitDbHelper.GetTotalPoints()}\n");
+        Console.WriteLine($"\nTotal heart points for year {year:00}: {dbHelper.GetTotalPoints()}\n");
     }
 }

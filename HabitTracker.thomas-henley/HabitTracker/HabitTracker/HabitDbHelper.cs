@@ -3,15 +3,16 @@ using System.Globalization;
 
 namespace HabitTracker;
 
-public class HabitDbHelper
+public class HabitDbHelper(string tableName = "heart_points")
 {
     private static readonly string connectionString = @"Data Source=habit-tracker.db";
+    private readonly string tableName = tableName;
 
     /// <summary>
     /// Build the table.
     /// </summary>
     /// <param name="tableName"></param>
-    public static void InitializeDB(string tableName = "heart_points")
+    public void InitializeDB()
     {
         // Create table
         string commandText = $@"CREATE TABLE IF NOT EXISTS {tableName} (
@@ -26,7 +27,7 @@ public class HabitDbHelper
     /// Remove the table.
     /// </summary>
     /// <param name="tableName"></param>
-    public static void TeardownDB(string tableName = "heart_points")
+    public void TeardownDB()
     {
         // Destroy table
         string commandText = $@"DROP TABLE {tableName}";
@@ -36,7 +37,7 @@ public class HabitDbHelper
     /// <summary>
     /// Fills the database with fake data for demonstration and testing.
     /// </summary>
-    public static void PopulateDB()
+    public void PopulateDB()
     {
         Random rand = new();
         DateTime[] dates = new DateTime[100];
@@ -57,7 +58,7 @@ public class HabitDbHelper
         }
     }
 
-    public static bool IsDbEmpty()
+    public bool IsDbEmpty()
     {
         return GetAllRecords().Count == 0;
     }
@@ -67,7 +68,7 @@ public class HabitDbHelper
     /// </summary>
     /// <param name="cmd">The SQL command to execute.</param>
     /// <returns>A List of HeartPoints objects from the database.</returns>
-    private static List<HeartPoints> SqlQuery(string cmd)
+    public static List<HeartPoints> SqlQuery(string cmd)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
@@ -98,7 +99,7 @@ public class HabitDbHelper
     /// Use for SQL commands that do not require a response.
     /// </summary>
     /// <param name="cmd">The SQL command to execute.</param>
-    private static void SqlNonQuery(string cmd)
+    public static void SqlNonQuery(string cmd)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
@@ -116,7 +117,7 @@ public class HabitDbHelper
     /// </summary>
     /// <param name="cmd"></param>
     /// <returns></returns>
-    private static int SqlScalarQuery(string cmd)
+    public static int SqlScalarQuery(string cmd)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
@@ -132,18 +133,18 @@ public class HabitDbHelper
     /// </summary>
     /// <param name="date"></param>
     /// <param name="quantity"></param>
-    public static void Insert(string date, int quantity)
+    public void Insert(string date, int quantity)
     {
-        SqlNonQuery($"INSERT INTO heart_points(date, quantity) VALUES('{date}', {quantity})");
+        SqlNonQuery($"INSERT INTO {tableName}(date, quantity) VALUES('{date}', {quantity})");
     }
 
     /// <summary>
     /// Retrieves all record from the database.
     /// </summary>
-    /// <returns>A List of all entries in the heart_points table.</returns>
-    public static List<HeartPoints> GetAllRecords()
+    /// <returns>A List of all entries in the {tableName} table.</returns>
+    public List<HeartPoints> GetAllRecords()
     {
-        return SqlQuery("SELECT * FROM heart_points");
+        return SqlQuery($"SELECT * FROM {tableName}");
     }
 
     /// <summary>
@@ -152,9 +153,9 @@ public class HabitDbHelper
     /// <param name="id">The ID of the record to search for.</param>
     /// <param name="entry">Out parameter to hold the record if it is found. Null if no matching record.</param>
     /// <returns>True if the record is found, false otherwise.</returns>
-    public static bool TryGetById(int id, out HeartPoints? entry)
+    public bool TryGetById(int id, out HeartPoints? entry)
     {
-        var results = SqlQuery($"SELECT * FROM heart_points WHERE id = {id}");
+        var results = SqlQuery($"SELECT * FROM {tableName} WHERE id = {id}");
 
         if (results.Count > 0)
         {
@@ -172,28 +173,28 @@ public class HabitDbHelper
     /// <param name="id"></param>
     /// <param name="newDate"></param>
     /// <param name="newQuantity"></param>
-    public static void Update(int id, string newDate, int newQuantity)
+    public void Update(int id, string newDate, int newQuantity)
     {
-        SqlNonQuery($"UPDATE heart_points SET date = '{newDate}', quantity = {newQuantity} WHERE id = {id};");
+        SqlNonQuery($"UPDATE {tableName} SET date = '{newDate}', quantity = {newQuantity} WHERE id = {id};");
     }
 
     /// <summary>
     /// Remove a record from the database.
     /// </summary>
     /// <param name="id"></param>
-    public static void Delete(int id)
+    public void Delete(int id)
     {
 
-        SqlNonQuery($"DELETE FROM heart_points WHERE id = {id}");
+        SqlNonQuery($"DELETE FROM {tableName} WHERE id = {id}");
     }
 
     /// <summary>
     /// Return the total number of days in which cardio activity has been logged.
     /// </summary>
     /// <returns>The integer count of days.</returns>
-    public static int GetTotalDays()
+    public int GetTotalDays()
     {
-        return SqlScalarQuery($"SELECT COUNT() FROM (SELECT DISTINCT date FROM heart_points);");
+        return SqlScalarQuery($"SELECT COUNT() FROM (SELECT DISTINCT date FROM {tableName});");
     }
 
     /// <summary>
@@ -201,10 +202,10 @@ public class HabitDbHelper
     /// </summary>
     /// <param name="year">Optionally filter to an individual year.</param>
     /// <returns></returns>
-    public static int GetTotalPoints(int year = -1)
+    public int GetTotalPoints(int year = -1)
     {
-        string yearOption = ((year < 0) ? "" : $" WHERE RIGHT(date, 2) = {year:00}");
+        string yearOption = ((year < 0) ? "" : $" WHERE SUBSTR(date, -2) = '{year:00}'");
 
-        return SqlScalarQuery($"SELECT SUM(quantity) FROM heart_points" + yearOption);
+        return SqlScalarQuery($"SELECT SUM(quantity) FROM {tableName}" + yearOption);
     }
 }
