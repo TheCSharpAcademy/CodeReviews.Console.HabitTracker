@@ -2,7 +2,6 @@
 using System.Data.SQLite;
 using System.Collections.Generic;
 using System.Globalization;
-using System.CodeDom;
 
 string? userMenuChoice;
 bool closeApp = false;
@@ -21,7 +20,6 @@ int habitIndex = 0;
 // Function for user to select from list of habits
 void ViewHabitsLogged()
 {
-    //Console.Clear();
     Console.WriteLine("\nThese are the habits you currently have logged:");
 
     int habitNum = 1;
@@ -475,9 +473,6 @@ void DeleteHabit(string habit)
     userInput = userInput!.Trim().ToLower();
     if ((userInput != null) && (userInput == "y" || userInput == "yes"))
     {
-        // Assume you have a connection string and a table name
-        string tableName = habit;
-
         try
         {
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
