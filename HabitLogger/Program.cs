@@ -164,7 +164,6 @@ void CreateHabit()
 // Function for Main Menu
 void UserSelectMenuOption(string habit)
 {
-    //Console.Clear();
     Console.WriteLine($"\nHABIT - {habit}\n");
     Console.WriteLine("What would you like to do?\n");
     Console.WriteLine("Type 0 to Close Application.");
