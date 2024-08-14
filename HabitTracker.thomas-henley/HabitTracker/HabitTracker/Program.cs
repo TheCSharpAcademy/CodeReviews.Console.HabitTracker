@@ -1,5 +1,3 @@
-﻿using Habits;
+﻿using HabitTracker;
 
-HabitTracker habitTracker = new();
-
-HabitTracker.StartCLI();
+CardioTracker.StartCLI();

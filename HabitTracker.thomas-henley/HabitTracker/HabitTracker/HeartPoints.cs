@@ -1,4 +1,4 @@
-﻿namespace Habits;
+﻿namespace HabitTracker;
 
 internal class HeartPoints
 {
@@ -8,6 +8,6 @@ internal class HeartPoints
 
     public string Display()
     {
-        return $"{Id}. {Date.ToString("dd-MM-yy")}, {Quantity} points.";
+        return $"{Id}. {Date:dd-MM-yy}, {Quantity} points.";
     }
 }

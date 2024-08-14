@@ -1,86 +1,14 @@
-﻿using Microsoft.Data.Sqlite;
-using System.Globalization;
+﻿namespace HabitTracker;
 
-namespace Habits;
-
-internal class HabitTracker
+internal class CardioTracker
 {
-    private static readonly string connectionString = @"Data Source=habit-tracker.db";
-    public HabitTracker()
-    {
-        // Create table
-        string commandText = @"CREATE TABLE IF NOT EXISTS heart_points (
-                                   Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                   Date TEXT,
-                                   Quantity INTEGER
-                               )";
-        SqlNonQuery(commandText);
-
-    }
-
-    /// <summary>
-    /// Connect to the database, run the query command, disconnect, and return the results.
-    /// </summary>
-    /// <param name="cmd">The SQL command to execute.</param>
-    /// <returns>A List of HeartPoints objects from the database.</returns>
-    private static List<HeartPoints> SqlQuery(string cmd)
-    {
-        using var connection = new SqliteConnection(connectionString);
-
-        connection.Open();
-
-        var tableCmd = connection.CreateCommand();
-
-        tableCmd.CommandText = cmd;
-
-        var reader = tableCmd.ExecuteReader();
-        
-        List<HeartPoints> heartPoints = [];
-
-        while (reader.Read())
-        {
-            HeartPoints entry = new()
-            {
-                Id = reader.GetInt32(0),
-                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                Quantity = reader.GetInt32(2)
-            };
-
-            heartPoints.Add(entry);
-        }
-
-        connection.Close();
-
-        return heartPoints;
-    }
-
-    /// <summary>
-    /// Connects to the database, runs the command, and disconnects.
-    /// Use for SQL commands that do not require a response.
-    /// </summary>
-    /// <param name="cmd">The SQL command to execute.</param>
-    private static void SqlNonQuery(string cmd)
-    {
-        using var connection = new SqliteConnection(connectionString);
-
-        connection.Open();
-
-        var tableCmd = connection.CreateCommand();
-
-        tableCmd.CommandText = cmd;
-
-        var result = tableCmd.ExecuteNonQuery();
-
-        connection.Close();
-
-        return;
-    }
 
     /// <summary>
     /// Entry point for running the Habit Tracker from the CLI.
     /// </summary>
     public static void StartCLI()
     {
+        InitializeDatabase();
         Console.WriteLine("Welcome to the Habit Tracker!\n\n");
 
         while (true)
@@ -93,6 +21,9 @@ internal class HabitTracker
             Console.WriteLine("\tType 2 to Insert Record.");
             Console.WriteLine("\tType 3 to Delete Record.");
             Console.WriteLine("\tType 4 to Update Record.");
+            Console.WriteLine("\tType 5 to View Total Number of Days Exercised.");
+            Console.WriteLine("\tType 6 to View Total Heart Points.");
+            Console.WriteLine("\tType 7 to View Total Heart Points by Year.\n");
             Console.WriteLine("-----------------------------------------------\n");
 
             string? userInput = Console.ReadLine() ?? "";
@@ -120,6 +51,9 @@ internal class HabitTracker
                 case "4":
                     UpdateRecord();
                     break;
+                case "5":
+                    ViewTotalDays();
+                    break;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     break;
@@ -128,10 +62,24 @@ internal class HabitTracker
             Console.ReadLine();
         }
     }
+    private static void InitializeDatabase()
+    {
+        Console.WriteLine("Initializing database...");
+        HabitDbHelper.Initialize();
+        if (HabitDbHelper.IsDbEmpty())
+        {
+            Console.WriteLine("Populating dummy data...");
+            HabitDbHelper.PopulateDB();
+        }
+        Console.WriteLine("Done.\n\n");
+    }
 
+    /// <summary>
+    /// Prints all the database entries to the console.
+    /// </summary>
     public static void ViewAllRecords()
     {
-        var heartPoints = GetAllRecords();
+        var heartPoints = HabitDbHelper.GetAllRecords();
 
         Console.WriteLine("Your cardio activity so far:");
 
@@ -141,11 +89,9 @@ internal class HabitTracker
         }
     }
 
-    public static List<HeartPoints> GetAllRecords()
-    {
-        return SqlQuery("SELECT * FROM heart_points");
-    }
-
+    /// <summary>
+    /// CLI method to insert new cardio entry into the database.
+    /// </summary>
     private static void InsertRecord()
     {
         Console.WriteLine("Please insert the date: (Format: dd-mm-yy).");
@@ -153,15 +99,19 @@ internal class HabitTracker
         Console.WriteLine("\nPlease insert the number of heart points for the day:");
         int quantity = GetNumberInput();
 
-        SqlNonQuery($"INSERT INTO heart_points(date, quantity) VALUES('{date}', {quantity})");
+        HabitDbHelper.Insert(date, quantity);
     }
 
+    /// <summary>
+    /// Gets a Date from the user, formatted as dd-MM-yy.
+    /// </summary>
+    /// <returns>A string representation of the date.</returns>
     internal static string GetDateInput()
     {
         while (true)
         {
             string dateInput = Console.ReadLine() ?? string.Empty;
-            
+
             if (!dateInput.Equals("")) //TODO validate date input
             {
                 return dateInput;
@@ -171,6 +121,10 @@ internal class HabitTracker
         }
     }
 
+    /// <summary>
+    /// Gets an integer from the user.
+    /// </summary>
+    /// <returns>A user-selected integer.</returns>
     internal static int GetNumberInput()
     {
         while (true)
@@ -184,6 +138,9 @@ internal class HabitTracker
         }
     }
 
+    /// <summary>
+    /// Asks the user for the ID number of a record they wish to delete.
+    /// </summary>
     internal static void DeleteRecord()
     {
         Console.WriteLine("Enter the ID of the record you would like to delete, or 0 to return to the main menu.");
@@ -194,9 +151,12 @@ internal class HabitTracker
             return;
         }
 
-        SqlNonQuery($"DELETE FROM heart_points WHERE id = {userChoice}");
+        HabitDbHelper.Delete(userChoice);
     }
 
+    /// <summary>
+    /// Allows the user to modify an existing record.
+    /// </summary>
     internal static void UpdateRecord()
     {
         Console.WriteLine("Enter the ID of the record you would like to update, or 0 to return to the main menu.");
@@ -207,23 +167,24 @@ internal class HabitTracker
             return;
         }
 
-        var results = SqlQuery($"SELECT * FROM heart_points WHERE id = {userChoice}");
-
-        if (results.Count == 0)
+        if (HabitDbHelper.TryGetById(userChoice, out var entry))
         {
-            Console.WriteLine("No entry found. Please try again.");
-            return;
+            Console.WriteLine($"Current data: << {entry!.Display()} >>");
+            Console.WriteLine("Please enter the new date: (Format: dd-mm-yy).\n");
+            string newDate = GetDateInput();
+            Console.WriteLine("Please enter the new number of heart points:");
+            int newQuantity = GetNumberInput();
+
+            HabitDbHelper.Update(userChoice, newDate, newQuantity);
         }
 
-        var entry = results.First();
+        Console.WriteLine("Invalid ID. Please try again.");
+        return;
 
-        Console.WriteLine($"Current data: << {entry.Display()} >>");
-        Console.WriteLine("Please enter the new date: (Format: dd-mm-yy).\n");
-        string newDate = GetDateInput();
-        Console.WriteLine("Please enter the new number of heart points:");
-        int newQuantity = GetNumberInput();
+    }
 
-        SqlNonQuery($"UPDATE heart_points SET date = '{newDate}', quantity = {newQuantity} WHERE id = {entry.Id};");
-
+    internal static void ViewTotalDays()
+    {
+        Console.WriteLine($"\nTotal days of exercise: {HabitDbHelper.GetTotalDays()}\n");
     }
 }
