@@ -79,39 +79,11 @@ class Program
                     case '2':
                         Console.WriteLine("\n\nAdd a Record");
                         AddNewHabbit(connection);
-                        Console.WriteLine("New entry added, press enter to continue");
-                        Console.ReadLine();
                         break;
                     case '3':
                         Console.WriteLine("\n\nDelete a Record");
                         ViewRecords(connection);
-
-                        Console.WriteLine("Which record ID would you like to delete");
-                        var entry = Console.ReadLine()?.ToLower();
-
-                        // while (entry == null)
-                        while (string.IsNullOrWhiteSpace(entry) || !CheckEntryExists(connection, entry))
-                        {
-                            Console.WriteLine("invalid entry please try again or press E to exit");
-                            entry = Console.ReadLine()?.ToLower();
-                        }
-
-                        if (entry.ToLower() == "e")
-                        {
-                            Console.WriteLine("Exiting program");
-                            return;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Deleting record ID {entry}");
-                            string deleteRecord = $"DELETE FROM habitsTable WHERE Id == {entry};";
-
-                            using (SQLiteCommand command = new SQLiteCommand(deleteRecord, connection))
-                            {
-                                command.ExecuteNonQuery();
-                            }
-                        }
-
+                        DeleteEntry(connection);
                         break;
                     case '4':
                         Console.WriteLine("\n\nEdit a Record");
@@ -125,6 +97,34 @@ class Program
             }
 
             connection.Close();
+        }
+    }
+
+    private static void DeleteEntry(SQLiteConnection connection)
+    {
+        Console.WriteLine("Enter the record ID would you like to delete, or E to exit");
+        var entry = Console.ReadLine()?.ToLower();
+
+        // while (entry == null)
+        while (string.IsNullOrWhiteSpace(entry) || !CheckEntryExists(connection, entry) || entry.ToLower() == "e")
+        {
+            if (entry.ToLower() == "e")
+            {
+                Console.WriteLine("Exiting Delete Option, press enter to continue");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("invalid entry please try again or press E to exit");
+            entry = Console.ReadLine()?.ToLower();
+        }
+
+        Console.WriteLine($"Deleting record ID {entry}");
+        string deleteRecord = $"DELETE FROM habitsTable WHERE Id == {entry};";
+
+        using (SQLiteCommand command = new SQLiteCommand(deleteRecord, connection))
+        {
+            command.ExecuteNonQuery();
         }
     }
 
@@ -144,6 +144,7 @@ class Program
                 return count > 0;
             }
         }
+
         return false;
     }
 
@@ -182,8 +183,20 @@ class Program
     private static void AddNewHabbit(SQLiteConnection connection)
     {
         string insertDataQuery;
-        Console.WriteLine("Enter Habit Name");
+        Console.WriteLine("Enter Habit Name, or type 'E' to exit");
         string? habitName = Console.ReadLine();
+        while (string.IsNullOrWhiteSpace(habitName) || habitName.ToLower() == "e")
+        {
+            if (habitName.ToLower() == "e")
+            {
+                Console.WriteLine("Exiting Add New Habit Option, press enter to continue");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("invalid entry please try again or press E to exit");
+            habitName = Console.ReadLine()?.ToLower();
+        }
 
         Console.WriteLine("Enter Quantity complete");
         string? entry = Console.ReadLine();
@@ -212,6 +225,8 @@ class Program
         {
             command.ExecuteNonQuery();
         }
+        Console.WriteLine("New entry added, press enter to continue");
+        Console.ReadLine();
     }
 
     static void DisplayMenu()
