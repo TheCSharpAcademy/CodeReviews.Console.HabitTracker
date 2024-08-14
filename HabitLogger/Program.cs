@@ -175,7 +175,7 @@ void UserSelectMenuOption(string habit)
     Console.WriteLine("Type 3 to Delete Record.");
     Console.WriteLine("Type 4 to Update Record.");
     Console.WriteLine("Type 5 to Delete This Habit.");
-    Console.WriteLine("Type 6 to View Other Habits.\n");
+    Console.WriteLine("Type 6 to View or Create Other Habits.\n");
     string[] menuOptions = { "0", "1", "2", "3", "4", "5", "6" };
     do
     {
