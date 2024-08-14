@@ -19,11 +19,48 @@ public class HabitTrackerController
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                @"CREATE TABLE IF NOT EXISTS drinking_water (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date TEXT,
-                    Quantity INTEGER
-                )";
+                @"
+                PRAGMA foreign_keys = ON;
+
+                CREATE TABLE IF NOT EXISTS habit (
+                    habitId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    habitName TEXT
+                );
+
+                INSERT INTO habit
+                SELECT *
+                FROM (
+                     VALUES (1, 'Drinking Water'),
+                            (2, 'Eating Fruit'),
+                            (3, 'Jogging')
+                )
+                WHERE NOT EXISTS (
+                    SELECT * FROM habit
+                );
+
+                CREATE TABLE IF NOT EXISTS record (
+                    recordId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    recordHabit INTEGER,
+                    date TEXT,
+                    quantity INTEGER,
+                    FOREIGN KEY(recordHabit) REFERENCES habit(habitId)
+                );
+
+                INSERT INTO record
+                SELECT *
+                FROM (
+                    VALUES (1, 2, '05-05-24', 5),
+                           (2, 3, '05-07-24', 23),
+                           (3, 1, '05-08-24', 3),
+                           (4, 3, '05-09-24', 2),
+                           (5, 2, '05-10-24', 3),
+                           (6, 2, '05-11-24', 2),
+                           (7, 1, '05-12-24', 12)
+                )
+                WHERE NOT EXISTS (
+                    SELECT * FROM record
+                );
+                ";
 
             tableCmd.ExecuteNonQuery();
 
@@ -60,6 +97,9 @@ public class HabitTrackerController
                 case "4":
                     Update();
                     break;
+                case "5":
+                    GetAllHabits();
+                    break;
                 default:
                     MenuView.InvalidCommand();
                     break;
@@ -74,11 +114,28 @@ public class HabitTrackerController
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
+
+            var queryCmd = connection.CreateCommand();
+            queryCmd.CommandText =
+                 $"SELECT * FROM habit;";
+
+            Dictionary<int, string> queryData = new();
+
+            SqliteDataReader queryReader = queryCmd.ExecuteReader();
+
+            if (queryReader.HasRows)
+            {
+                while (queryReader.Read())
+                {
+                    queryData.Add(queryReader.GetInt32(0), queryReader.GetString(1));
+                }
+            }
+
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText =
-                $"SELECT * FROM drinking_water ";
+                $"SELECT * FROM record;";
 
-            List<DrinkingWaterModel> tableData = new();
+            List<RecordModel> tableData = new();
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -87,11 +144,12 @@ public class HabitTrackerController
                 while (reader.Read())
                 {
                     tableData.Add(
-                        new DrinkingWaterModel
+                        new RecordModel
                         {
-                            Id = reader.GetInt32(0),
-                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-us")),
-                            Quantity = reader.GetInt32(2)
+                            RecordId = reader.GetInt32(0),
+                            HabitName = queryData[reader.GetInt32(1)],
+                            Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-us")),
+                            Quantity = reader.GetInt32(3)
                         });
                 }
             }
@@ -103,9 +161,51 @@ public class HabitTrackerController
             connection.Close();
 
             MenuView.DashLines();
-            foreach (var dw in tableData)
+            foreach (var rm in tableData)
             {
-                MenuView.DisplayDrinkingWater(dw);
+                MenuView.DisplayModel(rm);
+            }
+            MenuView.DashLines();
+        }
+    }
+
+    private static void GetAllHabits()
+    {
+        Console.Clear();
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText =
+                $"SELECT * FROM habit;";
+
+            List<HabitModel> tableData = new();
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    tableData.Add(
+                        new HabitModel
+                        {
+                            HabitId = reader.GetInt32(0),
+                            HabitName = reader.GetString(1)
+                        });
+                }
+            }
+            else
+            {
+                MenuView.NoRows();
+            }
+
+            connection.Close();
+
+            MenuView.DashLines();
+            foreach (var hm in tableData)
+            {
+                MenuView.DisplayModel(hm);
             }
             MenuView.DashLines();
         }
@@ -127,7 +227,7 @@ public class HabitTrackerController
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+                $"INSERT INTO record(date, quantity) VALUES('{date}', {quantity})";
 
             tableCmd.ExecuteNonQuery();
 
@@ -149,7 +249,7 @@ public class HabitTrackerController
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"DELETE FROM drinking_water WHERE Id = '{recordId}'";
+            tableCmd.CommandText = $"DELETE FROM record WHERE recordId = '{recordId}'";
 
             int rowCount = tableCmd.ExecuteNonQuery();
 
@@ -179,7 +279,7 @@ public class HabitTrackerController
             connection.Open();
             var checkCmd = connection.CreateCommand();
 
-            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM record WHERE recordId = {recordId})";
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
             if (checkQuery == 0)
@@ -205,7 +305,7 @@ public class HabitTrackerController
             }
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"Update drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+            tableCmd.CommandText = $"Update record SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
 
             tableCmd.ExecuteNonQuery();
 
