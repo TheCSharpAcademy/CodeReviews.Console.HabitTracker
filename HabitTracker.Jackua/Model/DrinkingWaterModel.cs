@@ -1,6 +1,6 @@
 ﻿namespace HabitTracker.Jackua.Model
 {
-    public class DrinkingWater
+    public class DrinkingWaterModel
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
