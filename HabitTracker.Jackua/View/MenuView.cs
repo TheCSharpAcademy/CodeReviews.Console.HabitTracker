@@ -14,6 +14,9 @@ namespace HabitTracker.Jackua.View
             Console.WriteLine("Type 3 to Delete Record");
             Console.WriteLine("Type 4 to Update Record");
             Console.WriteLine("Type 5 to View All Habits");
+            Console.WriteLine("Type 6 to Insert Habit");
+            Console.WriteLine("Type 7 to Delete Habit");
+            Console.WriteLine("Type 8 to Update Habit");
             DashLines();
         }
         public static void InvalidCommand()
@@ -31,9 +34,9 @@ namespace HabitTracker.Jackua.View
             Console.WriteLine($"{hm.HabitId} - {hm.HabitName}");
         }
 
-        public static void DoesNotExist(int recordId)
+        public static void DoesNotExist(int id, string type)
         {
-            Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. \n\n");
+            Console.WriteLine($"\n\n{type} with Id {id} doesn't exist. \n\n");
         }
 
         public static void DateRequest()
@@ -43,17 +46,22 @@ namespace HabitTracker.Jackua.View
 
         public static void QuantityRequest()
         {
-            Console.WriteLine("\n\nPlease insert number of glasses or other measurement of your choice (no decimals allowed)\n\n");
+            Console.WriteLine("\n\nPlease insert number of glasses or other measurement of your choice (no decimals allowed)");
+        }
+
+        public static void HabitRequest()
+        {
+            Console.WriteLine("\n\nPlease insert the name of the habit. Type 0 to return to main menu.");
         }
 
         public static void UpdateId()
         {
-            Console.WriteLine("\n\nPlease type the Id of the record you would like to update. Type 0 to return to main menu.\n\n");
+            Console.WriteLine("\n\nPlease type the Id of the record you would like to update. Type 0 to return to main menu.");
         }
 
-        public static void DeleteId()
+        public static void DeleteId(string type)
         {
-            Console.WriteLine("\n\nPlease type the Id of the record you want to delete. Type 0 to return to main menu.");
+            Console.WriteLine($"\n\nPlease type the Id of the {type} you want to delete. Type 0 to return to main menu.");
         }
 
         public static void InvalidDate()
@@ -66,9 +74,14 @@ namespace HabitTracker.Jackua.View
             Console.WriteLine("\n\nInvalid number. Try again.");
         }
 
-        public static void Deleted(int recordId)
+        public static void Deleted(int id, string type)
         {
-            Console.WriteLine($"\n\nRecord with Id{recordId} was deleted. \n\n");
+            Console.WriteLine($"\n\n{type} with Id {id} was deleted. \n\n");
+        }
+
+        public static void ForeignKey(int id)
+        {
+            Console.WriteLine($"\n\nUnable to delete Id {id}, there are still records using this habit.");
         }
 
         public static void DashLines()

@@ -89,16 +89,25 @@ public class HabitTrackerController
                     GetAllRecords();
                     break;
                 case "2":
-                    Insert();
+                    InsertRecord();
                     break;
                 case "3":
-                    Delete();
+                    DeleteRecord();
                     break;
                 case "4":
-                    Update();
+                    UpdateRecord();
                     break;
                 case "5":
                     GetAllHabits();
+                    break;
+                case "6":
+                    InsertHabit();
+                    break;
+                case "7":
+                    DeleteHabit();
+                    break;
+                case "8":
+                    UpdateHabit();
                     break;
                 default:
                     MenuView.InvalidCommand();
@@ -211,7 +220,7 @@ public class HabitTrackerController
         }
     }
 
-    private static void Insert()
+    private static void InsertRecord()
     {
         Console.Clear();
         string date = GetDateInput();
@@ -235,12 +244,34 @@ public class HabitTrackerController
         }
     }
 
-    private static void Delete()
+    private static void InsertHabit()
+    {
+        Console.Clear();
+
+        MenuView.HabitRequest();
+        string habitName = Console.ReadLine();
+        if (habitName == "0") return;
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText =
+                $"INSERT INTO habit(habitName) VALUES('{habitName}')";
+
+            tableCmd.ExecuteNonQuery();
+
+            connection.Close();
+        }
+    }
+
+    private static void DeleteRecord()
     {
         Console.Clear();
         GetAllRecords();
 
-        MenuView.DeleteId();
+        MenuView.DeleteId("record");
         var recordId = GetNumberInput();
         if (recordId == 0) return;
 
@@ -255,18 +286,58 @@ public class HabitTrackerController
 
             if (rowCount == 0)
             {
-                MenuView.DoesNotExist(recordId);
+                MenuView.DoesNotExist(recordId, "Record");
             } 
             else
             {
-                MenuView.Deleted(recordId);
+                MenuView.Deleted(recordId, "Record");
             }
 
             connection.Close();
         }
     }
 
-    private static void Update()
+    private static void DeleteHabit()
+    {
+        Console.Clear();
+        GetAllHabits();
+
+        MenuView.DeleteId("habit");
+        var habitId = GetNumberInput();
+        if (habitId == 0) return;
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText = $"DELETE FROM habit WHERE habitId = '{habitId}'";
+
+            try
+            {
+                int rowCount = tableCmd.ExecuteNonQuery();
+
+                if (rowCount == 0)
+                {
+                    MenuView.DoesNotExist(habitId, "Habit");
+                }
+                else
+                {
+                    MenuView.Deleted(habitId, "Habit");
+                }
+            }
+            catch (SqliteException e)
+            {
+                if (e.SqliteExtendedErrorCode == SQLitePCL.raw.SQLITE_CONSTRAINT_FOREIGNKEY)
+                {
+                    MenuView.ForeignKey(habitId);
+                }
+            }
+            connection.Close();
+        }
+    }
+
+    private static void UpdateRecord()
     {
         GetAllRecords();
 
@@ -284,7 +355,7 @@ public class HabitTrackerController
 
             if (checkQuery == 0)
             {
-                MenuView.DoesNotExist(recordId);
+                MenuView.DoesNotExist(recordId, "Record");
                 connection.Close();
                 return;
             }
@@ -305,7 +376,47 @@ public class HabitTrackerController
             }
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"Update record SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+            tableCmd.CommandText = $"Update record SET date = '{date}', quantity = {quantity} WHERE habitId = {recordId}";
+
+            tableCmd.ExecuteNonQuery();
+
+            connection.Close();
+        }
+    }
+
+    private static void UpdateHabit()
+    {
+        GetAllHabits();
+
+        MenuView.UpdateId();
+        var habitId = GetNumberInput();
+        if (habitId == 0) return;
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            var checkCmd = connection.CreateCommand();
+
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit WHERE habitId = {habitId})";
+            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+            if (checkQuery == 0)
+            {
+                MenuView.DoesNotExist(habitId, "Habit");
+                connection.Close();
+                return;
+            }
+
+            MenuView.HabitRequest();
+            string habitName = Console.ReadLine();
+            if (habitName == "0")
+            {
+                connection.Close();
+                return;
+            }
+
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = $"Update habit SET habitName = '{habitName}' WHERE habitId = {habitId}";
 
             tableCmd.ExecuteNonQuery();
 
