@@ -1,6 +1,6 @@
 ﻿namespace HabitTracker;
 
-internal class HeartPoints
+public class HeartPoints
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }

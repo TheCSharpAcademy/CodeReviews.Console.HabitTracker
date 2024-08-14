@@ -1,18 +1,20 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.VisualBasic;
 using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace HabitTracker;
 
-internal class HabitDbHelper
+public class HabitDbHelper
 {
     private static readonly string connectionString = @"Data Source=habit-tracker.db";
 
-    public static void Initialize()
+    /// <summary>
+    /// Build the table.
+    /// </summary>
+    /// <param name="tableName"></param>
+    public static void InitializeDB(string tableName = "heart_points")
     {
         // Create table
-        string commandText = @"CREATE TABLE IF NOT EXISTS heart_points (
+        string commandText = $@"CREATE TABLE IF NOT EXISTS {tableName} (
                                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                    Date TEXT,
                                    Quantity INTEGER
@@ -20,6 +22,20 @@ internal class HabitDbHelper
         SqlNonQuery(commandText);
     }
 
+    /// <summary>
+    /// Remove the table.
+    /// </summary>
+    /// <param name="tableName"></param>
+    public static void TeardownDB(string tableName = "heart_points")
+    {
+        // Destroy table
+        string commandText = $@"DROP TABLE {tableName}";
+        SqlNonQuery(commandText);
+    }
+
+    /// <summary>
+    /// Fills the database with fake data for demonstration and testing.
+    /// </summary>
     public static void PopulateDB()
     {
         Random rand = new();
@@ -57,6 +73,7 @@ internal class HabitDbHelper
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = cmd;
+        Console.WriteLine($"\nSQL CMD: << {cmd} >>");
         var reader = tableCmd.ExecuteReader();
 
         List<HeartPoints> heartPoints = [];
@@ -87,21 +104,34 @@ internal class HabitDbHelper
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = cmd;
+        Console.WriteLine($"\nSQL CMD: << {cmd} >>");
         var result = tableCmd.ExecuteNonQuery();
         connection.Close();
         return;
     }
 
+    /// <summary>
+    /// Connects to the database, runs the command, and disconnects.
+    /// Use for SQL commands that return an integet value (COUNT(), etc.).
+    /// </summary>
+    /// <param name="cmd"></param>
+    /// <returns></returns>
     private static int SqlScalarQuery(string cmd)
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = cmd;
+        Console.WriteLine($"\nSQL CMD: << {cmd} >>");
         var result = tableCmd.ExecuteScalar();
         return Convert.ToInt32(result);
     }
 
+    /// <summary>
+    /// Create a new record in the database.
+    /// </summary>
+    /// <param name="date"></param>
+    /// <param name="quantity"></param>
     public static void Insert(string date, int quantity)
     {
         SqlNonQuery($"INSERT INTO heart_points(date, quantity) VALUES('{date}', {quantity})");
@@ -116,6 +146,12 @@ internal class HabitDbHelper
         return SqlQuery("SELECT * FROM heart_points");
     }
 
+    /// <summary>
+    /// Attempt to retrieve a record from the database.
+    /// </summary>
+    /// <param name="id">The ID of the record to search for.</param>
+    /// <param name="entry">Out parameter to hold the record if it is found. Null if no matching record.</param>
+    /// <returns>True if the record is found, false otherwise.</returns>
     public static bool TryGetById(int id, out HeartPoints? entry)
     {
         var results = SqlQuery($"SELECT * FROM heart_points WHERE id = {id}");
@@ -130,25 +166,45 @@ internal class HabitDbHelper
         return false;
     }
 
+    /// <summary>
+    /// Update a record in the database.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="newDate"></param>
+    /// <param name="newQuantity"></param>
     public static void Update(int id, string newDate, int newQuantity)
     {
         SqlNonQuery($"UPDATE heart_points SET date = '{newDate}', quantity = {newQuantity} WHERE id = {id};");
     }
 
+    /// <summary>
+    /// Remove a record from the database.
+    /// </summary>
+    /// <param name="id"></param>
     public static void Delete(int id)
     {
 
         SqlNonQuery($"DELETE FROM heart_points WHERE id = {id}");
     }
 
+    /// <summary>
+    /// Return the total number of days in which cardio activity has been logged.
+    /// </summary>
+    /// <returns>The integer count of days.</returns>
     public static int GetTotalDays()
     {
         return SqlScalarQuery($"SELECT COUNT() FROM (SELECT DISTINCT date FROM heart_points);");
     }
 
+    /// <summary>
+    /// Returns the total number of heart points recorded.
+    /// </summary>
+    /// <param name="year">Optionally filter to an individual year.</param>
+    /// <returns></returns>
     public static int GetTotalPoints(int year = -1)
     {
-        //TODO implement get sum of all points
-        return -1;
+        string yearOption = ((year < 0) ? "" : $" WHERE RIGHT(date, 2) = {year:00}");
+
+        return SqlScalarQuery($"SELECT SUM(quantity) FROM heart_points" + yearOption);
     }
 }

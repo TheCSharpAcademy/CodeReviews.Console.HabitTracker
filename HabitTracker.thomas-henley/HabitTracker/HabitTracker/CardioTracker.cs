@@ -54,6 +54,12 @@ internal class CardioTracker
                 case "5":
                     ViewTotalDays();
                     break;
+                case "6":
+                    ViewTotalHeartPoints();
+                    break;
+                case "7":
+                    ViewTotalHeartPointsByYear();
+                    break;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     break;
@@ -65,7 +71,7 @@ internal class CardioTracker
     private static void InitializeDatabase()
     {
         Console.WriteLine("Initializing database...");
-        HabitDbHelper.Initialize();
+        HabitDbHelper.InitializeDB();
         if (HabitDbHelper.IsDbEmpty())
         {
             Console.WriteLine("Populating dummy data...");
@@ -94,7 +100,7 @@ internal class CardioTracker
     /// </summary>
     private static void InsertRecord()
     {
-        Console.WriteLine("Please insert the date: (Format: dd-mm-yy).");
+        Console.WriteLine("Please insert the date (Format: dd-mm-yy):");
         string date = GetDateInput();
         Console.WriteLine("\nPlease insert the number of heart points for the day:");
         int quantity = GetNumberInput();
@@ -170,7 +176,7 @@ internal class CardioTracker
         if (HabitDbHelper.TryGetById(userChoice, out var entry))
         {
             Console.WriteLine($"Current data: << {entry!.Display()} >>");
-            Console.WriteLine("Please enter the new date: (Format: dd-mm-yy).\n");
+            Console.WriteLine("Please enter the new date (Format: dd-mm-yy):\n");
             string newDate = GetDateInput();
             Console.WriteLine("Please enter the new number of heart points:");
             int newQuantity = GetNumberInput();
@@ -186,5 +192,23 @@ internal class CardioTracker
     internal static void ViewTotalDays()
     {
         Console.WriteLine($"\nTotal days of exercise: {HabitDbHelper.GetTotalDays()}\n");
+    }
+
+    internal static void ViewTotalHeartPoints()
+    {
+        Console.WriteLine($"\nTotal heart points: {HabitDbHelper.GetTotalPoints()}\n");
+    }
+
+    internal static void ViewTotalHeartPointsByYear()
+    {
+        Console.WriteLine("View total heart points for which year? (Format: yy):");
+
+        int year = GetNumberInput();
+        if (year < 0)
+        {
+            Console.WriteLine("Invalid year. Please use a positive two digit number.");
+            year = GetNumberInput();
+        }
+        Console.WriteLine($"\nTotal heart points for year {year:00}: {HabitDbHelper.GetTotalPoints()}\n");
     }
 }
