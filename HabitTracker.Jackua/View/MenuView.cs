@@ -35,6 +35,21 @@ namespace HabitTracker.Jackua.View
             Console.WriteLine("\n\nPlease insert the date: (Format: dd-MM-yy). Type 0 to return to main menu.");
         }
 
+        public static void QuantityRequest()
+        {
+            Console.WriteLine("\n\nPlease insert number of glasses or other measurement of your choice (no decimals allowed)\n\n");
+        }
+
+        public static void UpdateId()
+        {
+            Console.WriteLine("\n\nPlease type the Id of the record you would like to update. Type 0 to return to main menu.\n\n");
+        }
+
+        public static void DeleteId()
+        {
+            Console.WriteLine("\n\nPlease type the Id of the record you want to delete. Type 0 to return to main menu.");
+        }
+
         public static void InvalidDate()
         {
             Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Try again or Type 0 to return to main menu.\n\n");
