@@ -12,7 +12,7 @@ internal class CardioTracker
     /// <summary>
     /// Entry point for running the Habit Tracker from the CLI.
     /// </summary>
-    public void StartCLI()
+    public void StartCli()
     {
         InitializeDatabase();
         Console.WriteLine("Welcome to the Habit Tracker!\n\n");

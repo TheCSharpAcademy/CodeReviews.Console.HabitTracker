@@ -74,7 +74,6 @@ public class HabitDbHelper(string tableName = "heart_points")
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = cmd;
-        // Console.WriteLine($"\nSQL CMD: << {cmd} >>");
         var reader = tableCmd.ExecuteReader();
 
         List<HeartPoints> heartPoints = [];
@@ -105,8 +104,7 @@ public class HabitDbHelper(string tableName = "heart_points")
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = cmd;
-        // Console.WriteLine($"\nSQL CMD: << {cmd} >>");
-        var result = tableCmd.ExecuteNonQuery();
+        tableCmd.ExecuteNonQuery();
         connection.Close();
         return;
     }
@@ -123,7 +121,6 @@ public class HabitDbHelper(string tableName = "heart_points")
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = cmd;
-        // Console.WriteLine($"\nSQL CMD: << {cmd} >>");
         var result = tableCmd.ExecuteScalar();
         if (result is DBNull)
         {
