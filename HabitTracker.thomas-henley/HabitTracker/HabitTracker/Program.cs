@@ -1,4 +1,4 @@
 ﻿using HabitTracker;
 
 CardioTracker cardioTracker = new();
-cardioTracker.StartCLI();
+cardioTracker.StartCli();
