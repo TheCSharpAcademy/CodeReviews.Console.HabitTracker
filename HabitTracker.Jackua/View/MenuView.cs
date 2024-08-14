@@ -52,12 +52,12 @@ namespace HabitTracker.Jackua.View
 
         public static void InvalidDate()
         {
-            Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Try again or Type 0 to return to main menu.\n\n");
+            Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Try again or Type 0 to return to main menu.");
         }
 
         public static void InvalidNumber()
         {
-            Console.WriteLine("\n\nInvalid number. Try again.\n\n");
+            Console.WriteLine("\n\nInvalid number. Try again.");
         }
 
         public static void Deleted(int recordId)
