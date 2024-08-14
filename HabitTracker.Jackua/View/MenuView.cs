@@ -13,6 +13,7 @@ namespace HabitTracker.Jackua.View
             Console.WriteLine("Type 2 to Insert Records");
             Console.WriteLine("Type 3 to Delete Record");
             Console.WriteLine("Type 4 to Update Record");
+            Console.WriteLine("Type 5 to View All Habits");
             DashLines();
         }
         public static void InvalidCommand()
@@ -20,9 +21,14 @@ namespace HabitTracker.Jackua.View
             Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
         }
 
-        public static void DisplayDrinkingWater(DrinkingWaterModel dw)
+        public static void DisplayModel(RecordModel rm)
         {
-            Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MMM-yyyy")} - Quantity: {dw.Quantity}");
+            Console.WriteLine($"{rm.RecordId} - {rm.HabitName, 14} - {rm.Date.ToString("dd-MMM-yyyy")} - Quantity: {rm.Quantity}");
+        }
+
+        public static void DisplayModel(HabitModel hm)
+        {
+            Console.WriteLine($"{hm.HabitId} - {hm.HabitName}");
         }
 
         public static void DoesNotExist(int recordId)
