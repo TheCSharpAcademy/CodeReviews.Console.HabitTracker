@@ -189,8 +189,11 @@ internal class CardioTracker
 
             dbHelper.Update(userChoice, newDate, newQuantity);
         }
+        else
+        {
+            Console.WriteLine("Invalid ID. Please try again.");
+        }
 
-        Console.WriteLine("Invalid ID. Please try again.");
         return;
 
     }
@@ -215,6 +218,6 @@ internal class CardioTracker
             Console.WriteLine("Invalid year. Please use a positive two digit number.");
             year = GetNumberInput();
         }
-        Console.WriteLine($"\nTotal heart points for year {year:00}: {dbHelper.GetTotalPoints()}\n");
+        Console.WriteLine($"\nTotal heart points for year {year:00}: {dbHelper.GetTotalPoints(year)}\n");
     }
 }
