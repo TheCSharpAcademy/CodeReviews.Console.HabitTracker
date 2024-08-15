@@ -458,7 +458,7 @@ public class HabitTrackerController
             }
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"Update record SET recordhabit = {habitId}, date = '{date}', quantity = {quantity} WHERE habitId = {recordId}";
+            tableCmd.CommandText = $"Update record SET recordhabit = {habitId}, date = '{date}', quantity = {quantity} WHERE recordId = {recordId}";
 
             tableCmd.ExecuteNonQuery();
 
