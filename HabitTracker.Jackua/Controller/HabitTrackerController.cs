@@ -86,6 +86,7 @@ public class HabitTrackerController
                     Environment.Exit(0);
                     break;
                 case "1":
+                    Console.Clear();
                     GetAllRecords();
                     break;
                 case "2":
@@ -98,6 +99,7 @@ public class HabitTrackerController
                     UpdateRecord();
                     break;
                 case "5":
+                    Console.Clear();
                     GetAllHabits();
                     break;
                 case "6":
@@ -109,6 +111,9 @@ public class HabitTrackerController
                 case "8":
                     UpdateHabit();
                     break;
+                case "9":
+                    GetSummary();
+                    break;
                 default:
                     MenuView.InvalidCommand();
                     break;
@@ -119,7 +124,6 @@ public class HabitTrackerController
 
     private static void GetAllRecords()
     {
-        Console.Clear();
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -172,7 +176,7 @@ public class HabitTrackerController
             MenuView.DashLines();
             foreach (var rm in tableData)
             {
-                MenuView.DisplayModel(rm);
+                MenuView.DisplayData(rm);
             }
             MenuView.DashLines();
         }
@@ -180,7 +184,6 @@ public class HabitTrackerController
 
     private static void GetAllHabits()
     {
-        Console.Clear();
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
@@ -214,7 +217,57 @@ public class HabitTrackerController
             MenuView.DashLines();
             foreach (var hm in tableData)
             {
-                MenuView.DisplayModel(hm);
+                MenuView.DisplayData(hm);
+            }
+            MenuView.DashLines();
+        }
+    }
+
+    private static void GetSummary()
+    {
+        Console.Clear();
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText =
+                @" 
+                SELECT (
+                        SELECT habitname 
+                        FROM habit 
+                        where recordHabit = habitId
+                       ), 
+                    SUM(quantity) 
+                    FROM record 
+                    GROUP BY recordHabit
+                ;";
+
+            Dictionary<string, int> tableData = new();
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    tableData.Add(
+                        reader.GetString(0),
+                        reader.GetInt32(1)
+                    );
+                }
+            }
+            else
+            {
+                MenuView.NoRows();
+            }
+
+            connection.Close();
+
+            MenuView.DashLines();
+            foreach (string key in tableData.Keys)
+            {
+                MenuView.DisplayData(key, tableData[key]);
             }
             MenuView.DashLines();
         }
@@ -223,20 +276,39 @@ public class HabitTrackerController
     private static void InsertRecord()
     {
         Console.Clear();
-        string date = GetDateInput();
-        if (date == "0") return;
-
-        MenuView.QuantityRequest();
-        int quantity = GetNumberInput();
-        if (quantity == 0) return;
+        
+        GetAllHabits();
+        MenuView.HabitIdRequest();
+        int habitId = GetNumberInput();
+        if (habitId == 0) return;
 
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
+
+            var checkCmd = connection.CreateCommand();
+
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit WHERE habitId = {habitId})";
+            int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+            if (checkQuery == 0)
+            {
+                MenuView.DoesNotExist(habitId, "Habit");
+                connection.Close();
+                return;
+            }
+
+            string date = GetDateInput();
+            if (date == "0") return;
+
+            MenuView.QuantityRequest();
+            int quantity = GetNumberInput();
+            if (quantity == 0) return;
+
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText =
-                $"INSERT INTO record(date, quantity) VALUES('{date}', {quantity})";
+                $"INSERT INTO record(date, recordHabit, quantity) VALUES('{date}', {habitId}, {quantity})";
 
             tableCmd.ExecuteNonQuery();
 
@@ -339,9 +411,11 @@ public class HabitTrackerController
 
     private static void UpdateRecord()
     {
+        Console.Clear();
         GetAllRecords();
+        GetAllHabits();
 
-        MenuView.UpdateId();
+        MenuView.UpdateId("record");
         var recordId = GetNumberInput();
         if (recordId == 0) return;
 
@@ -356,6 +430,14 @@ public class HabitTrackerController
             if (checkQuery == 0)
             {
                 MenuView.DoesNotExist(recordId, "Record");
+                connection.Close();
+                return;
+            }
+
+            MenuView.UpdateId("habit");
+            int habitId = GetNumberInput();
+            if (habitId == 0)
+            {
                 connection.Close();
                 return;
             }
@@ -376,7 +458,7 @@ public class HabitTrackerController
             }
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"Update record SET date = '{date}', quantity = {quantity} WHERE habitId = {recordId}";
+            tableCmd.CommandText = $"Update record SET recordhabit = {habitId}, date = '{date}', quantity = {quantity} WHERE habitId = {recordId}";
 
             tableCmd.ExecuteNonQuery();
 
@@ -386,9 +468,10 @@ public class HabitTrackerController
 
     private static void UpdateHabit()
     {
+        Console.Clear();
         GetAllHabits();
 
-        MenuView.UpdateId();
+        MenuView.UpdateId("habit");
         var habitId = GetNumberInput();
         if (habitId == 0) return;
 
