@@ -2,7 +2,6 @@
 using HabitTracker.Jackua.View;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitTracker.Jackua.Controller;
 
