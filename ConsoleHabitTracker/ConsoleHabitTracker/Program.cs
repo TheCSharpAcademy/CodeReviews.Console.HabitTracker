@@ -168,12 +168,53 @@ class Program
                 Console.WriteLine("\nEditing the Habit Quantity");
                 Console.WriteLine("Enter the new Quantity");
                 var newQuantity = Console.ReadLine();
-                // todo sanitize newQuantity
+                var sanitizedQuanity =SanitizeQuantity(newQuantity);
+                updateQuery = "UPDATE habitsTable SET Quantity = @quantity WHERE Id = @id;";
+
+                // Create a command object and pass the query and connection
+                using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
+                {
+                    // Add parameters to avoid SQL injection
+                    command.Parameters.AddWithValue("@quantity", $"{sanitizedQuanity}");
+                    command.Parameters.AddWithValue("@id", idToEdit);
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        Console.WriteLine("Database updated successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
+                Console.WriteLine("quantity updated");
                 break;
             case "2":
                 Console.WriteLine("\nEditing the Habit Units");
                 Console.WriteLine("Enter the new Unit");
                 var newUnits = Console.ReadLine();
+                var sanitizedNewUnits = SanitizeNullOrWhiteSpace(newUnits);
+                if (IsExit(sanitizedNewUnits)) return;
+                updateQuery = "UPDATE habitsTable SET Units = @units WHERE Id = @id;";
+
+                // Create a command object and pass the query and connection
+                using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
+                {
+                    // Add parameters to avoid SQL injection
+                    command.Parameters.AddWithValue("@units", $"{sanitizedNewUnits}");
+                    command.Parameters.AddWithValue("@id", idToEdit);
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        Console.WriteLine("Database updated successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
                 break;
         }
 
@@ -270,6 +311,25 @@ class Program
 
         Console.WriteLine("Enter Quantity complete");
         string? entry = Console.ReadLine();
+        var quantity = SanitizeQuantity(entry);
+
+        Console.WriteLine("Enter type of Units tracked");
+        string? units = Console.ReadLine();
+        string sanitizedUnits = SanitizeNullOrWhiteSpace(units);
+        if(IsExit(sanitizedUnits)) return;
+
+        insertDataQuery =
+            $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('{habitName}', {quantity}, '{units}');";
+        using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
+        {
+            command.ExecuteNonQuery();
+        }
+        Console.WriteLine("New entry added, press enter to continue");
+        Console.ReadLine();
+    }
+
+    private static int SanitizeQuantity(string? entry)
+    {
         int quantity = -1;
         bool validEntry = false;
         while (!validEntry)
@@ -286,19 +346,7 @@ class Program
             }
         }
 
-        Console.WriteLine("Enter type of Units tracked");
-        string? units = Console.ReadLine();
-        string sanitizedUnits = SanitizeNullOrWhiteSpace(units);
-        if(IsExit(sanitizedUnits)) return;
-
-        insertDataQuery =
-            $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('{habitName}', {quantity}, '{units}');";
-        using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
-        {
-            command.ExecuteNonQuery();
-        }
-        Console.WriteLine("New entry added, press enter to continue");
-        Console.ReadLine();
+        return quantity;
     }
 
     private static bool IsExit(string entry)
