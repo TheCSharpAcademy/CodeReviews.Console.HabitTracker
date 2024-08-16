@@ -9,11 +9,11 @@ Developed using C# and SQLite.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
 - [x] Users need to be able to input the date of the occurrence of the habit
 - [x] The application should store and retrieve data from a real database
-- [x] When the application starts, it should create a sqlite database, if one isn’t present.
+- [x] When the application starts, it should create a sqlite database, if one isnâ€™t present.
 - [x] It should also create a table in the database, where the habit will be logged.
 - [x] The users should be able to insert, delete, update and view their logged habit.
 - [x] You should handle all possible errors so that the application never crashes.
-- [x] You can only interact with the database using ADO.NET. You can’t use mappers such as Entity Framework or Dapper.
+- [x] You can only interact with the database using ADO.NET. You canâ€™t use mappers such as Entity Framework or Dapper.
 - [x] Your project needs to contain a Read Me file
 
 # Features
@@ -23,10 +23,20 @@ Developed using C# and SQLite.
 	- If no database exists, or the current table doesn't exist, they will be created on the program start.
 
 * A console based UI where users can naviagted by pressing keys
-	
+	![image](https://github.com/user-attachments/assets/1395a717-9401-4e4c-b69f-28c43daf89c6)
 * CRUD DB functions
 
+- From the main menu users can Create, Read, Update or Delete entries.
+- Time and Dates inputted are checked to make sure they are in the correct and realistic format.
+  
 * Basic Reports of Cumulative Hours
+
+![image](https://github.com/user-attachments/assets/d55b6a88-d80b-493c-9edd-5a34ecf4ad61)
+
+* Reporting and other data output uses ConsoleTableExt library to output in a more pleasant way
+
+![image](https://github.com/user-attachments/assets/4313ed41-e5fb-4562-8a08-813475d42aaa)
+
 
 # Challenges
 
