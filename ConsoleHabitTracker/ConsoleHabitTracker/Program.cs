@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Diagnostics;
 using System.Data.SQLite;
+using System.Text.RegularExpressions;
 
 namespace ConsoleHabitTracker;
 
@@ -87,7 +88,8 @@ class Program
                         break;
                     case '4':
                         Console.WriteLine("\n\nEdit a Record");
-                        Console.ReadLine();
+                        ViewRecords(connection);
+                        UpdatEntry(connection);
                         break;
                     default:
                         Console.WriteLine("\n\nInvalid Selection press enter to try again");
@@ -100,12 +102,72 @@ class Program
         }
     }
 
+    private static void UpdatEntry(SQLiteConnection connection)
+    {
+        Console.WriteLine("Enter the record ID would you like to edit, or E to exit");
+        var entry = Console.ReadLine()?.ToLower();
+
+        while (string.IsNullOrWhiteSpace(entry) || !CheckEntryExists(connection, entry) || entry.ToLower() == "e")
+        {
+            if (entry.ToLower() == "e")
+            {
+                Console.WriteLine("Exiting Edit Option, press enter to continue");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("invalid entry please try again or press E to exit");
+            entry = Console.ReadLine()?.ToLower();
+        }
+
+        Console.WriteLine("What part of the entry would you like to edit:");
+        Console.WriteLine("\tEdit the Habit Name press 0");
+        Console.WriteLine("\tEdit the Habit Quantity press 1");
+        Console.WriteLine("\tEdit the Habit Units press 2");
+        var editEntry =Console.ReadLine()?.ToLower();
+                        
+        while (string.IsNullOrWhiteSpace(editEntry) || !Regex.IsMatch(editEntry, "^[eE012]$"))
+        {
+            if (editEntry.ToLower() == "e")
+            {
+                Console.WriteLine("Exiting Update Option, press enter to continue");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("invalid entry please try again or press E to exit");
+            editEntry = Console.ReadLine()?.ToLower();
+        } 
+                        
+        switch (editEntry)
+        {
+            case "0":
+                Console.WriteLine("\nEditing the Habit Name");
+                Console.WriteLine("Enter the new name");
+                var newName = Console.ReadLine();
+                break;
+            case "1":
+                Console.WriteLine("\nEditing the Habit Quantity");
+                Console.WriteLine("Enter the new Quantity");
+                var newQuantity = Console.ReadLine();
+                // todo sanitize newQuantity
+                break;
+            case "2":
+                Console.WriteLine("\nEditing the Habit Units");
+                Console.WriteLine("Enter the new Unit");
+                var newUnits = Console.ReadLine();
+                break;
+        }
+
+        Console.WriteLine("Record updated, press enter to continue");
+        Console.ReadLine();
+    }
+
     private static void DeleteEntry(SQLiteConnection connection)
     {
         Console.WriteLine("Enter the record ID would you like to delete, or E to exit");
         var entry = Console.ReadLine()?.ToLower();
 
-        // while (entry == null)
         while (string.IsNullOrWhiteSpace(entry) || !CheckEntryExists(connection, entry) || entry.ToLower() == "e")
         {
             if (entry.ToLower() == "e")
