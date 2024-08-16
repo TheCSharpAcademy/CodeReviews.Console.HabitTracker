@@ -105,30 +105,26 @@ class Program
     private static void UpdatEntry(SQLiteConnection connection)
     {
         Console.WriteLine("Enter the record ID would you like to edit, or E to exit");
-        var entry = Console.ReadLine()?.ToLower();
+        var idToEdit = Console.ReadLine()?.ToLower();
+        var sanitizedIdToEdit = SanitizeNullOrWhiteSpace(idToEdit);
+        if (IsExit(sanitizedIdToEdit)) return;
 
-        while (string.IsNullOrWhiteSpace(entry) || !CheckEntryExists(connection, entry) || entry.ToLower() == "e")
+        while (!CheckEntryExists(connection, sanitizedIdToEdit))
         {
-            if (entry.ToLower() == "e")
-            {
-                Console.WriteLine("Exiting Edit Option, press enter to continue");
-                Console.ReadLine();
-                return;
-            }
-
             Console.WriteLine("invalid entry please try again or press E to exit");
-            entry = Console.ReadLine()?.ToLower();
+            idToEdit = Console.ReadLine()?.ToLower();
+            sanitizedIdToEdit = SanitizeNullOrWhiteSpace(idToEdit);
         }
 
         Console.WriteLine("What part of the entry would you like to edit:");
         Console.WriteLine("\tEdit the Habit Name press 0");
         Console.WriteLine("\tEdit the Habit Quantity press 1");
         Console.WriteLine("\tEdit the Habit Units press 2");
-        var editEntry =Console.ReadLine()?.ToLower();
+        var selectColumnToEdit =Console.ReadLine()?.ToLower();
                         
-        while (string.IsNullOrWhiteSpace(editEntry) || !Regex.IsMatch(editEntry, "^[eE012]$"))
+        while (string.IsNullOrWhiteSpace(selectColumnToEdit) || !Regex.IsMatch(selectColumnToEdit, "^[eE012]$"))
         {
-            if (editEntry.ToLower() == "e")
+            if (selectColumnToEdit.ToLower() == "e")
             {
                 Console.WriteLine("Exiting Update Option, press enter to continue");
                 Console.ReadLine();
@@ -136,15 +132,37 @@ class Program
             }
 
             Console.WriteLine("invalid entry please try again or press E to exit");
-            editEntry = Console.ReadLine()?.ToLower();
+            selectColumnToEdit = Console.ReadLine()?.ToLower();
         } 
                         
-        switch (editEntry)
+        switch (selectColumnToEdit)
         {
             case "0":
                 Console.WriteLine("\nEditing the Habit Name");
                 Console.WriteLine("Enter the new name");
-                var newName = Console.ReadLine();
+                var newHabitName = Console.ReadLine();
+                var sanitizedNewHabbit = SanitizeNullOrWhiteSpace(newHabitName);
+                if (IsExit(sanitizedNewHabbit)) return;
+                // SQL UPDATE command to update the habit with the given Id
+                string updateQuery = "UPDATE habitsTable SET HabitName = @habitName WHERE Id = @id;";
+
+                // Create a command object and pass the query and connection
+                using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
+                {
+                    // Add parameters to avoid SQL injection
+                    command.Parameters.AddWithValue("@habitName", $"{sanitizedNewHabbit}");
+                    command.Parameters.AddWithValue("@id", idToEdit);
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        Console.WriteLine("Database updated successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
                 break;
             case "1":
                 Console.WriteLine("\nEditing the Habit Quantity");
@@ -247,18 +265,8 @@ class Program
         string insertDataQuery;
         Console.WriteLine("Enter Habit Name, or type 'E' to exit");
         string? habitName = Console.ReadLine();
-        while (string.IsNullOrWhiteSpace(habitName) || habitName.ToLower() == "e")
-        {
-            if (habitName.ToLower() == "e")
-            {
-                Console.WriteLine("Exiting Add New Habit Option, press enter to continue");
-                Console.ReadLine();
-                return;
-            }
-
-            Console.WriteLine("invalid entry please try again or press E to exit");
-            habitName = Console.ReadLine()?.ToLower();
-        }
+        string sanitizedEntry =SanitizeNullOrWhiteSpace(habitName);
+        if(IsExit(sanitizedEntry)) return;
 
         Console.WriteLine("Enter Quantity complete");
         string? entry = Console.ReadLine();
@@ -280,6 +288,8 @@ class Program
 
         Console.WriteLine("Enter type of Units tracked");
         string? units = Console.ReadLine();
+        string sanitizedUnits = SanitizeNullOrWhiteSpace(units);
+        if(IsExit(sanitizedUnits)) return;
 
         insertDataQuery =
             $"INSERT INTO habitsTable (HabitName, Quantity, Units) VALUES ('{habitName}', {quantity}, '{units}');";
@@ -289,6 +299,29 @@ class Program
         }
         Console.WriteLine("New entry added, press enter to continue");
         Console.ReadLine();
+    }
+
+    private static bool IsExit(string entry)
+    {
+        if (entry.ToLower() == "e")
+        {
+            Console.WriteLine("Exiting to main menu, press enter to continue");
+            Console.ReadLine();
+            return true;
+        }
+
+        return false;
+    }
+
+    private static string SanitizeNullOrWhiteSpace(string? entryName)
+    {
+        while (string.IsNullOrWhiteSpace(entryName))
+        {
+            Console.WriteLine("invalid entry please try again or press E to exit");
+            entryName = Console.ReadLine()?.ToLower();
+        }
+
+        return entryName;
     }
 
     static void DisplayMenu()
