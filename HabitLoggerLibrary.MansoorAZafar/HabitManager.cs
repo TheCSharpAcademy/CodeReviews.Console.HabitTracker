@@ -23,15 +23,11 @@ namespace HabitLoggerLibrary.MansoorAZafar
             switch(chosenSelection)
             {
                 case HabitSelections.update:
-                    this.AssignValidID(ref id);
                     this.UpdateHabit(ref id);
-                    
                     break;
                 
                 case HabitSelections.delete:
-                    this.AssignValidID(ref id);
                     this.DeleteHabit(ref id);
-                    
                     break;
                 
                 case HabitSelections.insert:
@@ -57,7 +53,6 @@ namespace HabitLoggerLibrary.MansoorAZafar
         {
             while(!this.databaseManager.IDExists(id))
             {
-                Console.WriteLine("That ID doesn't exist!\n");
                 Utilities.GetValidQuantity
                 (
                     quantity: ref id,
