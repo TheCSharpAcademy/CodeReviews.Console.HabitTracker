@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "dotnet",
+			"task": "build /home/lawang/Desktop/Academy/Lawang.Habit-Tracker/Lawang.Habit-Tracker.csproj",
+			"file": "/home/lawang/Desktop/Academy/Lawang.Habit-Tracker/Lawang.Habit-Tracker.csproj",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "dotnet: build /home/lawang/Desktop/Academy/Lawang.Habit-Tracker/Lawang.Habit-Tracker.csproj"
+		}
+	]
+}
