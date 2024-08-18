@@ -31,12 +31,6 @@ class Program
 }
 
 
-
-
-class Next
-{
-    
 }
 
 
-}
