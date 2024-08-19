@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Finshed the stirng");
+            Console.WriteLine("This is a comit");
+            Console.WriteLine("This is a comit");
+            Console.WriteLine("This is a comit");
+            Console.WriteLine("This is a comit");
         }
     }
 }
