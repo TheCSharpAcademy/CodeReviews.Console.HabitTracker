@@ -1,11 +1,14 @@
 ﻿using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace ConsoleHabitTracker;
 
 public static class Program
 {
+    private static Random _random = new Random();
+
     static void Main()
     {
         var continueProgram = true;
@@ -50,17 +53,7 @@ public static class Program
                 command.ExecuteNonQuery();
             }
 
-            // prepoulated data
-            string insertDataQuery = $"INSERT INTO habitsTable (date, HabitName, Quantity, Units) " +
-                                     $"VALUES ('8/1/2023','jumping', 27, 'minutes')," +
-                                     $"('7/3/2023','swimming', 15, 'miles'), " +
-                                     $"('9/1/2023','drink water', 7, 'glasses'), " +
-                                     $"('9/30/2021','biking', 4, 'miles');";
-
-            using (SQLiteCommand command = new SQLiteCommand(insertDataQuery, connection))
-            {
-                command.ExecuteNonQuery();
-            }
+            CreateAndPopulateData(connection);
         }
 
         while (continueProgram)
@@ -102,6 +95,72 @@ public static class Program
         }
 
         connection.Close();
+    }
+    
+    private static void CreateAndPopulateData(SQLiteConnection connection)
+    {
+        List<Habit> prepopulatedData = new();
+        int counter = 100;
+        while (counter > 0)
+        {
+            DateOnly randomDate = GenerateRandomDate(new DateOnly(2000, 1, 1), new DateOnly(2024, 7, 31));
+            string randomActivity = GenerateRandomActivity();
+            int randomDuration = _random.Next(1, 60);
+            string randomUnits = GenerateRandomUnits();
+
+            // Create an ActivityEntry object and add it to the list
+            Habit entry = new Habit
+            {
+                Date = randomDate,
+                HabitName = randomActivity,
+                Quantity = randomDuration,
+                Units = randomUnits
+            };
+            prepopulatedData.Add(entry);
+            counter--;
+        }
+        
+        foreach (var entry in prepopulatedData)
+        {
+            // SQL INSERT command
+            string insertQuery = "INSERT INTO habitsTable (Date, HabitName, Quantity, Units) " +
+                                 "VALUES (@date, @habitName, @quantity, @units);";
+
+            using SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
+            // Add parameters to avoid SQL injection
+            command.Parameters.AddWithValue("@date", entry.Date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("@habitName", entry.HabitName);
+            command.Parameters.AddWithValue("@quantity", entry.Quantity);
+            command.Parameters.AddWithValue("@units", entry.Units);
+
+            // Execute the insert command
+            command.ExecuteNonQuery();
+        }
+    }
+
+    static string GenerateRandomActivity()
+    {
+        string[] possibleActivities = ["swimming", "running", "walking", "cycling", "working", "cooking", "coding", "reading"];
+        int chosenEntry = _random.Next(0, 8);
+        return possibleActivities[chosenEntry];
+    }
+    
+    static string GenerateRandomUnits()
+    {
+        string[] possibleUnits = ["minutes", "hours"];
+        int chosenEntry = _random.Next(0, 2);
+        return possibleUnits[chosenEntry];
+    }
+    static DateOnly GenerateRandomDate(DateOnly startDate, DateOnly endDate)
+    {
+        // Calculate the total number of days between the start and end dates
+        int totalDays = (endDate.ToDateTime(TimeOnly.MinValue) - startDate.ToDateTime(TimeOnly.MinValue)).Days;
+
+        // Generate a random number of days to add to the start date
+        int randomDays = _random.Next(0, totalDays + 1);
+
+        // Return the new random date
+        return startDate.AddDays(randomDays);
     }
 
     private static void UpdateEntry(SQLiteConnection connection)
@@ -316,14 +375,6 @@ public static class Program
             {
                 while (reader.Read())
                 {
-                    // habits.Add(new Habit
-                    // {
-                    //     Id = reader.GetInt32(0),
-                    //     Date = reader.GetString(1),
-                    //     Name = reader.GetString(2),
-                    //     Quantity = reader.GetInt32(3),
-                    //     Units = reader.GetString(4),
-                    // });
                     Console.WriteLine($"Id: {reader["Id"],-4} " +
                                       $"Date: {reader["Date"],-20} " +
                                       $"HabitName: {reader["HabitName"],-20} " +
@@ -334,14 +385,14 @@ public static class Program
         }
     }
 
-    // public class Habit
-    // {
-    //     public int Id { get; set; }
-    //     public string Date { get; set; }
-    //     public string Name { get; set; }
-    //     public int Quantity { get; set; }
-    //     public string Units { get; set; }
-    // }
+    public class Habit
+    {
+        public int Id { get; set; }
+        public DateOnly Date { get; set; }
+        public string? HabitName { get; set; }
+        public int Quantity { get; set; }
+        public string? Units { get; set; }
+    }
 
     private static void AddNewHabit(SQLiteConnection connection)
     {
