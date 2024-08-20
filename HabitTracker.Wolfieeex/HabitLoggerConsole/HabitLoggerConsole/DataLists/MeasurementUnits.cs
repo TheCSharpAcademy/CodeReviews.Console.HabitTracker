@@ -1,4 +1,5 @@
 ﻿namespace HabitLoggerConsole.Models;
+
 public enum MeasurementType
 {
     blank,
@@ -16,9 +17,41 @@ public enum MeasurementType
     s,
     min,
     hr,
+    d
+}
+
+public enum MeasurementDivision
+{
+    None,
+    Liquid,
+    Length,
+    Weight,
+    Time
 }
 internal class MeasurementUnits
 {
+    internal static Dictionary<MeasurementType, MeasurementDivision> MeasurementDivisions { get; private set; } = new Dictionary<MeasurementType, MeasurementDivision>()
+    {
+        { MeasurementType.blank, MeasurementDivision.None },
+        { MeasurementType.l, MeasurementDivision.Liquid },
+        { MeasurementType.ml, MeasurementDivision.Liquid },
+        { MeasurementType.cm, MeasurementDivision.Length },
+        { MeasurementType.m, MeasurementDivision.Length },
+        { MeasurementType.km, MeasurementDivision.Length },
+        { MeasurementType.inch, MeasurementDivision.Length },
+        { MeasurementType.ft, MeasurementDivision.Length },
+        { MeasurementType.g, MeasurementDivision.Weight },
+        { MeasurementType.kg, MeasurementDivision.Weight },
+        { MeasurementType.lbs, MeasurementDivision.Weight },
+        { MeasurementType.stones, MeasurementDivision.Weight },
+        { MeasurementType.s, MeasurementDivision.Time },
+        { MeasurementType.min, MeasurementDivision.Time },
+        { MeasurementType.hr, MeasurementDivision.Time },
+        { MeasurementType.d, MeasurementDivision.Time },
+    }; 
+
+
+
     internal static Dictionary<MeasurementType, string> MeasurementValidation { get; private set; } = new Dictionary<MeasurementType, string>
     {
         { MeasurementType.blank, "aaa" },
@@ -36,11 +69,12 @@ internal class MeasurementUnits
         { MeasurementType.s, "aaa" },
         { MeasurementType.min, "aaa" },
         { MeasurementType.hr, "aaa" },
+        { MeasurementType.d, "sdf" },
     };
 
     internal static Dictionary<MeasurementType, string> MeasurementFullName { get; private set; } = new Dictionary<MeasurementType, string>
     {
-        { MeasurementType.blank, "leave blank" },
+        { MeasurementType.blank, "(blank)" },
         { MeasurementType.l, "liters" },
         { MeasurementType.ml, "mililiters" },
         { MeasurementType.cm, "centimeters" },
@@ -55,5 +89,34 @@ internal class MeasurementUnits
         { MeasurementType.s, "seconds" },
         { MeasurementType.min, "minutes" },
         { MeasurementType.hr, "hours" },
+        { MeasurementType.d, "days" },
     };
+
+    internal static MeasurementType[] DisplayMeasurements()
+    {
+        var sortedMeasurementList = from entry in MeasurementUnits.MeasurementDivisions orderby entry.Value ascending select entry;
+        var sortedDivisionDictionary = sortedMeasurementList.ToDictionary(pair => pair.Key, pair => pair.Value);
+        var arrayOfKeys = sortedDivisionDictionary.Keys;
+
+        MeasurementDivision? previousDivision = null;
+        int listCounter = 0;
+        foreach (MeasurementType key in arrayOfKeys)
+        {
+            listCounter++;
+
+            if (previousDivision == null || previousDivision != MeasurementUnits.MeasurementDivisions[key])
+            {
+                Console.WriteLine($"\n{MeasurementUnits.MeasurementDivisions[key]}:");
+                previousDivision = MeasurementUnits.MeasurementDivisions[key];
+            }
+
+            string measurementName = MeasurementUnits.MeasurementFullName[key];
+            measurementName = measurementName[0].ToString().ToUpper() + measurementName.Substring(1);
+
+
+            Console.WriteLine($"{listCounter} - {measurementName}");
+        }
+
+        return arrayOfKeys.ToArray();
+    }
 }

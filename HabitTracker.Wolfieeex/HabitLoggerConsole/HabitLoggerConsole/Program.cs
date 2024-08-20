@@ -238,4 +238,11 @@ public class Program
             Console.Write(reason + " Please try again to select your option: ");
         }
     }
+    internal static void InsertExitPrompt(char exitChar, bool backMenuAlteration = false)
+    {
+        string returnToWhere = backMenuAlteration ? "previous menu" : "main menu";
+        Console.WriteLine($"Optionally, insert '{exitChar}' to return to the {returnToWhere}.");
+        Console.Write("\nYour option: ");
+    }
+
 }

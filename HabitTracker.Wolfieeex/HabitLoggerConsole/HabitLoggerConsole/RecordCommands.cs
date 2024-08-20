@@ -86,7 +86,7 @@ internal class RecordCommands
 
         int numberOfSets = 0;
         Console.WriteLine("Please insert number of sets perfromed during the exercise.");
-        InsertExitPrompt(exitChar);
+        Program.InsertExitPrompt(exitChar);
 
         bool shouldExitToMenu = Program.AssignSelectionInput(ref numberOfSets, 0, 999, skipSelection: exitChar);
         if (shouldExitToMenu)
@@ -122,7 +122,7 @@ internal class RecordCommands
             int lastRowId = idMap.Count;
             int selectedRow = 0;
             Console.WriteLine("Choose which record to delete by selecting its index number.");
-            InsertExitPrompt(exitChar);
+            Program.InsertExitPrompt(exitChar);
             bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
             if (shouldExit)
             {
@@ -162,7 +162,7 @@ internal class RecordCommands
             int lastRowId = idMap.Count;
             int selectedRow = 0;
             Console.WriteLine("Choose which record to update by selecting its index number.");
-            InsertExitPrompt(exitChar);
+            Program.InsertExitPrompt(exitChar);
             bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
             if (shouldExit)
             {
@@ -184,7 +184,7 @@ internal class RecordCommands
 
                 int sets = 0;
                 Console.WriteLine("\nPlease insert number of sets perfromed during the exercise.");
-                InsertExitPrompt(exitChar);
+                Program.InsertExitPrompt(exitChar);
                 shouldExit = Program.AssignSelectionInput(ref sets, 1, 999, skipSelection: exitChar);
                 if (shouldExit)
                 {
@@ -207,7 +207,7 @@ internal class RecordCommands
     private static string GetDateInput()
     {
         Console.WriteLine("Please insert the date of the operation (Format that is accepted: dd-mm-yyyy).");
-        InsertExitPrompt(exitChar);
+        Program.InsertExitPrompt(exitChar);
 
         string? dateInput = Console.ReadLine();
         string optional = exitChar.ToString().ToLower();
@@ -223,12 +223,6 @@ internal class RecordCommands
         }
 
         return dateInput;
-    }
-
-    private static void InsertExitPrompt(char exitChar)
-    {
-        Console.WriteLine($"Optionally, insert '{exitChar}' to return to the main menu.");
-        Console.Write("\nYour option: ");
     }
 }
 
