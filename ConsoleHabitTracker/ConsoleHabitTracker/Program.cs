@@ -16,7 +16,7 @@ public static class Program
         string connectionString = "Data Source = habits.db; Version=3;";
 
         using var connection = new SQLiteConnection(connectionString);
-        // Open the connection
+
         connection.Open();
         if (connection.State != ConnectionState.Open)
         {
@@ -37,7 +37,7 @@ public static class Program
             }
         }
 
-        // if tabe doesn't exit Create a table
+        // if table doesn't exit Create a table
 
         if (!tableExists)
         {
@@ -108,8 +108,8 @@ public static class Program
             int randomDuration = _random.Next(1, 60);
             string randomUnits = GenerateRandomUnits();
 
-            // Create an ActivityEntry object and add it to the list
-            Habit entry = new Habit
+            // Create an Habit object and add it to the list
+            var entry = new Habit
             {
                 Date = randomDate,
                 HabitName = randomActivity,
@@ -122,18 +122,15 @@ public static class Program
         
         foreach (var entry in prepopulatedData)
         {
-            // SQL INSERT command
             string insertQuery = "INSERT INTO habitsTable (Date, HabitName, Quantity, Units) " +
                                  "VALUES (@date, @habitName, @quantity, @units);";
 
             using SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
-            // Add parameters to avoid SQL injection
             command.Parameters.AddWithValue("@date", entry.Date.ToString("yyyy-MM-dd"));
             command.Parameters.AddWithValue("@habitName", entry.HabitName);
             command.Parameters.AddWithValue("@quantity", entry.Quantity);
             command.Parameters.AddWithValue("@units", entry.Units);
 
-            // Execute the insert command
             command.ExecuteNonQuery();
         }
     }
@@ -147,8 +144,8 @@ public static class Program
     
     static string GenerateRandomUnits()
     {
-        string[] possibleUnits = ["minutes", "hours"];
-        int chosenEntry = _random.Next(0, 2);
+        string[] possibleUnits = ["minutes", "hours", "miles", "kilometers"];
+        int chosenEntry = _random.Next(0, 4);
         return possibleUnits[chosenEntry];
     }
     static DateOnly GenerateRandomDate(DateOnly startDate, DateOnly endDate)
@@ -264,10 +261,8 @@ public static class Program
                 var sanitizedQuantity = SanitizeQuantity(newQuantity);
                 updateQuery = "UPDATE habitsTable SET Quantity = @quantity WHERE Id = @id;";
 
-                // Create a command object and pass the query and connection
                 using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
                 {
-                    // Add parameters to avoid SQL injection
                     command.Parameters.AddWithValue("@quantity", $"{sanitizedQuantity}");
                     command.Parameters.AddWithValue("@id", idToEdit);
 
@@ -292,10 +287,8 @@ public static class Program
                 if (IsExit(sanitizedNewUnits)) return;
                 updateQuery = "UPDATE habitsTable SET Units = @units WHERE Id = @id;";
 
-                // Create a command object and pass the query and connection
                 using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
                 {
-                    // Add parameters to avoid SQL injection
                     command.Parameters.AddWithValue("@units", $"{sanitizedNewUnits}");
                     command.Parameters.AddWithValue("@id", idToEdit);
 
@@ -368,7 +361,6 @@ public static class Program
     private static void ViewRecords(SQLiteConnection connection)
     {
         string selectDataQuery = "SELECT * FROM habitsTable;";
-        // var habits = new List<Habit>();
         using (SQLiteCommand command = new SQLiteCommand(selectDataQuery, connection))
         {
             using (SQLiteDataReader reader = command.ExecuteReader())
@@ -487,7 +479,7 @@ public static class Program
 
     private static void DisplayMenu()
     {
-        Console.WriteLine("What do you want to do?");
+        Console.WriteLine("What do you want to do?\n");
         Console.WriteLine("Type 0 to Close Application");
         Console.WriteLine("Type 1 to View all Records");
         Console.WriteLine("Type 2 to Add a record");
