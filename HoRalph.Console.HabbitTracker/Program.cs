@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Data.Common;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Xml.XPath;
@@ -11,7 +12,7 @@ namespace habit_tracker
 class Program
 {
     public static string connectionString = @"Data Source = habit-Tracker.db";
-    void Main(string[] args)
+    static void Main(string[] args)
     {
         string?result="";
         
@@ -21,15 +22,15 @@ class Program
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water (
-                                    HabitID int AUTO_INCREMENT,
-                                    Date varchar(255),
-                                    Habit varchar(255),
-                                    Units varchar(255),
-                                    Quantity int)";
+            tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS HABIT (
+                                    HabitID INT PRIMARY KEY,
+                                    Date TEXT,
+                                    Habit TEXT,
+                                    Units TEXT,
+                                    Quantity INT)";
 
             tableCmd.ExecuteNonQuery();
-
+            
             connection.Close();
 
 
@@ -42,12 +43,14 @@ class Program
             Console.WriteLine("------------------------------------------");
             Console.WriteLine("-----------------MAIN MENU-----------------");
             Console.WriteLine("What would you like to do?");
-            Console.WriteLine(@"Type 0 to Close Application.
+            Console.WriteLine(@"
+            Type 0 to Close Application.
             Type 1 to View All Records.
             Type 2 to Insert Record.
             Type 3 to Delete Record.
             Type 4 to Update Record.
-            Type 5 to Delete Table.");
+            Type 5 to Delete Table.
+            ");
             Console.WriteLine("------------------------------------------");
             result = Console.ReadLine();
 
@@ -68,6 +71,7 @@ class Program
                 break;
 
                 case "2": //insert Record
+                InsertRecord();
                 break;
 
                 case "3": //Delete Record
@@ -77,6 +81,7 @@ class Program
                 break;
                 
                 case "5": //drop table
+                DeleteTable();
                 break;
 
                 default:
@@ -86,9 +91,83 @@ class Program
         }
     }
 
-
-    void InsertRecord()
+    static void ViewAll()
     {
+        using(var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = @"SELECT * FROM HABIT;";
+            
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+            int id = 0;
+            string date ="";
+            string habit ="";
+            string units ="";
+            string quantity ="";
+
+            if (reader.HasRows)
+            {
+                while(reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        Console.Write(reader.GetString(i));
+                        Console.Write("/t");
+                    }
+                    Console.WriteLine();
+                }
+
+            }
+            reader.Close();
+            connection.Close();
+
+        }
+    }
+
+    static void InsertRecord()
+    {
+        Console.WriteLine("Enter a date (MM/DD/YYYY).");
+        string?date = Console.ReadLine();
+        
+        Console.WriteLine("Enter a habit.");
+        string?habit = Console.ReadLine();
+
+        Console.WriteLine("Enter the unit.");
+        string?units = Console.ReadLine();
+
+        Console.WriteLine("Enter the quantity.");
+        string?quantity = Console.ReadLine();
+
+        
+        using(var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = @$"INSERT INTO HABIT (Date, Habit, Units Quantity)
+                                    VALUES ('{date}', {habit}, {units}, {quantity});";
+
+            tableCmd.ExecuteNonQuery();
+            connection.Close();
+        }
+    }
+
+
+    static void DeleteTable()
+    {
+        using(var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = @"DROP TABLE drinking_water;";
+
+            tableCmd.ExecuteNonQuery();
+            connection.Close();
+
+        }
 
     }
 
