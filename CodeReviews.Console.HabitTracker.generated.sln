@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoRalph.Console.HabbitTracker", "HoRalph.Console.HabbitTracker\HoRalph.Console.HabbitTracker.csproj", "{0F556231-BDCA-4C16-B752-F85D8F5C6452}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoRalph.Console.HabbitTracker", "HoRalph.Console.HabbitTracker\HoRalph.Console.HabbitTracker.csproj", "{CF188C64-BE6A-43D0-BCA5-A20D2EC8425A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0F556231-BDCA-4C16-B752-F85D8F5C6452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F556231-BDCA-4C16-B752-F85D8F5C6452}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F556231-BDCA-4C16-B752-F85D8F5C6452}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F556231-BDCA-4C16-B752-F85D8F5C6452}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF188C64-BE6A-43D0-BCA5-A20D2EC8425A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF188C64-BE6A-43D0-BCA5-A20D2EC8425A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF188C64-BE6A-43D0-BCA5-A20D2EC8425A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF188C64-BE6A-43D0-BCA5-A20D2EC8425A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

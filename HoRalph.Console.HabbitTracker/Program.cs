@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.XPath;
 using Microsoft.Data.Sqlite;
 
 namespace habit_tracker
@@ -101,13 +102,14 @@ class Program
             string habit ="";
             string units ="";
             string quantity ="";
+            string?pause;
 
             if (reader.HasRows)
             {
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    Console.Write(reader.GetName(i));
-                    Console.Write(" | ");
+                    Console.Write(reader.GetName(i).PadRight(15));
+                    Console.Write("|");
                 }
                 Console.WriteLine();
               
@@ -115,13 +117,17 @@ class Program
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        Console.Write(reader.GetString(i));
-                        Console.Write(" | ");
+                        Console.Write(reader.GetString(i).PadRight(15));
+                        Console.Write("|");
                     }
                     Console.WriteLine();
                 }
-
+                Console.WriteLine("\n\n Press any key to return to the menu.");
+                pause = Console.ReadLine();
             }
+            
+            
+
             else
                 Console.WriteLine("Empty  table.");
 
@@ -135,6 +141,16 @@ class Program
     {
         Console.WriteLine("Enter a date (MM/DD/YYYY).");
         string?date = Console.ReadLine();
+        bool validDate = false;
+
+        while (!validDate)
+        {
+            if (int.Parse(date.Substring(0,2)) <=12)
+                break;
+                
+            
+        }
+
         
         Console.WriteLine("Enter a habit.");
         string?habit = Console.ReadLine();
@@ -144,6 +160,12 @@ class Program
 
         Console.WriteLine("Enter the quantity.");
         string?quantity = Console.ReadLine();
+        
+        while (!int.TryParse(quantity,out int result))
+        {
+            Console.WriteLine("Invalid Number");
+            quantity = Console.ReadLine();
+        }
 
         
         using(var connection = new SqliteConnection(connectionString))
