@@ -1,9 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Design;
-using System.Data.Common;
-using System.Numerics;
-using System.Reflection.Metadata;
-using System.Xml.XPath;
 using Microsoft.Data.Sqlite;
 
 namespace habit_tracker
@@ -23,11 +18,11 @@ class Program
             var tableCmd = connection.CreateCommand();
 
             tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS HABIT (
-                                    HabitID INT PRIMARY KEY,
+                                    HabitID INTEGER PRIMARY KEY AUTOINCREMENT,
                                     Date TEXT,
                                     Habit TEXT,
                                     Units TEXT,
-                                    Quantity INT)";
+                                    Quantity INTEGER)";
 
             tableCmd.ExecuteNonQuery();
             
@@ -59,15 +54,15 @@ class Program
                 Console.WriteLine("Invalid Input! Please try again.");
                 result = Console.ReadLine();
             }
-            
+            Console.Clear();
             switch (result)
             {
                 case "0":
                 return;
                 
 
-                case "1":
-                //view all records
+                case "1": //view all records
+                ViewAll();
                 break;
 
                 case "2": //insert Record
@@ -109,17 +104,27 @@ class Program
 
             if (reader.HasRows)
             {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write(reader.GetName(i));
+                    Console.Write(" | ");
+                }
+                Console.WriteLine();
+              
                 while(reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
                         Console.Write(reader.GetString(i));
-                        Console.Write("/t");
+                        Console.Write(" | ");
                     }
                     Console.WriteLine();
                 }
 
             }
+            else
+                Console.WriteLine("Empty  table.");
+
             reader.Close();
             connection.Close();
 
@@ -146,8 +151,8 @@ class Program
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = @$"INSERT INTO HABIT (Date, Habit, Units Quantity)
-                                    VALUES ('{date}', {habit}, {units}, {quantity});";
+            tableCmd.CommandText = @$"INSERT INTO HABIT (Date, Habit, Units, Quantity)
+                                    VALUES ('{date}', '{habit}', '{units}', {quantity});";
 
             tableCmd.ExecuteNonQuery();
             connection.Close();
@@ -162,7 +167,7 @@ class Program
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = @"DROP TABLE drinking_water;";
+            tableCmd.CommandText = @"DROP TABLE HABIT;";
 
             tableCmd.ExecuteNonQuery();
             connection.Close();
