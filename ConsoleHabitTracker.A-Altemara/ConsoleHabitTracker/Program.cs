@@ -6,7 +6,9 @@ namespace ConsoleHabitTracker;
 
 public static class Program
 {
-    private static Random _random = new Random();
+    private static readonly Random Random = new Random();
+    private static readonly string[] DateFormats = { "MM-dd-yyyy", "dd-MM-yyyy" };
+
 
     static void Main()
     {
@@ -102,9 +104,9 @@ public static class Program
         int counter = 100;
         while (counter > 0)
         {
-            DateOnly randomDate = GenerateRandomDate(new DateOnly(2000, 1, 1), new DateOnly(2024, 7, 31));
+            DateOnly randomDate = GenerateRandomDate(new DateOnly(2020, 1, 1), new DateOnly(2024, 7, 31));
             string randomActivity = GenerateRandomActivity();
-            int randomDuration = _random.Next(1, 60);
+            int randomDuration = Random.Next(1, 60);
             string randomUnits = GenerateRandomUnits();
 
             // Create an Habit object and add it to the list
@@ -125,7 +127,7 @@ public static class Program
                                  "VALUES (@date, @habitName, @quantity, @units);";
 
             using SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
-            command.Parameters.AddWithValue("@date", entry.Date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("@date", entry.Date.ToString("MM-dd-yyyy"));
             command.Parameters.AddWithValue("@habitName", entry.HabitName);
             command.Parameters.AddWithValue("@quantity", entry.Quantity);
             command.Parameters.AddWithValue("@units", entry.Units);
@@ -137,23 +139,24 @@ public static class Program
     static string GenerateRandomActivity()
     {
         string[] possibleActivities = ["swimming", "running", "walking", "cycling", "working", "cooking", "coding", "reading"];
-        int chosenEntry = _random.Next(0, 8);
+        int chosenEntry = Random.Next(0, 8);
         return possibleActivities[chosenEntry];
     }
     
     static string GenerateRandomUnits()
     {
         string[] possibleUnits = ["minutes", "hours", "miles", "kilometers"];
-        int chosenEntry = _random.Next(0, 4);
+        int chosenEntry = Random.Next(0, 4);
         return possibleUnits[chosenEntry];
     }
+    
     static DateOnly GenerateRandomDate(DateOnly startDate, DateOnly endDate)
     {
         // Calculate the total number of days between the start and end dates
         int totalDays = (endDate.ToDateTime(TimeOnly.MinValue) - startDate.ToDateTime(TimeOnly.MinValue)).Days;
 
         // Generate a random number of days to add to the start date
-        int randomDays = _random.Next(0, totalDays + 1);
+        int randomDays = Random.Next(0, totalDays + 1);
 
         // Return the new random date
         return startDate.AddDays(randomDays);
@@ -203,7 +206,7 @@ public static class Program
                 var newHabitDate = Console.ReadLine();
                 var sanitizedNewDate = SanitizeNullOrWhiteSpace(newHabitDate);
                 if (IsExit(sanitizedNewDate)) return;
-                var newDate = SanitizeDate(sanitizedNewDate);
+                var newDate = SanitizeDate(sanitizedNewDate).ToString(DateFormats[0]);
                 string updateQuery = "UPDATE habitsTable SET Date = @date WHERE Id = @id;";
 
                 // Create a command object and pass the query and connection
@@ -391,7 +394,7 @@ public static class Program
         string? dateEntry = Console.ReadLine();
         string date = SanitizeNullOrWhiteSpace(dateEntry);
         if (IsExit(date)) return;
-        DateOnly? dateValue = SanitizeDate(dateEntry);
+        string? dateValue = SanitizeDate(dateEntry).ToString(DateFormats[0]);
 
         Console.WriteLine("Enter Habit Name, or type 'E' to exit");
         string? habitNameEntry = Console.ReadLine();
@@ -417,21 +420,28 @@ public static class Program
         Console.WriteLine("New entry added, press enter to continue");
         Console.ReadLine();
     }
-
+    
     private static DateOnly SanitizeDate(string? dateEntry)
     {
         while (true)
         {
             try
             {
-                var dateValue = DateOnly.Parse(dateEntry!);
-                Console.WriteLine("converted date to convention");
-                return dateValue;
+                // Try to parse the date using the specified formats
+                if (DateOnly.TryParseExact(dateEntry, DateFormats, null, System.Globalization.DateTimeStyles.None, out DateOnly dateValue))
+                {
+                    Console.WriteLine("Converted date to convention");
+                    return dateValue;
+                }
+                else
+                {
+                    throw new FormatException("Invalid date format.");
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine("unable to convert date, please try again");
-                Console.WriteLine("Enter Date completed mm-dd-yyyy, or type 'E' to exit");
+                Console.WriteLine("Unable to convert date, please try again.");
+                Console.WriteLine("Enter Date completed (mm-dd-yyyy or dd-mm-yyyy), or type 'E' to exit");
                 string? newDateEntry = Console.ReadLine();
                 dateEntry = SanitizeNullOrWhiteSpace(newDateEntry);
                 if (IsExit(dateEntry)) return DateOnly.MinValue;
@@ -478,6 +488,7 @@ public static class Program
 
     private static void DisplayMenu()
     {
+        Console.Clear();
         Console.WriteLine("What do you want to do?\n");
         Console.WriteLine("Type 0 to Close Application");
         Console.WriteLine("Type 1 to View all Records");
