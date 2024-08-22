@@ -76,6 +76,7 @@ class Program
                 break;
 
                 case "4": //Update Record
+                UpdateRecord();
                 break;
                 
                 case "5": //drop table
@@ -120,8 +121,7 @@ class Program
                     }
                     Console.WriteLine();
                 }
-                Console.WriteLine("\n\n Press any key to return to the menu.");
-                string?pause = Console.ReadLine();
+
             }
             
             
@@ -131,6 +131,8 @@ class Program
 
             reader.Close();
             connection.Close();
+            Console.WriteLine("\n\n Press any key to return to the menu.");
+            string?pause = Console.ReadLine();
 
         }
     }
@@ -258,6 +260,84 @@ class Program
 
     }
 
+
+
+
+ static void UpdateRecord()
+    {
+
+        string?dateUpdate = null;
+        bool validDate = false;
+        
+        while (!validDate)
+        {
+
+            Console.WriteLine("Enter a date (MM/DD/YYYY).");
+            dateUpdate = Console.ReadLine();
+
+            if(DateTime.TryParse(dateUpdate, out DateTime value))
+            {
+                validDate = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Date. Please re-enter");
+            }   
+
+        }
+        
+        
+        Console.WriteLine("Enter Habit. (leave blank if update all records with specified date)");
+        string?habitUpdate =Console.ReadLine();
+        
+
+        Console.WriteLine("Enter the new unit. (leave blank if don't update unit)");
+        string?unitUpdate = Console.ReadLine();
+
+        Console.WriteLine("Enter the new Quantity. (leave blank if don't update quantity)");
+        string?QuantityUpdate = Console.ReadLine();
+
+        string?setOne=null;
+
+        if (((unitUpdate != null)|| (unitUpdate !="")) && ((QuantityUpdate != null)|| (QuantityUpdate !="")))
+        {
+            setOne = $"SET Units = '{unitUpdate}', Quantity = {QuantityUpdate}";
+        }
+        else if ((unitUpdate == null)|| (unitUpdate ==""))
+        {
+            setOne = $"SET Quantity = {QuantityUpdate}";
+        }
+        else if ((QuantityUpdate == null) || (QuantityUpdate ==""))
+        {
+            setOne = $"SET UNITS = {unitUpdate}";
+        }
+  
+
+        using(var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            
+            var tableCmd = connection.CreateCommand();
+            if ((habitUpdate == "") || (habitUpdate == null))
+            {
+                tableCmd.CommandText = @$"UPDATE HABIT
+                                         {setOne}
+                                         WHERE date = '{dateUpdate}';";
+            }
+            else
+            {
+                tableCmd.CommandText = @$"UPDATE HABIT
+                                        {setOne}                
+                                        WHERE date = '{dateUpdate}' AND habit = '{habitUpdate}';";
+            }
+            
+
+            tableCmd.ExecuteNonQuery();
+            connection.Close();
+
+        }
+
+    }
 }
 
 
