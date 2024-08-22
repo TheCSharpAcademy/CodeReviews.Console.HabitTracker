@@ -72,6 +72,7 @@ class Program
                 break;
 
                 case "3": //Delete Record
+                DeleteRecord();
                 break;
 
                 case "4": //Update Record
@@ -79,7 +80,7 @@ class Program
                 
                 case "5": //drop table
                 DeleteTable();
-                break;
+                return;
 
                 default:
                 break;
@@ -98,12 +99,8 @@ class Program
             tableCmd.CommandText = @"SELECT * FROM HABIT;";
             
             SqliteDataReader reader = tableCmd.ExecuteReader();
-            int id = 0;
-            string date ="";
-            string habit ="";
-            string units ="";
-            string quantity ="";
-            string?pause;
+
+            
 
             if (reader.HasRows)
             {
@@ -124,7 +121,7 @@ class Program
                     Console.WriteLine();
                 }
                 Console.WriteLine("\n\n Press any key to return to the menu.");
-                pause = Console.ReadLine();
+                string?pause = Console.ReadLine();
             }
             
             
@@ -149,12 +146,6 @@ class Program
 
             Console.WriteLine("Enter a date (MM/DD/YYYY).");
             date = Console.ReadLine();
-
-           /* int firstSlash = date.IndexOf('/');
-            string month = date.Substring(0,firstSlash);
-            int secondSlash = date.Substring(firstSlash+1, date.Length-firstSlash-1).IndexOf('/') + firstSlash;
-            string day = date.Substring(firstSlash+1, secondSlash-2);
-            string year = date.Substring(secondSlash+2, date.Length-secondSlash-2); */
 
             if(DateTime.TryParse(date, out DateTime value))
             {
@@ -200,12 +191,65 @@ class Program
 
     static void DeleteTable()
     {
+
+
+
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = @"DROP TABLE HABIT;";
+
+            tableCmd.ExecuteNonQuery();
+            connection.Close();
+
+        }
+
+    }
+    static void DeleteRecord()
+    {
+
+        string dateDelete = null;
+        bool validDate = false;
+        
+        while (!validDate)
+        {
+
+            Console.WriteLine("Enter a date (MM/DD/YYYY).");
+            dateDelete = Console.ReadLine();
+
+            if(DateTime.TryParse(dateDelete, out DateTime value))
+            {
+                validDate = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Date. Please re-enter");
+            }   
+
+        }
+        
+        
+        Console.WriteLine("Enter Habit. (leave blank if delete all records with specified date)");
+        string?habitDelete =Console.ReadLine();
+        
+        using(var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            
+            var tableCmd = connection.CreateCommand();
+            if ((habitDelete == "") || (habitDelete == null))
+            {
+                tableCmd.CommandText = @$"DELETE FROM HABIT
+                                         WHERE date = '{dateDelete}';";
+            }
+            else
+            {
+                tableCmd.CommandText = @$"DELETE FROM HABIT
+                WHERE date = '{dateDelete}' AND habit = '{habitDelete}';";
+            }
+            
 
             tableCmd.ExecuteNonQuery();
             connection.Close();
