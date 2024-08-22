@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Xml.XPath;
 using Microsoft.Data.Sqlite;
 
@@ -139,16 +140,31 @@ class Program
 
     static void InsertRecord()
     {
-        Console.WriteLine("Enter a date (MM/DD/YYYY).");
-        string?date = Console.ReadLine();
+
         bool validDate = false;
+        string?date="";
 
         while (!validDate)
         {
-            if (int.Parse(date.Substring(0,2)) <=12)
-                break;
-                
-            
+
+            Console.WriteLine("Enter a date (MM/DD/YYYY).");
+            date = Console.ReadLine();
+
+           /* int firstSlash = date.IndexOf('/');
+            string month = date.Substring(0,firstSlash);
+            int secondSlash = date.Substring(firstSlash+1, date.Length-firstSlash-1).IndexOf('/') + firstSlash;
+            string day = date.Substring(firstSlash+1, secondSlash-2);
+            string year = date.Substring(secondSlash+2, date.Length-secondSlash-2); */
+
+            if(DateTime.TryParse(date, out DateTime value))
+            {
+                validDate = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Date. Please re-enter");
+            }
+    
         }
 
         
