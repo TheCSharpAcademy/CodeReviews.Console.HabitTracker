@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using System.Xml.XPath;
 using Microsoft.Data.Sqlite;
 
 namespace habit_tracker
@@ -132,7 +130,7 @@ class Program
             reader.Close();
             connection.Close();
             Console.WriteLine("\n\n Press any key to return to the menu.");
-            string?pause = Console.ReadLine();
+            Console.ReadLine();
 
         }
     }
