@@ -1,31 +1,30 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using ConsoleTableExt;
 using HabitLogger.Models;
 using HabitLogger.Services;
 using HabitLogger.Shared.Logger;
-using ConsoleTableExt;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
-using System.Text.RegularExpressions;
-using System.IO;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 class Application
 {
     private static HabitService _habitService;
     private static Message _successMessage;
     private static ErrorsLogger _errorLogger;
     private static SpeechRecognizer recognizer;
-    private static bool quit = false;
-    private static bool useSpeechRecognition = false;
+    private static bool quit;
+    private static bool useSpeechRecognition;
     const string DBNAME = "habit.db";
 
     private async static Task Main()
     {
-        
+
         try
         {
-             if (UseAI()){
+            if (UseAI())
+            {
                 useSpeechRecognition = true;
             }
             InitializeNeccessaryClasses();
@@ -97,7 +96,7 @@ class Application
         _habitService = new HabitService(path);
         _successMessage = new Message();
         _errorLogger = new ErrorsLogger();
-        if(useSpeechRecognition) InitializeSpeechRecognition();
+        if (useSpeechRecognition) InitializeSpeechRecognition();
     }
     private static void DisplayMenu()
     {
@@ -109,7 +108,7 @@ class Application
         Console.WriteLine("\td - Delete a habit");
         Console.WriteLine("\tu - Update a habit");
         Console.WriteLine("\tq - exit");
-        if(useSpeechRecognition)
+        if (useSpeechRecognition)
         {
             Console.Write("Say your option? ");
         }
@@ -153,7 +152,7 @@ class Application
         {
                 new List<object>{ "ID", "NAME", "QUANTITY", "DATE"},
                 new List<object>{ Retrieved.Id, Retrieved.Name, Retrieved.Quantity, Retrieved.Date },
-                
+
         };
         ConsoleTableBuilder
         .From(tableData)
@@ -180,7 +179,7 @@ class Application
     }
     private static Habit AskUserEnterValues()
     {
-         
+
         Console.WriteLine("-------------------------- Enter habit values --------------------------");
         string name = DisplayAddHabitOptions("name");
         string quantity = DisplayAddHabitOptions("quanity");
@@ -234,9 +233,9 @@ class Application
         if (retrievedHabitToUpdate == null)
         {
             throw new Exception("Habit not found!");
-        } 
+        }
         else return retrievedHabitToUpdate;
-       
+
     }
     private static void DeleteHabit()
     {
@@ -252,14 +251,14 @@ class Application
         updatedHabit.Id = RetrievedHabitToUpdate.Id;
         _habitService.UpdateHabit(updatedHabit);
         _successMessage.Display($"[{RetrievedHabitToUpdate.Name}] has been updated succefullly.");
-         
+
     }
     private static void ViewHabit()
     {
         try
         {
             var RetrievedHabit = RetrieveHabit();
-            if(RetrievedHabit == null)
+            if (RetrievedHabit == null)
                 _errorLogger.DisplayError("Habit not found!");
             else DisplayHabitRetrieved(RetrievedHabit);
         }
@@ -298,7 +297,7 @@ class Application
                     break;
             }
         }
-        
+
     }
     private static string FilterUserOption(string option)
     {
@@ -308,7 +307,7 @@ class Application
     private static async Task DisplayNextAIOptions()
     {
         var option = await GetRecognizedSpeech();
-        if(option == null)
+        if (option == null)
         {
             _errorLogger.DisplayError("Am I deaf? I heard nothing");
             _errorLogger.DisplayError("bye bye..................");

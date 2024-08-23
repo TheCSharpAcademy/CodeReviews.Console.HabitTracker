@@ -1,7 +1,6 @@
-﻿using System;
-namespace HabitLogger.Shared
+﻿namespace HabitLogger.Shared
 {
-	public interface IMaintanable<T>
+    public interface IMaintanable<T>
     {
         void Create(T obj);
         T Retrieve(int key);

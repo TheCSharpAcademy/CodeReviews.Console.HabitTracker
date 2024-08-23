@@ -1,10 +1,8 @@
-﻿using System;
-using HabitLogger.Models;
-
+﻿using HabitLogger.Models;
 namespace HabitLogger.Shared
 {
-	public interface IHabitService
-	{
+    public interface IHabitService
+    {
         void AddHabit(Habit habit);
         void UpdateHabit(Habit habit);
         Habit GetHabit(int id);

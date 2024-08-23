@@ -78,7 +78,7 @@ namespace HabitLogger.Data
 
                 }
             }
-            
+
         }
 
         public void Update(Habit habit)
