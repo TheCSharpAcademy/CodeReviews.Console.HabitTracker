@@ -11,24 +11,25 @@
     <None Remove="Models\" />
     <None Remove="Data\" />
     <None Remove="Services\" />
+    <None Remove="Shared\" />
+    <None Remove="Models\Engines\" />
+    <None Remove="Shared\Interfaces\" />
+    <None Remove="Shared\Logger\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Data\" />
     <Folder Include="Services\" />
+    <Folder Include="Shared\" />
+    <Folder Include="Models\Engines\" />
+    <Folder Include="Shared\Interfaces\" />
+    <Folder Include="Shared\Logger\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.7" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.9" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
-    
-  </ItemGroup>
-  <PropertyGroup>
-  <RuntimeIdentifiers>osx.11.0-arm64</RuntimeIdentifiers>
-</PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Console.HabitTracker.Models\Console.HabitTracker.Models.csproj" />
-    <ProjectReference Include="..\Console.HabitTracker.Data\Console.HabitTracker.Data.csproj" />
-    <ProjectReference Include="..\Console.HabitTracker.Services\Console.HabitTracker.Services.csproj" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.8" />
+    <PackageReference Include="ConsoleTableExt" Version="3.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.40.0" />
   </ItemGroup>
 </Project>

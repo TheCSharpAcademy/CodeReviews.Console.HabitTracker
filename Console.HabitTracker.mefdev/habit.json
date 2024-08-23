@@ -1,0 +1,122 @@
+﻿[
+  {
+    "Id": 1,
+    "Name": "Drink Water",
+    "Quantity": "8 glasses",
+    "Date": "23/12/2026"
+  },
+  {
+    "Id": 2,
+    "Name": "Read a Book",
+    "Quantity": "50 pages",
+    "Date": "22/08/2026"
+  },
+  {
+    "Id": 3,
+    "Name": "Eat Vegetables",
+    "Quantity": "5 servings",
+    "Date": "23/08/2026"
+  },
+  {
+    "Id": 4,
+    "Name": "Save Money",
+    "Quantity": "$10",
+    "Date": "24/08/2026"
+  },
+  {
+    "Id": 5,
+    "Name": "Compliment Others",
+    "Quantity": "3 compliments",
+    "Date": "25/08/2026"
+  },
+  {
+    "Id": 6,
+    "Name": "Practice Gratitude",
+    "Quantity": "5 things",
+    "Date": "26/08/2026"
+  },
+  {
+    "Id": 7,
+    "Name": "Do Push-Ups",
+    "Quantity": "20 reps",
+    "Date": "27/08/2026"
+  },
+  {
+    "Id": 8,
+    "Name": "Write Journal",
+    "Quantity": "1 entry",
+    "Date": "28/08/2026"
+  },
+  {
+    "Id": 9,
+    "Name": "Take Vitamins",
+    "Quantity": "1 dose",
+    "Date": "29/08/2026"
+  },
+  {
+    "Id": 10,
+    "Name": "Walk",
+    "Quantity": "10,000 steps",
+    "Date": "30/08/2026"
+  },
+  {
+    "Id": 11,
+    "Name": "Stretch",
+    "Quantity": "15 minutes",
+    "Date": "31/08/2026"
+  },
+  {
+    "Id": 12,
+    "Name": "Plan the Day",
+    "Quantity": "1 session",
+    "Date": "01/09/2026"
+  },
+  {
+    "Id": 13,
+    "Name": "Meditate",
+    "Quantity": "10 minutes",
+    "Date": "02/09/2026"
+  },
+  {
+    "Id": 14,
+    "Name": "Cook a Meal",
+    "Quantity": "1 meal",
+    "Date": "03/09/2026"
+  },
+  {
+    "Id": 15,
+    "Name": "Call a Friend",
+    "Quantity": "1 call",
+    "Date": "04/09/2026"
+  },
+  {
+    "Id": 16,
+    "Name": "Read News",
+    "Quantity": "20 minutes",
+    "Date": "05/09/2026"
+  },
+  {
+    "Id": 17,
+    "Name": "Practice a Skill",
+    "Quantity": "1 hour",
+    "Date": "06/09/2026"
+  },
+  {
+    "Id": 18,
+    "Name": "Learn a Language",
+    "Quantity": "30 minutes",
+    "Date": "07/09/2026"
+  },
+  {
+    "Id": 19,
+    "Name": "Water Plants",
+    "Quantity": "3 plants",
+    "Date": "08/09/2026"
+  },
+  {
+    "Id": 20,
+    "Name": "Organize Workspace",
+    "Quantity": "1 session",
+    "Date": "09/09/2026"
+  }
+]
