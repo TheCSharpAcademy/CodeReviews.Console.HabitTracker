@@ -1,5 +1,4 @@
-﻿using System;
-namespace HabitLogger.Shared.Logger
+﻿namespace HabitLogger.Shared.Logger
 {
     public class ErrorsLogger
     {
