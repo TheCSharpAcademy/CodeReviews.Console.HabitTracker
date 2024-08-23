@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.Reflection;
 using static System.Console;
 
@@ -7,12 +8,12 @@ namespace nikosnick13.HabitLogger
 {
     internal class Program
     {
-       static string  connectionString = @"Data Source=habit-Traker.db";
+        static string connectionString = @"Data Source=habit-Traker.db";
         static void Main(string[] args)
         {
- 
 
-            using (var conn = new SqliteConnection(connectionString)) 
+
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
 
@@ -30,7 +31,7 @@ namespace nikosnick13.HabitLogger
                 conn.Close();
 
 
-                
+
             }
 
             userInput();
@@ -40,16 +41,16 @@ namespace nikosnick13.HabitLogger
         }
 
         //USER INPUT MENY
-        public static void userInput() 
+        public static void userInput()
         {
             Clear();
             ForegroundColor = ConsoleColor.Green;
 
             bool isAppRunning = true;
 
-            while (isAppRunning) 
+            while (isAppRunning)
             {
-                WriteLine("============================================");
+                //WriteLine("============================================");
                 WriteLine("\n\nMAIN Menu");
                 WriteLine("\nWhat would you like to do?");
                 WriteLine("\n\tType 0 to Close Application.");
@@ -61,7 +62,7 @@ namespace nikosnick13.HabitLogger
 
                 string userInput = ReadLine();
 
-                switch (userInput) 
+                switch (userInput)
                 {
                     case "0":
                         isAppRunning = false;
@@ -71,7 +72,7 @@ namespace nikosnick13.HabitLogger
                         Insert();
                         break;
                     case "2":
-                        //TO DO: Call the ViewAll Method
+                        VeiwAll();
                         break;
 
                     case "3":
@@ -83,20 +84,20 @@ namespace nikosnick13.HabitLogger
 
                 }
 
-              
+
             }
 
         }
 
         #region Insert
 
-        private static void Insert() 
+        private static void Insert()
         {
             string date = GetDateInput();
 
-            int quantity = GetNumInput("\n\nPlaese Insert a number of glasses or another measures of your choice (no decimals is allowed \n\n) ");
+            int quantity = GetQuantityInput("\n\nPlaese Insert a number of glasses or another measures of your choice (no decimals is allowed \n\n) ");
 
-            using (var conn = new SqliteConnection(connectionString)) 
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
 
@@ -107,27 +108,25 @@ namespace nikosnick13.HabitLogger
                 insertUserCmd.ExecuteNonQuery();
 
                 conn.Close();
-            
+
 
             }
 
         }
-
         //Get the input for Date as string
-        private static string GetDateInput() 
+        private static string GetDateInput()
         {
             WriteLine("Please insert tha date: DD-MM-YYYY. Type 0 to return to main menu.");
 
             string dateInput = ReadLine();
 
-            if (dateInput == "0") userInput(); 
+            if (dateInput == "0") userInput();
 
 
             return dateInput;
         }
-
         //Get the input for quanti as string
-        private static int GetQuantityInput(string msq) 
+        private static int GetQuantityInput(string msq)
         {
             WriteLine(msq);
 
@@ -143,31 +142,64 @@ namespace nikosnick13.HabitLogger
         #endregion
 
         #region ViewAll
-        private static void VeiwAll() 
+        private static void VeiwAll()
         {
-            using(var conn = new SqliteConnection(connectionString))
+            using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
                 var viewAllCmd = conn.CreateCommand();
 
-                viewAllCmd.CommandText = 
+                viewAllCmd.CommandText =
                     $"SELECT * FROM dring_water";
-
-                List<DringWater> tableData = new();
-
-
                 viewAllCmd.ExecuteNonQuery();
+                //The list is generic how store objects of type DrinkingWater.
+                List<DringWater> tableData = new List<DringWater>();
+
+                SqliteDataReader reader = viewAllCmd.ExecuteReader();
+
+                //Check if has rows 
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        tableData.Add(
+                            new DringWater
+                            {
+                                Id = reader.GetInt32(0),
+                                // Date = DateTime.ParseExact(reader.GetString(1), "d-M-yy", new CultureInfo("en-US")),
+                                Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", new CultureInfo("en-US")),
+
+                                Quantity = reader.GetInt32(2)
+
+                            });
+                        // Console.WriteLine(String.Format("{0}", reader[0]));
+                    }
+                    foreach (var a in tableData)
+                    {
+                        WriteLine("---------------------------------------");
+                        WriteLine($"|ID:{a.Id} | DATE: {a.Date.ToString("dd-MM-yyyy")} | Quantity: {a.Quantity}|");
+                        WriteLine("---------------------------------------\n");
+                    }
+                }
+                else 
+                {
+                    WriteLine(" No rows founds");
+                }
+
+
+
+
 
                 conn.Close();
-                
-                
+
+
             }
         }
 
         #endregion
     }
 
-    public class DringWater 
+    public class DringWater
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
