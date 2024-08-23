@@ -146,11 +146,16 @@ class Program
         while (!validDate)
         {
 
-            Console.WriteLine("Enter a date (MM/DD/YYYY).");
+            Console.WriteLine("Enter a date (MM/DD/YYYY). (Enter blank to default to Today' date)");
             date = Console.ReadLine();
 
             if(DateTime.TryParse(date, out DateTime value))
             {
+                validDate = true;
+            }
+            else if (date == null || date == "")
+            {
+                date = DateTime.Today.ToString("d");
                 validDate = true;
             }
             else
