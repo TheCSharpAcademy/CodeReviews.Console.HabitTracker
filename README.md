@@ -1,6 +1,6 @@
 #HabbitTracker
-This C# application keeps track of habits inputted by the user.
-The user may keep track of the date, habit type, unit of the habit and quantity.
+- This C# application keeps track of habits inputted by the user.
+- The user may keep track of the date, habit type, unit of the habit and quantity.
 
 #Features
 - insert new habit
