@@ -16,7 +16,7 @@ namespace HabitTracker
 
             string connectionString = $"Data Source={dbFolderPath}HabitTracker.db";
             DataBase dataBase = new();
-            dataBase.ConnectionString(dbFolderPath);
+            dataBase.getConnectionString(dbFolderPath);
             DataSeeder.AutoSeed(connectionString);
             dataBase.MainMenu();
         }

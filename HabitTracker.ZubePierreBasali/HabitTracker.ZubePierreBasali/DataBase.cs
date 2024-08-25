@@ -5,10 +5,10 @@ namespace HabitTracker
 {
     internal class DataBase
     {
-        string? connectionString { get; set; }
+        string? ConnectionString { get; set; }
         static string? readResult;
 
-        public void ConnectionString(string folderPath) { connectionString = $"Data Source={folderPath}HabitTracker.db"; }
+        public void getConnectionString(string folderPath) { ConnectionString = $"Data Source={folderPath}HabitTracker.db"; }
 
         public void MainMenu()
         {
@@ -41,23 +41,23 @@ namespace HabitTracker
                             validInput = true;
                             break;
                         case "1":
-                            InsertData(connectionString);
+                            InsertData(ConnectionString);
                             validInput = true;
                             break;
                         case "2":
-                            DeleteData(connectionString);
+                            DeleteData(ConnectionString);
                             validInput = true;
                             break;
                         case "3":
-                            UpdateData(connectionString);
+                            UpdateData(ConnectionString);
                             validInput = true;
                             break;
                         case "4":
-                            PrintData(connectionString);
+                            PrintData(ConnectionString);
                             validInput = true;
                             break;
                         case "5":
-                            PrintTable(connectionString);
+                            PrintTable(ConnectionString);
                             validInput = true;
                             break;
                         case "6":
@@ -124,7 +124,7 @@ namespace HabitTracker
             } while (!isValid || (option < 1 && option > 2));
 
             if (option == 1) { DeleteTable(connectionString); }
-            else if (option == 2) { DeleteRow(connectionString); };
+            else if (option == 2) { DeleteRow(connectionString); }
 
             string redo = Redo("Do you want to delete other records?\n");
             if (redo == "y") DeleteData(connectionString);
@@ -382,7 +382,6 @@ namespace HabitTracker
                 connection.Open();
 
                 SqliteDataReader reader = tableCmd.ExecuteReader();
-                List<string> currentTable = new List<string>();
                 if (!reader.HasRows) { Console.WriteLine($"The table {table} contains no data."); }
                 else if (reader != null)
                 {
@@ -417,7 +416,7 @@ namespace HabitTracker
         {
             // This function was made separatlly from the function above to be used to autoseed the database
             string sqlCommand = $"CREATE TABLE IF NOT EXISTS {table}(Date DATE,Quantity INTEGER,Unit TEXT);";
-            ExecuteQuery(connectionString, sqlCommand);
+            ExecuteQuery(ConnectionString, sqlCommand);
         }
 
         private void ReportMenu()
@@ -465,62 +464,62 @@ namespace HabitTracker
             {
                 case 1:
                     sqlCommandText = $"SELECT SUM(Quantity) as sum FROM {table}";
-                    PrintSumCount(connectionString,sqlCommandText);
+                    PrintSumCount(ConnectionString,sqlCommandText);
                     break;
                 case 2:
                     sqlCommandText = $"SELECT COUNT(*) as count FROM {table}";
-                    PrintSumCount(connectionString, sqlCommandText, true);
+                    PrintSumCount(ConnectionString, sqlCommandText, true);
                     break;
                 case 3:
                     month = GetMonthYear();
                     year = GetMonthYear(false);
                     sqlCommandText = $"SELECT SUM(Quantity) as sum,strftime('%Y-%m', Date) as month FROM {table} WHERE month = '{year}-{month}'";
-                    PrintSumCount(connectionString, sqlCommandText);
+                    PrintSumCount(ConnectionString, sqlCommandText);
                     break;
                 case 4:
                     month = GetMonthYear();
                     year = GetMonthYear(false);
                     sqlCommandText = $"SELECT COUNT(*) as count,strftime('%Y-%m',Date) as month FROM {table} WHERE month = '{year}-{month}'";
-                    PrintSumCount (connectionString, sqlCommandText,true);
+                    PrintSumCount (ConnectionString, sqlCommandText,true);
                     break;
                 case 5:
                     year = GetMonthYear(false);
                     sqlCommandText = $"SELECT SUM(Quantity) as sum,strftime('%Y',Date) as year FROM {table} WHERE year = '{year}'";
-                    PrintSumCount(connectionString , sqlCommandText);
+                    PrintSumCount(ConnectionString , sqlCommandText);
                     break;
                 case 6:
                     year = GetMonthYear(true);
                     sqlCommandText = $"SELECT COUNT(*) as count,strftime('%Y',Date) as year FROM {table} WHERE year = '{year}'";
-                    PrintSumCount(connectionString , sqlCommandText);
+                    PrintSumCount(ConnectionString , sqlCommandText);
                     break;
                 case 7:
                     month = GetMonthYear();
                     year = GetMonthYear(false);
                     sqlCommandText = $"SELECT strftime('%Y-%m',Date) as monthYear,rowid,* FROM {table} WHERE monthYear = '{year}-{month}' ORDER BY Date;";
-                    PrintTable(connectionString,true,sqlCommandText);
+                    PrintTable(ConnectionString,true,sqlCommandText);
                     break;
                 case 8:
                     year = GetMonthYear(false);
                     sqlCommandText = $"SELECT strftime('%Y',Date) as year,rowid,* FROM {table} WHERE year = '{year}' ORDER BY Date";
-                    PrintTable(connectionString,true,sqlCommandText);
+                    PrintTable(ConnectionString,true,sqlCommandText);
                     break;
                 case 9:
                     string startDate = GetFormatedDate();
                     string endDate = GetFormatedDate();
                     sqlCommandText = $"SELECT SUM(Quantity) as sum,strftime('%Y-%m-%d',Date) as date FROM {table} WHERE date >= '{startDate}' AND date <= '{endDate}'";
-                    PrintSumCount(connectionString, sqlCommandText);
+                    PrintSumCount(ConnectionString, sqlCommandText);
                     break;
                 case 10:
                     startDate = GetFormatedDate();
                     endDate = GetFormatedDate();
                     sqlCommandText = $"SELECT COUNT(*) as count,strftime('%Y-%m-%d',Date) as date FROM {table} WHERE date >= '{startDate}' AND date <= '{endDate}'";
-                    PrintSumCount(connectionString, sqlCommandText, true);
+                    PrintSumCount(ConnectionString, sqlCommandText, true);
                     break;
                 case 11:
                     startDate = GetFormatedDate();
                     endDate = GetFormatedDate();
                     sqlCommandText = $"SELECT *,rowid,strftime('%Y-%m-%d',Date) as date FROM {table} WHERE date >= '{startDate}' AND date <= '{endDate}'";
-                    PrintTable(connectionString, true, sqlCommandText);
+                    PrintTable(ConnectionString, true, sqlCommandText);
                     break;
                 default:
                     break;
@@ -548,7 +547,6 @@ namespace HabitTracker
                     empty = true;
                 }
                 SqliteDataReader reader = tableCmd.ExecuteReader();
-                //List<string> currentTable = new List<string>();
                 if (empty) { Console.WriteLine($"The table contains no data for your request."); }
                 else if (reader != null) {
                     if (count) { while (reader.Read()) Console.WriteLine($"{reader["count"].ToString()}"); }
@@ -655,9 +653,9 @@ namespace HabitTracker
             {
                 if (count == len) { sqlCommandText = $"rowid = {id}"; }
                 else { sqlCommandText = $"rowid = {id} OR "; };
-                foreach (char letter in sqlCommandText) { sqlCommand += letter; };
+                foreach (char letter in sqlCommandText) { sqlCommand += letter; }
                 count++;
-            };
+            }
             return sqlCommand;
         }
 
@@ -704,9 +702,10 @@ namespace HabitTracker
         private static string GetMonthYear(bool getMonth = true)
         {
             int userInput;
+            string inputMonth;
             if (getMonth)
             {
-                DisplayText("Select a month between 01 and 12(mm):\n");
+                DisplayText("Select a month between 1 and 12(mm):\n");
                 string month;
                 do
                 {
@@ -718,8 +717,16 @@ namespace HabitTracker
                     }
                     else
                     {
+                        if (userInput < 10)
+                        {
+                            inputMonth = $"0{userInput}";
+                        }
+                        else
+                        {
+                            inputMonth = userInput.ToString();
+                        }
                         DateTime dateTime;
-                        bool validYear = DateTime.TryParseExact(readResult, "mm", CultureInfo.InvariantCulture,
+                        DateTime.TryParseExact(inputMonth, "mm", CultureInfo.InvariantCulture,
                             DateTimeStyles.None, out dateTime);
                         month = dateTime.ToString("mm");
                         return month;
@@ -728,12 +735,22 @@ namespace HabitTracker
             }
             else
             {
+                bool validYear;
+                string year = "";
                 DisplayText("Select a year(yyyy):\n");
-                userInput = GetNumericInput();
-                DateTime dateTime;
-                bool validYear = DateTime.TryParseExact(userInput.ToString(), "yyyy", CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out dateTime);
-                string year = dateTime.ToString("yyyy");
+                do
+                {
+                    userInput = GetNumericInput();
+                    DateTime dateTime;
+                    validYear = DateTime.TryParseExact(userInput.ToString(), "yyyy", CultureInfo.InvariantCulture,
+                        DateTimeStyles.None, out dateTime);
+                    if(validYear) year = dateTime.ToString("yyyy");
+                    else
+                    {
+                        DisplayText("Please enter year as yyyy format (ex: 2024).", 5, 500);
+                        ClearText();
+                    }
+                } while (!validYear);
                 return year;
             }
             return "Error";
@@ -845,9 +862,8 @@ namespace HabitTracker
     internal class DataSeeder
     {
         public static List<DataSeeder> autoData = new List<DataSeeder>();
-        string date { get; set; }
-        int quantity { get; set; }
-        string unit { get; set; }
+        string? Date { get; set; }
+        int Quantity { get; set; }
 
         public static void AutoSeed(string connectionString)
         {
@@ -903,8 +919,8 @@ namespace HabitTracker
                     {
                         autoData.Add(new DataSeeder
                         {
-                            quantity = random.Next(1, 20),
-                            date = dateItem,
+                            Quantity = random.Next(1, 20),
+                            Date = dateItem,
                         });
                     }
 
@@ -913,19 +929,19 @@ namespace HabitTracker
                     {
                         if (count < 50)
                         {
-                            string sqlCommandText = $"INSERT INTO test_data (Date,Quantity,Unit) VALUES('{dataItem.date}',{dataItem.quantity},\"test_unit\");";
+                            string sqlCommandText = $"INSERT INTO test_data (Date,Quantity,Unit) VALUES('{dataItem.Date}',{dataItem.Quantity},\"test_unit\");";
                             DataBase.ExecuteQuery(connectionString, sqlCommandText);
                             count++;
                         }
                         else if (count < 80)
                         {
-                            string sqlCommandText = $"INSERT INTO coffee_per_day (Date,Quantity,Unit) VALUES('{dataItem.date}',{dataItem.quantity},\"mug_of_coffee\");";
+                            string sqlCommandText = $"INSERT INTO coffee_per_day (Date,Quantity,Unit) VALUES('{dataItem.Date} ', {dataItem.Quantity},\"mug_of_coffee\");";
                             DataBase.ExecuteQuery(connectionString, sqlCommandText);
                             count++;
                         }
                         else
                         {
-                            string sqlCommandText = $"INSERT INTO fruits (Date,Quantity,Unit) VALUES('{dataItem.date}',{dataItem.quantity},\"fruit_per_day\");";
+                            string sqlCommandText = $"INSERT INTO fruits (Date,Quantity,Unit) VALUES('{dataItem.Date} ', {dataItem.Quantity},\"fruit_per_day\");";
                             DataBase.ExecuteQuery(connectionString, sqlCommandText);
                         }
                     }
