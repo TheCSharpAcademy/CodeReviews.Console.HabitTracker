@@ -8,7 +8,7 @@ namespace HabitTracker
         string? ConnectionString { get; set; }
         static string? readResult;
 
-        public void getConnectionString(string folderPath) { ConnectionString = $"Data Source={folderPath}HabitTracker.db"; }
+        public void GetConnectionString(string folderPath) { ConnectionString = $"Data Source={folderPath}HabitTracker.db"; }
 
         public void MainMenu()
         {
@@ -652,7 +652,7 @@ namespace HabitTracker
             foreach (int id in ids)
             {
                 if (count == len) { sqlCommandText = $"rowid = {id}"; }
-                else { sqlCommandText = $"rowid = {id} OR "; };
+                else { sqlCommandText = $"rowid = {id} OR "; }
                 foreach (char letter in sqlCommandText) { sqlCommand += letter; }
                 count++;
             }
