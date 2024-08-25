@@ -1,0 +1,104 @@
+# Habit Tracker
+*By Zube Pierre Basali*
+
+## About me
+
+I start learning coding few months ago, I began with some JS then python then discovered c#, liked it a lot,
+and decided to stick with it for the moment. Also a close friend told advise me to learn c# as he think it's
+suitable for newcomers, can do many things, and of course it's his former language.
+
+I Have some certification on freeCodeCamp, mostly in python, but I've learned basic HTML, CSS,JS and bit more in python
+before putting my hand onto c#.
+I made the c# certification by Windows, in collaboration with freeCodeCamp, then I hopped on thecsharpacademy to learn c# correctly
+and by myself (but not alone).
+
+I hope to be ready soon for some work even it'll be basic tasks, but everybody got to start somewhere.
+
+## The Application
+
+Console based CRUD app to track some kind of habits.
+Project done for Thecsharpacademy using c# and SqLite.
+
+## Requirements
+
+- This is an application where you’ll log occurrences of a habit.
+- This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
+- Users need to be able to input the date of the occurrence of the habit
+- The application should store and retrieve data from a real database
+- When the application starts, it should create a sqlite database, if one isn’t present.
+- It should also create a table in the database, where the habit will be logged.
+- The users should be able to insert, delete, update and view their logged habit.
+- You should handle all possible errors so that the application never crashes.
+- You can only interact with the database using ADO.NET. You can’t use mappers such as Entity Framework or Dapper.
+- Your project needs to contain a Read Me file where you'll explain how your app works. Here's a nice example:
+
+## Features
+
+* Console app Menu:
+	
+	- The app contains a menu where the user can navigate by selecting different options.
+	- The main menu can lead to other submenu depending on the option selected.
+	- After completing a task or handling an error, the console is cleared and the main menu is reprinted.
+
+* SqLite database:
+	
+	- A database is created in the same folder as the program if it does not exist, else it is automatically used as connection path
+	- All sql queries are done using sqlite, noly tools/classes to read and execute them are used
+
+* Main menu:
+	
+	- The main menu let the user choose between several option
+	- Some of the options have submenus in order to execute more precise tasks
+	- User can do diverse CRUD entries with varied options
+	- The app can only be exited by the main menu option "0"
+
+* Function:
+	
+	- The functions are ordered by the kind of utility they have
+	- The bigger functions are at the top
+	- A class has been done to autofill the database with a hundred records when it contains no table
+	for testing purpose.
+
+## Challenges
+
+	- It is my third project for thecsharpacademy, I tried to do it the more complete way possible
+	- It was my first time working with a database, I had to learn basic sql/sqlite
+	- I had some trouble dealing with sqlite syntax do to it being new to me
+	- At first, it was complicated to mix both languages (c# and sqlite)
+	- While coding I saw that many things were repeated with slight differences, I tried to make functions 
+	to handle it, I may have done too much function
+	- I also had to learn about sqlinjection and I tried to prevent it by using parametrized queries and
+	by restricting how values are inputed by the user
+
+## Lessons Learned
+
+	- I've learned how to use sql/sqlite and how to retrieve and work with data from a database
+	- I've learned how to use the tools avalaible in c# to work with database and sql/sqlite
+	- I've learned to restrict user inputs to have expected results
+	- I've learned to apply some try/catch for error handling and preventing the app from crashing
+	- I've learned to work a bit with DateTime type in order to work with specficly formated data
+	- I've learned to access a specific folder and deal with files based on how the apps folder is shaped
+	- I've learned to use reader and and how the data is handled by it
+
+## Areas to improve
+
+	- I am not clear as if my code is well written or not, if it's readable by others and if it's fast enough
+	- Understand more how the code is processed by the computer even if this project made me learn many things about it
+	- Make a better plan to build the app, plannig steps more precisely, planning the time necessary to do it
+	- Diverse the way I'm coding, be able to see how to code from different angles and add variety to my way of coding
+	- Many other things but I can't tell as of now
+
+## Resources
+
+	- Microsoft learn (learn.microsoft.com) to see what the class are and their properties and methods and how to use them
+	- Microsoft learn to 
+	- Stackoverflow (stackoverflow.com)  for some detailed thing to understand how they work, but I then write them by my own with
+	what I understood from the informations I've read
+	- Codewars (codewars.com) to learn basic sql queries and complete some challenges related to the topic
+	- SQLite Tutorial (sqlitetutorial.net) to understand and see more deeply how sql queries work and understand sql syntax better
+	- Reintech media (reintech.io) to understand how parametrized queries work and how to use them in the code
+
+## Greetings
+
+Thank you for whoever is reading and/or reviewing my work.
+We are lucky people like you are investing their time for the newcomers, wish you all the good.
