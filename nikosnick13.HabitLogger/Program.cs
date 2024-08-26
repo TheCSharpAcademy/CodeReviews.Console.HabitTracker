@@ -38,14 +38,14 @@ namespace nikosnick13.HabitLogger
 
             }
 
-            userInput();
+            UserInput();
 
             ReadKey();
 
         }
 
         //USER INPUT MENY
-        public static void userInput()
+        public static void UserInput()
         {
             Clear();
             ForegroundColor = ConsoleColor.Green;
@@ -54,7 +54,7 @@ namespace nikosnick13.HabitLogger
 
             while (!isAppRunning)
             {
-                //WriteLine("============================================");
+               
                 WriteLine("\n\nMAIN Menu");
                 WriteLine("\nWhat would you like to do?");
                 WriteLine("\n\tType 0 to Close Application.");
@@ -64,14 +64,14 @@ namespace nikosnick13.HabitLogger
                 WriteLine("\tType 4 to Update a Record");
                 WriteLine("============================================\n");
 
-                string userInput = ReadLine();
+                string UserInput = ReadLine();
 
-                switch (userInput)
+                switch (UserInput)
                 {
                     case "0":
                         WriteLine("\nGoodbye!! \n");
                         isAppRunning = true;
-                        //Environment.Exit(0);
+                        Environment.Exit(0);
                         break;
                     case "1":
                         Insert();
@@ -121,7 +121,7 @@ namespace nikosnick13.HabitLogger
 
             string dateInput = ReadLine();
 
-            if (dateInput == "0") userInput();
+            if (dateInput == "0") UserInput();
 
             //Validation input for date
             while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", new CultureInfo("en-US"),DateTimeStyles.None,out _)) 
@@ -148,7 +148,7 @@ namespace nikosnick13.HabitLogger
                 quantityInput = Console.ReadLine();
             }
 
-            if (quantityInput == "0") userInput();
+            if (quantityInput == "0") UserInput();
 
             int finalQuantity = Convert.ToInt32(quantityInput);
 
@@ -189,7 +189,7 @@ namespace nikosnick13.HabitLogger
 
                                 Quantity = reader.GetInt32(2)
                             });
-                        // Console.WriteLine(String.Format("{0}", reader[0]));
+                        
                     }
                     foreach (var a in tableData)
                     {
@@ -233,7 +233,7 @@ namespace nikosnick13.HabitLogger
                 }
             }
             WriteLine($"\t\n\nThe record with id {grapId}  was delete \n\n");
-            userInput();
+            UserInput();
         }
 
 
@@ -263,7 +263,7 @@ namespace nikosnick13.HabitLogger
                      
                     WriteLine($"\n\n Record with id {grapId} doesen't exist");
                     conn.Close();
-                   // ReadKey();
+                    ReadKey();
                     Updade();
                 }
 
