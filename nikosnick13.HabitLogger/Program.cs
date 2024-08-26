@@ -1,8 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Collections.Concurrent;
 using System.Data;
 using System.Globalization;
-using System.Reflection;
 using static System.Console;
 
 namespace nikosnick13.HabitLogger
