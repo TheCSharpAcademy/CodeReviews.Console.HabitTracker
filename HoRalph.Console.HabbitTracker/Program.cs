@@ -3,20 +3,16 @@ using Microsoft.Data.Sqlite;
 
 namespace habit_tracker
 {
-
 class Program
 {
     public static string connectionString = @"Data Source = habit-Tracker.db";
     static void Main(string[] args)
     {
         string?result="";
-        
-
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-
             tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS HABIT (
                                     HabitID INTEGER PRIMARY KEY AUTOINCREMENT,
                                     Date TEXT,
@@ -25,12 +21,7 @@ class Program
                                     Quantity INTEGER)";
 
             tableCmd.ExecuteNonQuery();
-            
             connection.Close();
-
-
-        
-
         }
         bool exitApp = false;
         while(!exitApp)
@@ -48,7 +39,6 @@ class Program
             ");
             Console.WriteLine("------------------------------------------");
             result = Console.ReadLine();
-
             while(!int.TryParse(result,out int choice))
             {
                 Console.WriteLine("Invalid Input! Please try again.");
@@ -59,7 +49,6 @@ class Program
             {
                 case "0":
                 return;
-                
 
                 case "1": //view all records
                 ViewAll();
@@ -83,24 +72,17 @@ class Program
 
                 default:
                 break;
-
             }
         }
     }
-
     static void ViewAll()
     {
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = @"SELECT * FROM HABIT;";
-            
             SqliteDataReader reader = tableCmd.ExecuteReader();
-
-            
-
             if (reader.HasRows)
             {
                 for (int i = 0; i < reader.FieldCount; i++)
@@ -109,7 +91,6 @@ class Program
                     Console.Write("|");
                 }
                 Console.WriteLine();
-              
                 while(reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
@@ -119,34 +100,25 @@ class Program
                     }
                     Console.WriteLine();
                 }
-
             }
-            
-            
-
             else
-                Console.WriteLine("Empty  table.");
-
+                {
+                    Console.WriteLine("Empty  table.");
+                }
             reader.Close();
             connection.Close();
             Console.WriteLine("\n\n Press any key to return to the menu.");
             Console.ReadLine();
-
         }
     }
-
     static void InsertRecord()
     {
-
         bool validDate = false;
         string?date="";
-
         while (!validDate)
         {
-
             Console.WriteLine("Enter a date (MM/DD/YYYY). (Enter blank to default to Today' date)");
             date = Console.ReadLine();
-
             if(DateTime.TryParse(date, out DateTime value))
             {
                 validDate = true;
@@ -160,67 +132,45 @@ class Program
             {
                 Console.WriteLine("Invalid Date. Please re-enter");
             }
-    
         }
-
-        
         Console.WriteLine("Enter a habit.");
         string?habit = Console.ReadLine();
-
         Console.WriteLine("Enter the unit.");
         string?units = Console.ReadLine();
-
         Console.WriteLine("Enter the quantity.");
         string?quantity = Console.ReadLine();
-        
         while (!int.TryParse(quantity,out int result))
         {
             Console.WriteLine("Invalid Number");
             quantity = Console.ReadLine();
         }
-
-        
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = @$"INSERT INTO HABIT (Date, Habit, Units, Quantity)
                                     VALUES ('{date}', '{habit}', '{units}', {quantity});";
-
             tableCmd.ExecuteNonQuery();
             connection.Close();
         }
     }
-
-
     static void DeleteTable()
     {
-
-
-
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = @"DROP TABLE HABIT;";
-
             tableCmd.ExecuteNonQuery();
             connection.Close();
-
         }
-
     }
     static void DeleteRecord()
     {
-
         string dateDelete = null;
         bool validDate = false;
-        
         while (!validDate)
         {
-
             Console.WriteLine("Enter a date (MM/DD/YYYY).");
             dateDelete = Console.ReadLine();
 
@@ -232,17 +182,12 @@ class Program
             {
                 Console.WriteLine("Invalid Date. Please re-enter");
             }   
-
-        }
-        
-        
+        }       
         Console.WriteLine("Enter Habit. (leave blank if delete all records with specified date)");
         string?habitDelete =Console.ReadLine();
-        
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-            
             var tableCmd = connection.CreateCommand();
             if ((habitDelete == "") || (habitDelete == null))
             {
@@ -254,27 +199,16 @@ class Program
                 tableCmd.CommandText = @$"DELETE FROM HABIT
                 WHERE date = '{dateDelete}' AND habit = '{habitDelete}';";
             }
-            
-
             tableCmd.ExecuteNonQuery();
             connection.Close();
-
         }
-
     }
-
-
-
-
  static void UpdateRecord()
     {
-
         string?dateUpdate = null;
-        bool validDate = false;
-        
+        bool validDate = false;      
         while (!validDate)
         {
-
             Console.WriteLine("Enter a date (MM/DD/YYYY).");
             dateUpdate = Console.ReadLine();
 
@@ -286,20 +220,13 @@ class Program
             {
                 Console.WriteLine("Invalid Date. Please re-enter");
             }   
-
-        }
-        
-        
+        }     
         Console.WriteLine("Enter Habit. (leave blank if update all records with specified date)");
         string?habitUpdate =Console.ReadLine();
-        
-
         Console.WriteLine("Enter the new unit. (leave blank if don't update unit)");
         string?unitUpdate = Console.ReadLine();
-
         Console.WriteLine("Enter the new Quantity. (leave blank if don't update quantity)");
         string?QuantityUpdate = Console.ReadLine();
-
         string?setOne=null;
 
         if (((unitUpdate != null)|| (unitUpdate !="")) && ((QuantityUpdate != null)|| (QuantityUpdate !="")))
@@ -314,12 +241,10 @@ class Program
         {
             setOne = $"SET UNITS = {unitUpdate}";
         }
-  
 
         using(var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-            
             var tableCmd = connection.CreateCommand();
             if ((habitUpdate == "") || (habitUpdate == null))
             {
@@ -333,19 +258,11 @@ class Program
                                         {setOne}                
                                         WHERE date = '{dateUpdate}' AND habit = '{habitUpdate}';";
             }
-            
-
             tableCmd.ExecuteNonQuery();
             connection.Close();
-
         }
-
     }
 }
-
-
-
-
 }
 
 
