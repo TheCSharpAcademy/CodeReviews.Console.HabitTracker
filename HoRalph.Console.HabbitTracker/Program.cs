@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Data.Sqlite;
 
 namespace habit_tracker
@@ -6,6 +7,7 @@ namespace habit_tracker
 class Program
 {
     public static string connectionString = @"Data Source = habit-Tracker.db";
+
     static void Main(string[] args)
     {
         string?result="";
@@ -115,11 +117,13 @@ class Program
     {
         bool validDate = false;
         string?date="";
+        string[] dateFormats = {"MM/dd/yyyy"};
+        CultureInfo enUS = new CultureInfo("en-US");
         while (!validDate)
         {
             Console.WriteLine("Enter a date (MM/DD/YYYY). (Enter blank to default to Today' date)");
             date = Console.ReadLine();
-            if(DateTime.TryParse(date, out DateTime value))
+            if(DateTime.TryParseExact(date, dateFormats, enUS, DateTimeStyles.None,out DateTime value))
             {
                 validDate = true;
             }
@@ -169,12 +173,14 @@ class Program
     {
         string dateDelete = null;
         bool validDate = false;
+        string[] dateFormats = {"MM/dd/yyyy"};
+        CultureInfo enUS = new CultureInfo("en-US");
         while (!validDate)
         {
             Console.WriteLine("Enter a date (MM/DD/YYYY).");
             dateDelete = Console.ReadLine();
 
-            if(DateTime.TryParse(dateDelete, out DateTime value))
+            if(DateTime.TryParseExact(dateDelete, dateFormats,enUS, DateTimeStyles.None ,out DateTime value))
             {
                 validDate = true;
             }
@@ -206,13 +212,15 @@ class Program
  static void UpdateRecord()
     {
         string?dateUpdate = null;
-        bool validDate = false;      
+        bool validDate = false;   
+        string[] dateFormats = {"MM/dd/yyyy"};
+        CultureInfo enUS = new CultureInfo("en-US");   
         while (!validDate)
         {
             Console.WriteLine("Enter a date (MM/DD/YYYY).");
             dateUpdate = Console.ReadLine();
 
-            if(DateTime.TryParse(dateUpdate, out DateTime value))
+            if(DateTime.TryParseExact(dateUpdate, dateFormats, enUS, DateTimeStyles.None,out DateTime value))
             {
                 validDate = true;
             }
