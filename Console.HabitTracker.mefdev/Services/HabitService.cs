@@ -32,7 +32,7 @@ namespace HabitLogger.Services
         {
             return _repository.Retrieve(id);
         }
-        public List<Habit> GetALLHabits()
+        public List<Habit> GetAllHabits()
         {
             return _repository.RetrieveAllHabits();
         }

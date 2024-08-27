@@ -15,8 +15,8 @@ class Application
     private static Message _successMessage;
     private static ErrorsLogger _errorLogger;
     private static SpeechRecognizer recognizer;
-    private static bool quit = false;
-    private static bool useSpeechRecognition = false;
+    private static bool quit;
+    private static bool useSpeechRecognition;
     const string DBNAME = "habit.db";
 
     private async static Task Main()
@@ -283,7 +283,7 @@ class Application
     }
     private static void ViewAllHabits()
     {
-        List<Habit> habits = _habitService.GetALLHabits();
+        List<Habit> habits = _habitService.GetAllHabits();
         DisplayHabits(habits);
     }
 
