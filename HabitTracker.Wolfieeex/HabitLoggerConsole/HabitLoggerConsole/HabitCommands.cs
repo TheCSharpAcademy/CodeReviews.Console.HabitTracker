@@ -2,12 +2,14 @@
 using Microsoft.Data.Sqlite;
 using HabitLoggerConsole.HabitUpdates;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HabitLoggerConsole;
 
 internal class HabitCommands
 {
     private static char exitChar = 'E';
+
     internal static void InsertHabit()
     {
         bool exitFunction = false;
@@ -44,9 +46,9 @@ internal class HabitCommands
         int measurementTypeLength = sortedMeasurements.Length;
         int userInput = 0;
         exitFunction = Program.AssignSelectionInput(ref userInput, 1, measurementTypeLength, skipSelection: exitChar);
-        if (exitFunction) 
-        { 
-            return; 
+        if (exitFunction)
+        {
+            return;
         }
         measurementType = sortedMeasurements[userInput - 1];
         string stringMeasurementType = Enum.GetName(typeof(MeasurementType), measurementType);
@@ -70,6 +72,7 @@ internal class HabitCommands
             connection.Close();
         }
     }
+
     internal static void ViewAllHabits()
     {
         Console.WriteLine("You are currently viewing all habits you have previously started.\n");
@@ -98,7 +101,7 @@ internal class HabitCommands
                 int paddingLength = 25;
                 while (reader.Read())
                 {
-                    if(reader.GetString(0).Length > paddingLength)
+                    if (reader.GetString(0).Length > paddingLength)
                         paddingLength = reader.GetString(0).Length;
                 }
                 if (paddingLength > 20)
@@ -108,6 +111,7 @@ internal class HabitCommands
                 reader = tableCmd.ExecuteReader();
 
                 Console.WriteLine($"{"Number of entries: ".PadRight(paddingLength)}Habit name:");
+                int counter = 0;
                 while (reader.Read())
                 {
                     if (reader.GetString(0) == "sqlite_sequence")
@@ -133,139 +137,57 @@ internal class HabitCommands
         Console.Write($"\nPlease press any key to return to the main menu: ");
         Console.ReadKey();
     }
+
     internal static void UpdateHabit()
     {
         while (true)
         {
-            using (var connection = new SqliteConnection(Program.connectionString))
+            bool shouldExit;
+            string updatingHabit;
+
+            shouldExit = SelectUpdatingHabit(out updatingHabit, exitChar);
+            if (shouldExit)
             {
-                connection.Open();
-
-                var command = connection.CreateCommand();
-
-                command.CommandText = $"SELECT name FROM sqlite_master WHERE type = 'table'";
-
-                SqliteDataReader reader = command.ExecuteReader();
-
-                if (!reader.HasRows)
-                {
-                    Console.WriteLine("You have no habits you can update! Please press any key to return to the main menu: ");
-                    Console.ReadKey();
-                    connection.Close();
-                    return;
-                }    
-
-                Console.WriteLine("You are currently updating one of your habits.");
-                Console.WriteLine("Below is the full list of the ones you have started to track: \n");
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-                Console.WriteLine();
-
-                int counter = 0;
-                List<string> habitNames = new List<string>();
-
-                while (reader.Read())
-                {
-                    if (reader.GetString(0) == "sqlite_sequence")
-                        continue;
-
-                    counter ++;
-                    habitNames.Add(reader.GetString(0));
-
-                    string displayableName = TableNameToDisplayableFormat(reader.GetString(0));
-                    Console.WriteLine($"{counter}) {displayableName}");
-                }
-
-                Console.WriteLine();
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-                Console.WriteLine();
-                Console.WriteLine("Please select the index number of the habit you'd like to update.");
-                Program.InsertExitPrompt(exitChar);
-
-                int selectionInput = 0;
-                bool shouldExit = Program.AssignSelectionInput(ref selectionInput, 1, counter, skipSelection: exitChar);
-                if (shouldExit)
-                {
-                    connection.Close();
-                    return;
-                }
-
-                string updatingHabit = habitNames[selectionInput - 1];
-                shouldExit = HabitUpdate.RunHabitUpdateMenu(updatingHabit, connection, exitChar);
-                if (shouldExit)
-                {
-                    connection.Close();
-                    return;
-                }
-                Console.Clear();
+                return;
             }
+
+            shouldExit = HabitUpdate.RunHabitUpdateMenu(updatingHabit, exitChar);
+            if (shouldExit)
+            {
+                return;
+            }
+            Console.Clear();
         }
     }
+
     internal static void DeleteHabit()
     {
         while (true)
         {
-            using (var connection = new SqliteConnection(Program.connectionString))
+            string deletionHabit = "";
+
+            bool shouldExit = SelectUpdatingHabit(out deletionHabit, exitChar);
+            if (shouldExit)
             {
-                connection.Open();
+                return;
+            }
 
-                var command = connection.CreateCommand();
+            Console.Clear();
+            Console.Write($"You are now deleting ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"{TableNameToDisplayableFormat(deletionHabit).ToLower()}");
+            Console.ResetColor();
+            Console.WriteLine($" habit and its all records.");
+            Console.Write($"Are you sure you want to continue?: Y - Yes/N - No. Type in your option: ");
 
-                command.CommandText = $"SELECT name FROM sqlite_master WHERE type = 'table'";
-
-                SqliteDataReader reader = command.ExecuteReader();
-
-                if (!reader.HasRows)
+            while (true)
+            {
+                using (var connection = new SqliteConnection(Program.connectionString))
                 {
-                    Console.WriteLine("You have no habits to delete. Please press any key to return to the main menu: ");
-                    Console.ReadKey();
-                    connection.Close();
-                    return;
-                }
+                    connection.Open();
 
-                Console.WriteLine("You are currently on a deletion menu.");
-                Console.WriteLine("Below is the full list of the ones you have started to track: \n");
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-                Console.WriteLine();
+                    var command = connection.CreateCommand();
 
-                int counter = 0;
-                List<string> habitNames = new List<string>();
-
-                while (reader.Read())
-                {
-                    if (reader.GetString(0) == "sqlite_sequence")
-                        continue;
-
-                    counter++;
-                    habitNames.Add(reader.GetString(0));
-
-                    string displayableName = TableNameToDisplayableFormat(reader.GetString(0));
-                    Console.WriteLine($"{counter}) {displayableName}");
-                }
-
-                reader.Close();
-
-                Console.WriteLine();
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-                Console.WriteLine();
-                Console.WriteLine("Please select the index number of the habit you'd like to delete permanently.");
-                Program.InsertExitPrompt(exitChar);
-
-                int selectionInput = 0;
-                bool shouldExit = Program.AssignSelectionInput(ref selectionInput, 1, counter, skipSelection: exitChar);
-                if (shouldExit)
-                {
-                    connection.Close();
-                    return;
-                }
-
-                string deletionHabit = habitNames[selectionInput - 1];
-
-                Console.Clear();
-                Console.WriteLine($"You are now deleting {deletionHabit} habit and its all records.");
-                Console.Write($"Are you sure you want to continue?: Y - Yes/N - No. Type in your option: ");
-
-                while (true)
-                {
                     string answer = Console.ReadLine().ToString().ToLower();
                     if (answer == "y")
                     {
@@ -320,5 +242,69 @@ internal class HabitCommands
         tableName = tableName.Replace("_", " ");
         tableName = tableName[0].ToString().ToUpper() + tableName.Substring(1);
         return tableName;
-    } 
+    }
+
+    internal static bool SelectUpdatingHabit(out string updatingHabit, char exitChar)
+    {
+        updatingHabit = "";
+
+        using (var connection = new SqliteConnection(Program.connectionString))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+
+            command.CommandText = $"SELECT name FROM sqlite_master WHERE type = 'table'";
+
+            SqliteDataReader reader = command.ExecuteReader();
+
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("You have no habits you can update! Please create one before you can use this function.");
+                Console.WriteLine("Press any key to return to the main menu: ");
+                Console.ReadKey();
+                connection.Close();
+                return true;
+            }
+
+            Console.WriteLine("You are currently updating one of your habits.");
+            Console.WriteLine("Below is the full list of the ones you have started to track: \n");
+            Console.WriteLine($"{new string('-', Console.BufferWidth)}");
+            Console.WriteLine();
+
+            int counter = 0;
+            List<string> habitNames = new List<string>();
+
+            while (reader.Read())
+            {
+                if (reader.GetString(0) == "sqlite_sequence")
+                    continue;
+
+                counter++;
+                habitNames.Add(reader.GetString(0));
+
+                string displayableName = TableNameToDisplayableFormat(reader.GetString(0));
+                Console.WriteLine($"{counter}) {displayableName}");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"{new string('-', Console.BufferWidth)}");
+            Console.WriteLine();
+            Console.WriteLine("Please select the index number of the habit you'd like to update.");
+            Program.InsertExitPrompt(exitChar);
+
+            connection.Close();
+
+            int selectionInput = 0;
+            bool shouldExit = Program.AssignSelectionInput(ref selectionInput, 1, counter, skipSelection: exitChar);
+
+            if (shouldExit)
+            {
+                return true;
+            }
+
+            updatingHabit = habitNames[selectionInput - 1];
+            return false;
+        }
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
-using HabitLoggerConsole;
 using System.Globalization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System;
 
 namespace HabitLoggerConsole;
 
@@ -9,32 +9,43 @@ internal class RecordCommands
 {
     private static char exitChar = 'E';
 
-    internal static Dictionary<int, int> GetAllRecords(bool pauseScreening)
+    internal static Dictionary<int, int> GetAllRecords(bool pauseScreening, string habit)
     {
         using (var connection = new SqliteConnection(Program.connectionString))
         {
             connection.Open();
+
             var tableCmd = connection.CreateCommand();
+
             int lastRowIndex = 0;
 
-            tableCmd.CommandText = $"SELECT * FROM going_to_gym";
+            tableCmd.CommandText = $"SELECT * FROM '{habit}'";
 
-            List<GoingToGym> tableData = new(); 
+            string? measurementType = null;
+            string? habitName = null;
+            List<DataRetreive> tableData = new(); 
             Dictionary<int, int>? idMap = new Dictionary<int, int>();
 
             SqliteDataReader reader = tableCmd.ExecuteReader();
 
             if (reader.HasRows)
             {
+                bool accessOnce = true;
                 while (reader.Read())
                 {
+                    if (accessOnce)
+                    {
+                        accessOnce = false;
+                        measurementType = reader.GetName(3);
+                        habitName = reader.GetName(2);
+                    }
                     lastRowIndex++;
                     tableData.Add(
-                        new GoingToGym
+                        new DataRetreive
                         {
                             Id = reader.GetInt32(0),
-                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-GB")),
-                            Sets = reader.GetInt32(2)
+                            Date = reader.GetString(1),
+                            HabitTracked = reader.GetInt32(2)
                         });
 
                     idMap.Add(lastRowIndex, reader.GetInt32(0));
@@ -60,7 +71,10 @@ internal class RecordCommands
             foreach (var dw in tableData)
             {
                 lastRowIndex++;
-                Console.WriteLine($"{lastRowIndex} - {dw.Date.ToString("dd-MMM-yyyy")} - Sets: {dw.Sets}");
+                Console.Write($"{(lastRowIndex + " - " + dw.Date).PadRight(40)} - {HabitCommands.TableNameToDisplayableFormat(habitName)}: {dw.HabitTracked}");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"{measurementType}");
+                Console.ResetColor();
             }
             Console.WriteLine();
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
@@ -74,7 +88,7 @@ internal class RecordCommands
             return idMap;
         }
     }
-    internal static void Insert()
+    internal static void Insert(string habit)
     {
         string date = GetDateInput();
         if (date.ToLower() == exitChar.ToString().ToLower())
@@ -84,11 +98,11 @@ internal class RecordCommands
 
         Console.Clear();
 
-        int numberOfSets = 0;
-        Console.WriteLine("Please insert number of sets perfromed during the exercise.");
+        int valueAchieved = 0;
+        Console.WriteLine("Please insert the value achieved you want to track.");
         Program.InsertExitPrompt(exitChar);
 
-        bool shouldExitToMenu = Program.AssignSelectionInput(ref numberOfSets, 0, 999, skipSelection: exitChar);
+        bool shouldExitToMenu = Program.AssignSelectionInput(ref valueAchieved, 0, 9999999, skipSelection: exitChar);
         if (shouldExitToMenu)
         {
             return;
@@ -97,20 +111,30 @@ internal class RecordCommands
         using (var connection = new SqliteConnection(Program.connectionString))
         {
             connection.Open();
+
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"INSERT INTO going_to_gym(Date, Sets) VALUES('{date}', '{numberOfSets}')";
+            tableCmd.CommandText = $"SELECT * FROM '{habit}'";
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            string habitTrackingName = reader.GetName(2);
+
+            reader.Close();
+
+            tableCmd.CommandText = $"INSERT INTO '{habit}'(Date, '{habitTrackingName}') VALUES('{date}', '{valueAchieved}')";
+
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
     }
-    internal static void Delete()
+    internal static void Delete(string habit)
     {
         bool executeProgram = true;
         while (executeProgram)
         {
-            var idMap = GetAllRecords(false);
+            var idMap = GetAllRecords(false, habit);
 
             if (idMap == null)
             {
@@ -135,7 +159,7 @@ internal class RecordCommands
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
 
-                tableCmd.CommandText = $"DELETE FROM going_to_gym WHERE Id = '{rowCount}'";
+                tableCmd.CommandText = $"DELETE FROM '{habit}' WHERE Id = '{rowCount}'";
                 rowCount = tableCmd.ExecuteNonQuery();
 
                 connection.Close();
@@ -145,12 +169,12 @@ internal class RecordCommands
             Console.Write($"Record with index {selectedRow} has been deleted.\n");
         }
     }
-    internal static void Update()
+    internal static void Update(string habit)
     {
         bool executeProgram = true;
         while (executeProgram)
         {
-            var idMap = GetAllRecords(false);
+            var idMap = GetAllRecords(false, habit);
 
             if (idMap == null)
             {
@@ -170,73 +194,138 @@ internal class RecordCommands
             }
 
             int rowCount = idMap[selectedRow];
+            Console.Clear();
+            shouldExit = RunUpdateMenu(habit, selectedRow, rowCount);
+        }
+    }
+
+    private static bool RunUpdateMenu(string habit, int selectedRow, int rowCount)
+    {
+        bool shouldExit;
+        while (true)
+        {
             using (var connection = new SqliteConnection(Program.connectionString))
             {
                 connection.Open();
 
-                Console.WriteLine();
-                string date = GetDateInput();
-                if (date.ToLower() == exitChar.ToString().ToLower())
-                {
-                    connection.Close();
-                    return;
-                }
+                var tableCmd = connection.CreateCommand();
 
-                int sets = 0;
-                Console.WriteLine("\nPlease insert number of sets perfromed during the exercise.");
-                Program.InsertExitPrompt(exitChar);
-                shouldExit = Program.AssignSelectionInput(ref sets, 1, 999, skipSelection: exitChar);
+                tableCmd.CommandText = $"SELECT * FROM '{habit}' WHERE Id = '{rowCount}'";
+
+                SqliteDataReader reader = tableCmd.ExecuteReader();
+
+                reader.Read();
+                string recordDate = reader.GetString(1);
+                string recordValue = reader.GetString(2);
+                string recordValueName = reader.GetName(2);
+                reader.Close();
+
+                Console.Write($"You are updating ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
+                Console.ResetColor();
+                Console.WriteLine($" habit with record inserted on {System.String.Format(recordDate, "dddd, dd MMMM, yyyy")} with its value {recordValue}.\n");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+                Console.WriteLine("0 - Update date");
+                Console.WriteLine("1 - Update value achieved\n");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+                Program.InsertExitPrompt(exitChar, backMenuAlteration: true);
+
+                int userInput = -1;
+                shouldExit = Program.AssignSelectionInput(ref userInput, 0, 1, skipSelection: exitChar);
                 if (shouldExit)
                 {
                     connection.Close();
-                    return;
+                    break;
                 }
 
-                var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"UPDATE going_to_gym SET Date = '{date}', Sets = '{sets}' WHERE Id = '{rowCount}'";
-                tableCmd.ExecuteNonQuery();
+                switch (userInput)
+                {
+                    case 0:
+                        Console.Clear();
+                        string date = GetDateInput();
+                        if (date.ToLower() == exitChar.ToString().ToLower())
+                        {
+                            Console.Clear();
+                            break;
+                        }
 
+                        tableCmd.CommandText = $"UPDATE '{habit}' SET Date = '{date}' WHERE Id = '{rowCount}'";
+                        tableCmd.ExecuteNonQuery();
+
+                        Console.Clear();
+                        Console.WriteLine($"Record with index {selectedRow} has been updated.\n");
+
+                        break;
+                    case 1:
+                        Console.Clear();
+                        int updatedValueAchieved = 0;
+                        Console.WriteLine("Please insert an updated value that was achieved on that time.");
+                        Program.InsertExitPrompt(exitChar);
+                        shouldExit = Program.AssignSelectionInput(ref updatedValueAchieved, 1, 9999999, skipSelection: exitChar);
+                        if (shouldExit)
+                        {
+                            Console.Clear();
+                            break;
+                        }
+                        tableCmd.CommandText = $"UPDATE '{habit}' SET '{recordValueName}' = '{updatedValueAchieved}' WHERE Id = '{rowCount}'";
+                        tableCmd.ExecuteNonQuery();
+
+                        Console.Clear();
+                        Console.WriteLine($"Record with index {selectedRow} has been updated.\n");
+
+                        break;
+                }
                 connection.Close();
             }
-
-            Console.Clear();
-            Console.WriteLine($"Record with index {selectedRow} has been updated.");
         }
+        return shouldExit;
     }
 
     private static string GetDateInput()
     {
-        Console.WriteLine("Please insert the date of the operation (Format that is accepted: dd-mm-yyyy).");
+        Console.WriteLine("Please insert the date of the operation, or type in \"Now\" to accept today's date instead:");
         Program.InsertExitPrompt(exitChar);
 
         string? dateInput = Console.ReadLine();
         string optional = exitChar.ToString().ToLower();
 
-        while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out _) && dateInput.ToLower() != optional)
+        while (!DateTime.TryParse(dateInput, out _) && dateInput.ToLower() != optional && dateInput.ToLower() != "now")
         {
             Console.SetCursorPosition(0, Console.CursorTop - 1);
             Console.Write($"{new string(' ', Console.BufferWidth)}");
             Console.SetCursorPosition(0, Console.CursorTop);
 
-            Console.Write($"Invalid option. Please insert a date in a correct format or choose '{exitChar}' to return to main menu: ");
+            Console.Write($"Invalid option. Please insert a date in a correct format, or type in \"Now\" to accept today's date: ");
             dateInput = Console.ReadLine();
+        }
+
+        if (dateInput.ToLower() == "now")
+        {
+            dateInput = DateTime.Now.ToString();
+        }
+
+        if (dateInput.ToLower() != optional)
+        {
+            var date = DateTime.Parse(dateInput, new CultureInfo("en-GB"), DateTimeStyles.None);
+            dateInput = date.ToString("dddd, dd MMMM, yyyy");
         }
 
         return dateInput;
     }
 }
 
-public class GoingToGym
+public class DataRetreive
 {
     public int Id
     {
         get; set;
     }
-    public DateTime Date
+    public string Date
     {
         get; set;
     }
-    public int Sets
+    public int HabitTracked
     {
         get; set;
     }

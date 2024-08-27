@@ -5,63 +5,77 @@ namespace HabitLoggerConsole.HabitUpdates;
 
 internal class HabitUpdate
 {
-    internal static bool RunHabitUpdateMenu(string habit, SqliteConnection connection, char exitChar)
+    internal static bool RunHabitUpdateMenu(string habit, char exitChar)
     {
-        string habitTrakced = habit;
-        bool runUpdateLoop = true;
-        while (runUpdateLoop)
+        using (var connection = new SqliteConnection(Program.connectionString))
         {
-            Console.Clear();
-            Console.WriteLine($"You are currently updating {HabitCommands.TableNameToDisplayableFormat(habitTrakced).ToLower()} habit.");
-            Console.WriteLine("Please choose one of the options listed below. \n");
-            Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-            Console.WriteLine("\n0 - Chose another habit to update");
-            Console.WriteLine("1 - Rename the habit");
-            Console.WriteLine("2 - Select another measurement type");
-            Console.WriteLine("3 - Rename what you are tracking\n");
-            Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-            Console.WriteLine();
-            Program.InsertExitPrompt(exitChar);
+            connection.Open(); 
 
-            int selectionInput = 0;
-            bool shouldExit = Program.AssignSelectionInput(ref selectionInput, 0, 3, skipSelection: exitChar);
-            if (shouldExit)
+            string habitTrakced = habit;
+            bool runUpdateLoop = true;
+            while (runUpdateLoop)
             {
-                connection.Close();
-                return true;
-            }
+                Console.Clear();
+                Console.Write($"You are currently updating ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitTrakced).ToLower()}");
+                Console.ResetColor();
+                Console.WriteLine($" habit.");
+                Console.WriteLine("Please choose one of the options listed below. \n");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
+                Console.WriteLine("\n0 - Chose another habit to update");
+                Console.WriteLine("1 - Rename the habit");
+                Console.WriteLine("2 - Select another measurement type");
+                Console.WriteLine("3 - Rename what you are tracking\n");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
+                Console.WriteLine();
+                Program.InsertExitPrompt(exitChar);
 
-            switch (selectionInput)
-            {
-                case 0:
-                    runUpdateLoop = false;
-                    break;
-                case 1:
-                    Console.Clear();
-                    habitTrakced = UpdateTableName(habitTrakced, connection, exitChar);
-                    break;
-                case 2:
-                    Console.Clear();
-                    UpdateMeasurementType(habitTrakced, connection, exitChar);
-                    break;
-                case 3:
-                    Console.Clear();
-                    UpdateColumnName(habitTrakced, connection, exitChar);
-                    break;
+                int selectionInput = 0;
+                bool shouldExit = Program.AssignSelectionInput(ref selectionInput, 0, 3, skipSelection: exitChar);
+                if (shouldExit)
+                {
+                    connection.Close();
+                    return true;
+                }
+
+                switch (selectionInput)
+                {
+                    case 0:
+                        connection.Close();
+                        runUpdateLoop = false;
+                        break;
+                    case 1:
+                        Console.Clear();
+                        habitTrakced = UpdateTableName(habitTrakced, connection, exitChar);
+                        break;
+                    case 2:
+                        Console.Clear();
+                        UpdateMeasurementType(habitTrakced, connection, exitChar);
+                        break;
+                    case 3:
+                        Console.Clear();
+                        UpdateColumnName(habitTrakced, connection, exitChar);
+                        break;
+                }
             }
+            return false;
         }
-        return false;
     }
 
     private static string UpdateTableName(string habit, SqliteConnection connection, char exitChar)
     {
         string? name = null;
 
-        Console.WriteLine($"Please chose a new name for the {HabitCommands.TableNameToDisplayableFormat(habit).ToLower()} habit.\n");
+        Console.Write($"Please chose a new name for the ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
+        Console.ResetColor();
+        Console.WriteLine($" habit.\n");
         Program.InsertExitPrompt(exitChar, backMenuAlteration: true);
         while (true)
         {
-            bool exitFunction = Program.AssingNameInput(ref name, "Your name must not be empty. Please, try inserting the habit's name again: ", exitChar: exitChar, excludeSymbols: true);
+            bool exitFunction = Program.AssingNameInput(ref name, "Your name must not be empty. Please, try inserting it again: ", exitChar: exitChar, excludeSymbols: true);
             if (exitFunction)
             {
                 return habit;
@@ -96,7 +110,15 @@ internal class HabitUpdate
 
         string measurementFullName = MeasurementUnits.MeasurementFullName[(MeasurementType)Enum.Parse(typeof(MeasurementType), columnName)];
 
-        Console.WriteLine($"Currently the measurement type for the {HabitCommands.TableNameToDisplayableFormat(habit).ToLower()} is {measurementFullName}. Please choose a new one from those that are listed below:");
+        Console.Write($"Currently the measurement type for the ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
+        Console.ResetColor();
+        Console.Write($" is ");
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(measurementFullName).ToLower()}");
+        Console.ResetColor();
+        Console.WriteLine($". Please choose a new one from those that are listed below: ");
         var listOfMeasurements = MeasurementUnits.DisplayMeasurements();
         Console.WriteLine();
         Console.WriteLine($"{new string('-', Console.BufferWidth)}");
@@ -142,7 +164,15 @@ internal class HabitUpdate
 
         reader.Close();
 
-        Console.WriteLine($"On your {HabitCommands.TableNameToDisplayableFormat(habit).ToLower()} habit your are currently tracking {columnName}. If you want, you can rename the name of this value.");
+        Console.Write($"On your ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
+        Console.ResetColor();
+        Console.Write($" habit your are currently tracking ");
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(columnName).ToLower()}");
+        Console.ResetColor();
+        Console.WriteLine($". If you want, you can rename the name of this value.");
         Program.InsertExitPrompt(exitChar);
 
         while (true)

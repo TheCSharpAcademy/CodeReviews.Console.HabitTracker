@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using HabitLoggerConsole.Models;
+using Microsoft.Data.Sqlite;
 using System.Text.RegularExpressions;
 
 namespace HabitLoggerConsole;
@@ -7,6 +8,9 @@ public class Program
 {
     public static string connectionString { private set; get; } = @"Data Source=HabitLoggerConsole.db";
 
+    static char exitChar = 'E';
+
+    static bool runDeveloperSeedTest = true;
 
     static void Main(string[] args)
     {
@@ -19,6 +23,10 @@ public class Program
             }
             try
             {
+                if (runDeveloperSeedTest)
+                {
+                    DataSeed.CreateTestRecord();
+                }
                 MainMenu();
             }
             catch (Exception ex)
@@ -39,8 +47,6 @@ public class Program
         bool runApp = true;
         while (runApp)
         {
-            Console.Clear();
-
             Console.WriteLine("MAIN MENU:");
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
@@ -50,7 +56,8 @@ public class Program
             Console.WriteLine("3 - Update settings of a habit");
             Console.WriteLine("4 - Stop tracking a habit\n");
             Console.WriteLine("5 - Add, update, view, and delete records of the habit\n");
-            
+            Console.WriteLine("6 - Display a report of the habit\n");
+
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.Write("\nYour input: ");
 
@@ -84,69 +91,90 @@ public class Program
                     Console.Clear();
                     HabitRecordMenu();
                     break;
+                case 6:
+                    Console.Clear();
+                    ReportMenu();
+                    break;
             }
+            Console.Clear();
         }
+    }
+
+    private static void ReportMenu()
+    {
+        throw new NotImplementedException();
     }
 
     private static void HabitRecordMenu()
     {
-        Console.Clear();
-
-        // Adding viewing all existing habits table and input selection with appropriate data validation
-        // for selecting datatable
-
         bool runHabitSelectionPreMenu = true;
         while (runHabitSelectionPreMenu)
         {
+            Console.Clear();
+
+            string? habitName = "";
+
+            bool shouldExit = HabitCommands.SelectUpdatingHabit(out habitName, exitChar);
+            if (shouldExit)
+            {
+                break;
+            }
+
             bool runHabitMenu = true;
             while (runHabitMenu)
             {
                 Console.Clear();
 
-                Console.WriteLine($"YOU ARE CURRENTLY ON ... HABIT. YOU CAN ADD, UPDATE, VIEW, AND DELETE RECORDS:");
-                Console.WriteLine("\nWhat would you like to do?");
+                Console.Write($"You have opened ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName).ToLower()}");
+                Console.ResetColor();
+                Console.WriteLine(" table database.");
+                Console.WriteLine("From here you can create, read, update and delete its records.");
+                Console.WriteLine("\nWhat would you like to do?\n");
                 Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-                Console.WriteLine("\n0 - Go back to the Main menu");
-                Console.WriteLine("1 - Select another habit\n");
-                Console.WriteLine("2 - Insert a record");
-                Console.WriteLine("3 - View all records");
-                Console.WriteLine("4 - Update a record");
-                Console.WriteLine("5 - Delete a record\n");
+                Console.WriteLine("\n0 - Select another habit\n");
+                Console.WriteLine("1 - Insert a record");
+                Console.WriteLine("2 - View all records");
+                Console.WriteLine("3 - Update a record");
+                Console.WriteLine("4 - Delete a record\n");
 
                 Console.WriteLine($"{new string('-', Console.BufferWidth)}");
-                Console.Write("\nYour input: ");
+                InsertExitPrompt(exitChar);
 
                 int userInput = -1;
-                AssignSelectionInput(ref userInput, 0, 5);
+                shouldExit = AssignSelectionInput(ref userInput, 0, 5, skipSelection: exitChar);
+                if (shouldExit)
+                {
+                    runHabitSelectionPreMenu = false;
+                    runHabitMenu = false;
+                    break;
+                }
 
                 switch (userInput)
                 {
                     case 0:
-                        runHabitSelectionPreMenu = false;
                         runHabitMenu = false;
                         break;
                     case 1:
-                        runHabitMenu = false;
+                        Console.Clear();
+                        RecordCommands.Insert(habitName);
                         break;
                     case 2:
                         Console.Clear();
-                        RecordCommands.Insert();
+                        RecordCommands.GetAllRecords(true, habitName);
                         break;
                     case 3:
                         Console.Clear();
-                        RecordCommands.GetAllRecords(true);
+                        RecordCommands.Update(habitName);
                         break;
                     case 4:
                         Console.Clear();
-                        RecordCommands.Update();
-                        break;
-                    case 5:
-                        Console.Clear();
-                        RecordCommands.Delete();
+                        RecordCommands.Delete(habitName);
                         break;
                 }
             }
-        }     
+        }
     }
 
     internal static bool AssingNameInput(ref string input, string failCommand, char? exitChar = null, bool excludeSymbols = false)
@@ -158,7 +186,7 @@ public class Program
             {
                 if (excludeSymbols)
                 {
-                    if (userInput.Any(ch => (! char.IsLetterOrDigit(ch)) && ch != ' '))
+                    if (userInput.Any(ch => (!char.IsLetterOrDigit(ch)) && ch != ' '))
                     {
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
                         Console.Write($"{new string(' ', Console.BufferWidth)}");
@@ -238,11 +266,11 @@ public class Program
             Console.Write(reason + " Please try again to select your option: ");
         }
     }
+    
     internal static void InsertExitPrompt(char exitChar, bool backMenuAlteration = false)
     {
         string returnToWhere = backMenuAlteration ? "previous menu" : "main menu";
         Console.WriteLine($"Optionally, insert '{exitChar}' to return to the {returnToWhere}.");
         Console.Write("\nYour option: ");
     }
-
 }
