@@ -78,7 +78,35 @@ namespace HabitLogger.Data
 
                 }
             }
+            
+        }
+        public List<Habit> RetrieveAllHabits()
+        {
+            List<Habit> habits = new List<Habit>();
+            using (var connection = GetConnection())
+            {
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT id, name, quantity, date FROM habit";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int id = reader.GetInt32(0);
+                            string name = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
+                            string quantity = reader.IsDBNull(2) ? string.Empty : reader.GetString(2);
+                            DateTime date = reader.IsDBNull(3) ? DateTime.MinValue : reader.GetDateTime(3);
 
+                            var habit = new Habit(id, name, quantity, date);
+                            habits.Add(habit);
+                        }
+                           
+                    }
+
+                }
+                
+            }
+            return habits;
         }
 
         public void Update(Habit habit)

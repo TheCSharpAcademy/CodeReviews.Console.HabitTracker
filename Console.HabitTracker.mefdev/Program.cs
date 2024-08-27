@@ -1,34 +1,32 @@
 ﻿using System.Globalization;
-using System.Text.RegularExpressions;
-using ConsoleTableExt;
 using HabitLogger.Models;
 using HabitLogger.Services;
 using HabitLogger.Shared.Logger;
-using Microsoft.CognitiveServices.Speech;
-using Microsoft.CognitiveServices.Speech.Audio;
+using ConsoleTableExt;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
+using System.Text.RegularExpressions;
+
 class Application
 {
     private static HabitService _habitService;
     private static Message _successMessage;
     private static ErrorsLogger _errorLogger;
     private static SpeechRecognizer recognizer;
-    private static bool quit;
-    private static bool useSpeechRecognition;
+    private static bool quit = false;
+    private static bool useSpeechRecognition = false;
     const string DBNAME = "habit.db";
 
     private async static Task Main()
     {
-
+        
         try
         {
-            if (UseAI())
-            {
-                useSpeechRecognition = true;
-            }
             InitializeNeccessaryClasses();
             AddRandomHabits();
+            if (UseAI()) useSpeechRecognition = true;
             while (!quit)
             {
                 await DisplayHabitLoggerMenu();
@@ -96,7 +94,7 @@ class Application
         _habitService = new HabitService(path);
         _successMessage = new Message();
         _errorLogger = new ErrorsLogger();
-        if (useSpeechRecognition) InitializeSpeechRecognition();
+        InitializeSpeechRecognition();
     }
     private static void DisplayMenu()
     {
@@ -107,8 +105,9 @@ class Application
         Console.WriteLine("\tv - View a habit");
         Console.WriteLine("\td - Delete a habit");
         Console.WriteLine("\tu - Update a habit");
+        Console.WriteLine("\ts - View all habits");
         Console.WriteLine("\tq - exit");
-        if (useSpeechRecognition)
+        if(useSpeechRecognition)
         {
             Console.Write("Say your option? ");
         }
@@ -132,7 +131,7 @@ class Application
                 Console.Write($"Enter habit {name}: ");
                 break;
             case "date":
-                Console.Write($"Enter habit start date {name}: ");
+                Console.Write($"Enter start date (yyyy-MM-dd) {name}: ");
                 break;
             default:
                 break;
@@ -152,10 +151,25 @@ class Application
         {
                 new List<object>{ "ID", "NAME", "QUANTITY", "DATE"},
                 new List<object>{ Retrieved.Id, Retrieved.Name, Retrieved.Quantity, Retrieved.Date },
-
+                
         };
         ConsoleTableBuilder
         .From(tableData)
+        .ExportAndWriteLine();
+    }
+    private static void DisplayHabits(List<Habit> habits)
+    {
+        Console.WriteLine("--------------------------- Habits ----------------------------");
+         
+        List<List<object>> habitObjects = new List<List<object>>();
+        foreach (var habit in habits)
+        {
+            habitObjects.Add(new List<object> { habit.Id, habit.Name, habit.Quantity, habit.Date });
+        }
+        
+        ConsoleTableBuilder
+        .From(habitObjects)
+        .WithColumn("ID", "NAME", "QUANTITY", "DATE")
         .ExportAndWriteLine();
     }
 
@@ -163,7 +177,7 @@ class Application
     {
         try
         {
-            return DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
         }
         catch
@@ -179,7 +193,7 @@ class Application
     }
     private static Habit AskUserEnterValues()
     {
-
+         
         Console.WriteLine("-------------------------- Enter habit values --------------------------");
         string name = DisplayAddHabitOptions("name");
         string quantity = DisplayAddHabitOptions("quanity");
@@ -233,9 +247,9 @@ class Application
         if (retrievedHabitToUpdate == null)
         {
             throw new Exception("Habit not found!");
-        }
+        } 
         else return retrievedHabitToUpdate;
-
+       
     }
     private static void DeleteHabit()
     {
@@ -251,14 +265,14 @@ class Application
         updatedHabit.Id = RetrievedHabitToUpdate.Id;
         _habitService.UpdateHabit(updatedHabit);
         _successMessage.Display($"[{RetrievedHabitToUpdate.Name}] has been updated succefullly.");
-
+         
     }
     private static void ViewHabit()
     {
         try
         {
             var RetrievedHabit = RetrieveHabit();
-            if (RetrievedHabit == null)
+            if(RetrievedHabit == null)
                 _errorLogger.DisplayError("Habit not found!");
             else DisplayHabitRetrieved(RetrievedHabit);
         }
@@ -266,6 +280,11 @@ class Application
         {
             Console.WriteLine(ex.Message);
         }
+    }
+    private static void ViewAllHabits()
+    {
+        List<Habit> habits = _habitService.GetALLHabits();
+        DisplayHabits(habits);
     }
 
     private static async Task DisplayNextOptions()
@@ -291,13 +310,16 @@ class Application
                 case "u":
                     UpdateHabit();
                     break;
+                case "s":
+                    ViewAllHabits();
+                    break;
                 default:
                     quit = true;
                     Environment.Exit(0);
                     break;
             }
         }
-
+        
     }
     private static string FilterUserOption(string option)
     {
@@ -307,7 +329,7 @@ class Application
     private static async Task DisplayNextAIOptions()
     {
         var option = await GetRecognizedSpeech();
-        if (option == null)
+        if(option == null)
         {
             _errorLogger.DisplayError("Am I deaf? I heard nothing");
             _errorLogger.DisplayError("bye bye..................");
@@ -328,6 +350,9 @@ class Application
                 break;
             case "update a habit":
                 UpdateHabit();
+                break;
+            case "view all habits":
+                ViewAllHabits();
                 break;
             default:
                 quit = true;

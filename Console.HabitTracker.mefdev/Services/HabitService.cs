@@ -1,47 +1,40 @@
 ﻿using HabitLogger.Data;
 using HabitLogger.Models;
-using HabitLogger.Shared;
-using HabitLogger.Shared.Logger;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace HabitLogger.Services
 {
-    public class HabitService
-    {
-        private readonly HabitRepository _repository;
+	public class HabitService
+	{
+		private readonly HabitRepository _repository;
         public HabitService(string connectionString)
-        {
+		{
             _repository = new HabitRepository(connectionString);
         }
 
         public void AddHabit(Habit habit)
         {
-            if (habit.Date < DateTime.UtcNow)
-            {
-                throw new Exception("Cannot start a habit in the past");
-            }
             if (DuplicateHabit(habit.Id))
             {
                 habit = GetByName(habit.Name);
                 if (habit is not null)
                     throw new Exception("A habit already exist");
             }
-            _repository.Create(habit);
+            _repository.Create(habit);  
         }
 
         public void UpdateHabit(Habit habit)
         {
-            if (habit.Date < DateTime.UtcNow)
-            {
-                throw new Exception("Cannot start a habit in the past");
-            }
             _repository.Update(habit);
         }
 
         public Habit GetHabit(int id)
         {
             return _repository.Retrieve(id);
+        }
+        public List<Habit> GetALLHabits()
+        {
+            return _repository.RetrieveAllHabits();
         }
 
         public void DeleteHabit(int id)
@@ -52,7 +45,7 @@ namespace HabitLogger.Services
         {
             var duplicateHabit = GetHabit(id);
             return duplicateHabit != null;
-
+            
         }
         public Habit GetByName(string name)
         {

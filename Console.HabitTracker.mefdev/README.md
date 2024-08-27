@@ -26,8 +26,23 @@
 			v - View a habit
 			d - Delete a habit
 			u - Update a habit
+			s - View all habits
 			q - exit
 	Your option? q
+* Saying an option from the Menu
+	- In order to use the voice recognition feature, the user must have an Azure subscription and a Speech service resource.
+	- The user must provide the subscription key and the region where the resource is located.
+	- Use environment variables to store the subscription key and the region.
+		- REGION="region"
+		- SUBKEY="subscription key"
+	-------------------------- Available options ---------------------------
+			a - Add a habit
+			v - View a habit
+			d - Delete a habit
+			u - Update a habit
+			s - View all habits
+			q - exit
+	say your option? example: say "add a habit"
  	
 
 * CRUD Operations
@@ -39,7 +54,7 @@
 * View habit data output uses ConsoleTableExt library to output in a more pleasant way
 
 	----------------------------------------------------------
-	| 2  | cycling | 2 times per week | 9/20/2024 12:00:00AM |
+	| 2  | cycling | 2 times per week | 2024-12-23 12:00:00AM |
 	----------------------------------------------------------
 
 	- [GitHub for ConsoleTableExt Library](https://github.com/minhhungit/ConsoleTableExt)
