@@ -35,16 +35,7 @@
 	- Use environment variables to store the subscription key and the region.
 		- REGION="region"
 		- SUBKEY="subscription key"
-	-------------------------- Available options ---------------------------
-			a - Add a habit
-			v - View a habit
-			d - Delete a habit
-			u - Update a habit
-			s - View all habits
-			q - exit
-	say your option? example: say "add a habit"
- 	
-
+	- The user can say the option from the menu and the program will execute the corresponding action.
 * CRUD Operations
 
 	- From the main menu users can create, read, update or delete entries. 
