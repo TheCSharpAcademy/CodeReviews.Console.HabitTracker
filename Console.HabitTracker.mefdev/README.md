@@ -21,20 +21,35 @@
 	- If no database or table exists, they will be created once the program starts.
 
 * A console based UI where users can navigate by entering or saying an option from the Menu
-	-------------------------- Available options ---------------------------
-			a - Add a habit
-			v - View a habit
-			d - Delete a habit
-			u - Update a habit
-			s - View all habits
-			q - exit
-	Your option? q
+	
+	 * Available options:
+	 * - a: Add a habit
+	 * - v: View a habit
+	 * - d: Delete a habit
+	 * - u: Update a habit
+	 * - s: View all habits
+	 * - q: Exit
+	
+	 * Example usage:
+	 * Your option? q
+
 * Saying an option from the Menu
 	- In order to use the voice recognition feature, the user must have an Azure subscription and a Speech service resource.
 	- The user must provide the subscription key and the region where the resource is located.
 	- Use environment variables to store the subscription key and the region.
 		- REGION="region"
 		- SUBKEY="subscription key"
+
+	 * Available options:
+	 * - a: Add a habit
+	 * - v: View a habit
+	 * - d: Delete a habit
+	 * - u: Update a habit
+	 * - s: View all habits
+	 * - q: Exit
+	
+	 * Example usage:
+	 * Say your option? example: "Add a habit"
 	- The user can say the option from the menu and the program will execute the corresponding action.
 * CRUD Operations
 
