@@ -1,33 +1,71 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Text.RegularExpressions;
+using HabitTracker;
+using Microsoft.Data.Sqlite;
 
 const string dbPath = "habit_tracker.db";
 const string tableName = "habits";
 const string checkTableExistsQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
 const string createTableCommand = """
-                                  CREATE TABLE habits(
+                                  CREATE TABLE habits (
                                       id INTEGER PRIMARY KEY,
                                       date DATE NOT NULL,
-                                      time TIME NOT NULL,
                                       habit TEXT NOT NULL,
-                                      Quantity INT NOT NULL
+                                      quantity INT NOT NULL
                                   )
                                   """;
-
+const string insertRecordCommand = """
+                                   INSERT INTO habits (date, habit, quantity) 
+                                   VALUES (@date, @habit, @quantity)
+                                   """;
+const string viewAllRecordsCommand = "SELECT id, date, habit, quantity FROM habits";
+Repository repository;
 
 try
 {
-    await using var connection = new SqliteConnection($"Data Source={dbPath}");
-    connection.Open();
-
-    Console.WriteLine("Connected to SQLite database");
-
-    if (!CheckTableExists(connection, tableName))
+    var connection = SystemStartUpCheck(dbPath, tableName);
+    repository = new Repository(connection);
+    bool exitApp = false;
+    Menu.DisplayWelcomeMessage();
+    
+    while (!exitApp)
     {
-        CreateTable(connection, tableName);
-    }
-    else
-    {
-        Console.WriteLine($"{tableName} table found.");
+        Menu.DisplayMenuOptions();
+    
+        string? input = Console.ReadLine();
+        
+        if (input == null || ! Regex.IsMatch(input, "[1|2|3|4|5]"))
+        {
+            Console.WriteLine("Error: Unrecognized input.");
+        }
+        else
+        {
+            int action = int.Parse(input);
+            
+            switch (action)
+            {
+                case 1:
+                {
+                    repository.ViewAllRecords(viewAllRecordsCommand);
+                    break;
+                }
+                case 2:
+                {
+                    using var command = new SqliteCommand(insertRecordCommand, connection);
+                    var date = new DateTime(2024, 8, 27);
+                    string habit = "push ups";
+                    int quantity = 45;
+    
+                    command.Parameters.AddWithValue("@date", date);
+                    command.Parameters.AddWithValue("@habit", habit);
+                    command.Parameters.AddWithValue("@quantity", quantity);
+                    command.ExecuteNonQuery();
+                    break;
+                }
+                case 5:
+                    exitApp = true;
+                    break;
+            }
+        }
     }
 }
 catch (SqliteException ex)
@@ -36,6 +74,27 @@ catch (SqliteException ex)
 }
 
 return;
+
+static SqliteConnection SystemStartUpCheck(string dbPath, string tableName)
+{
+    Console.WriteLine("Performing application start up checks...");
+    var connection = new SqliteConnection($"Data Source={dbPath}");
+    connection.Open();
+
+    Console.WriteLine("Successfully connected to SQLite database!");
+
+    if (!CheckTableExists(connection, tableName))
+    {
+        CreateTable(connection, tableName);
+        Console.WriteLine($"{tableName} table created!");
+    }
+    else
+    {
+        Console.WriteLine($"{tableName} table found!");
+    }
+
+    return connection;
+}
 
 static bool CheckTableExists(SqliteConnection connection, string tableName)
 {
