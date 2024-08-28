@@ -130,7 +130,7 @@ namespace HabitTracker
                         Delete();
                         break;
                     case "5":
-                        seeStats();
+                        SeeStats();
                         break;
                     default:
                         Console.WriteLine("Invalid number");
