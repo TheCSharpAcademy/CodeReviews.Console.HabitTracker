@@ -275,7 +275,7 @@ namespace HabitTracker
             }
         }
 
-        static void seeStats(){
+        static void SeeStats(){
 
             var sum = 0;
 
