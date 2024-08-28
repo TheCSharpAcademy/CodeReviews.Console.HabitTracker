@@ -50,15 +50,7 @@ try
                 }
                 case 2:
                 {
-                    using var command = new SqliteCommand(insertRecordCommand, connection);
-                    var date = new DateTime(2024, 8, 27);
-                    string habit = "push ups";
-                    int quantity = 45;
-    
-                    command.Parameters.AddWithValue("@date", date);
-                    command.Parameters.AddWithValue("@habit", habit);
-                    command.Parameters.AddWithValue("@quantity", quantity);
-                    command.ExecuteNonQuery();
+                    repository.InsertRecord(insertRecordCommand);
                     break;
                 }
                 case 5:
