@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (Console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",  // This references the build task
+            "program": "C:/Users/MARIUS/Desktop/Mattias.Habit-tracker/habit-tracker/bin/Debug/net8.0/habit-tracker.dll",
+            "args": [],
+            "cwd": "C:/Users/MARIUS/Desktop/Mattias.Habit-tracker/habit-tracker", // Set to the folder containing the .csproj file
+            "console": "externalTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}
