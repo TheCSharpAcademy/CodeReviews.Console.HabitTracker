@@ -166,7 +166,7 @@ internal class HabitCommands
         {
             string deletionHabit = "";
 
-            bool shouldExit = SelectUpdatingHabit(out deletionHabit, exitChar);
+            bool shouldExit = SelectUpdatingHabit(out deletionHabit, exitChar, deletionVariant: true);
             if (shouldExit)
             {
                 return;
@@ -244,7 +244,7 @@ internal class HabitCommands
         return tableName;
     }
 
-    internal static bool SelectUpdatingHabit(out string updatingHabit, char exitChar)
+    internal static bool SelectUpdatingHabit(out string updatingHabit, char exitChar, bool deletionVariant = false)
     {
         updatingHabit = "";
 
@@ -258,16 +258,20 @@ internal class HabitCommands
 
             SqliteDataReader reader = command.ExecuteReader();
 
+            string textValue;
+
             if (!reader.HasRows)
             {
-                Console.WriteLine("You have no habits you can update! Please create one before you can use this function.");
+                textValue = deletionVariant ? "You have no habits you can remove, for now. Please create one before you can use this function." : "You have no habits you can update! Please create one before you can use this function.";
+                Console.WriteLine($"{textValue}");
                 Console.WriteLine("Press any key to return to the main menu: ");
                 Console.ReadKey();
                 connection.Close();
                 return true;
             }
 
-            Console.WriteLine("You are currently updating one of your habits.");
+            textValue = deletionVariant ? "You are currently deleting one of your habits." : "You are currently updating one of your habits.";
+            Console.WriteLine($"{textValue}");
             Console.WriteLine("Below is the full list of the ones you have started to track: \n");
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.WriteLine();
@@ -290,7 +294,8 @@ internal class HabitCommands
             Console.WriteLine();
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.WriteLine();
-            Console.WriteLine("Please select the index number of the habit you'd like to update.");
+            textValue = deletionVariant ? "Please select the index number of the habit you'd like to delete." : "Please select the index number of the habit you'd like to update.";
+            Console.WriteLine($"{textValue}");
             Program.InsertExitPrompt(exitChar);
 
             connection.Close();

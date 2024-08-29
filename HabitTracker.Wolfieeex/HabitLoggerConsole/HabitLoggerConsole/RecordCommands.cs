@@ -198,7 +198,94 @@ internal class RecordCommands
             shouldExit = RunUpdateMenu(habit, selectedRow, rowCount);
         }
     }
+    internal static void GenerateReport(string habitName)
+    {
+        string updatingHabit = "";
 
+        using (var connection = new SqliteConnection(Program.connectionString))
+        {
+            connection.Open();
+
+            var tblCmd = connection.CreateCommand();
+            tblCmd.CommandText = $"SELECT COUNT(*) FROM '{habitName}'";
+            int recordsNumber = (int)(long)tblCmd.ExecuteScalar();
+
+            if (recordsNumber < 10)
+            {
+                Console.WriteLine("No sufficient data to generate your report. Your habit has to have at least 10 insertions.");
+            }
+            else
+            {
+                tblCmd.CommandText = $"SELECT * FROM '{habitName}'";
+
+                SqliteDataReader reader = tblCmd.ExecuteReader();
+
+                string valueTrackedName = "";
+                string measurementType = "";
+                List<DataRetreive> data = new List<DataRetreive>();
+
+                reader.Read();
+                valueTrackedName = reader.GetName(2);
+                measurementType = reader.GetName(3);
+
+                data.Add(new DataRetreive
+                {
+                    Id = reader.GetInt32(0),
+                    Date = reader.GetString(1),
+                    dateTimeFormatDate = DateTime.Parse(reader.GetString(1)),
+                    HabitTracked = reader.GetInt32(2)
+                });
+
+                while (reader.Read())
+                {
+                    data.Add(new DataRetreive
+                    {
+                        Id = reader.GetInt32(0),
+                        Date = reader.GetString(1),
+                        dateTimeFormatDate = DateTime.Parse(reader.GetString(1)),
+                        HabitTracked = reader.GetInt32(2)
+                    });
+                }
+                
+                List<int> differentYears = new List<int>();
+
+                foreach (DataRetreive dt in data)
+                {
+                    int year = dt.dateTimeFormatDate.Year;
+                    if (!differentYears.Contains(year))
+                    {
+                        differentYears.Add(year);
+                    }
+                }
+
+                List<int> codeList = new List<int>();
+
+                foreach (int y in differentYears)
+                {
+                    List<int> differentMonths = new List<int>();
+
+                    foreach (DataRetreive dt in data)
+                    {
+                        if (dt.dateTimeFormatDate.Year == y)
+                        {
+                            int month = dt.dateTimeFormatDate.Month;
+                            if (!differentMonths.Contains(month))
+                            {
+                                differentMonths.Add(month);
+                            }
+                        }
+                    }
+
+                    
+                }
+            }
+
+            Console.Write("Press any key to return to the previous menu: ");
+            Console.ReadKey();
+
+            connection.Close();
+        }
+    }
     private static bool RunUpdateMenu(string habit, int selectedRow, int rowCount)
     {
         bool shouldExit;
@@ -281,7 +368,6 @@ internal class RecordCommands
         }
         return shouldExit;
     }
-
     private static string GetDateInput()
     {
         Console.WriteLine("Please insert the date of the operation, or type in \"Now\" to accept today's date instead:");
@@ -317,16 +403,18 @@ internal class RecordCommands
 
 public class DataRetreive
 {
-    public int Id
-    {
-        get; set;
-    }
-    public string Date
-    {
-        get; set;
-    }
-    public int HabitTracked
-    {
-        get; set;
-    }
+    public int Id { get; set; }
+    public string Date { get; set; }
+    public DateTime dateTimeFormatDate { get; set; }
+    public int HabitTracked { get; set; }
+
+}
+public class ReportDataCoded
+{
+    public int occurrences { get; set; }
+    public int highiestValue { get; set; }
+    public int smallestValue { get; set; }
+    public int MeanValue { get; set; }
+    public int MedianValue { get; set; }
+    public List<int> ModalValues { get; set; }
 }

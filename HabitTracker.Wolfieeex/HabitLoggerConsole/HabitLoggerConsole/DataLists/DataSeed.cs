@@ -79,14 +79,16 @@ class DataSeed()
 
                 cmd.ExecuteNonQuery();
 
-                for (int i = 0; i < 300; i++)
+                sequence = random.Next(1, 300);
+
+                for (int i = 0; i < sequence; i++)
                 {
                     string? date;
                     int? valueAchieved;
 
                     int day = random.Next(1, 29);
                     int month = random.Next(1, 13);
-                    int preYearValue = random.Next(0, 4);
+                    int preYearValue = random.Next(0, 6);
                     int year = 2024 - preYearValue;
                     date = $"{day.ToString()}/{month.ToString()}/{year.ToString()}";
                     DateTime datetime = DateTime.Parse(date, new CultureInfo("en-GB"));

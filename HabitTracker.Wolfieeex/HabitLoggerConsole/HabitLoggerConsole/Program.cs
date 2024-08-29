@@ -54,9 +54,8 @@ public class Program
             Console.WriteLine("1 - Track a new habit");
             Console.WriteLine("2 - View your existing habits");
             Console.WriteLine("3 - Update settings of a habit");
-            Console.WriteLine("4 - Stop tracking a habit\n");
+            Console.WriteLine("4 - Stop tracking a habit");
             Console.WriteLine("5 - Add, update, view, and delete records of the habit\n");
-            Console.WriteLine("6 - Display a report of the habit\n");
 
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.Write("\nYour input: ");
@@ -91,20 +90,10 @@ public class Program
                     Console.Clear();
                     HabitRecordMenu();
                     break;
-                case 6:
-                    Console.Clear();
-                    ReportMenu();
-                    break;
             }
             Console.Clear();
         }
     }
-
-    private static void ReportMenu()
-    {
-        throw new NotImplementedException();
-    }
-
     private static void HabitRecordMenu()
     {
         bool runHabitSelectionPreMenu = true;
@@ -137,9 +126,10 @@ public class Program
                 Console.WriteLine("1 - Insert a record");
                 Console.WriteLine("2 - View all records");
                 Console.WriteLine("3 - Update a record");
-                Console.WriteLine("4 - Delete a record\n");
+                Console.WriteLine("4 - Delete a record");
+                Console.WriteLine("5 - Generate a report\n");
 
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
                 InsertExitPrompt(exitChar);
 
                 int userInput = -1;
@@ -172,11 +162,14 @@ public class Program
                         Console.Clear();
                         RecordCommands.Delete(habitName);
                         break;
+                    case 5:
+                        Console.Clear();
+                        RecordCommands.GenerateReport(habitName);
+                        break;
                 }
             }
         }
     }
-
     internal static bool AssingNameInput(ref string input, string failCommand, char? exitChar = null, bool excludeSymbols = false)
     {
         while (true)
@@ -218,7 +211,6 @@ public class Program
         }
         return false;
     }
-
     internal static bool AssignSelectionInput(ref int input, int rangeMin, int rangeMax, char? skipSelection = null)
     {
         bool inputChecksNotComplete = true;
@@ -266,7 +258,6 @@ public class Program
             Console.Write(reason + " Please try again to select your option: ");
         }
     }
-    
     internal static void InsertExitPrompt(char exitChar, bool backMenuAlteration = false)
     {
         string returnToWhere = backMenuAlteration ? "previous menu" : "main menu";
