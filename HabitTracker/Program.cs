@@ -2,7 +2,7 @@
 using HabitTracker;
 using Microsoft.Data.Sqlite;
 
-const string dbPath = "habit_tracker.db";
+const string dbName = "habit_tracker.db";
 const string tableName = "habits";
 const string checkTableExistsQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
 const string createTableCommand = """
@@ -22,9 +22,11 @@ Repository repository;
 
 try
 {
+    string dbPath = GetCorrectPathToStoreDatabase();
     var connection = SystemStartUpCheck(dbPath, tableName);
     repository = new Repository(connection);
     bool exitApp = false;
+    
     Menu.DisplayWelcomeMessage();
     
     while (!exitApp)
@@ -105,4 +107,26 @@ static void CreateTable(SqliteConnection connection, string tableName)
 
     command.ExecuteNonQuery();
     Console.WriteLine($"{tableName} table successfully created.");
+}
+
+static string GetCorrectPathToStoreDatabase()
+{
+    string curPath = Directory.GetCurrentDirectory();
+    var directoryInfo = Directory.GetParent(curPath);
+
+    for (int i = 0; i < 2; i++)
+    {
+        if (directoryInfo != null)
+        {
+            directoryInfo = directoryInfo.Parent;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    string dbPath = directoryInfo?.FullName + $"/{dbName}";
+
+    return dbPath;
 }
