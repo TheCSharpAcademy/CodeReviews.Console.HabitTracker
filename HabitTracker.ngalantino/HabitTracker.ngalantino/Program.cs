@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Data.Sqlite;
+using habitTracker.models;
+using System.Globalization;
 
 namespace habitTracker;
 
@@ -60,17 +62,17 @@ public class Program
                     closeApp = true;
                     break;
 
-                // case "1":
-                //     GetAllRecords();
-                //     break;
+                 case "1":
+                     GetAllRecords();
+                     break;
 
                 case "2":
                     Insert();
                     break;
 
-                    // case "3":
-                    //     Delete();
-                    //     break;
+                case "3":
+                    Delete();
+                    break;
 
                     // case "4":
                     //     Update();
@@ -126,4 +128,74 @@ public class Program
         return finalInput;
     }
 
+    private static void GetAllRecords() {
+        Console.Clear();
+        using (var connection = new SqliteConnection(connectionString)) {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText=
+                $"SELECT * FROM drinking_water";
+
+            List<DrinkingWater> tableData = new();
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            if (reader.HasRows) {
+                while (reader.Read()) {
+                    tableData.Add(
+                        new DrinkingWater {
+                            Id = reader.GetInt32(0),
+                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                            Quantity = reader.GetInt32(2)
+                        }
+                    );
+                }
+            }
+
+            else {
+                Console.WriteLine("No rows found.");
+            }
+
+            connection.Close();
+
+            // Display data
+            Console.WriteLine("-----------------------------------------\n");
+
+            foreach (DrinkingWater drinkingWater in tableData) {
+                Console.WriteLine($"{drinkingWater.Id}\t{drinkingWater.Date.ToString("dd-MM-yyyy")}\tQuantity: {drinkingWater.Quantity}");
+            }
+
+            Console.WriteLine("-----------------------------------------\n");
+        }
+
+    } 
+
+    private static void Delete() {
+        Console.Clear();
+
+        GetAllRecords();
+
+        int recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete.\n\n");
+
+        using (var connection = new SqliteConnection(connectionString)) {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText = $"DELETE FROM drinking_water WHERE Id = '{recordId}'";
+
+            // Executing this command returns the number of rows effected by the command.
+            int rowCount = tableCmd.ExecuteNonQuery();
+
+            if (rowCount == 0) {
+                Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+
+                Delete();
+            }
+        }
+
+        Console.WriteLine($"\n\nRecord with Id {recordId} was deleted.\n\n");
+
+        GetUserInput();
+
+    }
 }
