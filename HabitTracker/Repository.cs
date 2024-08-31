@@ -53,35 +53,25 @@ public class Repository(SqliteConnection connection)
 
         if (recordIndexes.Count == 0)
         {
-            Console.WriteLine("Nothing to update!");
+            Console.WriteLine("No records to update!");
         }
         else
         {
-            string? input;
-            bool validIndexEntered = false;
-
-            while (!validIndexEntered)
-            {
-                Console.Write("Enter the index of the record that you want to update: ");
-                input = Console.ReadLine();
-
-                if (input != null || int.TryParse(input, out int index) == false)
-                {
-                    Console.WriteLine("Error: Invalid Input");
-                }
-                else if (!recordIndexes.Contains(index))
-                {
-                    Console.WriteLine("Error: Index entered is not in the list shown.");
-                }
-                else
-                {
-                    validIndexEntered = true;
-                }
-            }
+            using var command = new SqliteCommand(updateRecordCommand, connection);
+            
+            int idToUpdate = Utils.GetIdOfRecord(recordIndexes);
+            
             
             var updatedHabitDate = Utils.GetDateInput();
             string updatedHabit = Utils.GetHabitInput();
             int updatedHabitQuantity = Utils.GetQuantityInput();
+
+            command.Parameters.AddWithValue("@updatedDate", updatedHabitDate);
+            command.Parameters.AddWithValue("@updatedHabit", updatedHabit);
+            command.Parameters.AddWithValue("@updatedQuantity", updatedHabitQuantity);
+            command.Parameters.AddWithValue("@id", idToUpdate);
+
+            command.ExecuteNonQuery();
         }
     }
 }

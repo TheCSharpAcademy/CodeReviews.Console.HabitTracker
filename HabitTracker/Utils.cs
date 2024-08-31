@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace HabitTracker;
 
-public class Utils
+public static class Utils
 {
     public static DateTime GetDateInput()
     {
@@ -83,5 +83,33 @@ public class Utils
         }
 
         return habitQuantity;
+    }
+
+    public static int GetIdOfRecord(HashSet<int> recordIndexes)
+    {
+        string? input;
+        bool validIndexEntered = false;
+        int recordIndex = 0;
+
+        while (!validIndexEntered)
+        {
+            Console.Write("\nEnter the id of the record that you want to update: ");
+            input = Console.ReadLine();
+
+            if (input == null || int.TryParse(input, out recordIndex) == false)
+            {
+                Console.WriteLine("Error: Invalid Input");
+            }
+            else if (!recordIndexes.Contains(recordIndex))
+            {
+                Console.WriteLine("Error: Id entered is not in the list shown.");
+            }
+            else
+            {
+                validIndexEntered = true;
+            }
+        }
+
+        return recordIndex;
     }
 }

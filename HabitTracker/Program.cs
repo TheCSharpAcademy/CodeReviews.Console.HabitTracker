@@ -18,6 +18,11 @@ const string insertRecordCommand = """
                                    VALUES (@date, @habit, @quantity)
                                    """;
 const string viewAllRecordsCommand = "SELECT id, date, habit, quantity FROM habits";
+const string updateRecordCommand = """
+                                   UPDATE habits SET date = @updatedDate, habit = @updatedHabit, quantity = @updatedQuantity 
+                                   WHERE id = @id
+                                   """;
+
 Repository repository;
 
 try
@@ -53,6 +58,11 @@ try
                 case 2:
                 {
                     repository.InsertRecord(insertRecordCommand);
+                    break;
+                }
+                case 3:
+                {
+                    repository.UpdateRecord(updateRecordCommand, viewAllRecordsCommand);
                     break;
                 }
                 case 5:
