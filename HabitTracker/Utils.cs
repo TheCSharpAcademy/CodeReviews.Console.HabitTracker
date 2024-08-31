@@ -39,27 +39,27 @@ public static class Utils
         return habitDate;
     }
 
-    public static string GetHabitInput()
+    public static string GetAlphabeticalInput(string type)
     {
-        bool validHabitEntered = false;
-        string? habit = "";
+        bool validStringEntered = false;
+        string? input = "";
         
-        while (!validHabitEntered)
+        while (!validStringEntered)
         {
-            Console.Write("Type the name of the habit: ");
-            habit = Console.ReadLine();
+            Console.Write($"Type the {type} and press Enter: ");
+            input = Console.ReadLine();
 
-            if (habit is null || !Regex.IsMatch(habit, "^[a-zA-Z ]+$"))
+            if (input is null || !Regex.IsMatch(input, "^[a-zA-Z ]+$"))
             {
-                Console.WriteLine("Name of habit should contain only alphabetical letters");
+                Console.WriteLine($"Name of {type} should contain only alphabetical letters");
             }
             else
             {
-                validHabitEntered = true;
+                validStringEntered = true;
             }
         }
 
-        return habit?.ToLower() ?? string.Empty;
+        return input?.ToLower() ?? string.Empty;
     }
 
     public static int GetQuantityInput()

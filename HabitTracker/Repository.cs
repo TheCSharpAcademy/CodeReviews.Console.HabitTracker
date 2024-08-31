@@ -18,15 +18,16 @@ public class Repository(SqliteConnection connection)
             return recordIndexes;
         }
 
-        Console.WriteLine($"\n{"Id", -5}\t{"Date", -12}\t{"Habit", -30}\t{"Quantity", 10}");
+        Console.WriteLine($"\n{"Id", -5}\t{"Date", -12}\t{"Habit", -30}\t{"Unit", -10}\t{"Quantity", 10}");
         while (reader.Read())
         {
             int id = reader.GetInt32(0);
             var date = reader.GetDateTime(1);
             string habit = reader.GetString(2);
-            int quantity = reader.GetInt32(3);
+            string unit = reader.GetString(3);
+            int quantity = reader.GetInt32(4);
             recordIndexes.Add(id);
-            Console.WriteLine($"{id, -5}\t{date.ToShortDateString(), -12}\t{habit, -30}\t{quantity, 10}");
+            Console.WriteLine($"{id, -5}\t{date.ToShortDateString(), -12}\t{habit, -30}\t{unit, -10}\t{quantity, 10}");
         }
 
         return recordIndexes;
@@ -36,13 +37,15 @@ public class Repository(SqliteConnection connection)
     {
         using var command = new SqliteCommand(insertRecordCommand, connection);
         
-        var habitDate = Utils.GetDateInput();
-        string habit = Utils.GetHabitInput();
-        int habitQuantity = Utils.GetQuantityInput();
+        var date = Utils.GetDateInput();
+        string habit = Utils.GetAlphabeticalInput("habit");
+        string unit = Utils.GetAlphabeticalInput("unit");
+        int quantity = Utils.GetQuantityInput();
         
-        command.Parameters.AddWithValue("@date", habitDate);
+        command.Parameters.AddWithValue("@date", date);
         command.Parameters.AddWithValue("@habit", habit);
-        command.Parameters.AddWithValue("@quantity", habitQuantity);
+        command.Parameters.AddWithValue("@unit", unit);
+        command.Parameters.AddWithValue("@quantity", quantity);
         
         command.ExecuteNonQuery();
     }
@@ -61,13 +64,14 @@ public class Repository(SqliteConnection connection)
             
             int idToUpdate = Utils.GetIdOfRecord(recordIndexes, "update");
             
-            
             var updatedHabitDate = Utils.GetDateInput();
-            string updatedHabit = Utils.GetHabitInput();
+            string updatedHabit = Utils.GetAlphabeticalInput("habit");
+            string updatedUnit = Utils.GetAlphabeticalInput("unit");
             int updatedHabitQuantity = Utils.GetQuantityInput();
 
             command.Parameters.AddWithValue("@updatedDate", updatedHabitDate);
             command.Parameters.AddWithValue("@updatedHabit", updatedHabit);
+            command.Parameters.AddWithValue("@updatedUnit", updatedUnit);
             command.Parameters.AddWithValue("@updatedQuantity", updatedHabitQuantity);
             command.Parameters.AddWithValue("@id", idToUpdate);
 

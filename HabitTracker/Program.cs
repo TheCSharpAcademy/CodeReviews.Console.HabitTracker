@@ -10,16 +10,19 @@ const string createTableCommand = """
                                       id INTEGER PRIMARY KEY,
                                       date DATE NOT NULL,
                                       habit TEXT NOT NULL,
+                                      unit TEXT NOT NULL,
                                       quantity INT NOT NULL
                                   )
                                   """;
 const string insertRecordCommand = """
-                                   INSERT INTO habits (date, habit, quantity) 
-                                   VALUES (@date, @habit, @quantity)
+                                   INSERT INTO habits (date, habit, unit, quantity) 
+                                   VALUES (@date, @habit, @unit, @quantity)
                                    """;
-const string viewAllRecordsCommand = "SELECT id, date, habit, quantity FROM habits";
+const string viewAllRecordsCommand = "SELECT id, date, habit, unit, quantity FROM habits";
 const string updateRecordCommand = """
-                                   UPDATE habits SET date = @updatedDate, habit = @updatedHabit, quantity = @updatedQuantity 
+                                   UPDATE habits 
+                                   SET date = @updatedDate, habit = @updatedHabit, 
+                                       unit = @updatedUnit, quantity = @updatedQuantity 
                                    WHERE id = @id
                                    """;
 const string deleteRecordCommand = "DELETE FROM habits WHERE id = @id";
@@ -97,7 +100,6 @@ static SqliteConnection SystemStartUpCheck(string dbPath, string tableName)
     if (!CheckTableExists(connection, tableName))
     {
         CreateTable(connection, tableName);
-        Console.WriteLine($"{tableName} table created!");
     }
     else
     {
