@@ -11,7 +11,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Repository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Repository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Utils.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +86,7 @@
       <workItem from="1724769257048" duration="4722000" />
       <workItem from="1724848672494" duration="8951000" />
       <workItem from="1725021537781" duration="7252000" />
-      <workItem from="1725094973374" duration="1143000" />
+      <workItem from="1725094973374" duration="2133000" />
     </task>
     <servers />
   </component>

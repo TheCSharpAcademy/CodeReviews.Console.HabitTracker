@@ -85,7 +85,7 @@ public static class Utils
         return habitQuantity;
     }
 
-    public static int GetIdOfRecord(HashSet<int> recordIndexes)
+    public static int GetIdOfRecord(HashSet<int> recordIndexes, string action)
     {
         string? input;
         bool validIndexEntered = false;
@@ -93,7 +93,7 @@ public static class Utils
 
         while (!validIndexEntered)
         {
-            Console.Write("\nEnter the id of the record that you want to update: ");
+            Console.Write($"\nEnter the id of the record that you want to {action}: ");
             input = Console.ReadLine();
 
             if (input == null || int.TryParse(input, out recordIndex) == false)

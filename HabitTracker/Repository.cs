@@ -18,7 +18,7 @@ public class Repository(SqliteConnection connection)
             return recordIndexes;
         }
 
-        Console.WriteLine($"\n{"Index", -5}\t{"Date", -12}\t{"Habit", -30}\t{"Quantity", 10}");
+        Console.WriteLine($"\n{"Id", -5}\t{"Date", -12}\t{"Habit", -30}\t{"Quantity", 10}");
         while (reader.Read())
         {
             int id = reader.GetInt32(0);
@@ -59,7 +59,7 @@ public class Repository(SqliteConnection connection)
         {
             using var command = new SqliteCommand(updateRecordCommand, connection);
             
-            int idToUpdate = Utils.GetIdOfRecord(recordIndexes);
+            int idToUpdate = Utils.GetIdOfRecord(recordIndexes, "update");
             
             
             var updatedHabitDate = Utils.GetDateInput();
@@ -70,6 +70,26 @@ public class Repository(SqliteConnection connection)
             command.Parameters.AddWithValue("@updatedHabit", updatedHabit);
             command.Parameters.AddWithValue("@updatedQuantity", updatedHabitQuantity);
             command.Parameters.AddWithValue("@id", idToUpdate);
+
+            command.ExecuteNonQuery();
+        }
+    }
+
+    public void DeleteRecord(string viewAllRecordsCommand, string deleteRecordCommand)
+    {
+        var recordIndexes = ViewAllRecords(viewAllRecordsCommand);
+
+        if (recordIndexes.Count == 0)
+        {
+            Console.WriteLine("No records to delete!");
+        }
+        else
+        {
+            using var command = new SqliteCommand(deleteRecordCommand, connection);
+            
+            int idToDelete = Utils.GetIdOfRecord(recordIndexes, "delete");
+
+            command.Parameters.AddWithValue("@id", idToDelete);
 
             command.ExecuteNonQuery();
         }

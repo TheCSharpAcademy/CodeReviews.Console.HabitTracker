@@ -22,6 +22,8 @@ const string updateRecordCommand = """
                                    UPDATE habits SET date = @updatedDate, habit = @updatedHabit, quantity = @updatedQuantity 
                                    WHERE id = @id
                                    """;
+const string deleteRecordCommand = "DELETE FROM habits WHERE id = @id";
+
 
 Repository repository;
 
@@ -63,6 +65,11 @@ try
                 case 3:
                 {
                     repository.UpdateRecord(updateRecordCommand, viewAllRecordsCommand);
+                    break;
+                }
+                case 4:
+                {
+                    repository.DeleteRecord(viewAllRecordsCommand, deleteRecordCommand);
                     break;
                 }
                 case 5:
