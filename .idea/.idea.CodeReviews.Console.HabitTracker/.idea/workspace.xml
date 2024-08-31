@@ -10,9 +10,7 @@
     <list default="true" id="7bd20474-e480-47b1-be99-a76a5a2a49fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/Repository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Repository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +44,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
+    "settings.editor.selected.configurable": "preferences.sourceCode.SQLite",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -93,7 +91,9 @@
       <workItem from="1724848672494" duration="8951000" />
       <workItem from="1725021537781" duration="7252000" />
       <workItem from="1725094973374" duration="3108000" />
-      <workItem from="1725108530831" duration="1856000" />
+      <workItem from="1725108530831" duration="2950000" />
+      <workItem from="1725111487582" duration="171000" />
+      <workItem from="1725111665780" duration="208000" />
     </task>
     <servers />
   </component>
@@ -103,5 +103,9 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

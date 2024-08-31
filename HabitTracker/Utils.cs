@@ -1,9 +1,21 @@
 using System.Text.RegularExpressions;
+using Microsoft.Data.Sqlite;
 
 namespace HabitTracker;
 
 public static class Utils
 {
+    private const string CheckTableExistsQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
+    private const string CreateTableCommand = """
+                                              CREATE TABLE habits (
+                                                  id INTEGER PRIMARY KEY,
+                                                  date DATE NOT NULL,
+                                                  habit TEXT NOT NULL,
+                                                  unit TEXT NOT NULL,
+                                                  quantity INT NOT NULL
+                                              )
+                                              """;
+    
     public static DateTime GetDateInput()
     {
         bool validDateEntered = false;
@@ -111,5 +123,66 @@ public static class Utils
         }
 
         return recordIndex;
+    }
+    
+    public static string GetCorrectPathToStoreDatabase(string dbName)
+    {
+        string curPath = Directory.GetCurrentDirectory();
+        var directoryInfo = Directory.GetParent(curPath);
+
+        for (int i = 0; i < 2; i++)
+        {
+            if (directoryInfo != null)
+            {
+                directoryInfo = directoryInfo.Parent;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        string dbPath = directoryInfo?.FullName + $"/{dbName}";
+
+        return dbPath;
+    }
+    
+    public static SqliteConnection SystemStartUpCheck(string dbPath, string tableName)
+    {
+        Console.WriteLine("Performing application start up checks...");
+        var connection = new SqliteConnection($"Data Source={dbPath}");
+        connection.Open();
+
+        Console.WriteLine("Successfully connected to SQLite database!");
+
+        if (!CheckTableExists(connection, tableName))
+        {
+            CreateTable(connection, tableName);
+        }
+        else
+        {
+            Console.WriteLine($"{tableName} table found!");
+        }
+
+        return connection;
+    }
+
+    private static bool CheckTableExists(SqliteConnection connection, string tableName)
+    {
+    
+        using var command = new SqliteCommand(CheckTableExistsQuery, connection);
+        command.Parameters.AddWithValue("@tableName", tableName);
+        using var reader = command.ExecuteReader();
+
+        return reader.HasRows;
+    }
+
+    private static void CreateTable(SqliteConnection connection, string tableName)
+    {
+        using var command = new SqliteCommand(CreateTableCommand, connection);
+        command.Parameters.AddWithValue("@tableName", tableName);
+
+        command.ExecuteNonQuery();
+        Console.WriteLine($"{tableName} table successfully created.");
     }
 }
