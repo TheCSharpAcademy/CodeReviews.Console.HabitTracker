@@ -9,8 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7bd20474-e480-47b1-be99-a76a5a2a49fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Utils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +24,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/88709861611a4ee3ad1f4c33f8a9f6612aa20/c0/50198caf/SqliteCommand.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/88709861611a4ee3ad1f4c33f8a9f6612aa20/e4/5214b2a6/SqliteConnection.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
@@ -93,7 +94,7 @@
       <workItem from="1725094973374" duration="3108000" />
       <workItem from="1725108530831" duration="2950000" />
       <workItem from="1725111487582" duration="171000" />
-      <workItem from="1725111665780" duration="208000" />
+      <workItem from="1725111665780" duration="5003000" />
     </task>
     <servers />
   </component>
@@ -103,6 +104,77 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
+          <line>216</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+            <startOffsets>
+              <option value="7037" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7090" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
+          <line>221</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+            <startOffsets>
+              <option value="7312" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7338" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
+          <line>218</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+            <startOffsets>
+              <option value="7171" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7224" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
+          <line>217</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+            <startOffsets>
+              <option value="7103" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7158" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
+          <line>219</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+            <startOffsets>
+              <option value="7237" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7298" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

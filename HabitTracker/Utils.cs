@@ -15,6 +15,11 @@ public static class Utils
                                                   quantity INT NOT NULL
                                               )
                                               """;
+    private const string InsertRecordCommand = """
+                                       INSERT INTO habits (date, habit, unit, quantity) 
+                                       VALUES (@date, @habit, @unit, @quantity)
+                                       """;
+    private static readonly Random Gen = new();
     
     public static DateTime GetDateInput()
     {
@@ -158,6 +163,7 @@ public static class Utils
         if (!CheckTableExists(connection, tableName))
         {
             CreateTable(connection, tableName);
+            SeedTable(connection);
         }
         else
         {
@@ -184,5 +190,43 @@ public static class Utils
 
         command.ExecuteNonQuery();
         Console.WriteLine($"{tableName} table successfully created.");
+    }
+
+    private static void SeedTable(SqliteConnection connection)
+    {
+        string[] habits = ["push ups", "run", "sleep"];
+        string[] units = ["times", "km", "hours"];
+        int[][] ranges =
+        {
+            [20, 70],
+            [2, 10],
+            [6, 9]
+        };
+
+        for (int i = 0; i < 20; i++)
+        {
+            using var command = new SqliteCommand(InsertRecordCommand, connection);
+            
+            int randomIndex = Gen.Next(0, 3);
+            string randomHabit = habits[randomIndex];
+            string randomUnit = units[randomIndex];
+            int[] randomRange = ranges[randomIndex];
+            var randomDate = RandomDate();
+            int randomQuantity = Gen.Next(randomRange[0], randomRange[1]);
+
+            command.Parameters.AddWithValue("@date", randomDate);
+            command.Parameters.AddWithValue("@habit", randomHabit);
+            command.Parameters.AddWithValue("@unit", randomUnit);
+            command.Parameters.AddWithValue("@quantity", randomQuantity);
+
+            command.ExecuteNonQuery();
+        }
+    }
+
+    private static DateTime RandomDate()
+    {
+        var start = new DateTime(2024, 5, 1);
+        int range = (DateTime.Today - start).Days;
+        return start.AddDays(Gen.Next(range));
     }
 }
