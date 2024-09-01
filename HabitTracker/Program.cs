@@ -4,18 +4,6 @@ using Microsoft.Data.Sqlite;
 
 const string dbName = "habit_tracker.db";
 const string tableName = "habits";
-const string insertRecordCommand = """
-                                   INSERT INTO habits (date, habit, unit, quantity) 
-                                   VALUES (@date, @habit, @unit, @quantity)
-                                   """;
-const string viewAllRecordsCommand = "SELECT id, date, habit, unit, quantity FROM habits";
-const string updateRecordCommand = """
-                                   UPDATE habits 
-                                   SET date = @updatedDate, habit = @updatedHabit, 
-                                       unit = @updatedUnit, quantity = @updatedQuantity 
-                                   WHERE id = @id
-                                   """;
-const string deleteRecordCommand = "DELETE FROM habits WHERE id = @id";
 
 Repository repository;
 
@@ -34,7 +22,7 @@ try
     
         string? input = Console.ReadLine();
         
-        if (input == null || ! Regex.IsMatch(input, "[1|2|3|4|5]"))
+        if (input == null || ! Regex.IsMatch(input, "[1|2|3|4|5|6]"))
         {
             Console.WriteLine("Error: Unrecognized input.");
         }
@@ -45,18 +33,21 @@ try
             switch (action)
             {
                 case 1:
-                    repository.ViewAllRecords(viewAllRecordsCommand);
+                    repository.ViewAllRecords();
                     break;
                 case 2:
-                    repository.InsertRecord(insertRecordCommand);
+                    repository.InsertRecord();
                     break;
                 case 3:
-                    repository.UpdateRecord(updateRecordCommand, viewAllRecordsCommand);
+                    repository.UpdateRecord();
                     break;
                 case 4:
-                    repository.DeleteRecord(viewAllRecordsCommand, deleteRecordCommand);
+                    repository.DeleteRecord();
                     break;
                 case 5:
+                    exitApp = true;
+                    break;
+                case 6:
                     exitApp = true;
                     break;
             }

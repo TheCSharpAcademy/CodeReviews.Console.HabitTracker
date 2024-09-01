@@ -1,6 +1,6 @@
 namespace HabitTracker;
 
-public class Menu
+public static class Menu
 {
     public static void DisplayWelcomeMessage()
     {
@@ -16,6 +16,7 @@ public class Menu
         Console.WriteLine("2 - To insert a record, type 2 and press Enter");
         Console.WriteLine("3 - To update a record, type 3 and press Enter");
         Console.WriteLine("4 - To delete a record, type 4 and press Enter");
-        Console.WriteLine("5 - To close the application, type 5 and press Enter");
+        Console.WriteLine("5 - To view a report on your habits, type 5 and press Enter");
+        Console.WriteLine("6 - To close the application, type 6 and press Enter");
     }
 }

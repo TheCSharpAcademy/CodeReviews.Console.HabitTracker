@@ -8,9 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7bd20474-e480-47b1-be99-a76a5a2a49fb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/HabitTracker/Queries.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HabitTracker/Menu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Menu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HabitTracker/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HabitTracker/Repository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Repository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +40,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    ".NET Project.HabitTracker.executor": "Debug",
+    ".NET Project.HabitTracker.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
@@ -95,7 +98,7 @@
       <workItem from="1725108530831" duration="2950000" />
       <workItem from="1725111487582" duration="171000" />
       <workItem from="1725111665780" duration="5073000" />
-      <workItem from="1725172106594" duration="3102000" />
+      <workItem from="1725172106594" duration="4589000" />
     </task>
     <servers />
   </component>
@@ -105,51 +108,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>33</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'GetDateInput'">
-            <startOffsets>
-              <option value="1504" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1661" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>42</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'GetDateInput'">
-            <startOffsets>
-              <option value="1808" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1833" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>38</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'GetDateInput'">
-            <startOffsets>
-              <option value="1692" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1746" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

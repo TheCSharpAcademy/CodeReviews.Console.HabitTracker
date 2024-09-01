@@ -5,20 +5,6 @@ namespace HabitTracker;
 
 public static class Utils
 {
-    private const string CheckTableExistsQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
-    private const string CreateTableCommand = """
-                                              CREATE TABLE habits (
-                                                  id INTEGER PRIMARY KEY,
-                                                  date DATE NOT NULL,
-                                                  habit TEXT NOT NULL,
-                                                  unit TEXT NOT NULL,
-                                                  quantity INT NOT NULL
-                                              )
-                                              """;
-    private const string InsertRecordCommand = """
-                                       INSERT INTO habits (date, habit, unit, quantity) 
-                                       VALUES (@date, @habit, @unit, @quantity)
-                                       """;
     private static readonly Random Gen = new();
     
     public static DateTime GetDateInput()
@@ -31,10 +17,7 @@ public static class Utils
             Console.Write("Type the date when the habit was done in dd/mm/yyyy format or type \"today\" for today's date: ");
             string? date = Console.ReadLine();
 
-            if (
-                date is null || 
-                !Regex.IsMatch(date, @"^((0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/\d{1,4}|today)$")
-                )
+            if (date is null || !Regex.IsMatch(date, @"^((0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/\d{1,4}|today)$"))
             {
                 Console.WriteLine("Error: date entered is not valid");
             }
@@ -186,7 +169,7 @@ public static class Utils
     private static bool CheckTableExists(SqliteConnection connection, string tableName)
     {
     
-        using var command = new SqliteCommand(CheckTableExistsQuery, connection);
+        using var command = new SqliteCommand(Queries.CheckTableExistsQuery, connection);
         command.Parameters.AddWithValue("@tableName", tableName);
         using var reader = command.ExecuteReader();
 
@@ -195,7 +178,7 @@ public static class Utils
 
     private static void CreateTable(SqliteConnection connection, string tableName)
     {
-        using var command = new SqliteCommand(CreateTableCommand, connection);
+        using var command = new SqliteCommand(Queries.CreateTableCommand, connection);
         command.Parameters.AddWithValue("@tableName", tableName);
 
         command.ExecuteNonQuery();
@@ -215,7 +198,7 @@ public static class Utils
 
         for (int i = 0; i < 20; i++)
         {
-            using var command = new SqliteCommand(InsertRecordCommand, connection);
+            using var command = new SqliteCommand(Queries.InsertRecordCommand, connection);
             
             int randomIndex = Gen.Next(0, 3);
             string randomHabit = habits[randomIndex];

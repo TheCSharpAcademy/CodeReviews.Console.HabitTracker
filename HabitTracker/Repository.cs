@@ -4,9 +4,9 @@ namespace HabitTracker;
 
 public class Repository(SqliteConnection connection)
 {
-    public HashSet<int> ViewAllRecords(string viewAllRecordsCommand)
+    public HashSet<int> ViewAllRecords()
     {
-        using var command = new SqliteCommand(viewAllRecordsCommand, connection);
+        using var command = new SqliteCommand(Queries.ViewAllRecordsCommand, connection);
         using var reader = command.ExecuteReader();
         HashSet<int> recordIndexes = [];
         
@@ -33,9 +33,9 @@ public class Repository(SqliteConnection connection)
         return recordIndexes;
     }
 
-    public void InsertRecord(string insertRecordCommand)
+    public void InsertRecord()
     {
-        using var command = new SqliteCommand(insertRecordCommand, connection);
+        using var command = new SqliteCommand(Queries.InsertRecordCommand, connection);
         
         var date = Utils.GetDateInput();
         string habit = Utils.GetAlphabeticalInput("habit");
@@ -50,9 +50,9 @@ public class Repository(SqliteConnection connection)
         command.ExecuteNonQuery();
     }
 
-    public void UpdateRecord(string updateRecordCommand, string viewAllRecordsCommand)
+    public void UpdateRecord()
     {
-        var recordIndexes = ViewAllRecords(viewAllRecordsCommand);
+        var recordIndexes = ViewAllRecords();
 
         if (recordIndexes.Count == 0)
         {
@@ -60,7 +60,7 @@ public class Repository(SqliteConnection connection)
         }
         else
         {
-            using var command = new SqliteCommand(updateRecordCommand, connection);
+            using var command = new SqliteCommand(Queries.UpdateRecordCommand, connection);
             
             int idToUpdate = Utils.GetIdOfRecord(recordIndexes, "update");
             
@@ -79,9 +79,9 @@ public class Repository(SqliteConnection connection)
         }
     }
 
-    public void DeleteRecord(string viewAllRecordsCommand, string deleteRecordCommand)
+    public void DeleteRecord()
     {
-        var recordIndexes = ViewAllRecords(viewAllRecordsCommand);
+        var recordIndexes = ViewAllRecords();
 
         if (recordIndexes.Count == 0)
         {
@@ -89,13 +89,27 @@ public class Repository(SqliteConnection connection)
         }
         else
         {
-            using var command = new SqliteCommand(deleteRecordCommand, connection);
+            using var command = new SqliteCommand(Queries.DeleteRecordCommand, connection);
             
             int idToDelete = Utils.GetIdOfRecord(recordIndexes, "delete");
 
             command.Parameters.AddWithValue("@id", idToDelete);
 
             command.ExecuteNonQuery();
+        }
+    }
+
+    public void ViewReportOfHabits()
+    {
+        var recordIndexes = ViewAllRecords();
+
+        if (recordIndexes.Count == 0)
+        {
+            Console.WriteLine("No habits to report on!");
+        }
+        else
+        {
+            
         }
     }
 }
