@@ -28,28 +28,38 @@ public static class Utils
             
         while (!validDateEntered)
         {
-            Console.Write("Type the date when the habit was done in dd/mm/yyyy format: ");
+            Console.Write("Type the date when the habit was done in dd/mm/yyyy format or type \"today\" for today's date: ");
             string? date = Console.ReadLine();
 
-            if (date is null || Regex.IsMatch(date, "[1-31]/[1-12]/[1-9999]"))
+            if (
+                date is null || 
+                !Regex.IsMatch(date, @"^((0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/\d{1,4}|today)$")
+                )
             {
                 Console.WriteLine("Error: date entered is not valid");
             }
             else
             {
-                string[] dateElements = date.Split("/");
-                int day = int.Parse(dateElements[0]);
-                int month = int.Parse(dateElements[1]);
-                int year = int.Parse(dateElements[2]);
-                try
+                if (date.Equals("today"))
                 {
-                    habitDate = new DateTime(year, month, day);
-                    validDateEntered = true;
+                    habitDate = DateTime.Today;
                 }
-                catch (ArgumentOutOfRangeException)
+                else
                 {
-                    Console.WriteLine("Error: Number of days entered greater than number of days in the given month");
+                    string[] dateElements = date.Split("/");
+                    int day = int.Parse(dateElements[0]);
+                    int month = int.Parse(dateElements[1]);
+                    int year = int.Parse(dateElements[2]);
+                    try
+                    {
+                        habitDate = new DateTime(year, month, day);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        Console.WriteLine("Error: Number of days entered greater than number of days in the given month");
+                    }
                 }
+                validDateEntered = true;
             }
         }
 

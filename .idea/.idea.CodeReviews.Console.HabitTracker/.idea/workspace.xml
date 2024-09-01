@@ -10,7 +10,7 @@
     <list default="true" id="7bd20474-e480-47b1-be99-a76a5a2a49fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +37,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    ".NET Project.HabitTracker.executor": "Run",
+    ".NET Project.HabitTracker.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
@@ -94,7 +94,8 @@
       <workItem from="1725094973374" duration="3108000" />
       <workItem from="1725108530831" duration="2950000" />
       <workItem from="1725111487582" duration="171000" />
-      <workItem from="1725111665780" duration="5003000" />
+      <workItem from="1725111665780" duration="5073000" />
+      <workItem from="1725172106594" duration="3102000" />
     </task>
     <servers />
   </component>
@@ -110,68 +111,42 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>216</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+          <line>33</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'GetDateInput'">
             <startOffsets>
-              <option value="7037" />
+              <option value="1504" />
             </startOffsets>
             <endOffsets>
-              <option value="7090" />
+              <option value="1661" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="1" />
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>221</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+          <line>42</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'GetDateInput'">
             <startOffsets>
-              <option value="7312" />
+              <option value="1808" />
             </startOffsets>
             <endOffsets>
-              <option value="7338" />
+              <option value="1833" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="2" />
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>218</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
+          <line>38</line>
+          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'GetDateInput'">
             <startOffsets>
-              <option value="7171" />
+              <option value="1692" />
             </startOffsets>
             <endOffsets>
-              <option value="7224" />
+              <option value="1746" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>217</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
-            <startOffsets>
-              <option value="7103" />
-            </startOffsets>
-            <endOffsets>
-              <option value="7158" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/HabitTracker/Utils.cs</url>
-          <line>219</line>
-          <properties documentPath="$PROJECT_DIR$/HabitTracker/Utils.cs" containingFunctionPresentation="Method 'SeedTable'">
-            <startOffsets>
-              <option value="7237" />
-            </startOffsets>
-            <endOffsets>
-              <option value="7298" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
