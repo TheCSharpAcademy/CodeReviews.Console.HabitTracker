@@ -1,33 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
 
 string DbPath = "steps.db";
-
-if (!File.Exists(DbPath))
-{
-    using (var conn = new SqliteConnection($"Data Source={DbPath}"))
-    {
-        conn.Open();
-
-        string createHabitTableQuery = @"
-            CREATE TABLE IF NOT EXISTS Steps (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Quantity INTEGER NOT NULL,
-                Unit TEXT NOT NULL,
-                DateLogged TEXT NOT NULL
-            );";
-
-        using var cmd = new SqliteCommand(createHabitTableQuery, conn);
-        cmd.ExecuteNonQuery();
-    }
-
-    Console.WriteLine($"Database file {DbPath} successfully created.");
-}
-else
-{
-    Console.WriteLine($"Database file {DbPath} already exists");
-}
-
 int choice;
+
+CreateDatabase();
 
 while (true)
 {
@@ -39,7 +15,8 @@ while (true)
     Console.WriteLine("2 to Insert a Log");
     Console.WriteLine("3 to Update a Log");
     Console.WriteLine("4 to Delete a Log");
-    Console.WriteLine("5 to Exit this Application");
+    Console.WriteLine("5 to View a Tailored Report");
+    Console.WriteLine("6 to Exit this Application");
 
     if (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 5)
     {
@@ -63,13 +40,74 @@ switch (choice)
     case 4:
         break;
     case 5:
+        break;
+    case 6:
         return;
     default:
         Console.WriteLine("Error: Unrecognized input.");
         break;
 }
 
+ void CreateDatabase()
+{
+    if (!File.Exists(DbPath))
+    {
+        using (var conn = new SqliteConnection($"Data Source={DbPath}"))
+        {
+            conn.Open();
 
+            string createHabitTableQuery = @"
+            CREATE TABLE IF NOT EXISTS Steps (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Quantity INTEGER NOT NULL,
+                Unit TEXT NOT NULL,
+                DateLogged TEXT NOT NULL
+            );";
+
+            using var cmd = new SqliteCommand(createHabitTableQuery, conn);
+            cmd.ExecuteNonQuery();
+        }
+
+        Console.WriteLine($"Database file {DbPath} successfully created.");
+        SeedDatabase();
+    }
+    else
+    {
+        Console.WriteLine($"Database file {DbPath} already exists");
+    }
+}
+
+void SeedDatabase()
+{
+    using (var conn = new SqliteConnection($"Data Source={DbPath}"))
+    {
+        conn.Open();
+        Console.WriteLine("Seeding database with 100 records...");
+
+        Random random = new Random();
+
+        for (int i = 0; i < 100; i++)
+        {
+            string query = "INSERT INTO Steps (Quantity, Unit, DateLogged) VALUES (@quantity, @unit, @date)";
+
+            using var cmd = new SqliteCommand(query, conn);
+            cmd.Parameters.AddWithValue("@quantity", random.Next(5000, 10000));
+            cmd.Parameters.AddWithValue("@unit", "steps");
+            cmd.Parameters.AddWithValue("@date", DateTime.Now.AddDays(-i).ToString("dd-MM-yy"));
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (SqliteException e)
+            {
+                Console.WriteLine("Error occured while trying to seed the database\n - Details: " + e.Message);
+            }
+        }
+
+        Console.WriteLine("Seeding completed.");
+    }
+}
 
 class Steps
 {
