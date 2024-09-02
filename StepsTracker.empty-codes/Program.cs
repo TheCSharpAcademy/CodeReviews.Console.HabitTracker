@@ -73,21 +73,26 @@ switch (choice)
 
 class Steps
 {
+    public int Id { get; set; }
     public int? Quantity { get; set; }
     public string? Unit { get; set; }
-    public string? Date { get; set; }
+    public string? DateLogged { get; set; }
+
+    public const string DbPath = "steps.db";
 
     public Steps(int quantity, string unit, string date)
     {
         Quantity = quantity;
         Unit = unit;
-        Date = date;
+        DateLogged = date;
     }
+
+    public Steps() { }
 
     public int InsertSteps(Steps log)
     {
         int result = -1;
-        using (var conn = new SqliteConnection($"Data Source={"steps.db"}"))
+        using (var conn = new SqliteConnection($"Data Source={DbPath}"))
         {
             conn.Open();
 
@@ -96,7 +101,7 @@ class Steps
             using var cmd = new SqliteCommand(query, conn);
             cmd.Parameters.AddWithValue("@quantity", log.Quantity);
             cmd.Parameters.AddWithValue("@unit", log.Unit);
-            cmd.Parameters.AddWithValue("@date", log.Date);
+            cmd.Parameters.AddWithValue("@date", log.DateLogged);
             try
             {
                 result = cmd.ExecuteNonQuery();
@@ -105,7 +110,97 @@ class Steps
             {
                 Console.WriteLine("Error occured while trying to log your steps\n - Details: " + e.Message);
             }
-            conn.Close();
+        }
+        return result;
+    }
+
+    public List<Steps> ViewSteps()
+    {
+        var logs = new List<Steps>();
+
+        using (var conn = new SqliteConnection($"Data Source={DbPath}"))
+        {
+            conn.Open();
+
+            string query = "SELECT Quantity, Unit, DateLogged FROM Steps";
+
+            using var cmd = new SqliteCommand(query, conn);
+
+            try
+            {
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var entry = new Steps
+                    {
+                        Quantity = reader.GetInt32(1),
+                        Unit = reader.GetString(2),
+                        DateLogged = reader.GetString(3)
+                    };
+                    logs.Add(entry);
+                }
+            }
+            catch (SqliteException e)
+            {
+                Console.WriteLine("Error occured while trying to access your steps log\n - Details: " + e.Message);
+            }
+        }
+        return logs;
+    }
+    public int UpdateSteps(Steps log)
+    {
+        int result = -1;
+        using (var conn = new SqliteConnection($"Data Source={DbPath}"))
+        {
+            conn.Open();
+
+            string query = "UPDATE Steps SET Quantity = @quantity WHERE Id = @id";
+
+            using var cmd = new SqliteCommand(query, conn);
+            cmd.Parameters.AddWithValue("@quantity", log.Quantity);
+            cmd.Parameters.AddWithValue("@id", log.Id);
+
+            try
+            {
+                result = cmd.ExecuteNonQuery();
+                if (result == 0)
+                {
+                    Console.WriteLine($"No record found with the provided Id: {log.Id}");
+                }
+            }
+            catch (SqliteException e)
+            {
+                Console.WriteLine("Error occured while trying to edit your steps count\n - Details: " + e.Message);
+            }
+        }
+        return result;
+    }
+
+    public int DeleteSteps(Steps log)
+    {
+        int result = -1;
+        using (var conn = new SqliteConnection($"Data Source={DbPath}"))
+        {
+            conn.Open();
+
+            string query = "DELETE FROM Steps WHERE Id = @id";
+
+            using var cmd = new SqliteCommand(query, conn);
+            cmd.Parameters.AddWithValue("@id", log.Id);
+
+            try
+            {
+                result = cmd.ExecuteNonQuery();
+                if (result == 0)
+                {
+                    Console.WriteLine($"No record found with the provided Id: {log.Id}");
+                }
+            }
+            catch (SqliteException e)
+            {
+                Console.WriteLine("Error occured while trying to delete this log\n - Details: " + e.Message);
+            }
         }
         return result;
     }
