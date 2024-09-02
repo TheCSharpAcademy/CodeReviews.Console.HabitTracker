@@ -45,7 +45,7 @@ try
                     repository.DeleteRecord();
                     break;
                 case 5:
-                    exitApp = true;
+                    repository.ViewReportOfHabits();
                     break;
                 case 6:
                     exitApp = true;
