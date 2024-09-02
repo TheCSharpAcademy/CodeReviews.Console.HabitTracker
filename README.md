@@ -27,3 +27,12 @@ is written in C# with SQLite as the database.
 
 * A console-based UI where users can navigates using commands from the keyboard
   - ![image](habit_logger_ui.png)
+
+* CRUD DB functions
+  * Users can create, read, update and delete records from the UI
+  * Information inputted are checked for correct format
+
+* Summarized report on the user's habit
+  * Users can view a report which summarizes each of their habit
+  for e.g. accumulative occurrences
+  * ![image](habit_report.png)
