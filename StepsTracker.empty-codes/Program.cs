@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Text.RegularExpressions;
 
-string DbPath = "steps.db";
+string? DbPath = "steps.db";
 int choice;
 
 CreateDatabase();
@@ -32,12 +33,16 @@ while (true)
 switch (choice)
 {
     case 1:
+        ViewAllSteps();
         break;
     case 2:
+        CreateStepsLog();
         break;
     case 3:
+        UpdateStepsLog();
         break;
     case 4:
+        DeleteStepsLog();
         break;
     case 5:
         break;
@@ -48,7 +53,77 @@ switch (choice)
         break;
 }
 
- void CreateDatabase()
+void CreateStepsLog()
+{
+    Steps insertSteps = new Steps();
+
+    Console.WriteLine("Input 0 to Add Today's Date or 1 to Add a Custom Date:");
+    bool state = int.TryParse(Console.ReadLine(), out int dateChoice);
+
+    while(!state || dateChoice != 1 || dateChoice != 0)
+    {
+        Console.WriteLine("Error: Choose between options 0 and 1.");
+        state = int.TryParse(Console.ReadLine(), out dateChoice);
+    }
+    if (state && dateChoice == 0)
+    {
+        insertSteps.DateLogged = DateTime.Now.ToString("dd-MM-yy");
+    }
+    if (state && dateChoice == 1)
+    {
+        Console.Write("Enter the date in the 'dd-MM-yy' format: ");
+        string? date = Console.ReadLine();
+
+        while (date == null || !Regex.IsMatch(date, @"^\d{2}-\d{2}-\d{2}$"))
+        {
+            Console.WriteLine("Error: Date must be in 'dd-MM-yy' format, Enter again: ");
+            date = Console.ReadLine();
+        }
+        insertSteps.DateLogged = date;
+    }
+
+    Console.WriteLine("Enter the number of steps walked:");
+    int.TryParse(Console.ReadLine(), out int quantity);
+    insertSteps.Quantity = quantity;
+
+    insertSteps.Unit = "steps";
+
+    if (insertSteps.InsertSteps(insertSteps) == 1)
+    {
+        Console.WriteLine("Steps successfully logged.");
+    }
+}
+void ViewAllSteps()
+{
+    Steps viewSteps = new Steps();
+    Console.WriteLine(viewSteps.ViewSteps());
+}  
+void UpdateStepsLog()
+{
+    Steps updateSteps = new Steps();
+    Console.WriteLine("Enter the Id of the log you wish to update:");
+    int.TryParse(Console.ReadLine(), out int updateId);
+    updateSteps.Id = updateId;
+    Console.WriteLine("Enter the new number of steps:");
+    int.TryParse(Console.ReadLine(), out int quantity);
+    updateSteps.Quantity = quantity;
+    if (updateSteps.UpdateSteps(updateSteps) == 1)
+    {
+        Console.WriteLine("Steps count successfully changed.");
+    }
+}
+void DeleteStepsLog()
+{
+    Steps deleteSteps = new Steps();
+    Console.WriteLine("Enter the Id of the log you wish to delete:");
+    int.TryParse(Console.ReadLine(), out int deleteId);
+    deleteSteps.Id = deleteId;
+    if (deleteSteps.DeleteSteps(deleteSteps) == 1)
+    {
+        Console.WriteLine("Steps log successfully deleted.");
+    }
+}
+void CreateDatabase()
 {
     if (!File.Exists(DbPath))
     {
@@ -76,7 +151,6 @@ switch (choice)
         Console.WriteLine($"Database file {DbPath} already exists");
     }
 }
-
 void SeedDatabase()
 {
     using (var conn = new SqliteConnection($"Data Source={DbPath}"))
@@ -108,22 +182,14 @@ void SeedDatabase()
         Console.WriteLine("Seeding completed.");
     }
 }
-
 class Steps
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public int? Quantity { get; set; }
     public string? Unit { get; set; }
     public string? DateLogged { get; set; }
 
-    public const string DbPath = "steps.db";
-
-    public Steps(int quantity, string unit, string date)
-    {
-        Quantity = quantity;
-        Unit = unit;
-        DateLogged = date;
-    }
+    public const string? DbPath = "steps.db";
 
     public Steps() { }
 
