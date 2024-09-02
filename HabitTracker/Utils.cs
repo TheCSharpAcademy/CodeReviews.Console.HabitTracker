@@ -6,6 +6,7 @@ namespace HabitTracker;
 public static class Utils
 {
     private static readonly Random Gen = new();
+    private const int NumOfRecordsToSeed = 100;
     
     public static DateTime GetDateInput()
     {
@@ -196,7 +197,7 @@ public static class Utils
             [6, 9]
         };
 
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < NumOfRecordsToSeed; i++)
         {
             using var command = new SqliteCommand(Queries.InsertRecordCommand, connection);
             

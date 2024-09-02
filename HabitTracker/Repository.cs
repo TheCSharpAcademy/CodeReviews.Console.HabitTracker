@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.Data.Sqlite;
 
 namespace HabitTracker;

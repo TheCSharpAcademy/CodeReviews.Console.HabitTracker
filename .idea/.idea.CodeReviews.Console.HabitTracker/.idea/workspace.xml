@@ -8,12 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7bd20474-e480-47b1-be99-a76a5a2a49fb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CodeReviews.Console.HabitTracker/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/Queries.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Queries.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Repository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Repository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HabitTracker/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" beforeDir="false" afterPath="$PROJECT_DIR$/HabitTracker/habit_tracker.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +101,7 @@
       <workItem from="1725111487582" duration="171000" />
       <workItem from="1725111665780" duration="5073000" />
       <workItem from="1725172106594" duration="16169000" />
-      <workItem from="1725256301116" duration="2546000" />
+      <workItem from="1725256301116" duration="3841000" />
     </task>
     <servers />
   </component>
