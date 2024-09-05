@@ -1,8 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using habitTracker.models;
 using System.Globalization;
-using SQLitePCL;
 
 namespace habitTracker;
 
