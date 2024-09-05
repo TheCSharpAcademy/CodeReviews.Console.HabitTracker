@@ -2,7 +2,7 @@
 
 This is a console based CRUD application created with C# and SQLite.
 
-<img src="HabitTracker.ngalantino/resources/app_screenshot.png" alt="Habit Tracker screenshot">
+<img src="HabitTracker.ngalantino/HabitTracker.ngalantino/resources/app_screenshot.png" alt="Habit Tracker screenshot">
 
 # Requirements
 
