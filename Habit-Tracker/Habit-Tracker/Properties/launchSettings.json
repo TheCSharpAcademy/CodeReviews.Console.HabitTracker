@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Habit-Tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Hannes\\source\\repos\\Habit-Tracker\\Habit-Tracker\\Properties\\"
+    }
+  }
+}
