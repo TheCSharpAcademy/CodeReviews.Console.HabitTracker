@@ -1,5 +1,5 @@
-﻿using System.Globalization;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using System.Globalization;
 namespace habit_tracker
 
 {
@@ -14,46 +14,50 @@ namespace habit_tracker
             {
                 Menu.DisplayMenu();
 
-                string menuInput = Console.ReadLine();
-                int ChosenOption = int.Parse(menuInput);
-                switch (ChosenOption)
+                string? menuInput = Console.ReadLine();
+                if (menuInput != null)
                 {
-                    case 0:
-                        Console.WriteLine("Bye Bye!");
-                        Thread.Sleep(1000);
-                        closeApp = true;
-                        break;
+                    int ChosenOption = int.Parse(menuInput);
+                    switch (ChosenOption)
+                    {
+                        case 0:
+                            Console.WriteLine("Bye Bye!");
+                            Thread.Sleep(1000);
+                            closeApp = true;
+                            break;
 
-                    case 1:
-                        GetRecords();
-                        Console.WriteLine("Press any key to return back to main menu");
-                        Console.ReadKey();
-                        break;
+                        case 1:
+                            GetRecords();
+                            Console.WriteLine("Press any key to return back to main menu");
+                            Console.ReadKey();
+                            break;
 
-                    case 2:
-                        InsertRecord();
-                        break;
+                        case 2:
+                            InsertRecord();
+                            break;
 
-                    case 3:
-                        DeleteRecord();
-                        Console.Clear();
-                        break;
+                        case 3:
+                            DeleteRecord();
+                            Console.Clear();
+                            break;
 
-                    case 4:
-                        UpdateRecord();
-                        break;
+                        case 4:
+                            UpdateRecord();
+                            break;
 
-                    default:
-                        Console.WriteLine("\nInvalid command. Please, enter number from 0 to 4\n");
-                        Thread.Sleep(1500);
-                        break;
+                        default:
+                            Console.WriteLine("\nInvalid command. Please, enter number from 0 to 4\n");
+                            Thread.Sleep(1500);
+                            break;
+                    }
                 }
             }
         }
         public static string GetDateInput(string message)
         {
             Console.WriteLine(message);
-            string dateInput = Console.ReadLine();
+            string? dateInput = Console.ReadLine();
+
             if (dateInput == "0") GetUserInput();
             while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
@@ -65,9 +69,9 @@ namespace habit_tracker
         public static int GetNumberInput(string message)
         {
             Console.WriteLine(message);
-            string numberInput = Console.ReadLine();
+            string? numberInput = Console.ReadLine();
             if (numberInput == "0") GetUserInput();
-            while (! (int.Parse(numberInput)>0))
+            while (numberInput == null || !(int.Parse(numberInput) > 0))
             {
                 Console.WriteLine("\n**Enter 0 to go to main menu**\nInvalid number. Number must be integer and no decimals allowed. Enter correct number:");
                 numberInput = Console.ReadLine();
@@ -149,7 +153,7 @@ namespace habit_tracker
                     Thread.Sleep(1500);
                     connection.Close();
                     DeleteRecord();
-                }   
+                }
             }
             Console.WriteLine($"\nRecord with Id {recordId} was deleted succesfully.\n");
             Console.WriteLine("Press any key to return back to main menu");
@@ -175,7 +179,7 @@ namespace habit_tracker
                     Thread.Sleep(1500);
                     connection.Close();
                     UpdateRecord();
-                } 
+                }
 
                 string date = GetDateInput("\n\n**Enter 0 to go to main menu**\nPlease, insert the date: (format: dd-mm-yy).\n");
                 int quantity = GetNumberInput("\n\n**Enter 0 to go to main menu**\nPlease, insert the number of lessons: (number must be integer, no decimals allowed)\n");

@@ -1,8 +1,7 @@
-﻿using System;
-namespace habit_tracker
+﻿namespace habit_tracker
 {
     public static class Menu
-    { 
+    {
         public static void DisplayMenu()
         {
             Console.Clear();
