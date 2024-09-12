@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Data.Sqlite;
 namespace habit_tracker
 {
     public static class Menu
