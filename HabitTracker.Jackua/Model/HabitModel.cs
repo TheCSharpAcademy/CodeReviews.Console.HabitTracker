@@ -1,8 +1,7 @@
-﻿namespace HabitTracker.Jackua.Model
+﻿namespace HabitTracker.Jackua.Model;
+
+public class HabitModel
 {
-    public class HabitModel
-    {
-        public int HabitId { get; set; }
-        public string HabitName { get; set; }
-    }
+    public int HabitId { get; set; }
+    public string HabitName { get; set; }
 }
