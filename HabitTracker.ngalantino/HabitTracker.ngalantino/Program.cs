@@ -100,7 +100,10 @@ public class Program
         var tableCmd = connection.CreateCommand();
 
         tableCmd.CommandText =
-        $"INSERT INTO drinking_water(date, quantity) VALUES('{date}', {quantity})";
+        $"INSERT INTO drinking_water(date, quantity) VALUES(@date, @quantity)";
+
+        tableCmd.Parameters.AddWithValue("@date", date);
+        tableCmd.Parameters.AddWithValue("@quantity", quantity);
 
         tableCmd.ExecuteNonQuery();
 
