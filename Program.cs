@@ -4,17 +4,21 @@
     {
         static void Main(string[] args)
         {
-
-            Repository.CreateTable();
+            
+            Repository.CreateTable(true);
             Repository.GetUserInput();
         }
-
     }
 }
 
-public class CsharpLessons
+public class HabitTable
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public int Quantity { get; set; }
+}
+
+public class TablesList
+{
+    public string TableName { get; set; }
 }
