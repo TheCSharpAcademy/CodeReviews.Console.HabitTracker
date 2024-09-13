@@ -7,6 +7,17 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Ignore database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore macOS .DS_Store files
+.DS_Store
+
+# Ignore other unnecessary files
+ReadMe.rtf
+
 # User-specific files
 *.rsuser
 *.suo
