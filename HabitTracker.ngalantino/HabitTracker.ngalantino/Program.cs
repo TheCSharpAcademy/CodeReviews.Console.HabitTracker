@@ -10,6 +10,16 @@ public class Program
 
     public Program()
     {
+    }
+
+    public static void Main(string[] args)
+    {
+        InitializeDatabase();
+        GetUserInput();
+    }
+
+    internal static void InitializeDatabase()
+    {
         using var connection = new SqliteConnection(connectionString);
 
         // Create database table.
@@ -27,12 +37,6 @@ public class Program
         tableCmd.ExecuteNonQuery();
 
         connection.Close();
-
-    }
-
-    public static void Main(string[] args)
-    {
-        GetUserInput();
     }
 
     static void GetUserInput()
