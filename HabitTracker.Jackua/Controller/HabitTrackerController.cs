@@ -42,7 +42,7 @@ public class HabitTrackerController
                 recordHabit INTEGER,
                 date TEXT,
                 quantity INTEGER,
-                FOREIGN KEY(recordHabit) REFERENCES habit(habitId)
+                FOREIGN KEY(recordHabit) REFERENCES habit(habitId) ON DELETE CASCADE
             );
 
             INSERT INTO record
@@ -159,31 +159,26 @@ public class HabitTrackerController
 
         if (reader.HasRows)
         {
+            MenuView.DashLines();
             while (reader.Read())
             {
-                tableData.Add(
-                    new RecordModel
-                    {
-                        RecordId = reader.GetInt32(0),
-                        HabitName = queryData[reader.GetInt32(1)],
-                        Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-us")),
-                        Quantity = reader.GetInt32(3)
-                    });
+                MenuView.DisplayData(new RecordModel
+                {
+                    RecordId = reader.GetInt32(0),
+                    HabitName = queryData[reader.GetInt32(1)],
+                    Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-us")),
+                    Quantity = reader.GetInt32(3)
+                });
             }
+            MenuView.DashLines();
         }
         else
         {
             MenuView.NoRows();
+            MenuView.DashLines();
         }
 
         connection.Close();
-
-        MenuView.DashLines();
-        foreach (var rm in tableData)
-        {
-            MenuView.DisplayData(rm);
-        }
-        MenuView.DashLines();
     }
 
     private static void GetAllHabits()
@@ -200,29 +195,24 @@ public class HabitTrackerController
 
         if (reader.HasRows)
         {
+            MenuView.DashLines();
             while (reader.Read())
             {
-                tableData.Add(
-                    new HabitModel
-                    {
-                        HabitId = reader.GetInt32(0),
-                        HabitName = reader.GetString(1)
-                    });
+                MenuView.DisplayData(new HabitModel
+                {
+                    HabitId = reader.GetInt32(0),
+                    HabitName = reader.GetString(1)
+                });
             }
+            MenuView.DashLines();
         }
         else
         {
             MenuView.NoRows();
+            MenuView.DashLines();
         }
 
         connection.Close();
-
-        MenuView.DashLines();
-        foreach (var hm in tableData)
-        {
-            MenuView.DisplayData(hm);
-        }
-        MenuView.DashLines();
     }
 
     private static void GetSummary()
@@ -250,27 +240,20 @@ public class HabitTrackerController
 
         if (reader.HasRows)
         {
+            MenuView.DashLines();
             while (reader.Read())
             {
-                tableData.Add(
-                    reader.GetString(0),
-                    reader.GetInt32(1)
-                );
+                MenuView.DisplayData(reader.GetString(0), reader.GetInt32(1));
             }
+            MenuView.DashLines();
         }
         else
         {
             MenuView.NoRows();
+            MenuView.DashLines();
         }
 
         connection.Close();
-
-        MenuView.DashLines();
-        foreach (string key in tableData.Keys)
-        {
-            MenuView.DisplayData(key, tableData[key]);
-        }
-        MenuView.DashLines();
     }
 
     private static void InsertRecord()
@@ -383,31 +366,37 @@ public class HabitTrackerController
 
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
-        var tableCmd = connection.CreateCommand();
 
+        var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText = "SELECT EXISTS(SELECT 1 FROM record WHERE recordHabit = @habitId)";
+        checkCmd.Parameters.Add(new SqliteParameter("@habitId", habitId));
+        int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+        var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = "DELETE FROM habit WHERE habitId = @habitId";
         tableCmd.Parameters.Add(new SqliteParameter("@habitId", habitId));
 
-        try
+        if (checkQuery == 0)
         {
-            int rowCount = tableCmd.ExecuteNonQuery();
-
-            if (rowCount == 0)
+            MenuView.DoesNotExist(habitId, "Habit");
+        }
+        else
+        {
+            int records = CountRecordWithHabitId(habitId);
+            string input = string.Empty;
+            if (records > 0)
             {
-                MenuView.DoesNotExist(habitId, "Habit");
+                MenuView.DeleteRecords(records, habitId);
+                input = Console.ReadLine();
             }
-            else
+
+            if (records == 0 || input.Equals("Yes"))
             {
+                tableCmd.ExecuteNonQuery();
                 MenuView.Deleted(habitId, "Habit");
             }
         }
-        catch (SqliteException e)
-        {
-            if (e.SqliteExtendedErrorCode == SQLitePCL.raw.SQLITE_CONSTRAINT_FOREIGNKEY)
-            {
-                MenuView.ForeignKey(habitId);
-            }
-        }
+
         connection.Close();
         MenuView.Continue();
         Console.ReadLine();
@@ -570,5 +559,29 @@ public class HabitTrackerController
         int finalInput = Convert.ToInt32(numberInput);
 
         return finalInput;
+    }
+
+    private static int CountRecordWithHabitId(int habitId)
+    {
+        using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+            "SELECT * FROM record where recordHabit = @habitId;";
+        tableCmd.Parameters.Add(new SqliteParameter("@habitId", habitId));
+        SqliteDataReader reader = tableCmd.ExecuteReader();
+
+        int records = 0;
+
+        if (reader.HasRows)
+        {
+            while (reader.Read())
+            {
+                records++;
+            }
+        }
+
+        connection.Close();
+        return records;
     }
 }
