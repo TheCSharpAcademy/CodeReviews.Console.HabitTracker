@@ -368,13 +368,10 @@ public class HabitTrackerController
         connection.Open();
 
         var checkCmd = connection.CreateCommand();
-        checkCmd.CommandText = "SELECT EXISTS(SELECT 1 FROM record WHERE recordHabit = @habitId)";
+        checkCmd.CommandText = "SELECT EXISTS(SELECT 1 FROM habit WHERE habitId = @habitId)";
         checkCmd.Parameters.Add(new SqliteParameter("@habitId", habitId));
         int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
-        var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = "DELETE FROM habit WHERE habitId = @habitId";
-        tableCmd.Parameters.Add(new SqliteParameter("@habitId", habitId));
 
         if (checkQuery == 0)
         {
@@ -392,6 +389,9 @@ public class HabitTrackerController
 
             if (records == 0 || input.Equals("Yes"))
             {
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = "DELETE FROM habit WHERE habitId = @habitId";
+                tableCmd.Parameters.Add(new SqliteParameter("@habitId", habitId));
                 tableCmd.ExecuteNonQuery();
                 MenuView.Deleted(habitId, "Habit");
             }
