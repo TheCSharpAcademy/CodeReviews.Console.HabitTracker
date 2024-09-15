@@ -20,6 +20,7 @@ public class MenuView
         Console.WriteLine("Type 9 to View Summary of Records");
         DashLines();
     }
+
     public static void InvalidCommand()
     {
         Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
@@ -73,6 +74,12 @@ public class MenuView
     public static void DeleteId(string type)
     {
         Console.WriteLine($"\nPlease type the Id of the {type} you want to delete. Type 0 to return to main menu.");
+    }
+
+    public static void DeleteRecords(int num, int id)
+    {
+        Console.WriteLine($"\nThere are {num} records with the habitId {id} that will also be deleted.");
+        Console.WriteLine("Enter \"Yes\" to delete the habit along with its records or anything else to return to main menu.");
     }
 
     public static void InvalidDate()
