@@ -6,6 +6,7 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 `Basic` Requirments:
 
 	- This is an application where you’ll log occurrences of a habit.
+    - This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
 	- This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
 	- Users need to be able to input the date of the occurrence of the habit
 	- The application should store and retrieve data from a real database
@@ -34,7 +35,7 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 + Full SQLite Database connection
 	- [x] Create, read, update, delete records
 	- [x] Create, select, view habits
-	- [x] Generate random records with user criterias:
+ - [x] Generate random records with user criterias:
 		- Amount of records
 		- Amount of units
 		- Year of records from 2020 to 2024
