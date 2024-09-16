@@ -418,16 +418,16 @@ namespace HabitTrackerLibrary
         }
         class RandomDateTime
         {
-            DateTime startDate { get; set; }
-            int range { get; set; }
+            DateTime StartDate { get; set; }
+            int Range { get; set; }
             public RandomDateTime()
             {
-                startDate = new DateTime(1995, 1, 1);
-                range = (DateTime.Today - startDate).Days;
+                StartDate = new DateTime(1995, 1, 1);
+                Range = (DateTime.Today - StartDate).Days;
             }
             public DateTime Next()
             {
-                return startDate.AddDays(Random.Shared.Next(range)).AddHours(Random.Shared.Next(0, 24)).AddMinutes(Random.Shared.Next(0, 60));
+                return StartDate.AddDays(Random.Shared.Next(Range)).AddHours(Random.Shared.Next(0, 24)).AddMinutes(Random.Shared.Next(0, 60));
             }
         }
     }

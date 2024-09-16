@@ -10,7 +10,7 @@
             Console.WriteLine("Please provide a name for your habit: \n");
             string habitName = Console.ReadLine() ?? "Habit name";
             Console.WriteLine("Please choose a unit of measurement for your habit: \n");
-            string chosenMeasurement = Console.ReadLine() ?? "Distance"; ;
+            string chosenMeasurement = Console.ReadLine() ?? "Distance";
             databaseQueries.CreateHabitQuery(habitName, chosenMeasurement);
         }
         public static void ViewHabit()

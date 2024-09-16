@@ -2,7 +2,7 @@
 internal class HabitTrackerMain
 {
     static DatabaseQueries databaseQueries = new DatabaseQueries();
-    private static bool exit = false;
+    private static bool exit;
     private static void Main(string[] args)
     {
         while (!exit)
