@@ -14,7 +14,7 @@ internal class HabitTrackerOperationHandler
         }
         return readResult;
     }
-    internal bool isDateValid(string input)
+    internal bool IsDateValid(string input)
     {
         if (!DateTime.TryParseExact(input, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out _))
         {
