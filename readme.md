@@ -22,7 +22,7 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 
     - Try using parameterized queries to make your application more secure
     - Let the users create their own habits (with their own unit) to track.
-    - Seed Data when DB gets created 1st time, inserting a 100 records.
+    - Seed data when DB gets created 1st time, inserting a 100 records.
     - Create a report functionality where the users can view specific information.
 
 > [!NOTE]
