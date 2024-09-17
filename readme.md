@@ -27,33 +27,3 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 > [!NOTE]
 > I changed a bit advanced requirments to challenge myself harder. :frog:
 
-
-## Features:
-
-![UI Menu Screenshot](/assets/UI.png)
-
-+ Full SQLite Database connection
-	- [x] Create, read, update, delete records
-	- [x] Create, select, view habits
- - [x] Generate random records with user criterias:
-		- Amount of records
-		- Amount of units
-		- Year of records from 2020 to 2024
-+ Console Interface (Navigation with numbers)  
-+ Validation for:
-	+ Dates
-	+ Names for habits[^1]
-	+ Numbers
-	+ Auto Counter of Records number and total  amount
-	
-![UI Menu Screenshot](/assets/AutoCounter.png)
-	
-[^1]Every habit is created in new table, so any symbols that might be wrong for SQL Table name are checked.
-
-## Resources Used:
-
-+ GitHub
-+ Stack Overflow 
-+ sqlite.org
-+ [GitHub Emoji Cheat Sheet](github.com/ikatyang/emoji-cheat-sheet/tree/master)
-+ ChatGPT (couple of minor issues)
