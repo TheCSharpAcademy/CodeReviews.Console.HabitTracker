@@ -8,7 +8,7 @@ internal class HabitTrackerOperationHandler
         string? readResult = Console.ReadLine();
         readResult = CheckInputNullOrWhitespace(readResult, message);
         if (readResult == "0") return readResult;
-        while (!isDateValid(readResult))
+        while (!IsDateValid(readResult))
         {
             readResult = Console.ReadLine();
         }
