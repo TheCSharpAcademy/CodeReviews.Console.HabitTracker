@@ -1,4 +1,4 @@
-# Habit Logger
+## Habit Logger
 
 Console based CRUD application to track number of drinks consumed in a day.
 Developed using C# and SqLite.
