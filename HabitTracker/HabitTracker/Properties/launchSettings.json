@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\ProjectsA\\HabitTracker\\HabitTracker"
+    }
+  }
+}
