@@ -1,10 +1,7 @@
 ﻿using AnaClos.HabitTracker;
 using Microsoft.Data.Sqlite;
-using System.Data;
-using System.Diagnostics.Metrics;
 using System.Globalization;
-using static System.Formats.Asn1.AsnWriter;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 string choice = "q";
 string connectionString = @"Data Source=habit_Tracker.db";
@@ -266,13 +263,12 @@ bool ValidateDate(string date)
     {
         try
         {
-            //ok = DateTime.TryParseExact(date, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime);
             dateTime = DateTime.ParseExact(date, "dd-MM-yy", new CultureInfo("en-US"));
             ok = true;
         }
         catch(Exception ex)
         {
-
+            ok = false;
         }        
     }
     
@@ -297,7 +293,7 @@ bool ValidateInt(string response)
         }
         catch (Exception ex)
         {
-
+            ok = false;
         }
     }
     return ok;
@@ -310,7 +306,7 @@ string GetDateInput()
     string date=string.Empty;
 
     Console.WriteLine();
-    Console.WriteLine(@"Enter the Date in format dd-mm-yy. Type 'R' to return to main menu.");
+    Console.WriteLine(@"Enter the Date in format dd-MM-yy. Type 'R' to return to main menu.");
 
     date = Console.ReadLine().ToLower().Trim();
     return date;
