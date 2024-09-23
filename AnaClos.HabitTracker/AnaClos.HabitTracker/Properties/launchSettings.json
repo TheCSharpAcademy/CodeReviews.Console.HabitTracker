@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AnaClos.HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\efalcom\\source\\repos\\CodeReviews.Console.HabitTracker\\AnaClos.HabitTracker\\AnaClos.HabitTracker"
+    }
+  }
+}
