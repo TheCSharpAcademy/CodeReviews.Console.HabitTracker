@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.ComponentModel.Design;
 using System.Globalization;
-using System.Runtime.InteropServices;
 
 internal class Program
 {
