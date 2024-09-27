@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,13 +50,13 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     case 0:
                         return;
                     case 1:
-                        Console.WriteLine("1");
+                        ViewAllRecords();
                         break;
                     case 2:
                         InsertRecord();
                         break; 
                     case 3:
-                        Console.WriteLine("3");
+                        DeleteRecord();
                         break;
                     case 4:
                         Console.WriteLine("4");
@@ -64,6 +65,66 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                         Console.WriteLine("Please choose a valid option\n\n");
                         continue;
                 }
+            }
+        }
+
+        private void ViewAllRecords()
+        {
+            String start = "=================\nVIEW ALL RECORDS\n=================\n";
+            Console.WriteLine(start);
+            List<Habit> habits = crud.GetAllRecords();
+            if (habits.Count == 0)
+            {
+                Console.WriteLine("There is no data in the database");
+                MainMenu();
+            }
+            PrintResults(habits);
+        }
+
+        private void PrintResults(List<Habit> habits)
+        {
+            int linespace = 20;
+            string head = String.Format("||{0,-3}||{1,-25}||{2,-10}||", "Id", "Habit", "Date");
+            string top = new('=', head.Length);
+            Console.WriteLine(top);
+            Console.WriteLine(head);
+            Console.WriteLine(top);
+            foreach(Habit habit in habits)
+            {
+                Console.WriteLine("||{0,-3}||{1,-25}||{2,-10}||", habit.Id, habit.Name, habit.Date.ToShortDateString());
+
+            }
+            Console.WriteLine(top + "\n");
+            Console.ReadLine();
+        }
+
+
+
+        private void DeleteRecord()
+        {
+            String start = "=================\nDELETE A RECORD\n=================\n";
+            Console.WriteLine(start);
+            while (true)
+            {
+                Console.WriteLine("Which id would you want to remove?");
+                string response = Console.ReadLine();
+                bool parse = int.TryParse(response, out int id);
+                if (!parse)
+                {
+                    Console.WriteLine("Please insert a valid id");
+                    Console.ReadLine();
+                    continue;
+                }
+                bool success = crud.DeleteRecord(id);
+                if (!success)
+                {
+                    Console.WriteLine("The provided id does not exist");
+                    Console.ReadLine();
+                    continue;
+                }
+                Console.WriteLine("\nRecord deleted with success!\n");
+                Console.ReadLine();
+                MainMenu();
             }
         }
 

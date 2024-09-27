@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+
 
 namespace HabitTracker.BatataDoc3.db
 {
@@ -63,6 +65,40 @@ namespace HabitTracker.BatataDoc3.db
             command.Parameters.AddWithValue("@name", input);
             command.Parameters.AddWithValue("@date", dt);
             command.ExecuteNonQuery();
+        }
+
+
+        public List<Habit> GetAllRecords()
+        {
+            List<Habit> habits = new List<Habit>();
+            string sql = "SELECT * FROM habits";
+
+            using var command = new SqliteCommand(sql, conn);
+            SqliteDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    string name = reader.GetString(1); 
+                    DateTime dt = reader.GetDateTime(2);
+                    Habit h = new Habit(id, name, dt);
+                    habits.Add(h);
+                }
+            }
+            return habits;
+
+        }
+
+        public bool DeleteRecord(int id)
+        {
+            string sql = "DELETE FROM habits WHERE id = @id";
+            using var command = new SqliteCommand(sql, conn);
+            command.Parameters.AddWithValue("@id", id);
+
+            var deletedRow = command.ExecuteNonQuery();
+            if (deletedRow == 0) return false;
+            return true;
         }
     }
 }
