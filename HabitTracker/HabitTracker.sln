@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTracker", "HabitTracker\HabitTracker.csproj", "{690BD667-3B6B-4182-87A9-F437BB1FC086}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTrackerLibrary", "HabitTrackerLibrary\HabitTrackerLibrary.csproj", "{27AFB1AE-CFE7-4D12-A1AD-22B5C3979277}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{690BD667-3B6B-4182-87A9-F437BB1FC086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{690BD667-3B6B-4182-87A9-F437BB1FC086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{690BD667-3B6B-4182-87A9-F437BB1FC086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{690BD667-3B6B-4182-87A9-F437BB1FC086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27AFB1AE-CFE7-4D12-A1AD-22B5C3979277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27AFB1AE-CFE7-4D12-A1AD-22B5C3979277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27AFB1AE-CFE7-4D12-A1AD-22B5C3979277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27AFB1AE-CFE7-4D12-A1AD-22B5C3979277}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
