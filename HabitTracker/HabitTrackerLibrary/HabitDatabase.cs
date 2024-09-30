@@ -26,6 +26,59 @@ public static class HabitDatabase
         
     }
 
+    public static void DeleteHabit(string type,string date)
+    {
+        string deleteCommand = String.IsNullOrWhiteSpace(date)? $"DELETE FROM Habits WHERE HabitType = @type":"DELETE FROM Habits WHERE HabitType = @type AND LoggingDate = @date";
+        using (var connection = new SqliteConnection(_connectionString))
+        {
+            connection.Open();
+            using (var cmd = new SqliteCommand(deleteCommand, connection))
+            {
+                cmd.Parameters.AddWithValue("@type", type);
+                if (!String.IsNullOrWhiteSpace(date))
+                {
+                    cmd.Parameters.AddWithValue("@date", date);
+                }
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        UpdateHabitTypes();
+    }
+
+    public static void UpdateHabitLog(string command,string habitType,string date,string newAmount)
+    {
+        using (var connection = new SqliteConnection(_connectionString))
+        {
+            connection.Open();
+            using (var cmd = new SqliteCommand(command, connection))
+            {
+                cmd.Parameters.AddWithValue("@HabitType", habitType);
+                cmd.Parameters.AddWithValue("@LoggingDate", date);
+                cmd.Parameters.AddWithValue("@Quantity", newAmount);
+                try
+                {
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine($"{rowsAffected} habit(s) updated successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No habit found with the specified type and date.");
+                    }
+                    Console.WriteLine("Press Enter to continue");
+                    Console.ReadLine();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+            connection.Close();
+        }
+    }
     public static void UpdateHabitTypes()
     {
         using (var connection = new SqliteConnection(_connectionString))
@@ -53,19 +106,42 @@ public static class HabitDatabase
         }
     }
 
-    public static void DisplayHabitsHistory()
-    {
+    public static void DisplayHabitsHistory(string habitType,string date)
+    {   Console.Clear();
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
-            using (var cmd = new SqliteCommand(@"SELECT HabitType, LoggingDate, Quantity FROM habits", connection))
+            string command = @"SELECT HabitType, LoggingDate, Quantity FROM habits ";
+            if (!string.IsNullOrWhiteSpace(date) && !string.IsNullOrWhiteSpace(habitType))
             {
+                command += ($"WHERE LoggingDate = @date AND HabitType = @type");
+            }
+            if (string.IsNullOrWhiteSpace(date) && !string.IsNullOrWhiteSpace(habitType))
+            {
+                command += ($"WHERE HabitType = @type");
+            }
+            if (!string.IsNullOrWhiteSpace(date) && string.IsNullOrWhiteSpace(habitType))
+            {
+                command += ($"WHERE LoggingDate = @date ");
+            }
+            
+            using (var cmd = new SqliteCommand(command, connection))
+            {
+                if (!String.IsNullOrEmpty(habitType))
+                {
+                    cmd.Parameters.AddWithValue("@type", habitType);
+                }
+
+                if (!String.IsNullOrWhiteSpace(date))
+                {
+                    cmd.Parameters.AddWithValue("@date", date);
+                }
                 using (var reader = cmd.ExecuteReader())
                 {
                     Console.WriteLine("Habits:");
                     while (reader.Read())
                     {
-                        Console.WriteLine($"{reader["HabitType"]}, {reader["LoggingDate"]}, {reader["Quantity"]}");
+                        Console.WriteLine($"{reader["HabitType"]}, {(DateTime.Parse(reader["LoggingDate"].ToString())).ToString("dd-MM-yyyy")}, {reader["Quantity"]}");
                     }
                     Console.WriteLine("press enter to continue...");
                     Console.ReadLine();

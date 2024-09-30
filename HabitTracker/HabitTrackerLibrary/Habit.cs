@@ -26,7 +26,7 @@ public class Habit
         public static  Amount? ParseAmount(string? quantity)
         {
             
-            if (String.IsNullOrWhiteSpace(quantity))
+            if (String.IsNullOrWhiteSpace(quantity) || quantity.Length < 3 || !quantity.Contains("-"))
             {
                 return null;
             }

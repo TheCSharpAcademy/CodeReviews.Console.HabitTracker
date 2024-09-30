@@ -6,7 +6,6 @@ public enum Options
     LogHabit,
     DeleteHabit,
     UpdateHabit,
-    CreateNewHabits,
     Help,
     Exit,
 }
@@ -21,9 +20,9 @@ public static class Menu
         Console.WriteLine("{2} Log Habit");
         Console.WriteLine("{3} Delete Habit");
         Console.WriteLine("{4} Update Habit");
-        Console.WriteLine("{5} Habit Management");
-        Console.WriteLine("{6} Help");
-        Console.WriteLine("{7} Exit");
+       
+        Console.WriteLine("{5} Help");
+        Console.WriteLine("{6} Exit");
         
         
     }
@@ -33,10 +32,12 @@ public static class Menu
         int option;
         do
         {
+            
             Console.WriteLine("Choose an option :");
             string? readLine = Console.ReadLine();
             int.TryParse(readLine, out option);
-        } while (option < 1 || option > 7);
+           
+        } while (option-1 < (int)(Options.ViewHabits) || option-1 > (int)Options.Exit);
         return (Options)(option-1);
     }
 
@@ -48,9 +49,8 @@ public static class Menu
         Console.WriteLine("{2} Log Habit -> Save a Habit ");
         Console.WriteLine("{3} Delete Habit -> Delete Habit Log");
         Console.WriteLine("{4} Update Habit -> Manipulate Habits (Name,Date,Quantity)");
-        Console.WriteLine("{5} Create new habit -> Create new Type of Habits ");
-        Console.WriteLine("{6} Exit -> Quits application Safely");
-        Console.WriteLine("press enter to proceed");
+        Console.WriteLine("{5} Exit -> Quits application Safely");
+        Console.WriteLine("press enter to proceed...");
         Console.ReadLine();
     }
 }
