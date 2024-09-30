@@ -100,5 +100,44 @@ namespace HabitTracker.BatataDoc3.db
             if (deletedRow == 0) return false;
             return true;
         }
+
+
+        public bool CheckIfTheIdExists(int id)
+        {
+            Console.WriteLine(id);
+            string sql = @"SELECT EXISTS(
+                        SELECT 1
+                        FROM habits
+                        WHERE id = @id
+                        );";
+            using var command = new SqliteCommand(sql, conn);
+            command.Parameters.AddWithValue("@id", id);
+            int existsRow = Convert.ToInt32(command.ExecuteScalar());
+            return existsRow == 1;
+        }
+
+        public bool UpdateRecord(int id, string habit)
+        {
+            string sql = @"UPDATE habits 
+                            SET name = @name
+                            WHERE id = @id";
+            using var command = new SqliteCommand(sql, conn);
+            command.Parameters.AddWithValue("@name", habit);
+            command.Parameters.AddWithValue("@id", id);
+            int result = command.ExecuteNonQuery();
+            return result == 1;
+        }
+
+        public bool UpdateRecord(int id,  DateTime dt)
+        {
+            string sql = @"UPDATE habits 
+                            SET date = @dt
+                            WHERE id = @id";
+            using var command = new SqliteCommand(sql, conn);
+            command.Parameters.AddWithValue("@dt", dt);
+            command.Parameters.AddWithValue("@id", id);
+            int result = command.ExecuteNonQuery();
+            return result == 1;
+        }
     }
 }
