@@ -24,18 +24,18 @@ namespace HabitTracker.BatataDoc3.db
             String sql = @"CREATE TABLE habits(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
+                measure TEXT,
+                quantity INT,
                 date DATE
             )";
             try 
             {
                 bool exists = checkIfDbExists();
-                Console.WriteLine(exists);
                 conn = new SqliteConnection(@"Data Source=db\habits.db");
                 conn.Open();
                 Console.WriteLine("db connected!");
                 if (!exists)
                 {
-                    Console.WriteLine("Hello");
                     using var command = new SqliteCommand(sql, conn);
                     command.ExecuteNonQuery();
                     Console.WriteLine("Table habits created with success");
@@ -57,12 +57,14 @@ namespace HabitTracker.BatataDoc3.db
         public SqliteConnection getConnection() { return conn; }
 
 
-        public void InsertRecord(string input, DateTime dt)
+        public void InsertRecord(string input, string measure, int quantity, DateTime dt)
         {
-            string sql = "INSERT INTO habits (name, date) VALUES(@name, @date)";
+            string sql = "INSERT INTO habits (name, measure, quantity, date) VALUES(@name, @measure, @quantity, @date)";
             
             using var command = new SqliteCommand(sql, conn);
             command.Parameters.AddWithValue("@name", input);
+            command.Parameters.AddWithValue("@measure", measure);
+            command.Parameters.AddWithValue("@quantity", quantity);
             command.Parameters.AddWithValue("@date", dt);
             command.ExecuteNonQuery();
         }
@@ -81,8 +83,10 @@ namespace HabitTracker.BatataDoc3.db
                 {
                     int id = reader.GetInt32(0);
                     string name = reader.GetString(1); 
-                    DateTime dt = reader.GetDateTime(2);
-                    Habit h = new Habit(id, name, dt);
+                    string measure = reader.GetString(2);
+                    int quantity = reader.GetInt32(3);
+                    DateTime dt = reader.GetDateTime(4);
+                    Habit h = new Habit(id, name, measure, quantity, dt);
                     habits.Add(h);
                 }
             }
@@ -104,7 +108,6 @@ namespace HabitTracker.BatataDoc3.db
 
         public bool CheckIfTheIdExists(int id)
         {
-            Console.WriteLine(id);
             string sql = @"SELECT EXISTS(
                         SELECT 1
                         FROM habits
@@ -116,13 +119,17 @@ namespace HabitTracker.BatataDoc3.db
             return existsRow == 1;
         }
 
-        public bool UpdateRecord(int id, string habit)
+        public bool UpdateRecord(int id, string habit, string measure, int quantity)
         {
             string sql = @"UPDATE habits 
-                            SET name = @name
+                            SET name = @name,
+                                measure = @measure,
+                                quantity = @quantity
                             WHERE id = @id";
             using var command = new SqliteCommand(sql, conn);
             command.Parameters.AddWithValue("@name", habit);
+            command.Parameters.AddWithValue("@measure", measure);
+            command.Parameters.AddWithValue("@quantity", quantity);
             command.Parameters.AddWithValue("@id", id);
             int result = command.ExecuteNonQuery();
             return result == 1;
@@ -135,6 +142,18 @@ namespace HabitTracker.BatataDoc3.db
                             WHERE id = @id";
             using var command = new SqliteCommand(sql, conn);
             command.Parameters.AddWithValue("@dt", dt);
+            command.Parameters.AddWithValue("@id", id);
+            int result = command.ExecuteNonQuery();
+            return result == 1;
+        }
+
+        public bool UpdateRecord(int id, int quantity)
+        {
+            string sql = @"UPDATE habits 
+                            SET quantity = @quantity
+                            WHERE id = @id";
+            using var command = new SqliteCommand(sql, conn);
+            command.Parameters.AddWithValue("@quantity", quantity);
             command.Parameters.AddWithValue("@id", id);
             int result = command.ExecuteNonQuery();
             return result == 1;

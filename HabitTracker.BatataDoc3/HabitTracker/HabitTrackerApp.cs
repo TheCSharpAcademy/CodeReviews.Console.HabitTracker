@@ -14,7 +14,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
     
     internal class HabitTrackerApp
     {
-        private List<string> habits = new List<string>(); 
+        private Dictionary<string, string> habits = new Dictionary<string, string>(); 
         private CRUD crud;
 
         public HabitTrackerApp(CRUD crud) {
@@ -23,9 +23,10 @@ namespace HabitTracker.BatataDoc3.HabitTracker
             string line;
             StreamReader sr = new StreamReader(@"HabitTracker\habits.txt");
             line = sr.ReadLine();
-            while (line != null) 
-            { 
-                habits.Add(line);
+            while (line != null)
+            {
+                string[] words = line.Split(",");
+                habits.Add(words[0], words[1]);
                 line = sr.ReadLine();
             }
         }
@@ -53,7 +54,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                         return;
                     case 1:
                         string records = "=================\nVIEW ALL RECORDS\n=================\n";
-                        Console.WriteLine(start);
+                        Console.WriteLine(records);
                         ViewAllRecords();
                         break;
                     case 2:
@@ -79,7 +80,8 @@ namespace HabitTracker.BatataDoc3.HabitTracker
             if (habits.Count == 0)
             {
                 Console.WriteLine("There is no data in the database");
-                MainMenu();
+                Console.ReadLine();
+                return;
             }
             PrintResults(habits);
         }
@@ -121,11 +123,11 @@ namespace HabitTracker.BatataDoc3.HabitTracker
             while (true)
             {
 
-                Console.WriteLine("\nWhat would you like to alter?\n1)Habit\n2)Date");
+                Console.WriteLine("\nWhat would you like to alter?\n1)Habit\n2)Date\n3)Quantity");
                 Console.WriteLine("---------------------------------------------------------");
                 string input = Console.ReadLine();
                 bool isInt = int.TryParse(input, out int option);
-                if (!isInt || (!input.Equals("1") && !input.Equals("2")))
+                if (!isInt || (!input.Equals("1") && !input.Equals("2") && !input.Equals("3")))
                 {
                     Console.WriteLine("Please insert a valid value");
                     continue;
@@ -135,12 +137,46 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     ChangeHabit(id);
                     return;
                 }
-                else
+                else if (option == 2) 
                 {
                     ChangeDate(id);
                     return;
                 }
+                else
+                {
+                    ChangeQuantity(id);
+                    return;
+                }
                 
+            }
+        }
+
+
+        private void ChangeQuantity(int id)
+        {
+            while (true)
+            {
+                Console.WriteLine("What is the quantity you want to change to?");
+                Console.WriteLine("---------------------------------------------------------");
+                string input = Console.ReadLine();
+                bool tryInt = int.TryParse(input, out int option);
+                if (!tryInt) Console.WriteLine("\nPlease insert a valid value");
+                else if (option < 1 || option > 10000) Console.WriteLine("\nPlease insert a valid value");
+                else
+                {
+                    bool update = crud.UpdateRecord(id, option);
+                    if (update)
+                    {
+                        Console.WriteLine("\nRecord updated with success! Press any key to continue");
+                        Console.ReadLine();
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error updating db. Press any key to continue");
+                        Console.ReadLine();
+                    }
+                }
             }
         }
 
@@ -158,14 +194,15 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     Console.WriteLine("Press any key to continue");
                     Console.ReadLine();
                 }
-                else if (!habits.Contains(input))
+                else if (!habits.ContainsKey(input))
                 {
                     Console.WriteLine("Invalid Habit");
                     Console.ReadLine();
                 }
                 else
                 {
-                    bool update = crud.UpdateRecord(id, input);
+                    int quantity = GetQuantity(input);
+                    bool update = crud.UpdateRecord(id, input, habits[input], quantity);
                     if (update)
                     {
                         Console.WriteLine("\nRecord updated with success! Press any key to continue");
@@ -175,6 +212,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     else
                     {
                         Console.WriteLine("Error updating db. Press any key to continue");
+                        Console.ReadLine();
                     }
                 }
             }
@@ -201,6 +239,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     else
                     {
                         Console.WriteLine("Error updating db. Press any key to continue");
+                        Console.ReadLine();
                     }
                 }
                 else
@@ -213,14 +252,14 @@ namespace HabitTracker.BatataDoc3.HabitTracker
 
         private void PrintResults(List<Habit> habits)
         {
-            string head = String.Format("||{0,-3}||{1,-25}||{2,-10}||", "Id", "Habit", "Date");
+            string head = String.Format("||{0,-3}||{1,-25}||{2,-15}||{3,-10}|||", "Id", "Habit", "Quantity", "Date");
             string top = new('=', head.Length);
             Console.WriteLine(top);
             Console.WriteLine(head);
             Console.WriteLine(top);
             foreach(Habit habit in habits)
             {
-                Console.WriteLine("||{0,-3}||{1,-25}||{2,-10}||", habit.Id, habit.Name, habit.Date.ToShortDateString());
+                Console.WriteLine("||{0,-3}||{1,-25}||{2,-15}||{3,-10}||", habit.Id, habit.Name, habit.Quantity + " " + habit.Measure, habit.Date.ToShortDateString());
 
             }
             Console.WriteLine(top + "\n");
@@ -266,13 +305,13 @@ namespace HabitTracker.BatataDoc3.HabitTracker
 
         private void InsertRecord()
         {
-            String start = "=================\nINSERT A NEW RECORD\n=================\n";
+            string start = "=================\nINSERT A NEW RECORD\n=================\n";
             Console.WriteLine(start);
             while (true) { 
 
-                String habitsString = "\nWhat habit do you want to add? Write 's' for a list of available habits and 'b' to go back to the Main Menu\n---------------------------------------------------------";
+                string habitsString = "\nWhat habit do you want to add? Write 's' for a list of available habits and 'b' to go back to the Main Menu\n---------------------------------------------------------";
                 Console.WriteLine(habitsString);
-                String input = Console.ReadLine();
+                string input = Console.ReadLine();
                 if (input.Equals("s"))
                 {
                     ShowHabits();
@@ -283,10 +322,11 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                 {
                     return;
                 }
-                else if (habits.Contains(input))
+                else if (habits.ContainsKey(input))
                 {
                     DateTime parsedTime = GetDate();
-                    crud.InsertRecord(input, parsedTime);
+                    int quantity = GetQuantity(input);
+                    crud.InsertRecord(input, habits[input], quantity, parsedTime);
                     Console.WriteLine("\nRecord added successfully!\nPress any key to continue");
                     Console.ReadLine();
                     return;
@@ -304,7 +344,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
         {
             while (true)
             { 
-                Console.WriteLine("Input the Date of the Habit (YYYY-MM-DD)");
+                Console.WriteLine("\nInput the Date of the Habit (YYYY-MM-DD)");
                 Console.WriteLine("---------------------------------------------------------");
                 string input = Console.ReadLine();
 
@@ -316,7 +356,30 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                 else
                 {
                     Console.WriteLine("invalid format");
+                    Console.ReadLine();
                 }
+            }
+        }
+
+        private int GetQuantity(string habit)
+        {
+            while(true)
+            {
+                Console.WriteLine($"\nPlease insert the number of {habits[habit]}");
+                Console.WriteLine("---------------------------------------------------------");
+                string? input = Console.ReadLine();
+                bool tryInt = int.TryParse(input, out int value);
+                if (!tryInt)
+                {
+                    Console.WriteLine("The input must be an integer");
+                    Console.ReadLine();
+                }
+                else if (value < 1 || value > 100000)
+                {
+                    Console.WriteLine("Please insert a valid value");
+                    Console.ReadLine();
+                }
+                else return value;
             }
         }
 
@@ -324,7 +387,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
         private void ShowHabits()
         {
             Console.WriteLine("---------------------------------------------------------");
-            foreach(string habit in habits)
+            foreach(string habit in habits.Keys)
             {
                 Console.WriteLine(habit);
                 

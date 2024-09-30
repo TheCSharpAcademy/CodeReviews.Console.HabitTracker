@@ -1,8 +1,10 @@
-﻿Drinking Water
-Eating
-Reading
-Meditation
-Brushing
-Stretching
-Gym
-Listen to Music
+﻿Drinking Water,liters
+Eating,calories
+Reading,times
+Meditation,times
+Brushing,times
+Stretching,times
+Gym,kg
+Listen to Music,times
+Running,meters
+Walking,meters

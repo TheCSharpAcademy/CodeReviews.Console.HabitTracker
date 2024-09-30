@@ -10,13 +10,17 @@ namespace HabitTracker.BatataDoc3.db
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Measure { get; set; } 
+        public int Quantity { get; set; }
         public DateTime Date { get; set; }
 
-        public Habit(int id, string name, DateTime date)
+        public Habit(int id, string name, string measure, int quantity, DateTime date)
         {
             Id = id;
             Name = name;
             Date = date;
+            Measure = measure;
+            Quantity = quantity;
         }
     }
 }
