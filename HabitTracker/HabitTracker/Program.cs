@@ -177,13 +177,13 @@ public static class Program
         Console.WriteLine("Finally create the habit's measurement.");
         Console.WriteLine("press enter to avoid or enter it in this format ##-unit");
 
-        {
-            var readLine = Console.ReadLine();
-            if (string.IsNullOrEmpty(readLine))
+        
+            var read = Console.ReadLine();
+            if (string.IsNullOrEmpty(read))
                 amount = null;
             else
-                amount = readLine;
-        }
+                amount = read;
+        
 
         try
         {
