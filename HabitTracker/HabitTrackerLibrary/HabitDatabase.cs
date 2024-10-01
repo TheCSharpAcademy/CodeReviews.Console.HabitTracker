@@ -1,52 +1,53 @@
 ﻿using Microsoft.Data.Sqlite;
+
 namespace HabitTrackerLibrary;
 
 public static class HabitDatabase
 {
-    private static string _connectionString = "DataSource=HabitTracker.db";
-    public static Dictionary<string, Habit.Amount?> HabitTypes = new Dictionary<string, Habit.Amount?>();
+    private static readonly string _connectionString = "DataSource=HabitTracker.db";
+    public static Dictionary<string, Habit.Amount?> HabitTypes = new();
+
     public static void CreateDatabase()
     {
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
-            string createTable = @"
+            var createTable = @"
             CREATE TABLE IF NOT EXISTS Habits (
             HabitType TEXT NOT NULL,
             LoggingDate DATE NOT NULL,
             Quantity TEXT NULL)";
             using (var cmd = new SqliteCommand(createTable, connection))
             {
-                cmd.ExecuteNonQuery();  // This will create the 'Users' table if it doesn't already exist
+                cmd.ExecuteNonQuery(); // This will create the 'Users' table if it doesn't already exist
             }
+
             connection.Close();
             UpdateHabitTypes();
-           
         }
-        
     }
 
-    public static void DeleteHabit(string type,string date)
+    public static void DeleteHabit(string type, string date)
     {
-        string deleteCommand = String.IsNullOrWhiteSpace(date)? $"DELETE FROM Habits WHERE HabitType = @type":"DELETE FROM Habits WHERE HabitType = @type AND LoggingDate = @date";
+        var deleteCommand = string.IsNullOrWhiteSpace(date)
+            ? "DELETE FROM Habits WHERE HabitType = @type"
+            : "DELETE FROM Habits WHERE HabitType = @type AND LoggingDate = @date";
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
             using (var cmd = new SqliteCommand(deleteCommand, connection))
             {
                 cmd.Parameters.AddWithValue("@type", type);
-                if (!String.IsNullOrWhiteSpace(date))
-                {
-                    cmd.Parameters.AddWithValue("@date", date);
-                }
+                if (!string.IsNullOrWhiteSpace(date)) cmd.Parameters.AddWithValue("@date", date);
 
                 cmd.ExecuteNonQuery();
             }
         }
+
         UpdateHabitTypes();
     }
 
-    public static void UpdateHabitLog(string command,string habitType,string date,string newAmount)
+    public static void UpdateHabitLog(string command, string habitType, string date, string newAmount)
     {
         using (var connection = new SqliteConnection(_connectionString))
         {
@@ -58,16 +59,12 @@ public static class HabitDatabase
                 cmd.Parameters.AddWithValue("@Quantity", newAmount);
                 try
                 {
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                
+                    var rowsAffected = cmd.ExecuteNonQuery();
+
                     if (rowsAffected > 0)
-                    {
                         Console.WriteLine($"{rowsAffected} habit(s) updated successfully.");
-                    }
                     else
-                    {
                         Console.WriteLine("No habit found with the specified type and date.");
-                    }
                     Console.WriteLine("Press Enter to continue");
                     Console.ReadLine();
                 }
@@ -76,27 +73,25 @@ public static class HabitDatabase
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
+
             connection.Close();
         }
     }
+
     public static void UpdateHabitTypes()
     {
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
-            string getHabitTypes = @"SELECT DISTINCT HabitType , Quantity FROM Habits";
+            var getHabitTypes = @"SELECT DISTINCT HabitType , Quantity FROM Habits";
             using (var cmd = new SqliteCommand(getHabitTypes, connection))
             {
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
-                    {
                         if (!HabitTypes.ContainsKey(reader.GetString(0)))
-                        {
                             HabitTypes.Add(reader["HabitType"].ToString(),
                                 Habit.Amount.ParseAmount(reader["Quantity"].ToString()));
-                        }
-                    }
 
                     Console.ReadLine();
                 }
@@ -106,43 +101,31 @@ public static class HabitDatabase
         }
     }
 
-    public static void DisplayHabitsHistory(string habitType,string date)
-    {   Console.Clear();
+    public static void DisplayHabitsHistory(string habitType, string date)
+    {
+        Console.Clear();
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
-            string command = @"SELECT HabitType, LoggingDate, Quantity FROM habits ";
+            var command = @"SELECT HabitType, LoggingDate, Quantity FROM habits ";
             if (!string.IsNullOrWhiteSpace(date) && !string.IsNullOrWhiteSpace(habitType))
-            {
-                command += ($"WHERE LoggingDate = @date AND HabitType = @type");
-            }
+                command += "WHERE LoggingDate = @date AND HabitType = @type";
             if (string.IsNullOrWhiteSpace(date) && !string.IsNullOrWhiteSpace(habitType))
-            {
-                command += ($"WHERE HabitType = @type");
-            }
+                command += "WHERE HabitType = @type";
             if (!string.IsNullOrWhiteSpace(date) && string.IsNullOrWhiteSpace(habitType))
-            {
-                command += ($"WHERE LoggingDate = @date ");
-            }
-            
+                command += "WHERE LoggingDate = @date ";
+
             using (var cmd = new SqliteCommand(command, connection))
             {
-                if (!String.IsNullOrEmpty(habitType))
-                {
-                    cmd.Parameters.AddWithValue("@type", habitType);
-                }
+                if (!string.IsNullOrEmpty(habitType)) cmd.Parameters.AddWithValue("@type", habitType);
 
-                if (!String.IsNullOrWhiteSpace(date))
-                {
-                    cmd.Parameters.AddWithValue("@date", date);
-                }
+                if (!string.IsNullOrWhiteSpace(date)) cmd.Parameters.AddWithValue("@date", date);
                 using (var reader = cmd.ExecuteReader())
                 {
                     Console.WriteLine("Habits:");
                     while (reader.Read())
-                    {
-                        Console.WriteLine($"{reader["HabitType"]}, {(DateTime.Parse(reader["LoggingDate"].ToString())).ToString("dd-MM-yyyy")}, {reader["Quantity"]}");
-                    }
+                        Console.WriteLine(
+                            $"{reader["HabitType"]}, {DateTime.Parse(reader["LoggingDate"].ToString()).ToString("dd-MM-yyyy")}, {reader["Quantity"]}");
                     Console.WriteLine("press enter to continue...");
                     Console.ReadLine();
                 }
@@ -151,26 +134,24 @@ public static class HabitDatabase
             connection.Close();
         }
     }
+
     public static void AddHabit(Habit habit)
     {
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
-            string insertCommand = @"INSERT INTO Habits (HabitType,LoggingDate,Quantity) VALUES (@type, @date, @quantity);";
+            var insertCommand =
+                @"INSERT INTO Habits (HabitType,LoggingDate,Quantity) VALUES (@type, @date, @quantity);";
             using (var cmd = new SqliteCommand(insertCommand, connection))
             {
                 cmd.Parameters.AddWithValue("@type", habit.Name);
                 cmd.Parameters.AddWithValue("@date", habit.GetDate());
                 //check if value is null and return suitable value
                 if (habit.GetAmount() == null)
-                {
                     cmd.Parameters.Add("@quantity", SqliteType.Text).Value = DBNull.Value;
-                }
                 else
-                {
                     cmd.Parameters.Add("@quantity", SqliteType.Text).Value = habit.GetAmount();
-                }
-                
+
                 try
                 {
                     cmd.ExecuteNonQuery();
@@ -180,8 +161,8 @@ public static class HabitDatabase
                     Console.WriteLine(ex.Message);
                 }
             }
+
             connection.Close();
         }
     }
-    
 }

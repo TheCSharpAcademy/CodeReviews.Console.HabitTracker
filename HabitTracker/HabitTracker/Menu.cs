@@ -7,8 +7,9 @@ public enum Options
     DeleteHabit,
     UpdateHabit,
     Help,
-    Exit,
+    Exit
 }
+
 //handles  the CLI interface
 public static class Menu
 {
@@ -20,11 +21,9 @@ public static class Menu
         Console.WriteLine("{2} Log Habit");
         Console.WriteLine("{3} Delete Habit");
         Console.WriteLine("{4} Update Habit");
-       
+
         Console.WriteLine("{5} Help");
         Console.WriteLine("{6} Exit");
-        
-        
     }
 
     public static Options GetOptions()
@@ -32,13 +31,12 @@ public static class Menu
         int option;
         do
         {
-            
             Console.WriteLine("Choose an option :");
-            string? readLine = Console.ReadLine();
+            var readLine = Console.ReadLine();
             int.TryParse(readLine, out option);
-           
-        } while (option-1 < (int)(Options.ViewHabits) || option-1 > (int)Options.Exit);
-        return (Options)(option-1);
+        } while (option - 1 < (int)Options.ViewHabits || option - 1 > (int)Options.Exit);
+
+        return (Options)(option - 1);
     }
 
     public static void ShowHelp()
