@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.Common;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using HabitTracker.BatataDoc3.db;
-using Microsoft.Data.Sqlite;
+﻿using HabitTracker.BatataDoc3.db;
 
 namespace HabitTracker.BatataDoc3.HabitTracker
 {
