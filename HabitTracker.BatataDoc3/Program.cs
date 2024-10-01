@@ -5,15 +5,20 @@ namespace HabitTracker.BatataDoc3
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
 
             CRUD crud = new CRUD();
-            crud.startDatabase();
+            bool newDb = crud.StartDatabase();
+
             Console.WriteLine(@"========================
 WELCOME TO HABIT TRACKER
 ========================");
             HabitTrackerApp ht = new HabitTrackerApp(crud);
+            if (newDb)
+            {
+                ht.PopulateDb();
+            }
             ht.MainMenu();
 
 

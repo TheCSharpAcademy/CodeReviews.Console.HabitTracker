@@ -21,13 +21,15 @@ namespace HabitTracker.BatataDoc3.HabitTracker
             this.crud = crud;
 
             string line;
-            StreamReader sr = new StreamReader(@"HabitTracker\habits.txt");
-            line = sr.ReadLine();
-            while (line != null)
-            {
-                string[] words = line.Split(",");
-                habits.Add(words[0], words[1]);
+            using (StreamReader sr = new StreamReader(@"HabitTracker\habits.txt")) { 
+            
                 line = sr.ReadLine();
+                while (line != null)
+                {
+                    string[] words = line.Split(",");
+                    habits.Add(words[0], words[1]);
+                    line = sr.ReadLine();
+                }
             }
         }
 
@@ -35,7 +37,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
         {
             while (true)
             {
-                String start = "0) Exit\n1) View All Records\n2) Insert Record\n3) Delete Record\n4) Update Record";
+                String start = "0) Exit\n1) View All Records\n2) Insert Record\n3) Delete Record\n4) Update Record\n5) Insert new Habit";
                 Console.WriteLine("=================\nMAIN MENU\n=================");
                 Console.WriteLine("Please choose an option");
                 Console.WriteLine(start);
@@ -66,10 +68,49 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     case 4:
                         UpdateRecord();
                         break;
+                    case 5:
+                        AddHabit();
+                        break;
                     default:
                         Console.WriteLine("Please choose a valid option\n\n");
                         continue;
                 }
+            }
+        }
+
+        private void AddHabit()
+        {
+            Console.WriteLine("=================\nADD HABIT\n=================\n");
+
+            while (true)
+            {
+                Console.WriteLine("\nPlease insert the new habit");
+                Console.WriteLine("---------------------------------------------------------");
+                string? habit = Console.ReadLine();
+                if (habit.Length > 20 || habits.Keys.Contains(habit))
+                {
+                    Console.WriteLine("The habit should not be over 20 characters nor should it exist already");
+                    Console.ReadLine();
+                    continue;
+                }
+                Console.WriteLine("\nPlease insert the measurement");
+                Console.WriteLine("---------------------------------------------------------");
+                string? measure = Console.ReadLine();
+                if (measure.Length > 10)
+                {
+                    Console.WriteLine("The measure should not be over 10 characters");
+                    Console.ReadLine();
+                    continue;
+                }
+                habits.Add(habit, measure);
+                using (StreamWriter sw = File.AppendText(@"HabitTracker\habits.txt"))
+                {
+                    sw.WriteLine(habit + "," + measure);
+                }
+                Console.WriteLine("\nHabit added with success!");
+                Console.ReadLine();
+                return;
+
             }
         }
 
@@ -180,6 +221,20 @@ namespace HabitTracker.BatataDoc3.HabitTracker
             }
         }
 
+        public void PopulateDb()
+        {
+            Random rand = new Random();
+            int length = habits.Count();
+            for (int i = 0; i < 100; i++)
+            {
+                int r = rand.Next(0, length);
+                string habit = habits.Keys.ElementAt(r);
+                string measure = habits[habit];
+                int quantity = rand.Next(0, 10000);
+                DateTime dt = DateTime.Now;
+                crud.InsertRecord(habit, measure, quantity, dt);
+            }
+        }
 
         private void ChangeHabit(int id)
         {
@@ -374,7 +429,7 @@ namespace HabitTracker.BatataDoc3.HabitTracker
                     Console.WriteLine("The input must be an integer");
                     Console.ReadLine();
                 }
-                else if (value < 1 || value > 100000)
+                else if (value < 1 || value > 10000)
                 {
                     Console.WriteLine("Please insert a valid value");
                     Console.ReadLine();

@@ -19,7 +19,7 @@ namespace HabitTracker.BatataDoc3.db
             conn = null;
         }
 
-        public void startDatabase()
+        public bool StartDatabase()
         {
             String sql = @"CREATE TABLE habits(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,9 +28,10 @@ namespace HabitTracker.BatataDoc3.db
                 quantity INT,
                 date DATE
             )";
+
+            bool exists = CheckIfDbExists();
             try 
             {
-                bool exists = checkIfDbExists();
                 conn = new SqliteConnection(@"Data Source=db\habits.db");
                 conn.Open();
                 Console.WriteLine("db connected!");
@@ -45,16 +46,18 @@ namespace HabitTracker.BatataDoc3.db
             {
                 Console.WriteLine(ex.Message);
             }
+            return !exists;
 
         }
 
-        public bool checkIfDbExists()
+
+        public bool CheckIfDbExists()
         {
             if(File.Exists(@"db\habits.db")) return true;
             return false;
         }
 
-        public SqliteConnection getConnection() { return conn; }
+        public SqliteConnection GetConnection() { return conn; }
 
 
         public void InsertRecord(string input, string measure, int quantity, DateTime dt)
