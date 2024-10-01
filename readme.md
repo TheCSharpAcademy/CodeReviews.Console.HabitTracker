@@ -1,8 +1,4 @@
-﻿This is a simple project to track your habits
-
-## How it works
-
-### The project
+﻿### The project
 
 This is a console application using sqlite as the database. The user uses the
 numpad most of the times to choose the desired options. In some menus, certains
