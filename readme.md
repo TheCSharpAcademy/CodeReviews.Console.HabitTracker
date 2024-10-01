@@ -1,4 +1,4 @@
-﻿# The project
+﻿# Habbit Logger
 
 This is a console application using sqlite as the database. The user uses the
 numpad most of the times to choose the desired options. In some menus, certains
