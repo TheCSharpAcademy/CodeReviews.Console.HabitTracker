@@ -8,7 +8,7 @@ namespace HabitTracker.BatataDoc3
         static void Main()
         {
 
-            CRUD crud = new CRUD();
+            Crud crud = new Crud();
             bool newDb = crud.StartDatabase();
 
             Console.WriteLine(@"========================

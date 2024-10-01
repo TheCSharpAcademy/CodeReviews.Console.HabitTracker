@@ -6,9 +6,9 @@ namespace HabitTracker.BatataDoc3.HabitTracker
     internal class HabitTrackerApp
     {
         private Dictionary<string, string> habits = new Dictionary<string, string>(); 
-        private CRUD crud;
+        private Crud crud;
 
-        public HabitTrackerApp(CRUD crud) {
+        public HabitTrackerApp(Crud crud) {
             this.crud = crud;
 
             string line;

@@ -4,11 +4,11 @@
 namespace HabitTracker.BatataDoc3.db
 {
 
-    internal class CRUD
+    internal class Crud
     {
         private SqliteConnection? conn;
 
-        public CRUD()
+        public Crud()
         {
             conn = null;
         }
