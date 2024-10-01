@@ -1,7 +1,4 @@
-﻿
-# Habit Logger
-
-This is a simple project to track your habits
+﻿This is a simple project to track your habits
 
 ## How it works
 
