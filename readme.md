@@ -20,7 +20,7 @@ From this menu you can choose 5 options
 
 ### View All Records
 As the name suggests, this shows all the records in the database. Upon starting, if no database is present, the program creates a new one and populates with 100 elements with random values, using todays date. Some of the values naturally don't make sense, but the point of populating is more for testing than to be realistic
-![alt text](image.png)
+
 
 ### Insert Record
 This menu is for inserting new records in the database. The first option that appears is to add the habit that you want to add. You must add an existing habit for it to be valid (a warning message appears if it's not valid). The user can also press 's' to check the available habits and 'b' to go back.
