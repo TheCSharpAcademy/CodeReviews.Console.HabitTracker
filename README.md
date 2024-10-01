@@ -11,7 +11,7 @@ The idea is simple you just make habit logs using previous types you made or mak
 - [x] The application must not be stopped unless the user types the exit option which mean i must handle as much edge cases as possible.
 - [x] You can only interact with the database using raw SQL. You can’t use mappers such as Entity Framework
 
-#Features:
+# Features:
 * Connection with a local SQLite databse
      - the Program uses a SQLite database and connects with ADO.NET NUGET package ( Framework )
      - if no database exist a new table is already made which is easy in ADO.NET since is it automatically handled
@@ -21,7 +21,7 @@ The idea is simple you just make habit logs using previous types you made or mak
 * CRUD DB functions
     - the main functions you can do in the app is just Creating ,deleting,updating,reading habit logs
     
-#Challenges
+# Challenges
     - First time doing real C# application with a database
     - No prior Knowledge in SQL so had to spend time while development learning basic commands : DELETE, SELECT, UPDATE, CREATE, INSET DISTINCT and etc
     - Rapid Development . due to other life activities i am busy so the project had to be done as soon as possible to me my DeadLine
