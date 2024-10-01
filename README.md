@@ -1,9 +1,9 @@
 Hello.
-#Project: Console Habit Logger:
+# Project: Console Habit Logger:
 my first C# CRUD application  Developed with {C# , SQLite, Rider}
 The idea is simple you just make habit logs using previous types you made or make a new one.
 
-#Requirements:
+# Requirements:
 - [x] When the application starts, it should create a sqlite database, if one isn’t present.
 - [x] It should also create a table in the database, where the habits will be logged [Habit Name , Time, Quantity(optional paramter)].
 - [x] You need to be able to add, delete, update and view your logged habits. 
