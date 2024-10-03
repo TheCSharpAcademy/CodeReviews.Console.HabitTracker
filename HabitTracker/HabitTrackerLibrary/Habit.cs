@@ -2,11 +2,10 @@ namespace HabitTrackerLibrary;
 
 public class Habit
 {
+    private readonly Amount? _amount;
     private readonly DateTime _date;
 
     public readonly string Name;
-
-    private readonly Amount? _amount;
     //quantity is the optional amount to measure and displayed as "39-unit"
 
 
@@ -26,6 +25,10 @@ public class Habit
 
     public override string ToString()
     {
+        if (_amount == null)
+        {
+            return $"Name: {Name} -- Date: {GetDate()} -- Quantity: NONE";
+        }
         return $"Name: {Name} -- Date: {GetDate()} -- Quantity: {GetAmount()}";
     }
 

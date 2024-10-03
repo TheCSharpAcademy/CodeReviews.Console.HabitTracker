@@ -93,7 +93,6 @@ public static class HabitDatabase
                             HabitTypes.Add(reader["HabitType"].ToString(),
                                 Habit.Amount.ParseAmount(reader["Quantity"].ToString()));
 
-                    Console.ReadLine();
                 }
             }
 

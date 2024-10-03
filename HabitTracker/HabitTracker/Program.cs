@@ -90,6 +90,7 @@ public static class Program
             Console.WriteLine("Sorry the habit doesnt have amount to alter");
             Console.WriteLine("Press enter to return back");
             Console.ReadLine();
+            return;
         }
 
         Console.WriteLine("Enter habit's date");
@@ -103,8 +104,8 @@ public static class Program
                 break;
             }
         } while (true);
-
-        Console.WriteLine("Enter habit's amount ##-" + HabitDatabase.HabitTypes[name].Unit);
+        
+        Console.WriteLine("Enter habit's amount ##-" + HabitDatabase.HabitTypes[name]?.Unit);
         var amount = 0;
         while (amount == 0)
         {
@@ -148,9 +149,9 @@ public static class Program
         Console.Clear();
         Console.WriteLine("Let's create new habits");
         Console.WriteLine("Enter Habit name: ");
-        var habitName = "";
-        var date = "";
-        var amount = "";
+        string habitName = "";
+        string date = "";
+        string amount = "";
         do
         {
             var readline = Console.ReadLine();
@@ -178,11 +179,11 @@ public static class Program
         Console.WriteLine("press enter to avoid or enter it in this format ##-unit");
 
         
-            var read = Console.ReadLine();
-            if (string.IsNullOrEmpty(read))
-                amount = null;
-            else
-                amount = read;
+        var read = Console.ReadLine();
+        if (string.IsNullOrEmpty(read))
+            amount = null;
+        else
+            amount = read;
         
 
         try
@@ -215,13 +216,14 @@ public static class Program
         } while (string.IsNullOrWhiteSpace(habitName));
 
         Console.WriteLine("Enter habit date(yyyy-MM-dd) or press enter to select all");
-        var date = "";
-        do
+        var date = "date";
+        while (!string.IsNullOrWhiteSpace(date) && !DateTime.TryParse(date, out _))
         {
             var readline = Console.ReadLine();
-            if (DateTime.TryParse(readline, out var dateTime)) date = dateTime.ToString("yyyy-MM-dd");
-        } while (!string.IsNullOrWhiteSpace(date) && !DateTime.TryParse(date, out _));
-
+            Console.WriteLine($"Input was -> {readline}");
+            if (DateTime.TryParse(readline, out var dateTime)) 
+                date = dateTime.ToString("yyyy-MM-dd");
+        } 
         HabitDatabase.DeleteHabit(habitName, date);
     }
 
@@ -266,7 +268,7 @@ public static class Program
         string? quantity = null;
         if (HabitDatabase.HabitTypes[type] != null)
         {
-            Console.WriteLine($"Enter Amount ##-{HabitDatabase.HabitTypes[type].Unit}");
+            Console.WriteLine($"Enter Amount ##-{HabitDatabase.HabitTypes[type]?.Unit}");
             do
             {
                 var readline = Console.ReadLine();
