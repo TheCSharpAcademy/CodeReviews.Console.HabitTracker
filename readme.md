@@ -1,4 +1,5 @@
 # Habit Tracker
+
 This app is my first project that connects CMD App with SQL database file.
 It helps to track any habits you wish to, choosing your habit name, unit name.
 
@@ -33,12 +34,11 @@ Features
 
 - Full SQLite database connection
 
- 	- Create, read, update, delete records.
+- Create, read, update, delete records.
 - Create, select, view habits.
- - Generate random records with user criterias.
-
- - Console Interface (Navigation with numbers)
- - User input gets validated 
+- Generate random records with user criterias.
+- Console Interface (Navigation with numbers)
+- User input gets validated
 
 - Validation for
 
