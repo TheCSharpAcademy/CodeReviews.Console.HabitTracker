@@ -8,7 +8,6 @@ internal class Program
 	private static void Main(string[] args)
 	{
 		Batteries.Init();
-		string dbFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "habit-Tracker.db");
 
 		using (var connection = new SqliteConnection(connectionString))
 		{
