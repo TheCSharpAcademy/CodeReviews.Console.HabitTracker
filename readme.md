@@ -1,10 +1,11 @@
-
-# Habit Tracker
+# Habit-Tracker
 
 This app is my first project that connects CMD App with SQL database file.
+
 It helps to track any habits you wish to, choosing your habit name, unit name.
 
 ## Requirments
+
 `Basic` Requirments:
 
 - [x] This is an application where you’ll log occurrences of a habit.
@@ -53,6 +54,7 @@ Features
 SQL name are checked.
 
 ## Resources Used
+
 - GitHub
 - Stack Overflow
 - [MS docs for DateTime](https://docs.microsoft.com/en-us/dotnet/api/system.datetime?view=net-5.0)
