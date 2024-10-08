@@ -19,6 +19,9 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 - [x] You can only interact with the DB using ADO.NET. You can’t use mappers.
 - [x] Project needs to contain a ReadMe file where you'll explain how app works.
 
+
+### Advanced 
+
 `Advanced` Requirments:
 
 - [x] Try using parameterized queries to make your application more secure
