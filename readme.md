@@ -1,3 +1,4 @@
+# Habit Tracker
 This app is my first project that connects CMD App with SQL database file.
 It helps to track any habits you wish to, choosing your habit name, unit name.
 
@@ -26,32 +27,33 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 > [!NOTE]
 > I changed advanced requirments to challenge myself a bit harder. :frog:
 
-## Features
+Features
 
 - ![UI Menu Screenshot](/assets/UI.png)
-* Full SQLite database connection
 
- - Create, read, update, delete records.
-  - Create, select, view habits.
-  - Generate random records with user criterias.
+- Full SQLite database connection
 
-- Console Interface (Navigation with numbers)
- 	- User input gets validated
+ 	- Create, read, update, delete records.
+- Create, select, view habits.
+ - Generate random records with user criterias.
 
--  Validation for
+ - Console Interface (Navigation with numbers)
+ - User input gets validated 
 
-  - Dates
-  - Names for habits[^1]
-  - Numbers
-  - Auto counter of records number and total amount
+- Validation for
+
+  - Dates.
+  - Names for habits[^1].
+  - Numbers.
+  - Auto counter of records number and total amount.
   - ![UI Menu Screenshot](/assets/AutoCounter.png)
 [^1]Every habit is created in new table, so any symbols that might be wrong for
 SQL name are checked.
 
-## Resources Used
+Resources Used
 
 - GitHub
 - Stack Overflow
 - [MS docs for DateTime](https://docs.microsoft.com/en-us/dotnet/api/system.datetime?view=net-5.0)
 - [GitHub Emoji Cheat Sheet](github.com/ikatyang/emoji-cheat-sheet/tree/master)
-- ChatGPT (couple of minor issues)
+- ChatGPT (couple of minor issues).
