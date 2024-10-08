@@ -1,4 +1,5 @@
-Habit Tracker App.
+# Habit Tracker App
+
 This app is my first project that connects CMD App with SQL database file.
 It helps to track any habits you wish to, choosing your habit name, unit name.
 
@@ -44,12 +45,14 @@ Features
   - Dates.
   - Names for habits[^1].
   - Numbers.
-  - Auto counter of records number and total amount.
-  - ![UI Menu Screenshot](/assets/AutoCounter.png)
+
+- Auto counter of records number and total amount.
+- ![UI Menu Screenshot](/assets/AutoCounter.png)
+
 [^1]Every habit is created in new table, so any symbols that might be wrong for
 SQL name are checked.
 
-Resources Used
+## Resources Used
 
 - GitHub
 - Stack Overflow
