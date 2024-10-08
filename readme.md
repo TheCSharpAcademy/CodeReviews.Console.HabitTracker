@@ -25,7 +25,7 @@ It helps to track any habits you wish to, choosing your habit name, unit name.
 - [x] Create a report functionality where the users can view specific information.
 
 > [!NOTE]
-> I changed a bit advanced requirments to challenge myself harder. :frog:
+> I changed advanced requirments to challenge myself a bit harder. :frog:
 
 # Features
 
