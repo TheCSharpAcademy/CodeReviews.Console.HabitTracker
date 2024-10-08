@@ -1,11 +1,12 @@
 
-Habit Tracker App 
+Habit Tracker App
 ===========
 
 This app is my first project that connects CMD App with SQL database file.
 It helps to track any habits you wish to, choosing your habit name, unit name.
 
-## Requirments
+Requirments
+---
 
 `Basic` Requirments:
 
@@ -54,7 +55,8 @@ Features
 [^1]Every habit is created in new table, so any symbols that might be wrong for
 SQL name are checked.
 
-## Resources Used
+Resources Used
+---
 
 - GitHub
 - Stack Overflow
