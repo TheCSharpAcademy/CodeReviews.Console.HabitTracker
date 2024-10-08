@@ -1,5 +1,6 @@
 
-# Habit Tracker App
+Habit Tracker App 
+===========
 
 This app is my first project that connects CMD App with SQL database file.
 It helps to track any habits you wish to, choosing your habit name, unit name.
