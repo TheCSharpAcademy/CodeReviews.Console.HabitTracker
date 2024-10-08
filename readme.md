@@ -1,3 +1,4 @@
+
 # Habit Tracker App
 
 This app is my first project that connects CMD App with SQL database file.
