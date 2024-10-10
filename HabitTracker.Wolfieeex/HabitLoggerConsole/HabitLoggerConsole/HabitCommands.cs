@@ -65,7 +65,7 @@ internal class HabitCommands
 
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"CREATE TABLE IF NOT EXISTS '{name}' (Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, '{nameOfTheTrackingVariable}' TEXT, '{measurementType}' TEXT)";
+            tableCmd.CommandText = $"CREATE TABLE IF NOT EXISTS '{name}' (Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, '{nameOfTheTrackingVariable}' REAL, '{measurementType}' TEXT)";
 
             tableCmd.ExecuteNonQuery();
 

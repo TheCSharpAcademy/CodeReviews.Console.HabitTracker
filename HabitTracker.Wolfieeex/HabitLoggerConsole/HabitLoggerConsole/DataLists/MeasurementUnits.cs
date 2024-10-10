@@ -50,28 +50,6 @@ internal class MeasurementUnits
         { MeasurementType.d, MeasurementDivision.Time },
     }; 
 
-
-
-    internal static Dictionary<MeasurementType, string> MeasurementValidation { get; private set; } = new Dictionary<MeasurementType, string>
-    {
-        { MeasurementType.blank, "aaa" },
-        { MeasurementType.l, "aaa" },
-        { MeasurementType.ml, "aaa" },
-        { MeasurementType.cm, "aaa" },
-        { MeasurementType.m, "aaa" },
-        { MeasurementType.km, "aaa" },
-        { MeasurementType.inch, "aaa" },
-        { MeasurementType.ft, "aaa" },
-        { MeasurementType.g, "aaa" },
-        { MeasurementType.kg, "aaa" },
-        { MeasurementType.lbs, "aaa" },
-        { MeasurementType.stones, "aaa" },
-        { MeasurementType.s, "aaa" },
-        { MeasurementType.min, "aaa" },
-        { MeasurementType.hr, "aaa" },
-        { MeasurementType.d, "sdf" },
-    };
-
     internal static Dictionary<MeasurementType, string> MeasurementFullName { get; private set; } = new Dictionary<MeasurementType, string>
     {
         { MeasurementType.blank, "(blank)" },
