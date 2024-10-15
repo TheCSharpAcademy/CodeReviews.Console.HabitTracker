@@ -75,7 +75,7 @@ class DataSeed()
                 measurementType = Enum.GetName(typeof(MeasurementType), (MeasurementType)sequence);
 
                 habitsCreatedCounter++;
-                cmd.CommandText = $"CREATE TABLE IF NOT EXISTS '{habitName}' (Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, '{trackedName}' TEXT, '{measurementType}' TEXT)";
+                cmd.CommandText = $"CREATE TABLE IF NOT EXISTS '{habitName}' (Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, '{trackedName}' REAL, '{measurementType}' TEXT)";
 
                 cmd.ExecuteNonQuery();
 

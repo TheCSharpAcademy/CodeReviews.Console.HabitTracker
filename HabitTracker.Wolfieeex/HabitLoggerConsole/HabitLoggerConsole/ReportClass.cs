@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitLoggerConsole;
 
@@ -9,6 +11,8 @@ internal class ReportClass
     internal static void GenerateReportV2(string habitName)
     {
         List<Tuple<int, ReportDataCoded[]>> data = GatherData(habitName);
+
+
     }
 
     public static List<Tuple<int, ReportDataCoded[]>> GatherData(string habitName)
@@ -53,6 +57,14 @@ internal class ReportClass
 
                 years.Sort();
 
+                tblCmd.CommandText = $"SELECT * FROM '{habitName}'";
+                reader = tblCmd.ExecuteReader();
+                reader.Read();
+                string trackedName = reader.GetName(2);
+                reader.Close();
+
+                tblCmd.CommandText = $"SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}'";
+
                 foreach (int year in years)
                 {
                     ReportDataCoded[] yearlySummation = new ReportDataCoded[13];
@@ -63,30 +75,12 @@ internal class ReportClass
 
                     foreach (string currentlyCheckedMonth in Enum.GetNames<Months>())
                     {
-                        tblCmd.CommandText = $"SELECT * FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
-                        reader = tblCmd.ExecuteReader();
-
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                Console.WriteLine(reader.GetString(1));
-                            }
-                        }
-                        else
-                        {
-                            yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
-                            {
-                                occurrences = null,
-                                highiestValue = double.NaN,
-                                smallestValue = double.NaN,
-                                MeanValue = double.NaN,
-                                MedianValue = double.NaN,
-                                ModalValue = double.NaN
-                            };
-                        }
-                        reader.Close();
+                        DataCalculator(habitName, connection, tblCmd, trackedName, year, ref yearlySummation, false, currentlyCheckedMonth);
                     }
+                    DataCalculator(habitName, connection, tblCmd, trackedName, year, ref yearlySummation, true);
+
+
+                    reader.Close();
                     data.Add(new Tuple<int, ReportDataCoded[]>(year, yearlySummation));
                 }
                 Console.ReadKey();
@@ -96,17 +90,113 @@ internal class ReportClass
         return data;
     }
 
+    private static void DataCalculator(string habitName, SqliteConnection connection, SqliteCommand tblCmd, string trackedName, int year, ref ReportDataCoded[] yearlySummation, bool yearlyReport, string currentlyCheckedMonth = "")
+    {
+        string yearlyCalculator = yearlyReport ? "" : $"AND Date LIKE '%{currentlyCheckedMonth}%'";
+
+        SqliteDataReader reader;
+        tblCmd.CommandText = $"SELECT * FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+        reader = tblCmd.ExecuteReader();
+
+        if (reader.HasRows)
+        {
+            double sumValue = 0;
+            int occurrences = 0;
+            double meanValue = 0;
+            double modalValue = 0;
+            double medianValue = 0;
+            double highiestValue = 0;
+            double smallestValue = 0;
+
+            ReportDataCoded currentMonthSummation = new ReportDataCoded();
+            var summationTblCmd = connection.CreateCommand();
+
+            summationTblCmd.CommandText = $"SELECT SUM({trackedName}) FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            sumValue = (double)summationTblCmd.ExecuteScalar();
+
+            summationTblCmd.CommandText = $"SELECT COUNT(*) FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            occurrences = Convert.ToInt32(summationTblCmd.ExecuteScalar());
+
+            meanValue = sumValue / occurrences;
+
+            summationTblCmd.CommandText = $"SELECT MAX({trackedName}) FROM '{habitName}' WHERE DATE LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            highiestValue = (double)summationTblCmd.ExecuteScalar();
+
+            summationTblCmd.CommandText = $"SELECT MIN({trackedName}) FROM '{habitName}' WHERE DATE LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            smallestValue = (double)summationTblCmd.ExecuteScalar();
+
+            List<double> recordList = new List<double>();
+            while (reader.Read())
+            {
+                recordList.Add(reader.GetDouble(2));
+            }
+            recordList.Sort();
+
+            if (recordList.Count == 1)
+            {
+                modalValue = medianValue = 1;
+            }
+            else
+            {
+                if (recordList.Count() % 2 == 0)
+                    medianValue = (recordList[recordList.Count / 2] + recordList[(recordList.Count / 2) - 1]) / 2;
+                else
+                    medianValue = recordList[(recordList.Count / 2) - 1];
+
+                Dictionary<double, int> numericCount = new Dictionary<double, int>();
+
+                foreach (double n in recordList)
+                {
+                    if (!numericCount.ContainsKey(n))
+                        numericCount.Add(n, 1);
+                    else
+                        numericCount[n]++;
+                }
+
+                List<KeyValuePair<double, int>> numericCountList = numericCount.ToList();
+                numericCountList = numericCountList.OrderBy(x => x.Value).ToList();
+
+                if (numericCountList[0].Value == numericCountList[1].Value)
+                    modalValue = double.NaN;
+                else
+                    modalValue = numericCountList[0].Value;
+
+                yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
+                {
+                    Occurrences = occurrences,
+                    HighiestValue = highiestValue,
+                    SmallestValue = smallestValue,
+                    MeanValue = meanValue,
+                    MedianValue = medianValue,
+                    ModalValue = modalValue
+                };
+            }
+        }
+        else
+        {
+            yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
+            {
+                Occurrences = null,
+                HighiestValue = double.NaN,
+                SmallestValue = double.NaN,
+                MeanValue = double.NaN,
+                MedianValue = double.NaN,
+                ModalValue = double.NaN
+            };
+        }
+    }
+
     public class ReportDataCoded
     {
-        public int? occurrences
+        public int? Occurrences
         {
             get; set;
         }
-        public double highiestValue
+        public double HighiestValue
         {
             get; set;
         }
-        public double smallestValue
+        public double SmallestValue
         {
             get; set;
         }
