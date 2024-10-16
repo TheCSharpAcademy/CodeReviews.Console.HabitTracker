@@ -6,8 +6,10 @@ namespace HabitTracker;
 
 internal class CRUD
 {
+    
     public bool Create(SqliteConnection connection, string name)
     {
+        // query for creating table if it not exists
         var createTableQuery = @$"CREATE TABLE IF NOT EXISTS '{name}' (
     Id INTEGER PRIMARY KEY,
     Date TEXT,
@@ -20,21 +22,24 @@ internal class CRUD
         return false;
     }
 
-    public bool Update(SqliteConnection connection, string name, string date, int repetition)
+    public bool Update(SqliteConnection connection, string name, string date, int? repetition, bool action)
     {
+        // query to check if table exists
         var query1 = $@"SELECT name FROM sqlite_master WHERE type='table' AND name=""{name}""";
-        
+        // query to select string from table by date
         var query2 = $@"SELECT Id, Date, Quantity from ""{name}"" WHERE Date = '{date}'";
 
         using var command1 = new SqliteCommand(query1, connection);
         using var command4 = new SqliteCommand(query2, connection);
         using var command3 = new SqliteCommand(query2, connection);
+        // check if table exists
         try
         {
             var readerTest = command4.ExecuteReader();
         }
         catch (SqliteException)
         {
+            // if not, propose to create one
             Console.Write(@"Habbit is not existed yet. Want to create one? 1 - yes, 2 - no: ");
             string? x = Console.ReadLine();
             Regex regex = new Regex(@"^[1-2]$");
@@ -57,9 +62,14 @@ internal class CRUD
             }
         }
         var reader = command3.ExecuteReader();
-
+        // if user has chosen delete action and there is no existing record
         if (!reader.HasRows)
         {
+            if (!action)
+            {
+                Console.WriteLine("No data.");
+                return false;
+            }
             // No existing record for this date, insert a new row
             var insertTableQuery = $@"INSERT INTO [{name}] (
             Id,
@@ -82,6 +92,13 @@ internal class CRUD
         {
             try
             {
+                // if user has chosen delete action - delete it
+                if (!action)
+                {
+                    new SqliteCommand($@"DELETE FROM [{name}]
+                WHERE Date = '{date}'", connection).ExecuteNonQuery();
+                    return true;
+                }
                 int quantity = Convert.ToInt32(reader.GetString(2));
                 new SqliteCommand($@"UPDATE [{name}]
                 SET Quantity = {quantity + repetition}
@@ -100,6 +117,7 @@ internal class CRUD
 
     public bool Read(SqliteConnection connection, string name)
     {
+        // selecting all strings from table
         var selectTableQuery = @$"SELECT Id, Date, Quantity from [{name}]";
         using var command = new SqliteCommand(selectTableQuery, connection);
         var reader = command.ExecuteReader();
@@ -111,10 +129,28 @@ internal class CRUD
 
     public bool Delete(SqliteConnection connection, string name)
     {
+        // delete whole table
         var selectDeleteQuery = $"DROP TABLE [{name}]";
         using var command = new SqliteCommand(selectDeleteQuery, connection);
         if (command.ExecuteNonQuery() >= 0)
             return true;
         return false;
+    }
+
+   public bool DbExistence(string dbString)
+    {
+        // check if db exists
+        // this path is local - consider to change it your pc path
+        string databasePath = $@"C:\Users\Alex\source\repos\Math Game\CodeReviews.Console.HabitTracker\HabbitTracker\bin\Debug\net8.0\{dbString}";  // Full path to your SQLite database
+
+        if (File.Exists(databasePath))
+        {
+            Console.WriteLine("Database exists.");
+            return true;
+        }
+        Console.WriteLine("Database does not exist.");
+        return false;
+        
+
     }
 }
