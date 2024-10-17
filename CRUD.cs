@@ -1,33 +1,48 @@
-﻿using System.Reflection.PortableExecutable;
+﻿using System.Diagnostics.Metrics;
+using System.Reflection.PortableExecutable;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Microsoft.Data.Sqlite;
 
 namespace HabitTracker;
 
 internal class CRUD
 {
-    
+
     public bool Create(SqliteConnection connection, string name)
     {
         // query for creating table if it not exists
         var createTableQuery = @$"CREATE TABLE IF NOT EXISTS '{name}' (
     Id INTEGER PRIMARY KEY,
     Date TEXT,
-    Quantity INTEGER
+    Quantity INTEGER,
+    Measurement TEXT
     )";
-
+        
         using var command = new SqliteCommand(createTableQuery, connection);
         if (command.ExecuteNonQuery() >= 0)
+        {
+            SetMeasurement(connection, name);
             return true;
+        }
         return false;
     }
 
     public bool Update(SqliteConnection connection, string name, string date, int? repetition, bool action)
     {
-        // query to check if table exists
+        var queryMeasurement = $@"SELECT Measurement from ""{name}"" WHERE Id = 0";
+        using var commandMeasurement = new SqliteCommand(queryMeasurement, connection);
+        var measurement = "";
+        var readerMeasurement = commandMeasurement.ExecuteReader();
+        while (readerMeasurement.Read())
+        {
+            measurement = readerMeasurement["Measurement"].ToString();
+        }
+        
+                // query to check if table exists
         var query1 = $@"SELECT name FROM sqlite_master WHERE type='table' AND name=""{name}""";
         // query to select string from table by date
-        var query2 = $@"SELECT Id, Date, Quantity from ""{name}"" WHERE Date = '{date}'";
+        var query2 = $@"SELECT Id, Date, Quantity, Measurement from ""{name}"" WHERE Date = '{date}'";
 
         using var command1 = new SqliteCommand(query1, connection);
         using var command4 = new SqliteCommand(query2, connection);
@@ -74,12 +89,14 @@ internal class CRUD
             var insertTableQuery = $@"INSERT INTO [{name}] (
             Id,
             Date,
-            Quantity
+            Quantity,
+            Measurement
         )
         VALUES (
             (SELECT MAX(Id) + 1 FROM [{name}]),  
             '{date}',                         
-            {repetition}
+            {repetition},
+            '{measurement}'
         )";
 
             using var command2 = new SqliteCommand(insertTableQuery, connection);
@@ -118,10 +135,11 @@ internal class CRUD
     public bool Read(SqliteConnection connection, string name)
     {
         // selecting all strings from table
-        var selectTableQuery = @$"SELECT Id, Date, Quantity from [{name}]";
+        var selectTableQuery = @$"SELECT Id, Date, Quantity from [{name}]
+                                WHERE Id != 0";
         using var command = new SqliteCommand(selectTableQuery, connection);
         var reader = command.ExecuteReader();
-        while (reader.Read()) Console.WriteLine($"{reader.GetString(1)}, {reader.GetString(2)}");
+        while (reader.Read()) Console.WriteLine($"{reader.GetString(1)}, {reader.GetString(2)}, {reader.GetString(3)}");
         if (reader.HasRows)
             return true;
         return false;
@@ -140,17 +158,40 @@ internal class CRUD
    public bool DbExistence(string dbString)
     {
         // check if db exists
-        // this path is local - consider to change it your pc path
-        string databasePath = $@"C:\Users\Alex\source\repos\Math Game\CodeReviews.Console.HabitTracker\HabbitTracker\bin\Debug\net8.0\{dbString}";  // Full path to your SQLite database
+        // this path is local - consider to change it to your pc path
+        string databasePath = $@"C:\Users\Alex\source\repos\Math Game\CodeReviews.Console.HabitTracker\bin\Debug\net8.0\{dbString}"; 
 
-        if (File.Exists(databasePath))
-        {
-            Console.WriteLine("Database exists.");
-            return true;
-        }
+        if (File.Exists(databasePath)) return true;
         Console.WriteLine("Database does not exist.");
+        Console.WriteLine("Created seed tables - test1, test2, test3");
         return false;
-        
-
     }
+
+   //CHECK
+    public bool SetMeasurement(SqliteConnection connection, string name)
+    {
+        Console.Write("Please, insert measurement for your habit or leave empty if one is not necessary: ");
+        string? measurement = Console.ReadLine();
+
+        
+        var commandAddMeasurement = new SqliteCommand($"INSERT INTO {name} (Id, Date, Quantity, Measurement) VALUES (@Id, @Date, @Quantity, @Measurement)", connection);
+
+        commandAddMeasurement.Parameters.AddWithValue("@Id", 0);
+        commandAddMeasurement.Parameters.AddWithValue("@Date", DBNull.Value);
+        commandAddMeasurement.Parameters.AddWithValue("@Quantity", DBNull.Value);
+        commandAddMeasurement.Parameters.AddWithValue("@Measurement", string.IsNullOrEmpty(measurement) ? DBNull.Value : (object)measurement);
+
+        try
+        {
+            commandAddMeasurement.ExecuteNonQuery();
+        }
+        catch (SqliteException ex)
+        {
+            Console.WriteLine($"SQLite Error: {ex.Message}");
+            return false;
+        }
+
+        return true;
+    }
+    //CHECK
 }

@@ -1,18 +1,13 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using HabitTracker;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;
 
 var crud = new CRUD();
 
-
 raw.SetProvider(new SQLite3Provider_e_sqlite3());
 var dbString = "test1-habit-Tracker.db";
-
 var ex = crud.DbExistence(dbString);
-
 var connectionString = @$"Data Source={dbString}";
 using var connection = new SqliteConnection(connectionString);
 connection.Open();
@@ -47,8 +42,15 @@ while (end)
     5. Exit.
     
     Choose your option: ");
-    var option = Convert.ToInt32(Console.ReadLine());
-    switch (option)
+    
+    var option = Console.ReadLine();
+    int optionInt;
+    while (!int.TryParse(option, out optionInt))
+    {
+        Console.Write("Incorrect option, try again: ");
+        option = Console.ReadLine();
+    }
+    switch (optionInt)
     {
         case 1:
             Console.Write("Write name of your habit: ");
@@ -99,7 +101,7 @@ while (end)
             var dateUpdate = Console.ReadLine();
             while (!regex.IsMatch(dateUpdate))
             {
-                Console.WriteLine("Wrong data format, try again. Example: 01.01.2001");
+                Console.WriteLine("Wrong data format, try again. Example: 01.01.2001 or T for today's date.");
                 Console.Write("Write date of your habit: ");
                 dateUpdate = Console.ReadLine();
             }
@@ -123,9 +125,10 @@ while (end)
             while (!int.TryParse(repetitionUpdateReadLine, out repetitionUpdate))
             {
                 Console.WriteLine("Wrong repetition number, try again.");
-                Console.Write("Write date of your habit: ");
+                Console.Write("Write repetition of your habit that day: ");
                 repetitionUpdateReadLine = Console.ReadLine();
             }
+
 
             if (crud.Update(connection, nameUpdate, dateUpdate, repetitionUpdate, true))
                 Console.WriteLine("Created successfully");
@@ -137,6 +140,10 @@ while (end)
             Console.WriteLine("Wrong choice selection, try again: \n");
             break;
     }
+
+    Console.WriteLine("Press any key to continue...");
+    Console.ReadKey();
+    Console.Clear();
 }
 
 connection.Close();
@@ -145,15 +152,6 @@ string RngRegex()
 {
     // method to create data for seed
     var rng = new Random();
-    var f1f1 = rng.Next(0, 3);
-    var f1f2 = rng.Next(0, 10);
-    var f2f2 = rng.Next(0, 10);
-    var f3f1 = rng.Next(1, 3);
-    var f3f2 = rng.Next(0, 10);
-    var f3f3 = rng.Next(0, 10);
-    var f3f4 = rng.Next(0, 10);
-
-    var date = $"{f1f1}{f1f2}.0{f2f2}.{f3f1}{f3f2}{f3f3}{f3f4}";
-
+    var date = $"{rng.Next(0, 3)}{rng.Next(0, 10)}.0{rng.Next(0, 10)}.{rng.Next(1, 3)}{rng.Next(0, 10)}{rng.Next(0, 10)}{rng.Next(0, 10)}";
     return date;
 }
