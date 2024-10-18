@@ -6,7 +6,7 @@ using SQLitePCL;
 var crud = new CRUD();
 
 raw.SetProvider(new SQLite3Provider_e_sqlite3());
-var dbString = "test1-habit-Tracker.db";
+var dbString = "habit-Tracker.db";
 var ex = crud.DbExistence(dbString);
 var connectionString = @$"Data Source={dbString}";
 using var connection = new SqliteConnection(connectionString);
@@ -39,7 +39,8 @@ while (end)
     2. View your habit progress.
     3. Delete habit.
     4. Add or Delete data to/from your habit.
-    5. Exit.
+    5. Habit report.
+    6. Exit.
     
     Choose your option: ");
     
@@ -105,13 +106,7 @@ while (end)
                 Console.Write("Write date of your habit: ");
                 dateUpdate = Console.ReadLine();
             }
-
-            if (dateUpdate == "T")
-            {
-                var thisTime = DateTime.Today;
-                dateUpdate = thisTime.ToString("d");
-            }
-
+            if (dateUpdate == "T") dateUpdate = DateTime.Today.ToString("d");
             if (check == "d")
             {
                 crud.Update(connection, nameUpdate, dateUpdate, null, false);
@@ -119,7 +114,6 @@ while (end)
             }
 
             Console.Write("Write repetition of your habit that day: ");
-
             var repetitionUpdateReadLine = Console.ReadLine();
             int repetitionUpdate;
             while (!int.TryParse(repetitionUpdateReadLine, out repetitionUpdate))
@@ -134,6 +128,29 @@ while (end)
                 Console.WriteLine("Created successfully");
             break;
         case 5:
+            Console.Write("Write name of your habit: ");
+            var nameReport = Console.ReadLine();
+            
+            Console.Write("Write date of interested data: ");
+            var year = Console.ReadLine();
+            var regexReport = new Regex(@"^(\d{4})$|^T$");
+            while (!regexReport.IsMatch(year))
+            {
+                Console.WriteLine("Wrong data format, try again. Example: 2001 or T for today's date.");
+                Console.Write("Write date of your habit: ");
+                year = Console.ReadLine();
+            }
+            if (year == "T") year = DateTime.Today.ToString("yyyy");
+            try
+            {
+                crud.Report(connection, nameReport, year);
+            }
+            catch (SqliteException)
+            {
+                Console.WriteLine("Name was not found");
+            }
+            break;
+        case 6:
             end = false;
             break;
         default:
@@ -152,6 +169,6 @@ string RngRegex()
 {
     // method to create data for seed
     var rng = new Random();
-    var date = $"{rng.Next(0, 3)}{rng.Next(0, 10)}.0{rng.Next(0, 10)}.{rng.Next(1, 3)}{rng.Next(0, 10)}{rng.Next(0, 10)}{rng.Next(0, 10)}";
+    var date = $"{rng.Next(0, 3)}{rng.Next(0, 10)}.0{rng.Next(0, 10)}.{rng.Next(2, 3)}{0}{rng.Next(0, 3)}{rng.Next(0, 5)}";
     return date;
 }

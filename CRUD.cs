@@ -30,42 +30,33 @@ internal class CRUD
 
     public bool Update(SqliteConnection connection, string name, string date, int? repetition, bool action)
     {
-        var queryMeasurement = $@"SELECT Measurement from ""{name}"" WHERE Id = 0";
-        using var commandMeasurement = new SqliteCommand(queryMeasurement, connection);
-        var measurement = "";
-        var readerMeasurement = commandMeasurement.ExecuteReader();
-        while (readerMeasurement.Read())
-        {
-            measurement = readerMeasurement["Measurement"].ToString();
-        }
-        
-                // query to check if table exists
-        var query1 = $@"SELECT name FROM sqlite_master WHERE type='table' AND name=""{name}""";
         // query to select string from table by date
-        var query2 = $@"SELECT Id, Date, Quantity, Measurement from ""{name}"" WHERE Date = '{date}'";
+        var query2 = $@"SELECT Id, Date, Quantity, Measurement from ""{name}"" WHERE Date = @Date";
 
-        using var command1 = new SqliteCommand(query1, connection);
-        using var command4 = new SqliteCommand(query2, connection);
-        using var command3 = new SqliteCommand(query2, connection);
+        using var commandTest = new SqliteCommand(query2, connection);
+        using var commandSelect = new SqliteCommand(query2, connection);
+
+        commandSelect.Parameters.AddWithValue("@Date", date);
+        commandTest.Parameters.AddWithValue("@Date", date);
         // check if table exists
         try
         {
-            var readerTest = command4.ExecuteReader();
+            var readerTest = commandTest.ExecuteReader();
         }
         catch (SqliteException)
         {
             // if not, propose to create one
-            Console.Write(@"Habbit is not existed yet. Want to create one? 1 - yes, 2 - no: ");
-            string? x = Console.ReadLine();
+            Console.Write(@"Habit is not existed yet. Want to create one? 1 - yes, 2 - no: ");
+            string? inputUserCreateHabit = Console.ReadLine();
             Regex regex = new Regex(@"^[1-2]$");
-            while (!regex.IsMatch(x))
+            while (!regex.IsMatch(inputUserCreateHabit))
             {
                 Console.WriteLine("Once more: ");
-                Console.Write(@"Habbit is not existed yet. Want to create one? 1 - yes, 2 - no: ");
-                x = Console.ReadLine();
+                Console.Write(@"Habit is not existed yet. Want to create one? 1 - yes, 2 - no: ");
+                inputUserCreateHabit = Console.ReadLine();
             }
 
-            switch (x)
+            switch (inputUserCreateHabit)
             {
                 case "1":
                     Create(connection, name);
@@ -76,7 +67,18 @@ internal class CRUD
                     break;
             }
         }
-        var reader = command3.ExecuteReader();
+        // get measurement from id 0 row
+        var queryMeasurement = $@"SELECT Measurement from ""{name}"" WHERE Id = 0";
+        using var commandMeasurement = new SqliteCommand(queryMeasurement, connection);
+        var measurement = "";
+        var readerMeasurement = commandMeasurement.ExecuteReader();
+        while (readerMeasurement.Read())
+        {
+            measurement = readerMeasurement["Measurement"].ToString();
+        }
+
+
+        var reader = commandSelect.ExecuteReader();
         // if user has chosen delete action and there is no existing record
         if (!reader.HasRows)
         {
@@ -94,13 +96,16 @@ internal class CRUD
         )
         VALUES (
             (SELECT MAX(Id) + 1 FROM [{name}]),  
-            '{date}',                         
-            {repetition},
-            '{measurement}'
+            @Date,                         
+            @Repetition,
+            @Measurement
         )";
 
-            using var command2 = new SqliteCommand(insertTableQuery, connection);
-            command2.ExecuteNonQuery();
+            using var commandInsert = new SqliteCommand(insertTableQuery, connection);
+            commandInsert.Parameters.AddWithValue("@Date", date);
+            commandInsert.Parameters.AddWithValue("@Repetition", repetition);
+            commandInsert.Parameters.AddWithValue("@Measurement", measurement);
+            commandInsert.ExecuteNonQuery();
             return true;
         }
 
@@ -135,7 +140,7 @@ internal class CRUD
     public bool Read(SqliteConnection connection, string name)
     {
         // selecting all strings from table
-        var selectTableQuery = @$"SELECT Id, Date, Quantity from [{name}]
+        var selectTableQuery = @$"SELECT Id, Date, Quantity, Measurement from [{name}]
                                 WHERE Id != 0";
         using var command = new SqliteCommand(selectTableQuery, connection);
         var reader = command.ExecuteReader();
@@ -159,7 +164,7 @@ internal class CRUD
     {
         // check if db exists
         // this path is local - consider to change it to your pc path
-        string databasePath = $@"C:\Users\Alex\source\repos\Math Game\CodeReviews.Console.HabitTracker\bin\Debug\net8.0\{dbString}"; 
+        string databasePath = $@"C:\Users\Alex\source\repos\projects\CodeReviews.Console.HabitTracker\bin\Debug\net8.0\{dbString}"; 
 
         if (File.Exists(databasePath)) return true;
         Console.WriteLine("Database does not exist.");
@@ -167,9 +172,10 @@ internal class CRUD
         return false;
     }
 
-   //CHECK
     public bool SetMeasurement(SqliteConnection connection, string name)
     {
+        // function to create table with measurement 
+        // insert one row on id 0 with empty data except measurement, from where update method will take info
         Console.Write("Please, insert measurement for your habit or leave empty if one is not necessary: ");
         string? measurement = Console.ReadLine();
 
@@ -179,7 +185,7 @@ internal class CRUD
         commandAddMeasurement.Parameters.AddWithValue("@Id", 0);
         commandAddMeasurement.Parameters.AddWithValue("@Date", DBNull.Value);
         commandAddMeasurement.Parameters.AddWithValue("@Quantity", DBNull.Value);
-        commandAddMeasurement.Parameters.AddWithValue("@Measurement", string.IsNullOrEmpty(measurement) ? DBNull.Value : (object)measurement);
+        commandAddMeasurement.Parameters.AddWithValue("@Measurement", string.IsNullOrEmpty(measurement) ? DBNull.Value : measurement);
 
         try
         {
@@ -193,5 +199,28 @@ internal class CRUD
 
         return true;
     }
-    //CHECK
+
+    public bool Report(SqliteConnection connection, string name, string year)
+    {
+        // function to get year habit report
+        var selectTableQuery = @$"SELECT Id, Date, Quantity, Measurement from [{name}]
+                                WHERE Id != 0 
+                                AND
+                                Date LIKE '%{year}%'";
+        using var command = new SqliteCommand(selectTableQuery, connection);
+        var reader = command.ExecuteReader();
+        int quantityAmount = 0;
+        int iterator = 0;
+        string measurement = " ";
+        while (reader.Read())
+        {
+            iterator++;
+            quantityAmount += Convert.ToInt32(reader.GetString(2));
+            measurement = reader.GetString(3);
+        }
+        Console.WriteLine($" You have done {name} {iterator} times this year and achieved {quantityAmount} {measurement}");
+        if (reader.HasRows)
+            return true;
+        return false;
+    }
 }
