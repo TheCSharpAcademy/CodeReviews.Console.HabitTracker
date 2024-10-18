@@ -96,6 +96,22 @@ namespace HabitTracker.alexgit55
             return query;
         }
 
+        private static int CheckDatabaseForRecord(string date)
+        /* Check if a record with the given date exists in the database
+         * Return 1 if the record exists, 0 if it does not */
+        {
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = $"SELECT EXISTS(SELECT 1 FROM {databaseName} WHERE Date = '{date}')";
+            int query = Convert.ToInt32(command.ExecuteScalar());
+
+            connection.Close();
+
+            return query;
+        }
+
 
         public static int RunNonQueryCommandOnDatabase(string commandText)
         // Create a connection to the database and execute a command
@@ -209,13 +225,29 @@ namespace HabitTracker.alexgit55
         private static void InsertRecord()
         /* Insert a new record into the database
          * Prompt the user for a date and quantity of water drank, then insert the record into the database
+         * If a record with the given date already exists, display a message and prompt for a different date
          * If the user enters 0 for the date or quantity, return to the main menu
          */
         {
             Console.Clear();
             Console.WriteLine("\nAdd New Record to Database\n");
             Console.WriteLine("----------------------------\n\n");
-            string date = GetDateInput();
+
+            int recordExists = 1;
+            string date = null;
+
+            while (recordExists != 0)
+            {
+                date = GetDateInput();
+                recordExists = CheckDatabaseForRecord(date);
+
+                if (recordExists == 0)
+                    break;
+
+                Console.WriteLine("A record with this date already exists. Please enter a different date.\n");
+            }
+
+            
             if (date == "0")
             {
                 Console.WriteLine("No records will be added.");
