@@ -1,6 +1,6 @@
 # ConsoleHabitTracker
 
-## Console based CRUD application to track people habits. Developed using C# and SQLite with ADO.NET.
+Console based CRUD application to track people habits. Developed using C# and SQLite with ADO.NET.
 
 ## Given Requirements:
 This is an application where you log occurrences of a habit.
