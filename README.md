@@ -40,7 +40,7 @@ Console based CRUD application to track people habits. Developed using C# and SQ
 - Debugging is very useful tool, which was not very often used by me previously.
 - SQL commands can be tricky but you can get almost everything with a right specific query.
 - Handling user's input with Regex is a very handy way to do it.
-Areas to Improve
+## Areas to Improve
 - Better code writing with DRY and KISS principles, better error and inputs handling, more different libraries and frameworks to acknowledge that I can try more different features.
 ## Resources Used
 - C# Academy guidelines and roadmap.
