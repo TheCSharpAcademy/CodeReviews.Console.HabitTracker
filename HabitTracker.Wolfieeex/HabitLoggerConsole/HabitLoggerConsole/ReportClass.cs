@@ -10,11 +10,24 @@ internal class ReportClass
 {
     internal static void GenerateReportV2(string habitName)
     {
-        List<Tuple<int, ReportDataCoded[]>> data = GatherData(habitName);
+        //ReportOptionsMenu();
 
+        bool[] options = new bool[6];
+        List<Tuple<int, ReportDataCoded[]>> data = GatherData(habitName);
+        GenerateReportOnScreen(options, data);
 
     }
-
+    private static void ReportOptionsMenu()
+    {
+        throw new NotImplementedException();
+    }
+    private static void GenerateReportOnScreen(bool[] options, List<Tuple<int, ReportDataCoded[]>> data)
+    {
+        WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.BUp);
+        WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BUp);
+        WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.BUp);
+        Console.ReadKey();
+    }
     public static List<Tuple<int, ReportDataCoded[]>> GatherData(string habitName)
     {
         List<Tuple<int, ReportDataCoded[]>> data = new List<Tuple<int, ReportDataCoded[]>>();
@@ -89,13 +102,12 @@ internal class ReportClass
         }
         return data;
     }
-
     private static void DataCalculator(string habitName, SqliteConnection connection, SqliteCommand tblCmd, string trackedName, int year, ref ReportDataCoded[] yearlySummation, bool yearlyReport, string currentlyCheckedMonth = "")
     {
         string yearlyCalculator = yearlyReport ? "" : $"AND Date LIKE '%{currentlyCheckedMonth}%'";
 
         SqliteDataReader reader;
-        tblCmd.CommandText = $"SELECT * FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+        tblCmd.CommandText = $"SELECT * FROM '{habitName}' WHERE Date LIKE '%{year}'{yearlyCalculator}";
         reader = tblCmd.ExecuteReader();
 
         if (reader.HasRows)
@@ -111,18 +123,18 @@ internal class ReportClass
             ReportDataCoded currentMonthSummation = new ReportDataCoded();
             var summationTblCmd = connection.CreateCommand();
 
-            summationTblCmd.CommandText = $"SELECT SUM({trackedName}) FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            summationTblCmd.CommandText = $"SELECT SUM({trackedName}) FROM '{habitName}' WHERE Date LIKE '%{year}'{yearlyCalculator}";
             sumValue = (double)summationTblCmd.ExecuteScalar();
 
-            summationTblCmd.CommandText = $"SELECT COUNT(*) FROM '{habitName}' WHERE Date LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            summationTblCmd.CommandText = $"SELECT COUNT(*) FROM '{habitName}' WHERE Date LIKE '%{year}'{yearlyCalculator}";
             occurrences = Convert.ToInt32(summationTblCmd.ExecuteScalar());
 
             meanValue = sumValue / occurrences;
 
-            summationTblCmd.CommandText = $"SELECT MAX({trackedName}) FROM '{habitName}' WHERE DATE LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            summationTblCmd.CommandText = $"SELECT MAX({trackedName}) FROM '{habitName}' WHERE DATE LIKE '%{year}'{yearlyCalculator}";
             highiestValue = (double)summationTblCmd.ExecuteScalar();
 
-            summationTblCmd.CommandText = $"SELECT MIN({trackedName}) FROM '{habitName}' WHERE DATE LIKE '%{year}' AND Date LIKE '%{currentlyCheckedMonth}%'";
+            summationTblCmd.CommandText = $"SELECT MIN({trackedName}) FROM '{habitName}' WHERE DATE LIKE '%{year}'{yearlyCalculator}";
             smallestValue = (double)summationTblCmd.ExecuteScalar();
 
             List<double> recordList = new List<double>();
@@ -161,15 +173,30 @@ internal class ReportClass
                 else
                     modalValue = numericCountList[0].Value;
 
-                yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
+                if (yearlyReport)
                 {
-                    Occurrences = occurrences,
-                    HighiestValue = highiestValue,
-                    SmallestValue = smallestValue,
-                    MeanValue = meanValue,
-                    MedianValue = medianValue,
-                    ModalValue = modalValue
-                };
+                    yearlySummation[12] = new ReportDataCoded()
+                    {
+                        Occurrences = occurrences,
+                        HighiestValue = highiestValue,
+                        SmallestValue = smallestValue,
+                        MeanValue = meanValue,
+                        MedianValue = medianValue,
+                        ModalValue = modalValue
+                    };
+                }
+                else
+                {
+                    yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
+                    {
+                        Occurrences = occurrences,
+                        HighiestValue = highiestValue,
+                        SmallestValue = smallestValue,
+                        MeanValue = meanValue,
+                        MedianValue = medianValue,
+                        ModalValue = modalValue
+                    };
+                }
             }
         }
         else
@@ -184,8 +211,196 @@ internal class ReportClass
                 ModalValue = double.NaN
             };
         }
+        reader.Close();
     }
-
+    internal static void WriteTableWall(TableWallsHorizontal horizontal, TableWallsVertical vertical)
+    {
+        switch (horizontal)
+        {
+            case TableWallsHorizontal.Left:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("┌");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("└");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("╒");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("╘");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("├");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("╞");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write("│");
+                        break;
+                }
+                break;
+            case TableWallsHorizontal.Right:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("┐");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("┘");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("╕");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("╛");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("┤");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("╡");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write("│");
+                        break;
+                }
+                break;
+            case TableWallsHorizontal.BRight:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("╖");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("╜");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("╗");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("╝");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("╢");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("╣");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write("║");
+                        break;
+                }
+                break;
+            case TableWallsHorizontal.BLeft:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("╓");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("╙");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("╔");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("╚");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("╟");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("╠");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write("║");
+                        break;
+                }
+                break;
+            case TableWallsHorizontal.Middle:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("┬");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("┴");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("╤");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("╧");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("┼");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("╫");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write("─");
+                        break;
+                }
+                break;
+            case TableWallsHorizontal.BMiddle:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("╥");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("╨");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("╦");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("╩");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("╬");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write("═");
+                        break;
+                }
+                break;
+            case TableWallsHorizontal.Blank:
+                switch (vertical)
+                {
+                    case TableWallsVertical.Up:
+                        Console.Write("─");
+                        break;
+                    case TableWallsVertical.Down:
+                        Console.Write("─");
+                        break;
+                    case TableWallsVertical.BUp:
+                        Console.Write("═");
+                        break;
+                    case TableWallsVertical.BDown:
+                        Console.Write("═");
+                        break;
+                    case TableWallsVertical.Middle:
+                        Console.Write("─");
+                        break;
+                    case TableWallsVertical.BMiddle:
+                        Console.Write("═");
+                        break;
+                    case TableWallsVertical.Blank:
+                        Console.Write(" ");
+                        break;
+                }
+                break;
+        }
+    }
     public class ReportDataCoded
     {
         public int? Occurrences
@@ -213,7 +428,26 @@ internal class ReportClass
             get; set;
         }
     }
-
+    public enum TableWallsHorizontal
+    {
+        Right,
+        Left,
+        BRight,
+        BLeft,
+        Middle,
+        BMiddle,
+        Blank
+    }
+    public enum TableWallsVertical
+    {
+        Up,
+        Down,
+        BUp,
+        BDown,
+        Middle,
+        BMiddle,
+        Blank
+    }
     public enum Months
     {
         January,

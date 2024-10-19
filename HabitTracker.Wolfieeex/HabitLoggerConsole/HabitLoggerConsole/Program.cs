@@ -1,5 +1,6 @@
 ﻿using HabitLoggerConsole.Models;
 using Microsoft.Data.Sqlite;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace HabitLoggerConsole;
@@ -28,6 +29,8 @@ public class Program
                     DataSeed.CreateTestRecord();
                 }
 
+                Console.OutputEncoding = Encoding.UTF8;
+
                 Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 Console.SetWindowPosition(0, 0);
 
@@ -37,6 +40,9 @@ public class Program
             {
                 Console.WriteLine("An exception occurred while trying to connect to a database");
                 Console.WriteLine(ex.Message);
+
+                System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(ex, true);
+                Console.WriteLine("Line: " + trace.GetFrame(0).GetFileLineNumber());
             }
         }
         catch (Exception ex)
