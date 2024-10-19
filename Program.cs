@@ -3,7 +3,7 @@ using HabitTracker;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;
 
-var crud = new CRUD();
+var crud = new Crud();
 
 raw.SetProvider(new SQLite3Provider_e_sqlite3());
 var dbString = "habit-Tracker.db";

@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 
 namespace HabitTracker;
 
-internal class CRUD
+internal class Crud
 {
 
     public bool Create(SqliteConnection connection, string name)
@@ -41,7 +41,7 @@ internal class CRUD
         // check if table exists
         try
         {
-            var readerTest = commandTest.ExecuteReader();
+            commandTest.ExecuteReader();
         }
         catch (SqliteException)
         {
