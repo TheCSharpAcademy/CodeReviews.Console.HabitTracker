@@ -1,4 +1,4 @@
-#ConsoleHabitTracker
+# ConsoleHabitTracker
 
 ##Console based CRUD application to track people habits. Developed using C# and SQLite with ADO.NET.
 
