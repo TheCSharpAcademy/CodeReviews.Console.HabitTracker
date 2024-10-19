@@ -20,16 +20,18 @@ Console based CRUD application to track people habits. Developed using C# and SQ
   - If no database exists, or the correct table does not exist they will be created on program start.
 
 * A console based UI where users can navigate by user input.
-
+  - ![image](https://github.com/TwilightSaw/CodeReviews.Console.HabitTracker/blob/master/images/UI.jpg?raw=true)
+  
 * CRUD DB functions
   - From the main menu users can Create, Read, Update or Delete entries for whichever date they want, entered in dd.mm.yyyy format. Duplicate days will sum quantity of habit occurances.
 
 * Reports of days and occurances that happened during one year. User can choose which year to check.
-
+  - ![image](https://github.com/TwilightSaw/CodeReviews.Console.HabitTracker/blob/master/images/seed.jpg?raw=true)
 * Measurement of habit, which is chosen by user in creation process of a new habit and can't be changed later for that specific habit.
 
 * Seeded sample of 3 habit tables with 100 different occurances each.
-
+  - ![image](https://github.com/TwilightSaw/CodeReviews.Console.HabitTracker/blob/master/images/report.jpg?raw=true)
+    
 ## Challenges
 - It wasn't my first or even second time of SQL like db usage, but definitely first one when I was using SQLite with ADO.NET. It was a little challenged to write the right query, especially with parametrized queries, which not always works with SQLite.
 - Other little problem was to handle all the input's validation and parsing different types of user's inputs.
