@@ -6,7 +6,7 @@ Console based CRUD application to track people habits. Developed using C# and SQ
 - [x] This is an application where you log occurrences of a habit.
 - [x] This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day).
 - [x] Users need to be able to input the date of the occurrence of the habit.
-- [x]The application should store and retrieve data from a real database.
+- [x] The application should store and retrieve data from a real database.
 - [x] When the application starts, it should create a sqlite database, if one isn’t present.
 - [x] It should also create a table in the database, where the habit will be logged.
 - [x] The users should be able to insert, delete, update and view their logged habit.
