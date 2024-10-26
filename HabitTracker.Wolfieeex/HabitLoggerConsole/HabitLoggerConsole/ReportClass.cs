@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 using System.Globalization;
+using System.Numerics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HabitLoggerConsole;
@@ -12,7 +13,7 @@ internal class ReportClass
     {
         //ReportOptionsMenu();
 
-        bool[] options = new bool[6];
+        bool[] options = new bool[9] { true, true, false, false, true, true, false, false, true };
         List<Tuple<int, ReportDataCoded[]>> data = GatherData(habitName);
         GenerateReportOnScreen(options, data);
 
@@ -23,10 +24,145 @@ internal class ReportClass
     }
     private static void GenerateReportOnScreen(bool[] options, List<Tuple<int, ReportDataCoded[]>> data)
     {
-        WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.BUp);
-        WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BUp);
-        WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.BUp);
+        int tableVerticalSpace = 0;
+        for (int i = 0; i < 7; i++)
+        {
+            if (options[i] == true)
+            {
+                tableVerticalSpace++;
+            }
+        }
+
+        Console.Clear();
+
+        WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.BUp, 0, 1);
+        WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.Blank, 0, 1);
+        WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.BMiddle, 0, 1);
+
+        for (int i = 0; i < data.Count; i++)
+        {
+            for (int j = 0; j < tableVerticalSpace; j++)
+            {
+                WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.Blank, 0, 1);
+            }
+            if (i + 1 == data.Count)
+            {
+                WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.BDown, 0, 1);
+            }
+            else
+            {
+                WriteTableWall(TableWallsHorizontal.BLeft, TableWallsVertical.Middle, 0, 1);
+            }
+        }
+
+        //  Create left edge content (years) and table edges:
+        //      Top bit:
+        Console.SetCursorPosition(1, 0);
+        for (int i = 0; i < 7; i++)
+        {
+            WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BUp, 1, 0);
+        }
+        // // WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BUp, 1, 0);
+        Console.SetCursorPosition(1, 2);
+        for (int i = 0; i < 7; i++)
+        {
+            WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BMiddle, 1, 0);
+        }
+
+        //      Year bit:
+        for (int i = 0; i < data.Count; i++)
+        {
+            int yearPosition = 0;
+            yearPosition = tableVerticalSpace % 2 == 0 ? yearPosition = tableVerticalSpace / 2 : yearPosition = (tableVerticalSpace + 1) / 2;
+
+            Console.SetCursorPosition(2, Console.CursorTop + yearPosition);
+            Console.Write(data[i].Item1);
+            Console.Write(":");
+
+            //          Bottom edge:
+            Console.SetCursorPosition(1, Console.CursorTop + tableVerticalSpace - yearPosition + 1);
+            if (i + 1 == data.Count)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BDown, 1, 0);
+                }
+            }
+            else
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.Middle, 1, 0);
+                }
+            }
+        }
+
+        //      Close the year bit:
+        Console.SetCursorPosition(8, 0);
+        WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BUp, 0, 1);
+        WriteTableWall(TableWallsHorizontal.Right, TableWallsVertical.Blank, 0, 1);
+        WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BMiddle, 0, 1);
+
+        for (int i = 0; i < data.Count; i++)
+        {
+            for (int j = 0; j < tableVerticalSpace; j++)
+            {
+                WriteTableWall(TableWallsHorizontal.Right, TableWallsVertical.Blank, 0, 1);
+            }
+            if (i + 1 == data.Count)
+            {
+                WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BDown, 0, 1);
+            }
+            else
+            {
+                WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.Middle, 0, 1);
+            }
+        }
+
+        //  Create table contents:
+
+        int alterations = options[8] ? 13 : 12;
+        for (int i = 0; i < alterations; i++)
+        {
+            Console.SetCursorPosition(Console.CursorLeft + 2, 1);
+            int lineupPosition = Console.CursorLeft - 1;
+            int longestInsert = 2;
+
+            if (i == 12)
+            {
+                InputTableContent("Yearly:", ref longestInsert);
+            }
+            else
+            {
+                string currentMonth = Enum.GetName(typeof(Months), i);
+                InputTableContent(currentMonth.Substring(0, 3), ref longestInsert);
+            }
+            Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop + 2);
+
+            for (int j = 0; j < data.Count; j++)
+            {
+                ReportDataCoded monthData = data[j].Item2[i];
+
+            }
+
+
+
+        }
+
         Console.ReadKey();
+    }
+    public static void InputTableContent(string content, ref int inputLength)
+    {
+        int x = Console.CursorLeft;
+        int y = Console.CursorTop;
+
+        Console.WriteLine(content);
+        if (content.Length + 2 > inputLength)
+        {
+            inputLength = content.Length + 2;
+        }
+
+        Console.SetCursorPosition(x, y);
     }
     public static List<Tuple<int, ReportDataCoded[]>> GatherData(string habitName)
     {
@@ -178,6 +314,7 @@ internal class ReportClass
                     yearlySummation[12] = new ReportDataCoded()
                     {
                         Occurrences = occurrences,
+                        Sum = sumValue,
                         HighiestValue = highiestValue,
                         SmallestValue = smallestValue,
                         MeanValue = meanValue,
@@ -190,6 +327,7 @@ internal class ReportClass
                     yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
                     {
                         Occurrences = occurrences,
+                        Sum = sumValue,
                         HighiestValue = highiestValue,
                         SmallestValue = smallestValue,
                         MeanValue = meanValue,
@@ -204,6 +342,7 @@ internal class ReportClass
             yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
             {
                 Occurrences = null,
+                Sum = double.NaN,
                 HighiestValue = double.NaN,
                 SmallestValue = double.NaN,
                 MeanValue = double.NaN,
@@ -213,7 +352,7 @@ internal class ReportClass
         }
         reader.Close();
     }
-    internal static void WriteTableWall(TableWallsHorizontal horizontal, TableWallsVertical vertical)
+    internal static void WriteTableWall(TableWallsHorizontal horizontal, TableWallsVertical vertical, int moveRight, int moveDown)
     {
         switch (horizontal)
         {
@@ -400,10 +539,15 @@ internal class ReportClass
                 }
                 break;
         }
+        Console.SetCursorPosition(Console.CursorLeft - 1 + moveRight, Console.CursorTop + moveDown);
     }
     public class ReportDataCoded
     {
         public int? Occurrences
+        {
+            get; set;
+        }
+        public double? Sum
         {
             get; set;
         }
@@ -436,7 +580,8 @@ internal class ReportClass
         BLeft,
         Middle,
         BMiddle,
-        Blank
+        Blank,
+        Special
     }
     public enum TableWallsVertical
     {
@@ -446,7 +591,8 @@ internal class ReportClass
         BDown,
         Middle,
         BMiddle,
-        Blank
+        Blank,
+        Special
     }
     public enum Months
     {

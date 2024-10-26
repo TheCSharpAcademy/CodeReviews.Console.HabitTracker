@@ -1,4 +1,4 @@
-Bool[] userOptions = new Bool[9];
+/*Bool[] userOptions = new Bool[9];
 List<Tuple<int, userDataCoded[]>> data = new List<Tuple<int,userDataCoded[]>>();
 
 int tableVerticalSpace = 0;
@@ -14,23 +14,23 @@ for (int i = 0; i < 6; i++)
 //  Create left edge:
 Console.Clear();
 
-DrawEdge(TableWalls.BLeft, TableWalls.BUp, 0, -1);
-DrawEdge(TableWalls.BLeft, Blank, 0, -1);
-DrawEdge(TableWalls.BLeft, TableWalls.BMiddle, 0, -1);
+WriteTableWall(TableWalls.BLeft, TableWalls.BUp, 0, -1);
+WriteTableWall(TableWalls.BLeft, Blank, 0, -1);
+WriteTableWall(TableWalls.BLeft, TableWalls.BMiddle, 0, -1);
 
 for (int i = 0; i < data.Count; i++)
 {
     for (int j = 0; j < tableVerticalSpace; j++)
     {
-        DrawEdge(TableWalls.BLeft, Blank, 0, -1);
+        WriteTableWall(TableWalls.BLeft, Blank, 0, -1);
     }
     if (i + 1 == data.Count)
     {
-        DrawEdge(TableWalls.BLeft, TableWalls.BDown, 0, -1);
+        WriteTableWall(TableWalls.BLeft, TableWalls.BDown, 0, -1);
     }
     else
     {
-        DrawEdge(TableWalls.BLeft, TableWalls.BMiddle, 1, 0);
+        WriteTableWall(TableWalls.BLeft, TableWalls.BMiddle, 1, 0);
     }
 }
 
@@ -39,13 +39,13 @@ for (int i = 0; i < data.Count; i++)
 Console.SetCursorPosition(1, 0);
 for (int i = 0; i < 7; i++)
 {
-    DrawEdge(TableWalls.Blank, TableWalls.BTop, 1, 0);
+    WriteTableWall(TableWalls.Blank, TableWalls.BTop, 1, 0);
 }
-DrawEdge(TableWalls.Middle, TableWalls.BTop, 1, 0);
+WriteTableWall(TableWalls.Middle, TableWalls.BTop, 1, 0);
 Console.SetCursorPosition(1, 2);
 for (int i = 0; i < 7; i++)
 {
-    DrawEdge(TableWalls.Blank, TableWalls.BMiddle, 1, 0);
+    WriteTableWall(TableWalls.Blank, TableWalls.BMiddle, 1, 0);
 }
 
 //      Year bit:
@@ -90,4 +90,4 @@ for (int i = 0; i < alterations; i++)
     {
 
     }
-}
+}*/
