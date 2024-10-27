@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Data;
 using System.Globalization;
 using System.Numerics;
@@ -11,16 +12,51 @@ internal class ReportClass
 {
     internal static void GenerateReportV2(string habitName)
     {
-        //ReportOptionsMenu();
-
-        bool[] options = new bool[9] { true, true, false, false, true, true, false, false, true };
+        bool[] options = new bool[9] { true, true, false, true, true, true, true, false, true };
+        ReportOptionsMenu(HabitCommands.TableNameToDisplayableFormat(habitName));
+        
         List<Tuple<int, ReportDataCoded[]>> data = GatherData(habitName);
         GenerateReportOnScreen(options, data);
 
+
+        Console.Write("Report for ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName)}");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write(" habit have been genereted. Press any key to return to the previous menu: ");
+        Console.ReadKey();
+
     }
-    private static void ReportOptionsMenu()
+    private static bool[] ReportOptionsMenu(string habitName)
     {
-        throw new NotImplementedException();
+        Console.Clear();
+        bool[] userOptions = new bool[9];
+
+        Console.WriteLine("You are currently in the report options selection menu.");
+        Console.Write("Please select display options for each month for the ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{habitName}");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(" report.\n");
+        Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+
+        Console.WriteLine($"1 - Display number of records.");
+        Console.WriteLine($"2 - Display sum of records.");
+        Console.WriteLine($"3 - Display maximal value.");
+        Console.WriteLine($"4 - Display minimal value.");
+        Console.WriteLine($"5 - Display mean value.");
+        Console.WriteLine($"6 - Display median value.");
+        Console.WriteLine($"7 - Display modal value.");
+        Console.WriteLine($"8 - Display yearly summation.\n");
+        Console.WriteLine($"9 - Save those options as default.\n");
+
+        Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+
+        Program.InsertExitPrompt('E');
+        int userInput = 0;
+        Program.AssignSelectionInput(ref userInput, 1, 9);
+
+        return userOptions;
     }
     private static void GenerateReportOnScreen(bool[] options, List<Tuple<int, ReportDataCoded[]>> data)
     {
@@ -62,7 +98,6 @@ internal class ReportClass
         {
             WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BUp, 1, 0);
         }
-        // // WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BUp, 1, 0);
         Console.SetCursorPosition(1, 2);
         for (int i = 0; i < 7; i++)
         {
@@ -135,21 +170,170 @@ internal class ReportClass
             else
             {
                 string currentMonth = Enum.GetName(typeof(Months), i);
-                InputTableContent(currentMonth.Substring(0, 3), ref longestInsert);
+                InputTableContent(currentMonth + ":", ref longestInsert);
             }
             Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop + 2);
 
+            //  First, insert the data:
             for (int j = 0; j < data.Count; j++)
             {
                 ReportDataCoded monthData = data[j].Item2[i];
+                for (int k = 0; k < 7; k++)
+                {
+                    if (options[k] != true)
+                    {
+                        continue;
+                    }
 
+                    string? dataToPresent;
+                    string presentator;
+
+                    switch (k)
+                    {
+                        case 0:
+                            if (monthData.Occurrences == null)
+                            {
+                                dataToPresent = "0";
+                            }
+                            else
+                            {
+                                dataToPresent = monthData.Occurrences.ToString();
+                            }
+                            presentator = "Records";
+                            break;
+                        case 1:
+                            dataToPresent =  System.String.Format("{0:#.##}", monthData.Sum);
+                            presentator = "Sum";
+                            break;
+                        case 2:
+                            dataToPresent = System.String.Format("{0:#.##}", monthData.HighiestValue);
+                            presentator = "Max";
+                            break;
+                        case 3:
+                            dataToPresent = System.String.Format("{0:#.##}", monthData.SmallestValue);
+                            presentator = "Min";
+                            break;
+                        case 4:
+                            dataToPresent = System.String.Format("{0:#.##}", monthData.MeanValue);
+                            presentator = "Mean";
+                            break;
+                        case 5:
+                            dataToPresent = System.String.Format("{0:#.##}", monthData.MedianValue);
+                            presentator = "Median";
+                            break;
+                        case 6:
+                            dataToPresent = System.String.Format("{0:#.##}", monthData.ModalValue);
+                            presentator = "Modal";
+                            break;
+                        default:
+                            presentator = "?";
+                            dataToPresent = "-";
+                            break;
+                    }
+                    if (dataToPresent == "NaN" || dataToPresent == null)
+                    {
+                        dataToPresent = "-";
+                    }
+                    InputTableContent(presentator + ": " + dataToPresent, ref longestInsert);
+                    Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop + 1);
+                }
+                Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop + 1);
             }
 
+            // Then, create horizontal sides of the table:
+            Console.SetCursorPosition(lineupPosition, 0);
+            for (int j = 0; j < longestInsert; j++)
+            {
+                WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BUp, 1, 0);
+            }
+            Console.SetCursorPosition(lineupPosition, 2);
 
+            for (int j = 0; j < longestInsert; j++)
+            {
+                WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BUp, 1, 0);
+            }
+            Console.SetCursorPosition(lineupPosition, Console.CursorTop + tableVerticalSpace + 1);
 
+            for (int j = 0; j < data.Count; j++)
+            {
+                
+                if (j + 1 != data.Count)
+                {
+                    for (int k = 0; k < longestInsert; k++)
+                    {
+                        WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.Middle, 1, 0);
+                    }
+                }
+                else
+                {
+                    for (int k = 0; k < longestInsert; k++)
+                    {
+                        WriteTableWall(TableWallsHorizontal.Blank, TableWallsVertical.BDown, 1, 0);
+                    }
+                }
+                Console.SetCursorPosition(lineupPosition, Console.CursorTop + tableVerticalSpace + 1);
+            }
+            //  Then, close the montly (yearly) section wiht a verical wall:
+            Console.SetCursorPosition(lineupPosition + longestInsert, 0);
+
+            if (i + 1 == alterations)
+            {
+                WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.BUp, 0, 1);
+                WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.Blank, 0, 1);
+                WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.BMiddle, 0, 1);
+            }
+            else
+            {
+                WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BUp, 0, 1);
+                WriteTableWall(TableWallsHorizontal.Right, TableWallsVertical.Blank, 0, 1);
+                WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BMiddle, 0, 1);
+            }
+            
+            for (int j = 0; j < data.Count; j++)
+            {
+                for (int k = 0; k < tableVerticalSpace; k++)
+                {
+                    if (i + 1 == alterations)
+                    {
+                        WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.Blank, 0, 1);
+                    }
+                    else
+                    {
+                        WriteTableWall(TableWallsHorizontal.Right, TableWallsVertical.Blank, 0, 1);
+                    }
+                }
+                if (j + 1 == data.Count)
+                {
+                    if (i + 1 == alterations)
+                    {
+                        WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.BDown, 0, 1);
+                    }
+                    else
+                    {
+                        WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.BDown, 0, 1);
+                    }
+                }
+                else
+                {
+                    if (i + 1 == alterations)
+                    {
+                        WriteTableWall(TableWallsHorizontal.BRight, TableWallsVertical.Middle, 0, 1);
+                    }
+                    else
+                    {
+                        WriteTableWall(TableWallsHorizontal.Middle, TableWallsVertical.Middle, 0, 1);
+                    }
+                }
+            }
+            if (i + 1 == alterations)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop + 2);
+            }
+            else
+            {
+                Console.SetCursorPosition(lineupPosition + longestInsert, 0);
+            }
         }
-
-        Console.ReadKey();
     }
     public static void InputTableContent(string content, ref int inputLength)
     {
@@ -307,34 +491,34 @@ internal class ReportClass
                 if (numericCountList[0].Value == numericCountList[1].Value)
                     modalValue = double.NaN;
                 else
-                    modalValue = numericCountList[0].Value;
+                    modalValue = numericCountList[0].Value;                
+            }
 
-                if (yearlyReport)
+            if (yearlyReport)
+            {
+                yearlySummation[12] = new ReportDataCoded()
                 {
-                    yearlySummation[12] = new ReportDataCoded()
-                    {
-                        Occurrences = occurrences,
-                        Sum = sumValue,
-                        HighiestValue = highiestValue,
-                        SmallestValue = smallestValue,
-                        MeanValue = meanValue,
-                        MedianValue = medianValue,
-                        ModalValue = modalValue
-                    };
-                }
-                else
+                    Occurrences = occurrences,
+                    Sum = sumValue,
+                    HighiestValue = highiestValue,
+                    SmallestValue = smallestValue,
+                    MeanValue = meanValue,
+                    MedianValue = medianValue,
+                    ModalValue = modalValue
+                };
+            }
+            else
+            {
+                yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
                 {
-                    yearlySummation[(int)Enum.Parse(typeof(Months), currentlyCheckedMonth)] = new ReportDataCoded()
-                    {
-                        Occurrences = occurrences,
-                        Sum = sumValue,
-                        HighiestValue = highiestValue,
-                        SmallestValue = smallestValue,
-                        MeanValue = meanValue,
-                        MedianValue = medianValue,
-                        ModalValue = modalValue
-                    };
-                }
+                    Occurrences = occurrences,
+                    Sum = sumValue,
+                    HighiestValue = highiestValue,
+                    SmallestValue = smallestValue,
+                    MeanValue = meanValue,
+                    MedianValue = medianValue,
+                    ModalValue = modalValue
+                };
             }
         }
         else
@@ -479,7 +663,7 @@ internal class ReportClass
                         Console.Write("┼");
                         break;
                     case TableWallsVertical.BMiddle:
-                        Console.Write("╫");
+                        Console.Write("╪");
                         break;
                     case TableWallsVertical.Blank:
                         Console.Write("─");
@@ -502,7 +686,7 @@ internal class ReportClass
                         Console.Write("╩");
                         break;
                     case TableWallsVertical.Middle:
-                        Console.Write("");
+                        Console.Write("╫");
                         break;
                     case TableWallsVertical.BMiddle:
                         Console.Write("╬");

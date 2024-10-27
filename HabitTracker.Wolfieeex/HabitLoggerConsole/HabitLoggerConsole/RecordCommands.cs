@@ -199,6 +199,179 @@ internal class RecordCommands
             shouldExit = RunUpdateMenu(habit, selectedRow, rowCount);
         }
     }
+    private static bool RunUpdateMenu(string habit, int selectedRow, int rowCount)
+    {
+        bool shouldExit;
+        while (true)
+        {
+            using (var connection = new SqliteConnection(Program.connectionString))
+            {
+                connection.Open();
+
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText = $"SELECT * FROM '{habit}' WHERE Id = '{rowCount}'";
+
+                SqliteDataReader reader = tableCmd.ExecuteReader();
+
+                reader.Read();
+                string recordDate = reader.GetString(1);
+                string recordValue = reader.GetString(2);
+                string recordValueName = reader.GetName(2);
+                reader.Close();
+
+                Console.Write($"You are updating ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
+                Console.ResetColor();
+                Console.WriteLine($" habit with record inserted on {System.String.Format(recordDate, "dddd, dd MMMM, yyyy")} with its value {recordValue}.\n");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+                Console.WriteLine("0 - Update date");
+                Console.WriteLine("1 - Update value achieved\n");
+                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+                Program.InsertExitPrompt(exitChar, backMenuAlteration: true);
+
+                int userInput = -1;
+                shouldExit = Program.AssignSelectionInput(ref userInput, 0, 1, skipSelection: exitChar);
+                if (shouldExit)
+                {
+                    connection.Close();
+                    break;
+                }
+
+                switch (userInput)
+                {
+                    case 0:
+                        Console.Clear();
+                        string date = GetDateInput();
+                        if (date.ToLower() == exitChar.ToString().ToLower())
+                        {
+                            Console.Clear();
+                            break;
+                        }
+
+                        tableCmd.CommandText = $"UPDATE '{habit}' SET Date = '{date}' WHERE Id = '{rowCount}'";
+                        tableCmd.ExecuteNonQuery();
+
+                        Console.Clear();
+                        Console.WriteLine($"Record with index {selectedRow} has been updated.\n");
+
+                        break;
+                    case 1:
+                        Console.Clear();
+                        int updatedValueAchieved = 0;
+                        Console.WriteLine("Please insert an updated value that was achieved on that time.");
+                        Program.InsertExitPrompt(exitChar);
+                        shouldExit = Program.AssignSelectionInput(ref updatedValueAchieved, 1, 9999999, skipSelection: exitChar);
+                        if (shouldExit)
+                        {
+                            Console.Clear();
+                            break;
+                        }
+                        tableCmd.CommandText = $"UPDATE '{habit}' SET '{recordValueName}' = '{updatedValueAchieved}' WHERE Id = '{rowCount}'";
+                        tableCmd.ExecuteNonQuery();
+
+                        Console.Clear();
+                        Console.WriteLine($"Record with index {selectedRow} has been updated.\n");
+
+                        break;
+                }
+                connection.Close();
+            }
+        }
+        return shouldExit;
+    }
+    private static string GetDateInput()
+    {
+        Console.WriteLine("Please insert the date of the operation, or type in \"Now\" to accept today's date instead:");
+        Program.InsertExitPrompt(exitChar);
+
+        string? dateInput = Console.ReadLine();
+        string optional = exitChar.ToString().ToLower();
+
+        while (!DateTime.TryParse(dateInput, out _) && dateInput.ToLower() != optional && dateInput.ToLower() != "now")
+        {
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.Write($"{new string(' ', Console.BufferWidth)}");
+            Console.SetCursorPosition(0, Console.CursorTop);
+
+            Console.Write($"Invalid option. Please insert a date in a correct format, or type in \"Now\" to accept today's date: ");
+            dateInput = Console.ReadLine();
+        }
+
+        if (dateInput.ToLower() == "now")
+        {
+            dateInput = DateTime.Now.ToString();
+        }
+
+        if (dateInput.ToLower() != optional)
+        {
+            var date = DateTime.Parse(dateInput, new CultureInfo("en-GB"), DateTimeStyles.None);
+            dateInput = date.ToString("dddd, dd MMMM, yyyy");
+        }
+
+        return dateInput;
+    }
+    /*private static void BuildReportTable(int longestWord, int numberOfYears)
+    {
+        int startCursorPositionX = Console.CursorLeft;
+        int startCursorPositionY = Console.CursorTop;
+        
+        
+        
+        Console.WriteLine($"{new string('_', 16 + (13 * (longestWord + 3)))}");
+        Console.Write("|");
+        Console.SetCursorPosition(Console.CursorLeft + 14, Console.CursorTop);
+        Console.Write("|");
+        for (int i = 0; i < 13; i++)
+        {
+            Console.SetCursorPosition(Console.CursorLeft + longestWord + 2, Console.CursorTop);
+            Console.Write("|");
+        }
+        Console.WriteLine();
+        Console.WriteLine($"{new string('_', 16 + (13 * (longestWord + 3)))}");
+        for (int i = 0; i < numberOfYears; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                Console.Write("|");
+                Console.SetCursorPosition(Console.CursorLeft + 14, Console.CursorTop);
+                Console.Write("|");
+                for (int k = 0; k < 13; k++)
+                {
+                    Console.SetCursorPosition(Console.CursorLeft + longestWord + 2, Console.CursorTop);
+                    Console.Write("|");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine($"{new string('_', 16 + (13 * (longestWord + 3)))}");
+        }
+
+        //Console.SetCursorPosition(startCursorPositionX, startCursorPositionY);
+    }
+    private static void PopulateTable(Dictionary<int, ReportDataCoded[]> report, int longestWord)
+    {
+        Console.SetBufferSize(20 + (13 * (longestWord + 3)), 600);
+
+        int startCursorPositionX = Console.CursorLeft;
+        int startCursorPositionY = Console.CursorTop;
+        Console.SetCursorPosition(startCursorPositionX + 1, startCursorPositionY + 1);
+
+        string lineString = "";
+        lineString += $"Year\u2193   Month\u2192 ";
+        for (int i = 0; i < 12; i++)
+        {
+            lineString += (Enum.GetName(typeof(Months), (Months)i) + ":").PadRight(longestWord + 3);
+        }
+        lineString += $"Total for the year:";
+        Console.WriteLine(lineString);
+
+        Console.SetCursorPosition(startCursorPositionX, startCursorPositionY);
+    }
+    private static int FindLongestWord(Dictionary<int, ReportDataCoded[]> report)
+    {
+        return 0;
+    }*/
     /*internal static void GenerateReport(string habitName)
     {
         using (var connection = new SqliteConnection(Program.connectionString))
@@ -381,179 +554,6 @@ internal class RecordCommands
 
             connection.Close();
         }
-    }*/
-    private static bool RunUpdateMenu(string habit, int selectedRow, int rowCount)
-    {
-        bool shouldExit;
-        while (true)
-        {
-            using (var connection = new SqliteConnection(Program.connectionString))
-            {
-                connection.Open();
-
-                var tableCmd = connection.CreateCommand();
-
-                tableCmd.CommandText = $"SELECT * FROM '{habit}' WHERE Id = '{rowCount}'";
-
-                SqliteDataReader reader = tableCmd.ExecuteReader();
-
-                reader.Read();
-                string recordDate = reader.GetString(1);
-                string recordValue = reader.GetString(2);
-                string recordValueName = reader.GetName(2);
-                reader.Close();
-
-                Console.Write($"You are updating ");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
-                Console.ResetColor();
-                Console.WriteLine($" habit with record inserted on {System.String.Format(recordDate, "dddd, dd MMMM, yyyy")} with its value {recordValue}.\n");
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
-                Console.WriteLine("0 - Update date");
-                Console.WriteLine("1 - Update value achieved\n");
-                Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
-                Program.InsertExitPrompt(exitChar, backMenuAlteration: true);
-
-                int userInput = -1;
-                shouldExit = Program.AssignSelectionInput(ref userInput, 0, 1, skipSelection: exitChar);
-                if (shouldExit)
-                {
-                    connection.Close();
-                    break;
-                }
-
-                switch (userInput)
-                {
-                    case 0:
-                        Console.Clear();
-                        string date = GetDateInput();
-                        if (date.ToLower() == exitChar.ToString().ToLower())
-                        {
-                            Console.Clear();
-                            break;
-                        }
-
-                        tableCmd.CommandText = $"UPDATE '{habit}' SET Date = '{date}' WHERE Id = '{rowCount}'";
-                        tableCmd.ExecuteNonQuery();
-
-                        Console.Clear();
-                        Console.WriteLine($"Record with index {selectedRow} has been updated.\n");
-
-                        break;
-                    case 1:
-                        Console.Clear();
-                        int updatedValueAchieved = 0;
-                        Console.WriteLine("Please insert an updated value that was achieved on that time.");
-                        Program.InsertExitPrompt(exitChar);
-                        shouldExit = Program.AssignSelectionInput(ref updatedValueAchieved, 1, 9999999, skipSelection: exitChar);
-                        if (shouldExit)
-                        {
-                            Console.Clear();
-                            break;
-                        }
-                        tableCmd.CommandText = $"UPDATE '{habit}' SET '{recordValueName}' = '{updatedValueAchieved}' WHERE Id = '{rowCount}'";
-                        tableCmd.ExecuteNonQuery();
-
-                        Console.Clear();
-                        Console.WriteLine($"Record with index {selectedRow} has been updated.\n");
-
-                        break;
-                }
-                connection.Close();
-            }
-        }
-        return shouldExit;
-    }
-    private static string GetDateInput()
-    {
-        Console.WriteLine("Please insert the date of the operation, or type in \"Now\" to accept today's date instead:");
-        Program.InsertExitPrompt(exitChar);
-
-        string? dateInput = Console.ReadLine();
-        string optional = exitChar.ToString().ToLower();
-
-        while (!DateTime.TryParse(dateInput, out _) && dateInput.ToLower() != optional && dateInput.ToLower() != "now")
-        {
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-            Console.Write($"{new string(' ', Console.BufferWidth)}");
-            Console.SetCursorPosition(0, Console.CursorTop);
-
-            Console.Write($"Invalid option. Please insert a date in a correct format, or type in \"Now\" to accept today's date: ");
-            dateInput = Console.ReadLine();
-        }
-
-        if (dateInput.ToLower() == "now")
-        {
-            dateInput = DateTime.Now.ToString();
-        }
-
-        if (dateInput.ToLower() != optional)
-        {
-            var date = DateTime.Parse(dateInput, new CultureInfo("en-GB"), DateTimeStyles.None);
-            dateInput = date.ToString("dddd, dd MMMM, yyyy");
-        }
-
-        return dateInput;
-    }
-    /*private static void BuildReportTable(int longestWord, int numberOfYears)
-    {
-        int startCursorPositionX = Console.CursorLeft;
-        int startCursorPositionY = Console.CursorTop;
-        
-        
-        
-        Console.WriteLine($"{new string('_', 16 + (13 * (longestWord + 3)))}");
-        Console.Write("|");
-        Console.SetCursorPosition(Console.CursorLeft + 14, Console.CursorTop);
-        Console.Write("|");
-        for (int i = 0; i < 13; i++)
-        {
-            Console.SetCursorPosition(Console.CursorLeft + longestWord + 2, Console.CursorTop);
-            Console.Write("|");
-        }
-        Console.WriteLine();
-        Console.WriteLine($"{new string('_', 16 + (13 * (longestWord + 3)))}");
-        for (int i = 0; i < numberOfYears; i++)
-        {
-            for (int j = 0; j < 5; j++)
-            {
-                Console.Write("|");
-                Console.SetCursorPosition(Console.CursorLeft + 14, Console.CursorTop);
-                Console.Write("|");
-                for (int k = 0; k < 13; k++)
-                {
-                    Console.SetCursorPosition(Console.CursorLeft + longestWord + 2, Console.CursorTop);
-                    Console.Write("|");
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine($"{new string('_', 16 + (13 * (longestWord + 3)))}");
-        }
-
-        //Console.SetCursorPosition(startCursorPositionX, startCursorPositionY);
-    }
-    private static void PopulateTable(Dictionary<int, ReportDataCoded[]> report, int longestWord)
-    {
-        Console.SetBufferSize(20 + (13 * (longestWord + 3)), 600);
-
-        int startCursorPositionX = Console.CursorLeft;
-        int startCursorPositionY = Console.CursorTop;
-        Console.SetCursorPosition(startCursorPositionX + 1, startCursorPositionY + 1);
-
-        string lineString = "";
-        lineString += $"Year\u2193   Month\u2192 ";
-        for (int i = 0; i < 12; i++)
-        {
-            lineString += (Enum.GetName(typeof(Months), (Months)i) + ":").PadRight(longestWord + 3);
-        }
-        lineString += $"Total for the year:";
-        Console.WriteLine(lineString);
-
-        Console.SetCursorPosition(startCursorPositionX, startCursorPositionY);
-    }
-    private static int FindLongestWord(Dictionary<int, ReportDataCoded[]> report)
-    {
-        return 0;
     }*/
 }
 
