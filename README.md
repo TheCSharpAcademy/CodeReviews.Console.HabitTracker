@@ -16,7 +16,7 @@ Console based CRUD application to track people habits. Developed using C# and SQ
 ## Features
 * SQLite database connection with ADO.NET
 
-* The program uses a SQLite db connection to store and read information.
+  - The program uses a SQLite db connection to store and read information.
   - If no database exists, or the correct table does not exist they will be created on program start.
 
 * A console based UI where users can navigate by user input.
