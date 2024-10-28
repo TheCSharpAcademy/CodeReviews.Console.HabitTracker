@@ -9,11 +9,11 @@ using UserInput;
 bool endApp = false;
 SqliteCrudController sqliteController = CreateCrudController();
 Reports reports = new Reports(sqliteController);
-
 sqliteController.CreateTable();
 
 while (!endApp)
 {
+    
     string? menuChoice = GetMainMenuChoice();
 
     if (menuChoice == null || !Regex.IsMatch(menuChoice, "[0|1|2|3|4|5|6]"))
@@ -74,7 +74,9 @@ string GetNonEmputStringInput(string prompt)
 SqliteCrudController CreateCrudController()
 {
     string habit = GetNonEmputStringInput("Enter a habit you would like to track: ");
+    Console.WriteLine(habit);
     string unitOfMeasure = GetNonEmputStringInput("Enter the unit of measure (quantity only, time units are not permitted): ");
+    Console.WriteLine(unitOfMeasure);
     return new SqliteCrudController(habit, unitOfMeasure);
 }
 

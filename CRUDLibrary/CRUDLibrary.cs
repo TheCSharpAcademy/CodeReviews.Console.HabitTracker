@@ -20,7 +20,7 @@ namespace CrudLibrary
 
         public void CreateTable()
         {
-            string command = $@"CREATE TABLE IF NOT EXISTS {Habit}(
+            string query = $@"CREATE TABLE IF NOT EXISTS {Habit}(
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Date TEXT,
             Quantity INTEGER
@@ -29,8 +29,10 @@ namespace CrudLibrary
             using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
-                connection.CreateCommand().CommandText = command;
-                connection.CreateCommand().ExecuteNonQuery();
+                using (SqliteCommand command = new SqliteCommand(query, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
                 connection.Close();
             }
         }
