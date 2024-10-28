@@ -9,7 +9,7 @@ public class Program
 {
     public static string connectionString { private set; get; } = @"Data Source=HabitLoggerConsole.db";
 
-    static char exitChar = 'E';
+    public static char exitChar = 'E';
 
     static bool runDeveloperSeedTest = true;
 

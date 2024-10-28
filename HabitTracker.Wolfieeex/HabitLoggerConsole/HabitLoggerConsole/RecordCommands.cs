@@ -74,7 +74,8 @@ internal class RecordCommands
                 lastRowIndex++;
                 Console.Write($"{(lastRowIndex + " - " + dw.Date).PadRight(40)} - {HabitCommands.TableNameToDisplayableFormat(habitName)}: {dw.HabitTracked}");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"{measurementType}");
+                string measurementDisplay = measurementType == "blank" ? "" : measurementType;
+                Console.WriteLine($" {measurementDisplay}");
                 Console.ResetColor();
             }
             Console.WriteLine();
@@ -279,6 +280,7 @@ internal class RecordCommands
                 connection.Close();
             }
         }
+        Console.Clear();
         return shouldExit;
     }
     private static string GetDateInput()

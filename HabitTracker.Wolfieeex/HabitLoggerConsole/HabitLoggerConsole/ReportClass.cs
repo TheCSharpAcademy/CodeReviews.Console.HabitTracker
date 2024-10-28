@@ -1,10 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
+using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
-using System.Numerics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace HabitLoggerConsole;
 
@@ -12,8 +11,13 @@ internal class ReportClass
 {
     internal static void GenerateReportV2(string habitName)
     {
-        bool[] options = new bool[9] { true, true, false, true, true, true, true, false, true };
-        ReportOptionsMenu(HabitCommands.TableNameToDisplayableFormat(habitName));
+        bool[] options = new bool[9];
+
+        options = ReportOptionsMenu(habitName);
+        if (options == null)
+        {
+            return;
+        }
         
         List<Tuple<int, ReportDataCoded[]>> data = GatherData(habitName);
         GenerateReportOnScreen(options, data);
@@ -32,30 +36,65 @@ internal class ReportClass
         Console.Clear();
         bool[] userOptions = new bool[9];
 
+        using (var connection = new SqliteConnection(Program.connectionString))
+        {
+            connection.Open();
+
+            var tblCmd = connection.CreateCommand();
+            tblCmd.CommandText = $"SELECT COUNT(*) FROM '{habitName}'";
+            int recordsNumber = (int)(long)tblCmd.ExecuteScalar();
+
+            if (recordsNumber < 10)
+            {
+                Console.WriteLine("No sufficient data to generate your report. Your habit has to have at least 10 insertions.");
+                return null;
+            }
+            connection.Close();
+        }
+
         Console.WriteLine("You are currently in the report options selection menu.");
         Console.Write("Please select display options for each month for the ");
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"{habitName}");
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName)}");
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine(" report.\n");
         Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
 
-        Console.WriteLine($"1 - Display number of records.");
-        Console.WriteLine($"2 - Display sum of records.");
-        Console.WriteLine($"3 - Display maximal value.");
-        Console.WriteLine($"4 - Display minimal value.");
-        Console.WriteLine($"5 - Display mean value.");
-        Console.WriteLine($"6 - Display median value.");
-        Console.WriteLine($"7 - Display modal value.");
-        Console.WriteLine($"8 - Display yearly summation.\n");
-        Console.WriteLine($"9 - Save those options as default.\n");
+        Console.WriteLine($"[ ] 0 - Display number of records.");
+        Console.WriteLine($"[ ] 1 - Display sum of records.");
+        Console.WriteLine($"[ ] 2 - Display maximal value.");
+        Console.WriteLine($"[ ] 3 - Display minimal value.");
+        Console.WriteLine($"[ ] 4 - Display mean value.");
+        Console.WriteLine($"[ ] 5 - Display median value.");
+        Console.WriteLine($"[ ] 6 - Display modal value.");
+        Console.WriteLine($"[ ] 7 - Display yearly summation.\n");
+        Console.WriteLine($"    8 - Save those options as default.");
+        Console.WriteLine($"    9 - Run the report.\n");
 
         Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
 
-        Program.InsertExitPrompt('E');
+        Program.InsertExitPrompt(Program.exitChar, backMenuAlteration: true);
         int userInput = 0;
-        Program.AssignSelectionInput(ref userInput, 1, 9);
 
+        bool exitMenu = Program.AssignSelectionInput(ref userInput, 1, 9, skipSelection: Program.exitChar);
+        if (exitMenu)
+        {
+            return null;
+        }
+
+        if (userInput == 8)
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Formatting = Formatting.Indented;
+
+            var match = Regex.Match(UserOptionsData.path, @"(.*)(?=\\)");
+            
+            System.IO.Directory.CreateDirectory(match.Value);
+            using (StreamWriter writeStream = File.CreateText(UserOptionsData.path))
+            {
+                serializer.Serialize(writeStream, userOptions);
+            }
+        }
         return userOptions;
     }
     private static void GenerateReportOnScreen(bool[] options, List<Tuple<int, ReportDataCoded[]>> data)
@@ -360,64 +399,55 @@ internal class ReportClass
             connection.Open();
 
             var tblCmd = connection.CreateCommand();
-            tblCmd.CommandText = $"SELECT COUNT(*) FROM '{habitName}'";
-            int recordsNumber = (int)(long)tblCmd.ExecuteScalar();
 
-            if (recordsNumber < 10)
+            int numberOfYears = 0;
+            int[] longestWordInColumn = new int[12];
+
+            tblCmd.CommandText = $"SELECT COUNT(*) FROM (SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}')";
+            int differentYearsCount = (int)(long)tblCmd.ExecuteScalar();
+
+            tblCmd.CommandText = $"SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}'";
+
+            SqliteDataReader reader = tblCmd.ExecuteReader();
+
+            List<int> years = new List<int>();
+
+            while (reader.Read())
             {
-                Console.WriteLine("No sufficient data to generate your report. Your habit has to have at least 10 insertions.");
-                return null;
+                years.Add(Convert.ToInt32(reader.GetString(0)));
             }
-            else
+            reader.Close();
+
+            years.Sort();
+
+            tblCmd.CommandText = $"SELECT * FROM '{habitName}'";
+            reader = tblCmd.ExecuteReader();
+            reader.Read();
+            string trackedName = reader.GetName(2);
+            reader.Close();
+
+            tblCmd.CommandText = $"SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}'";
+
+            foreach (int year in years)
             {
-                int numberOfYears = 0;
-                int[] longestWordInColumn = new int[12];
-
-                tblCmd.CommandText = $"SELECT COUNT(*) FROM (SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}')";
-                int differentYearsCount = (int)(long)tblCmd.ExecuteScalar();
-
-                tblCmd.CommandText = $"SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}'";
-
-                SqliteDataReader reader = tblCmd.ExecuteReader();
-
-                List<int> years = new List<int>();
-
-                while (reader.Read())
+                ReportDataCoded[] yearlySummation = new ReportDataCoded[13];
+                for (int i = 0; i < yearlySummation.Length; i++)
                 {
-                    years.Add(Convert.ToInt32(reader.GetString(0)));
+                    yearlySummation[i] = new ReportDataCoded();
                 }
-                reader.Close();
 
-                years.Sort();
-
-                tblCmd.CommandText = $"SELECT * FROM '{habitName}'";
-                reader = tblCmd.ExecuteReader();
-                reader.Read();
-                string trackedName = reader.GetName(2);
-                reader.Close();
-
-                tblCmd.CommandText = $"SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}'";
-
-                foreach (int year in years)
+                foreach (string currentlyCheckedMonth in Enum.GetNames<Months>())
                 {
-                    ReportDataCoded[] yearlySummation = new ReportDataCoded[13];
-                    for (int i = 0; i < yearlySummation.Length; i++)
-                    {
-                        yearlySummation[i] = new ReportDataCoded();
-                    }
-
-                    foreach (string currentlyCheckedMonth in Enum.GetNames<Months>())
-                    {
-                        DataCalculator(habitName, connection, tblCmd, trackedName, year, ref yearlySummation, false, currentlyCheckedMonth);
-                    }
-                    DataCalculator(habitName, connection, tblCmd, trackedName, year, ref yearlySummation, true);
-
-
-                    reader.Close();
-                    data.Add(new Tuple<int, ReportDataCoded[]>(year, yearlySummation));
+                    DataCalculator(habitName, connection, tblCmd, trackedName, year, ref yearlySummation, false, currentlyCheckedMonth);
                 }
-                Console.ReadKey();
+                DataCalculator(habitName, connection, tblCmd, trackedName, year, ref yearlySummation, true);
+
+
+                reader.Close();
+                data.Add(new Tuple<int, ReportDataCoded[]>(year, yearlySummation));
             }
+            Console.ReadKey();
+
             connection.Close();
         }
         return data;
