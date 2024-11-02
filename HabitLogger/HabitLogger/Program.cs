@@ -1,7 +1,4 @@
-﻿using System.Data.SqlClient;
-using System.Data.SQLite;
-using System.Diagnostics.Metrics;
-using System.Numerics;
+﻿using System.Data.SQLite;
 using System.Text.RegularExpressions;
 
 string connectionString = @"Data Source=.\MyDatabase.db;Version=3;";
@@ -21,7 +18,7 @@ string checkIdQuery = "SELECT COUNT(1) FROM Habits WHERE id = @id";
 
 string dateRegex = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\\d{4}$";
 Console.WriteLine("Welcome to the habit logger");
-createTableFunct();
+CreateTableFunct();
 bool flag = true;
 while (flag)
 {
@@ -33,16 +30,16 @@ while (flag)
             flag = false;
             break;
         case "1":
-            readHabitsFunct();
+            ReadHabitsFunct();
             break;
         case "2":
-            createHabitFunct();
+            CreateHabitFunct();
             break;
         case "3":
-            updateHabitFunct();
+            UpdateHabitFunct();
             break;
         case "4":
-            deleteHabitFunct();
+            DeleteHabitFunct();
             break;
         default:
             Console.WriteLine("Invalid input");
@@ -50,7 +47,7 @@ while (flag)
     }
 }
 
-void createTableFunct()
+void CreateTableFunct()
 {
     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     {
@@ -72,11 +69,11 @@ void createTableFunct()
     }
 }
 
-void createHabitFunct()
+void CreateHabitFunct()
 {
-    string habit = getHabit();
-    string quantity = getQuantity();
-    string date = getDate();
+    string habit = GetHabit();
+    string quantity = GetQuantity();
+    string date = GetDate();
 
     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     {
@@ -101,7 +98,7 @@ void createHabitFunct()
     }
 }
 
-void readHabitsFunct()
+void ReadHabitsFunct()
 {
     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     {
@@ -127,9 +124,9 @@ void readHabitsFunct()
     }
 }
 
-void updateHabitFunct()
+void UpdateHabitFunct()
 {
-    string idToUpdate = getId();
+    string idToUpdate = GetId();
 
     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     {
@@ -145,9 +142,9 @@ void updateHabitFunct()
             if (count > 0) // If count > 0, the ID exists
             {
                 Console.WriteLine($"Record with ID {idToUpdate} exists. Proceeding to edit...");
-                string newHabit = getHabit();
-                string newQuantity = getQuantity();
-                string newDate = getDate();
+                string newHabit = GetHabit();
+                string newQuantity = GetQuantity();
+                string newDate = GetDate();
                 using (SQLiteCommand updateCommand = new SQLiteCommand(updateHabit, connection))
                 {
                     updateCommand.Parameters.AddWithValue("@id", idToUpdate);
@@ -168,9 +165,9 @@ void updateHabitFunct()
 
 }
 
-void deleteHabitFunct()
+void DeleteHabitFunct()
 {
-    string idToDelete = getId();
+    string idToDelete = GetId();
     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     {
         connection.Open();
@@ -210,7 +207,7 @@ void deleteHabitFunct()
     }
 }
 
-string getId()
+string GetId()
 {
     string id = "";
     bool isNumber;
@@ -229,7 +226,7 @@ string getId()
     return id;
 }
 
-string getHabit()
+string GetHabit()
 {
     string habit = "";
     bool isNumber;
@@ -248,7 +245,7 @@ string getHabit()
     return habit;
 }
 
-string getQuantity()
+string GetQuantity()
 {
     string quantity = "";
     bool isNumber;
@@ -267,7 +264,7 @@ string getQuantity()
     return quantity;
 }
 
-string getDate()
+string GetDate()
 {
     string date = "";
     bool invalidDate;
