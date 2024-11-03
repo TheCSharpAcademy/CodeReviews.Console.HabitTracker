@@ -101,7 +101,7 @@ public static class OperationController
         {
             if (row != "")
             {
-                string[] columnValue = row.Split(",");
+                string[] columnValue = row.Split(columnDelimiter);
                 string ID = columnValue[0].Substring(columnValue[0].IndexOf('=') + 1);
                 string habitName = columnValue[1].Substring(columnValue[1].IndexOf('=') + 1);
                 string quantity = columnValue[2].Substring(columnValue[2].IndexOf('=') + 1);
@@ -191,8 +191,6 @@ public static class OperationController
     // Second CRUD operation , view all records
     public static void ViewAllRecords(string databasePath)
     {
-
-        SqliteQuery sqliteQuery = new SqliteQuery();
         string queryResult = "";
 
         string query =

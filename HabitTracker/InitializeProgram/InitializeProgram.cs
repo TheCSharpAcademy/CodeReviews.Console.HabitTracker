@@ -5,7 +5,7 @@ public static class InitializeProgram
 {
 
 
-    public static void StartDatabase(string dataBasePath, string desiredDatabaseSchema)
+    public static void StartDatabase(string dataBasePath, string desiredDatabaseSchema, bool seedRandomData = false)
     {
         // Checks if a database with the given name exists to read and write to it , if it doesnt exist it will create the database with the given name.
         using (var connection = new SqliteConnection($"Data Source={dataBasePath}"))
@@ -22,7 +22,8 @@ public static class InitializeProgram
                 var createDatabaseSchema = connection.CreateCommand();
                 createDatabaseSchema.CommandText = desiredDatabaseSchema;
                 createDatabaseSchema.ExecuteNonQuery();
-                GenerateRandomData(dataBasePath, true);
+                if (seedRandomData)
+                    GenerateRandomData(dataBasePath);
             }
             else
             {
@@ -39,7 +40,7 @@ public static class InitializeProgram
 
 
     //seed random data into the database Upon Creation if the option was toggled true in the method call.
-    private static void GenerateRandomData(string databasePath, bool seedData = false, int generatedRowsNumber = 100)
+    private static void GenerateRandomData(string databasePath, int generatedRowsNumber = 100)
     {
         string dateFormat = "yyyy-MM-dd";
         string[] randomHabits = ["Reading(Hrs)", "Running(Kms)", "Playing Chess(Hrs)", "Swimming(Kms)", "Coding(Hrs)", "Walking(Kms)", "Working Out(Hrs)", "Smoking(Ciggaretes)"];

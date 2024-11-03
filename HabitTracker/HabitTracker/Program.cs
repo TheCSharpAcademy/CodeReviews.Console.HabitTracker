@@ -16,7 +16,7 @@ string databaseSchema =
         );
     ";
 
-InitializeProgram.StartDatabase(dataBaseID, databaseSchema);
+InitializeProgram.StartDatabase(dataBaseID, databaseSchema,true);
 
 UserInterface userinteface = new UserInterface();
 userinteface.ShowMainMenu(dataBaseID);
