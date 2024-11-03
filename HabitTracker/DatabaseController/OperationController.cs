@@ -44,7 +44,6 @@ public static class OperationController
     // shows the table rows as selectable items to further process upon them.
     private static string SelectRecordList(string databasePath, bool distinctRows = false)
     {
-        SqliteQuery sqliteQuery = new SqliteQuery();
         string queryResult = "";
         string query;
 
@@ -126,7 +125,7 @@ public static class OperationController
     public static void InsertRecord(string databasePath)
     {
         string dateFormat = "yyyy-MM-dd";
-        SqliteQuery sqliteQuery = new SqliteQuery();
+        
         String outputDate = "";
 
         bool queryIsSuccessfull = default;
@@ -210,7 +209,7 @@ public static class OperationController
 
     public static void DeleteRecord(string databasePath)
     {
-        SqliteQuery sqliteQuery = new SqliteQuery();
+
         string queryResult = "";
 
         // Show all the records to the user
@@ -254,7 +253,7 @@ public static class OperationController
     public static void UpdateRecord(string databasePath)
     {
         string dateFormat = "yyyy-MM-dd";
-        SqliteQuery sqliteQuery = new SqliteQuery();
+
 
         string selectedHabit = SelectRecordList(databasePath);
 
@@ -320,7 +319,7 @@ public static class OperationController
 
     public static void ViewReports(string databasePath)
     {
-        SqliteQuery sqliteQuery = new SqliteQuery();
+
         string reportRows = "";
         bool exitMenu = default;
         string dateFormat = "yyyy-MM-dd";
