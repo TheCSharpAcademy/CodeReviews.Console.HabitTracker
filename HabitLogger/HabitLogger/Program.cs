@@ -217,11 +217,15 @@ string GetId()
         Console.WriteLine("Enter an ID: ");
         id = Console.ReadLine();
         isNumber = int.TryParse(id, out _) || double.TryParse(id, out _);
-        if (!isNumber)
+        if(string.IsNullOrEmpty(id))
         {
-            Console.WriteLine("Please enter a number for ID");
+            Console.WriteLine("Error: ID must have a value");
         }
-    } while (!isNumber);
+        else if (!isNumber)
+        {
+            Console.WriteLine("Error: ID must be a number");
+        }
+    } while (string.IsNullOrEmpty(id) || !isNumber);
 
     return id;
 }
@@ -236,11 +240,15 @@ string GetHabit()
         Console.WriteLine("Please enter a habit (ex. drink more water): ");
         habit = Console.ReadLine();
         isNumber = int.TryParse(habit, out _) || double.TryParse(habit, out _);
+        if (string.IsNullOrEmpty(habit))
+        {
+            Console.WriteLine("Error: Habit must have a value");
+        }
         if (isNumber)
         {
-            Console.WriteLine("Please enter a string for a habit");
+            Console.WriteLine("Error: Habit must be a string");
         }
-    } while (isNumber);
+    } while (string.IsNullOrEmpty(habit) || isNumber);
 
     return habit;
 }
@@ -255,11 +263,15 @@ string GetQuantity()
         Console.WriteLine("How would you quantify this habit? (ex. number of water glasses a day): ");
         quantity = Console.ReadLine();
         isNumber = int.TryParse(quantity, out _) || double.TryParse(quantity, out _);
+        if(string.IsNullOrEmpty(quantity))
+        {
+            Console.WriteLine("Error: Quantity must have a value");
+        }
         if (isNumber)
         {
-            Console.WriteLine("Please enter a string for a quantity");
+            Console.WriteLine("Error: Quantity must be a string");
         }
-    } while (isNumber);
+    } while (string.IsNullOrEmpty(quantity) || isNumber);
 
     return quantity;
 }
