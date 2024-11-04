@@ -36,18 +36,22 @@ Console based CRUD application to track habits. Developed using C# and SQLite3.
     - Used [Spectre console](https://spectreconsole.net/) for more pleasent way to show the menu and the options.
     - Enforce user correct input using the Spectre.Console Ansi.Console
     - User can cycle between menu options with keyboard arrows
-    
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/19e6b90f-c89e-4500-8c83-90fdb6f75e19/2112887c-d5f4-4663-a446-1ecaac139c66/image.png)
+
+    ![1](https://github.com/user-attachments/assets/ea094aa9-17d0-4973-8f01-3e501aa23c20)
+
     
 - CRUD  functions queris against the database
     - Users can insert records with habit name, quantity,quantity measurement unit  and a ocurrance date in the format “yyyy-MM-dd”
     - Users can view all the records shown in a table in pleasent way
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/19e6b90f-c89e-4500-8c83-90fdb6f75e19/b45b3f4c-31e5-4199-9c55-ae594b99a395/image.png)
+![2](https://github.com/user-attachments/assets/da89fded-7317-4f9f-81c9-7e841801cbc5)
+
+    
     
 - Basic report functionality with a table to show each report in a pleasent way using microsoft [**Table Class**](https://learn.microsoft.com/en-us/dotnet/api/system.windows.documents.table?view=windowsdesktop-8.0)
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/19e6b90f-c89e-4500-8c83-90fdb6f75e19/596871fb-358f-4d97-8d6e-911225d75c34/image.png)
+  ![3](https://github.com/user-attachments/assets/c29f0a0c-118c-4cf6-9bda-50d81d5f31d2)
+
     
 
 # Challenges
