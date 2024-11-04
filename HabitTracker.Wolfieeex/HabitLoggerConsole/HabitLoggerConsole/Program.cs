@@ -1,5 +1,6 @@
 ﻿using HabitLoggerConsole.Models;
 using Microsoft.Data.Sqlite;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -29,6 +30,7 @@ public class Program
                     DataSeed.CreateTestRecord();
                 }
 
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
                 Console.OutputEncoding = Encoding.UTF8;
 
                 Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
@@ -57,7 +59,9 @@ public class Program
         bool runApp = true;
         while (runApp)
         {
+            Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine("MAIN MENU:");
+            Console.ResetColor();
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.WriteLine("\n0 - Track a new habit");
@@ -125,12 +129,15 @@ public class Program
             {
                 Console.Clear();
 
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.Write($"You have opened ");
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName).ToLower()}");
                 Console.ResetColor();
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine(" table database.");
                 Console.WriteLine("From here you can create, read, update and delete its records.");
+                Console.ResetColor();
                 Console.WriteLine("\nWhat would you like to do?\n");
                 Console.WriteLine($"{new string('-', Console.BufferWidth)}");
                 Console.WriteLine("\n0 - Select another habit\n");

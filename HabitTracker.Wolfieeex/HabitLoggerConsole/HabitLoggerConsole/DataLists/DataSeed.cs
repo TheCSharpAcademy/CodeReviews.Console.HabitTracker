@@ -104,7 +104,8 @@ class DataSeed()
                 cmd.CommandText = $"SELECT COUNT(*) name FROM sqlite_master WHERE type = 'table' AND name LIKE 'test%'";
                 testHabitCount = (long)cmd.ExecuteScalar();
             }
-
+            
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
             switch (habitsCreatedCounter)
             {
                 case 0:
@@ -118,6 +119,7 @@ class DataSeed()
                     break;
                 
             }
+            Console.ResetColor();
             connection.Close();
         }
     }

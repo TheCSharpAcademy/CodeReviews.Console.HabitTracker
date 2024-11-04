@@ -17,7 +17,9 @@ internal class HabitCommands
         string nameOfTheTrackingVariable = "";
         MeasurementType measurementType = 0;
 
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine("Choose a name for the habit you want to start tracking.");
+        Console.ResetColor();
         Program.InsertExitPrompt(exitChar);
 
         while (true)
@@ -35,7 +37,9 @@ internal class HabitCommands
         }
         Console.Clear();
 
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine("Choose how you would like to measure your habit from the units listed below. Type in an index number.\n");
+        Console.ResetColor();
         Console.WriteLine($"{new string('-', Console.BufferWidth)}");
         var sortedMeasurements = MeasurementUnits.DisplayMeasurements();
         Console.WriteLine();
@@ -54,7 +58,9 @@ internal class HabitCommands
         string stringMeasurementType = Enum.GetName(typeof(MeasurementType), measurementType);
 
         Console.Clear();
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine("Please type in a name for what you are going to be tracking.");
+        Console.ResetColor();
         Program.InsertExitPrompt(exitChar);
 
         exitFunction = Program.AssingNameInput(ref nameOfTheTrackingVariable, "Your name must not be empty. Please, try inserting variable's name again: ", exitChar: exitChar, excludeSymbols: true);
@@ -71,11 +77,16 @@ internal class HabitCommands
 
             connection.Close();
         }
+        Console.Clear();
+        Console.Write("New habit has been initiated. You can start tracking it now. Please press any key to return to a previous menu: ");
+        Console.ReadKey();
     }
 
     internal static void ViewAllHabits()
     {
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine("You are currently viewing all habits you have previously started.\n");
+        Console.ResetColor();
         Console.WriteLine($"{new string('-', Console.BufferWidth)}");
         Console.WriteLine();
 
@@ -92,7 +103,9 @@ internal class HabitCommands
             if (!reader.HasRows)
             {
                 Console.Clear();
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine("You are currently not tracking any habits. Please choose an option to track a new habit to view your list.");
+                Console.ResetColor();
                 Console.Write("Press any key to return to the back menu: ");
                 Console.ReadKey();
             }
@@ -173,11 +186,14 @@ internal class HabitCommands
             }
 
             Console.Clear();
+            Console.BackgroundColor = ConsoleColor.Red;
             Console.Write($"You are now deleting ");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.Write($"{TableNameToDisplayableFormat(deletionHabit).ToLower()}");
             Console.ResetColor();
+            Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine($" habit and its all records.");
+            Console.ResetColor();
             Console.Write($"Are you sure you want to continue?: Y - Yes/N - No. Type in your option: ");
 
             while (true)
@@ -263,7 +279,9 @@ internal class HabitCommands
             if (!reader.HasRows)
             {
                 textValue = deletionVariant ? "You have no habits you can remove, for now. Please create one before you can use this function." : "You have no habits you can update! Please create one before you can use this function.";
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine($"{textValue}");
+                Console.ResetColor();
                 Console.WriteLine("Press any key to return to the main menu: ");
                 Console.ReadKey();
                 connection.Close();
@@ -271,7 +289,9 @@ internal class HabitCommands
             }
 
             textValue = deletionVariant ? "You are currently deleting one of your habits." : "You are currently updating one of your habits.";
+            Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine($"{textValue}");
+            Console.ResetColor();
             Console.WriteLine("Below is the full list of the ones you have started to track: \n");
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.WriteLine();
@@ -295,7 +315,9 @@ internal class HabitCommands
             Console.WriteLine($"{new string('-', Console.BufferWidth)}");
             Console.WriteLine();
             textValue = deletionVariant ? "Please select the index number of the habit you'd like to delete." : "Please select the index number of the habit you'd like to update.";
+            Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine($"{textValue}");
+            Console.ResetColor();
             Program.InsertExitPrompt(exitChar);
 
             connection.Close();

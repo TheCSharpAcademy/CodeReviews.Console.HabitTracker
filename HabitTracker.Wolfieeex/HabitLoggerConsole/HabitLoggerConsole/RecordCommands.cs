@@ -101,7 +101,9 @@ internal class RecordCommands
         Console.Clear();
 
         double valueAchieved = 0;
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine("Please insert the value achieved you want to track.");
+        Console.ResetColor();
         Program.InsertExitPrompt(exitChar);
 
         bool shouldExitToMenu = Program.AssingDoubleInput(ref valueAchieved, 0, 9999999, skipSelection: exitChar);
@@ -147,7 +149,9 @@ internal class RecordCommands
 
             int lastRowId = idMap.Count;
             int selectedRow = 0;
+            Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine("Choose which record to delete by selecting its index number.");
+            Console.ResetColor();
             Program.InsertExitPrompt(exitChar);
             bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
             if (shouldExit)
@@ -187,7 +191,10 @@ internal class RecordCommands
 
             int lastRowId = idMap.Count;
             int selectedRow = 0;
-            Console.WriteLine("Choose which record to update by selecting its index number.");
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Write("Choose which record to update by selecting its index number.");
+            Console.ResetColor();
+            Console.WriteLine();
             Program.InsertExitPrompt(exitChar);
             bool shouldExit = Program.AssignSelectionInput(ref selectedRow, 1, lastRowId, skipSelection: exitChar);
             if (shouldExit)
@@ -221,11 +228,14 @@ internal class RecordCommands
                 string recordValueName = reader.GetName(2);
                 reader.Close();
 
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.Write($"You are updating ");
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
                 Console.ResetColor();
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine($" habit with record inserted on {System.String.Format(recordDate, "dddd, dd MMMM, yyyy")} with its value {recordValue}.\n");
+                Console.ResetColor();
                 Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
                 Console.WriteLine("0 - Update date");
                 Console.WriteLine("1 - Update value achieved\n");
@@ -261,7 +271,9 @@ internal class RecordCommands
                     case 1:
                         Console.Clear();
                         int updatedValueAchieved = 0;
+                        Console.BackgroundColor = ConsoleColor.Red;
                         Console.WriteLine("Please insert an updated value that was achieved on that time.");
+                        Console.ResetColor();
                         Program.InsertExitPrompt(exitChar);
                         shouldExit = Program.AssignSelectionInput(ref updatedValueAchieved, 1, 9999999, skipSelection: exitChar);
                         if (shouldExit)
@@ -285,7 +297,9 @@ internal class RecordCommands
     }
     private static string GetDateInput()
     {
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine("Please insert the date of the operation, or type in \"Now\" to accept today's date instead:");
+        Console.ResetColor();
         Program.InsertExitPrompt(exitChar);
 
         string? dateInput = Console.ReadLine();

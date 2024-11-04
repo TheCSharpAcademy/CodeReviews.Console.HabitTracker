@@ -16,11 +16,14 @@ internal class HabitUpdate
             while (runUpdateLoop)
             {
                 Console.Clear();
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.Write($"You are currently updating ");
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitTrakced).ToLower()}");
                 Console.ResetColor();
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine($" habit.");
+                Console.ResetColor();
                 Console.WriteLine("Please choose one of the options listed below. \n");
                 Console.WriteLine($"{new string('-', Console.BufferWidth)}");
                 Console.WriteLine("\n0 - Chose another habit to update");
@@ -67,11 +70,14 @@ internal class HabitUpdate
     {
         string? name = null;
 
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.Write($"Please chose a new name for the ");
-        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.DarkBlue;
         Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
         Console.ResetColor();
+        Console.BackgroundColor = ConsoleColor.Red;
         Console.WriteLine($" habit.\n");
+        Console.ResetColor();
         Program.InsertExitPrompt(exitChar, backMenuAlteration: true);
         while (true)
         {
@@ -111,14 +117,16 @@ internal class HabitUpdate
         string measurementFullName = MeasurementUnits.MeasurementFullName[(MeasurementType)Enum.Parse(typeof(MeasurementType), columnName)];
 
         Console.Write($"Currently the measurement type for the ");
-        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.DarkBlue;
         Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
         Console.ResetColor();
         Console.Write($" is ");
         Console.ForegroundColor = ConsoleColor.DarkGreen;
-        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(measurementFullName).ToLower()}");
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(measurementFullName).ToLower()}. ");
         Console.ResetColor();
-        Console.WriteLine($". Please choose a new one from those that are listed below: ");
+        Console.BackgroundColor = ConsoleColor.Red;
+        Console.WriteLine($"Please choose a new one from those that are listed below: ");
+        Console.ResetColor();
         var listOfMeasurements = MeasurementUnits.DisplayMeasurements();
         Console.WriteLine();
         Console.WriteLine($"{new string('-', Console.BufferWidth)}");
@@ -165,14 +173,16 @@ internal class HabitUpdate
         reader.Close();
 
         Console.Write($"On your ");
-        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.DarkBlue;
         Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habit).ToLower()}");
         Console.ResetColor();
         Console.Write($" habit your are currently tracking ");
         Console.ForegroundColor = ConsoleColor.DarkGreen;
-        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(columnName).ToLower()}");
+        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(columnName).ToLower()}. ");
         Console.ResetColor();
-        Console.WriteLine($". If you want, you can rename the name of this value.");
+        Console.BackgroundColor = ConsoleColor.Red;
+        Console.WriteLine($"If you want, you can rename the name of this value.");
+        Console.ResetColor();
         Program.InsertExitPrompt(exitChar);
 
         while (true)

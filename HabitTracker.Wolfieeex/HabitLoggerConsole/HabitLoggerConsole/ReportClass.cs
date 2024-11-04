@@ -11,7 +11,7 @@ internal class ReportClass
 {
     internal static void GenerateReportV2(string habitName)
     {
-        bool[] options = new bool[9];
+        bool[] options = new bool[8];
 
         options = ReportOptionsMenu(habitName);
         if (options == null)
@@ -23,18 +23,18 @@ internal class ReportClass
         GenerateReportOnScreen(options, data);
 
 
-        Console.Write("Report for ");
+        Console.Write($"Report for ");
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName)}");
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write(" habit have been genereted. Press any key to return to the previous menu: ");
+        Console.Write($" habit report have been genereted. Press any key to return to the previous menu: ");
         Console.ReadKey();
 
     }
     private static bool[] ReportOptionsMenu(string habitName)
     {
         Console.Clear();
-        bool[] userOptions = new bool[9];
+        bool[] userOptions = new bool[8];
 
         using (var connection = new SqliteConnection(Program.connectionString))
         {
@@ -47,55 +47,100 @@ internal class ReportClass
             if (recordsNumber < 10)
             {
                 Console.WriteLine("No sufficient data to generate your report. Your habit has to have at least 10 insertions.");
+                Console.Write("Please press any button to return to a previous menu: ");
+                Console.ReadKey();
                 return null;
             }
             connection.Close();
         }
 
-        Console.WriteLine("You are currently in the report options selection menu.");
-        Console.Write("Please select display options for each month for the ");
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName)}");
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine(" report.\n");
-        Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+        userOptions = UserOptionsData.RetreiveUserDefaultOptions();
+        string[] menuStars = new string[8];
 
-        Console.WriteLine($"[ ] 0 - Display number of records.");
-        Console.WriteLine($"[ ] 1 - Display sum of records.");
-        Console.WriteLine($"[ ] 2 - Display maximal value.");
-        Console.WriteLine($"[ ] 3 - Display minimal value.");
-        Console.WriteLine($"[ ] 4 - Display mean value.");
-        Console.WriteLine($"[ ] 5 - Display median value.");
-        Console.WriteLine($"[ ] 6 - Display modal value.");
-        Console.WriteLine($"[ ] 7 - Display yearly summation.\n");
-        Console.WriteLine($"    8 - Save those options as default.");
-        Console.WriteLine($"    9 - Run the report.\n");
-
-        Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
-
-        Program.InsertExitPrompt(Program.exitChar, backMenuAlteration: true);
-        int userInput = 0;
-
-        bool exitMenu = Program.AssignSelectionInput(ref userInput, 1, 9, skipSelection: Program.exitChar);
-        if (exitMenu)
+        for (int i = 0; i < 8; i++)
         {
-            return null;
-        }
-
-        if (userInput == 8)
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Formatting = Formatting.Indented;
-
-            var match = Regex.Match(UserOptionsData.path, @"(.*)(?=\\)");
-            
-            System.IO.Directory.CreateDirectory(match.Value);
-            using (StreamWriter writeStream = File.CreateText(UserOptionsData.path))
+            if (userOptions[i] == true)
             {
-                serializer.Serialize(writeStream, userOptions);
+                menuStars[i] = "*";
+            }
+            else
+            {
+                menuStars[i] = " ";
             }
         }
-        return userOptions;
+
+
+        while (true)
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("You are currently in the report options selection menu.");
+            Console.ResetColor();
+            Console.Write("Please select display options for each month for the ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"{HabitCommands.TableNameToDisplayableFormat(habitName)}");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" report.\n");
+            Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+
+            Console.WriteLine($"[{menuStars[0]}] 0 - Display number of records.");
+            Console.WriteLine($"[{menuStars[1]}] 1 - Display sum of records.");
+            Console.WriteLine($"[{menuStars[2]}] 2 - Display maximal value.");
+            Console.WriteLine($"[{menuStars[3]}] 3 - Display minimal value.");
+            Console.WriteLine($"[{menuStars[4]}] 4 - Display mean value.");
+            Console.WriteLine($"[{menuStars[5]}] 5 - Display median value.");
+            Console.WriteLine($"[{menuStars[6]}] 6 - Display modal value.");
+            Console.WriteLine($"[{menuStars[7]}] 7 - Display yearly summation.\n");
+            Console.WriteLine($"    8 - Save those options as default.");
+            Console.WriteLine($"    9 - Run the report.\n");
+
+            Console.WriteLine($"{new string('-', Console.BufferWidth)}\n");
+
+            Program.InsertExitPrompt(Program.exitChar, backMenuAlteration: true);
+            int userInput = 0;
+
+            bool exitMenu = Program.AssignSelectionInput(ref userInput, 0, 9, skipSelection: Program.exitChar);
+            if (exitMenu)
+            {
+                return null;
+            }
+
+            switch (userInput)
+            {
+                case 8:
+                    if (userInput == 8)
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        serializer.Formatting = Formatting.Indented;
+
+                        var match = Regex.Match(UserOptionsData.path, @"(.*)(?=\\)");
+
+                        System.IO.Directory.CreateDirectory(match.Value);
+                        using (StreamWriter writeStream = File.CreateText(UserOptionsData.path))
+                        {
+                            serializer.Serialize(writeStream, userOptions);
+                        }
+                    }
+                    Console.Clear();
+                    Console.WriteLine("Your default options have been saved!");
+                    break;
+                case 9:
+                    Console.Clear();
+                    return userOptions;
+                default:
+                    Console.Clear();
+                    if (userOptions[userInput] == true)
+                    {
+                        userOptions[userInput] = false;
+                        menuStars[userInput] = " ";
+                    }
+                    else
+                    {
+                        userOptions[userInput] = true;
+                        menuStars[userInput] = "*";
+                    }
+                    break;
+            }    
+        }
     }
     private static void GenerateReportOnScreen(bool[] options, List<Tuple<int, ReportDataCoded[]>> data)
     {
@@ -195,7 +240,7 @@ internal class ReportClass
 
         //  Create table contents:
 
-        int alterations = options[8] ? 13 : 12;
+        int alterations = options[7] ? 13 : 12;
         for (int i = 0; i < alterations; i++)
         {
             Console.SetCursorPosition(Console.CursorLeft + 2, 1);
@@ -445,8 +490,7 @@ internal class ReportClass
 
                 reader.Close();
                 data.Add(new Tuple<int, ReportDataCoded[]>(year, yearlySummation));
-            }
-            Console.ReadKey();
+            } 
 
             connection.Close();
         }
