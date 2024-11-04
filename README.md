@@ -18,17 +18,17 @@ Welcome to HabitLogger, a console-based habit tracking application written in C#
 
 # Usage
 
-Add Habit: Add a new habit to track.
-Log Habit Activity: Record the completion of a habit on a specific day.
-View Habit Logs: View all recorded entries for a habit.
-Delete Habit: Remove a habit from your tracking list.
-Simply follow the on-screen instructions to interact with the application.
+- Add Habit: Add a new habit to track.
+- Log Habit Activity: Record the completion of a habit on a specific day.
+- View Habit Logs: View all recorded entries for a habit.
+- Delete Habit: Remove a habit from your tracking list.
+- Simply follow the on-screen instructions to interact with the application.
 
 # Future Enhancements
 
-Reporting: Generate reports or summaries for weekly/monthly progress.
-Habit Reminders: Include reminders or notifications for daily habits.
-Data Persistence: Store habit data in a local database or file for persistence.
+- Reporting: Generate reports or summaries for weekly/monthly progress.
+- Habit Reminders: Include reminders or notifications for daily habits.
+- Data Persistence: Store habit data in a local database or file for persistence.
 
 # Resources Used
 
