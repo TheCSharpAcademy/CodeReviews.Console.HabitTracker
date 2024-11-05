@@ -22,7 +22,8 @@ namespace DataAccessLibrary
                         CREATE TABLE IF NOT EXISTS Habit (
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
                             Name TEXT NOT NULL,
-                            Date TEXT
+                            Date TEXT,
+                            Quantity DOUBLE NOT NULL
                         );";
 
                     using (var command = new SQLiteCommand(createTableQuery, connection))

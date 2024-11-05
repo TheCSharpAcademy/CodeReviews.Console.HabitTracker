@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console.HabitTracker", "Console.HabitTracker\Console.HabitTracker.csproj", "{18FFB570-00F1-4387-BCCF-8C0A4AFF6FD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.HabitTracker", "Console.HabitTracker\Console.HabitTracker.csproj", "{18FFB570-00F1-4387-BCCF-8C0A4AFF6FD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLibrary", "DataAccessLibrary\DataAccessLibrary.csproj", "{57DFF373-B894-48D1-9874-9D53B137D5E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLibrary", "DataAccessLibrary\DataAccessLibrary.csproj", "{57DFF373-B894-48D1-9874-9D53B137D5E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitData", "HabitData\HabitData.csproj", "{5A272875-3DCC-4485-9E63-27637CF84FC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{57DFF373-B894-48D1-9874-9D53B137D5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57DFF373-B894-48D1-9874-9D53B137D5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57DFF373-B894-48D1-9874-9D53B137D5E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A272875-3DCC-4485-9E63-27637CF84FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A272875-3DCC-4485-9E63-27637CF84FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A272875-3DCC-4485-9E63-27637CF84FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A272875-3DCC-4485-9E63-27637CF84FC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
