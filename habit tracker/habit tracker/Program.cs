@@ -1,10 +1,8 @@
-﻿using System.Collections;
+
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Net.Cache;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using Microsoft.Data.Sqlite;
 
 
@@ -17,7 +15,7 @@ using (var connection = new SqliteConnection(connectionString))
     var tableCmd = connection.CreateCommand();
     tableCmd.CommandText = 
        @"CREATE TABLE IF NOT EXISTS habit_tracked 
-(Id INTEGER PRIMARY KEY AUTOINCREMENT, Habit TEXT, Date TEXT, quantity INTEGER, Unit TEXT)";
+(Id INTEGER PRIMARY KEY AUTOINCREMENT, Habit TEXT, Date TEXT, Quantity INTEGER, Unit TEXT)";
     tableCmd.ExecuteNonQuery();
     connection.Close();
 }
@@ -40,7 +38,6 @@ static void GetUserInput() // method to get user input
         Console.WriteLine("\n type 2 to insert record");
         Console.WriteLine("\n type 3 to delete record");
         Console.WriteLine("\n type 4 to update record");
-    //    Console.WriteLine("\n type 5 to show your recap");
         Console.WriteLine("-----------------------------\n");
         string comInput = Console.ReadLine();
 
@@ -63,9 +60,6 @@ static void GetUserInput() // method to get user input
             case "4":
                 UpdateRecords();
                 break;
-           // case "5":
-            //     Recap();
-             //    break;
             default:
                 Console.WriteLine("Invalid input. Please type a valid choice");
                 break;
@@ -94,7 +88,7 @@ static void GetRecords() // method to retrieve n display all records
                     Id = reader.GetInt32(0),
                     Habit = reader.GetString(1),
                     Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
-                    quantity = reader.GetInt32(3),
+                    Quantity = reader.GetInt32(3),
                     Unit = reader.GetString(4),
                 });
             }
@@ -107,7 +101,7 @@ static void GetRecords() // method to retrieve n display all records
         Console.WriteLine("===========================");
         foreach (var routine in tableData)
         {
-            Console.WriteLine($"{routine.Id} - {routine.Habit} - {routine.Date.ToString("dd-MM-yy")} - {routine.quantity} - {routine.Unit}");
+            Console.WriteLine($"{routine.Id} - {routine.Habit} - {routine.Date.ToString("dd-MM-yy")} - {routine.Quantity} - {routine.Unit}");
         }
         Console.WriteLine("===========================");
 
@@ -124,7 +118,7 @@ static void AddRecords() // method do add record
     {
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"INSERT INTO habit_tracked(Habit, Date, quantity, Unit) VALUES('{habit}','{date}', {quantity}, '{unit}')";
+        tableCmd.CommandText = $"INSERT INTO habit_tracked(Habit, Date, Quantity, Unit) VALUES('{habit}','{date}', {quantity}, '{unit}')";
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
@@ -160,7 +154,7 @@ static string GetDateInput()
 static void DeleteRecords() // methods to update data
 {
     string connectionString = @"Data Source=Habit-Tracker.db";
-    // Console.Clear();
+    Console.Clear();
     GetRecords();
     var recordId = GetNumInput("\n\n please type the id of the record you want to delete or type 0 to turn back to main menu");
     
@@ -183,7 +177,7 @@ static void DeleteRecords() // methods to update data
 static void UpdateRecords()
 {
     string connectionString = @"Data Source=Habit-Tracker.db";
-    //Console.Clear();
+    Console.Clear();
     GetRecords();
     var recordId = GetNumInput("Please type the id of the record you'd like to update or type 0 to return to main menu");
      using (var connection = new SqliteConnection(connectionString)) 
@@ -205,7 +199,7 @@ static void UpdateRecords()
         int quantity = GetNumInput("please insert quantity");
         string unit = GetStringInput("please input the unit (ex: glasses, pages, hours, assignments..)");
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText=$"UPDATE habit_tracked SET Habit = '{habit}', Date = '{date}', quantity = {quantity}, Unit = '{unit}' WHERE Id = {recordId}";
+        tableCmd.CommandText=$"UPDATE habit_tracked SET Habit = '{habit}', Date = '{date}', Quantity = {quantity}, Unit = '{unit}' WHERE Id = {recordId}";
         tableCmd.ExecuteNonQuery();
         connection.Close();  
         }
@@ -232,7 +226,7 @@ static void SeedingDatabase() // method to seed database
     {
         connection.Open();
         var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = $"INSERT INTO habit_tracked(Habit, Date, quantity, Unit) VALUES('{habit}','{date}', {quantity}, '{unit}')";
+        tableCmd.CommandText = $"INSERT INTO habit_tracked(Habit, Date, Quantity, Unit) VALUES('{habit}','{date}', {quantity}, '{unit}')";
         tableCmd.ExecuteNonQuery();
         connection.Close();
     }
@@ -272,59 +266,12 @@ static int RandomQuantity()
     return quantity;
 }
 
-/*static void Recap()
-{
-    string connectionString = @"Data Source=Habit-Tracker.db";
-    GetRecords();
-    // how many habits tracked
-    using (var connection = new SqliteConnection(connectionString)) 
-{
-    connection.Open();
-    var command = connection.CreateCommand();
-    command.CommandText = $"SELECT * FROM habit_tracked(Habit)";
-    SqliteDataReader reader = command.ExecuteReader();
-    List <HabitRoutine> tableData = new();
-
-        if (reader.HasRows)
-        {
-            while (reader.Read())
-            {
-                tableData.Add(
-                new HabitRoutine
-                {
-                    Id = reader.GetInt32(0),
-                    Habit = reader.GetString(1),
-                    Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
-                    quantity = reader.GetInt32(3),
-                    Unit = reader.GetString(4),
-                });
-            }
-        }
-        else
-        {
-            Console.WriteLine("No rows found");
-        }
-        connection.Close();
-        Console.WriteLine("===========================");
-        foreach (var routine in tableData)
-        {
-
-            Console.WriteLine($"{routine.Id} - {routine.Habit} - {routine.Date.ToString("dd-MM-yy")} - {routine.quantity} - {routine.Unit}");
-        }
-        Console.WriteLine("===========================");
-
-    
-   // Console.WriteLine("You have trackes {habitsNumber}");
-   // how many times each habit has been logged in // each habit total quantity and avg
-   // Console.WriteLine("{habit} has been added {times} for a {total} of {unit}, with an average of {average}"); // one for each habit? with a foreach loop?
-}
-*/
 public class HabitRoutine // 
 {
     public int Id { get; set; }
     public string Habit { get; set; }
     public DateTime Date { get; set; }
-    public int quantity { get; set; }
+    public int Quantity { get; set; }
     public string Unit { get; set; }
     
 }
