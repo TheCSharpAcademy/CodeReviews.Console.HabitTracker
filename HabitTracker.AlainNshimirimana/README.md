@@ -16,3 +16,8 @@ This is a console-based CRUD application. Developed using C# and SQL.
 -[x] You can only interact with the database using ADO.NET. You can't use mappers such as Entity Framework or Dapper.
 -[x] Follow the DRY Principle, and avoid code repetition.
 -[x] Your project needs to contain a Read Me file where you'll explain how your app works.
+
+## Challenges I faced ##
+
+*This was my first time coding in a almost a year. So I had a lot of refreshing to do in order to under the code and continue where I left off.
+*I still struggle with DateTime stuff. Such as formatting.
