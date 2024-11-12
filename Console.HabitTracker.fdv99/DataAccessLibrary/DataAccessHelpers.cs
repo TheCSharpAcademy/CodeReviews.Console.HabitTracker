@@ -1,13 +1,12 @@
 ﻿// DataBaseCreate.cs
-
 using System.Data.SQLite;
 
 namespace DataAccessLibrary
 {
-    public class DataBaseCreate
+    public class DataAccessHelpers
     {
         private static readonly string _databaseFile = "HabitDataBase.db";
-        private readonly string connectionString = $"Data Source ={_databaseFile};Version=3";
+        public static readonly string connectionString = $"Data Source ={_databaseFile};Version=3";
 
         public void InitializeDatabase()
         {
@@ -20,11 +19,11 @@ namespace DataAccessLibrary
                 {
                     connection.Open();
                     string createTableQuery = @"
-                        CREATE TABLE IF NOT EXISTS Habit (
+                        CREATE TABLE IF NOT EXISTS Habits (
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
                             Name TEXT NOT NULL,
                             Date TEXT,
-                            Quantity DOUBLE NOT NULL
+                            Quantity INT NOT NULL
                         );";
 
                     using (var command = new SQLiteCommand(createTableQuery, connection))

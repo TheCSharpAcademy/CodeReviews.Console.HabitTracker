@@ -11,7 +11,7 @@ namespace HabitData
         public int Id { get; set; }
         public string Habit { get; set; }
         public double Quantity { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
 
     }
 }

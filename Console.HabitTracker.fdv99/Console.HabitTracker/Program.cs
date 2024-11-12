@@ -36,27 +36,55 @@ internal class Program
     public static void EnterHabit()
     {
         HabitModel habit = new HabitModel();
+
         Console.WriteLine("What habit would you like to track: ");
         habit.Habit = Console.ReadLine();
+
         Console.WriteLine("Please enter the date, or press T to use today: ");
         string dateInputString = Console.ReadLine();
+        
+
         if (dateInputString.ToLower() == "t")
         {
-            habit.Date = DateTime.Now.Date;
+            habit.Date = DateTime.Now.ToString("MM/dd/yyyy");
+            Console.WriteLine(habit.Date);
         }
         else 
         {
             DateTime parsedDate;
             if (DateTime.TryParse(dateInputString, out parsedDate))
             {
-                habit.Date = parsedDate;
+                habit.Date = parsedDate.ToString("MM/dd/yyyy");
             }
             else
             {
                 Console.WriteLine("Invalid date format. Setting date to today.");
-                habit.Date = DateTime.Now.Date;
+                Console.WriteLine("You can update the date from the menu");
+                habit.Date = DateTime.Now.ToString("MM/dd/yyyy");
             }
         }
+
+        bool quantityValid = false;
+       
+        string quantityInput = "";
+        int quantity;
+
+        while (quantityValid == false)
+        {
+            Console.WriteLine("Please enter the quantity: ");
+            quantityInput = Console.ReadLine();
+
+            if (int.TryParse(quantityInput, out quantity) == true)
+            {
+                habit.Quantity = quantity;
+                quantityValid = true;
+            }
+            else
+            {
+                Console.WriteLine("Value must be an integer.");
+            }
+        }
+
     }
 
     private static void Main(string[] args)
@@ -64,7 +92,7 @@ internal class Program
         Console.WriteLine("Welcome to the Habit Tracker!\n");
 
         // Check that database exists in current working directory and if not create one
-        DataBaseCreate dbCreate = new DataBaseCreate();
+        DataAccessHelpers dbCreate = new DataAccessHelpers();
         dbCreate.InitializeDatabase();
 
         int userInput = UserInput();
