@@ -40,17 +40,23 @@ internal class Program
         habit.Habit = Console.ReadLine();
         Console.WriteLine("Please enter the date, or press T to use today: ");
         string dateInputString = Console.ReadLine();
-        DateTime inputDate;
         if (dateInputString.ToLower() == "t")
         {
-            inputDate = DateTime.Now.Date;
+            habit.Date = DateTime.Now.Date;
         }
         else 
         {
-             DateTime.TryParse(dateInputString, out inputDate);
+            DateTime parsedDate;
+            if (DateTime.TryParse(dateInputString, out parsedDate))
+            {
+                habit.Date = parsedDate;
+            }
+            else
+            {
+                Console.WriteLine("Invalid date format. Setting date to today.");
+                habit.Date = DateTime.Now.Date;
+            }
         }
-        // validation on the date
-
     }
 
     private static void Main(string[] args)
