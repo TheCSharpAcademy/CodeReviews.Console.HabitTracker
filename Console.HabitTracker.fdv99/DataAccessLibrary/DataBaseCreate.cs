@@ -6,7 +6,8 @@ namespace DataAccessLibrary
 {
     public class DataBaseCreate
     {
-        private readonly string _databaseFile = "HabitDataBase.db";
+        private static readonly string _databaseFile = "HabitDataBase.db";
+        private readonly string connectionString = $"Data Source ={_databaseFile};Version=3";
 
         public void InitializeDatabase()
         {
@@ -15,7 +16,7 @@ namespace DataAccessLibrary
                 SQLiteConnection.CreateFile(_databaseFile);
                 Console.WriteLine("Database File Created");
 
-                using (var connection = new SQLiteConnection($"Data Source ={_databaseFile};Version=3"))
+                using (var connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
                     string createTableQuery = @"
