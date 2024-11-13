@@ -85,6 +85,9 @@ internal class Program
             }
         }
 
+        SqliteDataAccess dataAccess = new SqliteDataAccess();
+        dataAccess.InsertHabit(habit);
+
     }
 
     private static void Main(string[] args)
@@ -95,26 +98,29 @@ internal class Program
         DataAccessHelpers dbCreate = new DataAccessHelpers();
         dbCreate.InitializeDatabase();
 
-        int userInput = UserInput();
-        switch (userInput)
+        while (true)
         {
-            case 1:
-                // Enter a Habit
-                EnterHabit();
-
-                break;
-            case 2:
-                // Edit Habit
-                break;
-            case 3:
-                // Delete Habit
-                break;
-            case 4:
-                // Search Habit
-                break;
-            case 5:
-                // Quit Program
-                break;
+            int userInput = UserInput();
+            switch (userInput)
+            {
+                case 1:
+                    // Enter a Habit
+                    EnterHabit();
+                    break;
+                case 2:
+                    // Edit Habit
+                    break;
+                case 3:
+                    // Delete Habit
+                    break;
+                case 4:
+                    // Search Habit
+                    break;
+                case 5:
+                    // Quit Program
+                    return;
+            } 
+            Console.Clear();
         }
 
     }

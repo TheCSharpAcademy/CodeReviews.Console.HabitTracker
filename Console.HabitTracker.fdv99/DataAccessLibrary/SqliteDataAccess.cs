@@ -1,7 +1,9 @@
 ﻿using System.Data.SQLite;
+using HabitData;
+
 namespace DataAccessLibrary;
 
-public class DataAccess
+public class SqliteDataAccess
 {
     private SQLiteConnection CreateConnection()
     {
@@ -20,5 +22,18 @@ public class DataAccess
                 command.ExecuteNonQuery();
             }
         }
+    }
+
+    public void InsertHabit(HabitModel habit)
+    {
+        string sqlStatement = "INSERT INTO Habits (Habit, Quantity, Date) VALUES (@Habit, @Quantity, @Date)";
+
+        SQLiteParameter[] parameters = {
+                new SQLiteParameter("@Habit", habit.Habit),
+                new SQLiteParameter("@Quantity", habit.Quantity),
+                new SQLiteParameter("@Date", habit.Date)
+            };
+
+        Insert(sqlStatement, parameters);
     }
 }

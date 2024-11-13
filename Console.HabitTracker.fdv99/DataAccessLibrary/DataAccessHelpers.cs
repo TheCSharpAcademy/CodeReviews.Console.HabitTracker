@@ -21,7 +21,7 @@ namespace DataAccessLibrary
                     string createTableQuery = @"
                         CREATE TABLE IF NOT EXISTS Habits (
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            Name TEXT NOT NULL,
+                            Habit TEXT NOT NULL,
                             Date TEXT,
                             Quantity INT NOT NULL
                         );";
