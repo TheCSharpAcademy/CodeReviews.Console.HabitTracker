@@ -136,8 +136,6 @@
 
                 command.Parameters.AddWithValue("@id", idInt);
 
-                int result = command.ExecuteNonQuery();
-
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -149,27 +147,31 @@
                         {
                             case 1:
                                 string name = Habit.GetInput("a new title of your habit");
-                                updateCommand.CommandText = Habit.GetUpdateCommand("habits", "name", "idInt");
+                                updateCommand.CommandText = Habit.GetUpdateCommand("habits", "name", "id");
                                 updateCommand.Parameters.AddWithValue("@name", name);
                                 updateCommand.Parameters.AddWithValue("@id", idInt);
+                                updateCommand.ExecuteNonQuery();
                                 break;
                             case 2:
                                 string frequency = Habit.GetInput("a new frequency to track the habit (weekly, daily, monthly)", "frequency");
                                 updateCommand.CommandText = Habit.GetUpdateCommand("habits", "frequency", "id");
                                 updateCommand.Parameters.AddWithValue("@frequency", frequency);
                                 updateCommand.Parameters.AddWithValue("@id", idInt);
+                                updateCommand.ExecuteNonQuery();
                                 break;
                             case 3:
                                 int timesInt = Habit.GetInputInt("a new times per period you would like to perform the habit");
-                                updateCommand.CommandText = Habit.GetUpdateCommand("habits", "name", "id");
-                                updateCommand.Parameters.AddWithValue("@name", timesInt);
+                                updateCommand.CommandText = Habit.GetUpdateCommand("habits", "TimesPerPeriod", "id");
+                                updateCommand.Parameters.AddWithValue("@TimesPerPeriod", timesInt);
                                 updateCommand.Parameters.AddWithValue("@id", idInt);
+                                updateCommand.ExecuteNonQuery();
                                 break;
                             case 4:
                                 DateTime startDateValue = Habit.GetInputDate("a new start date of your new habit (format YYYY-MM-DD)", "startDate");
                                 updateCommand.CommandText = Habit.GetUpdateCommand("habits", "startDate", "id");
                                 updateCommand.Parameters.AddWithValue("@startDate", startDateValue);
                                 updateCommand.Parameters.AddWithValue("@id", idInt);
+                                updateCommand.ExecuteNonQuery();
                                 break;
                             default:
                                 break;
