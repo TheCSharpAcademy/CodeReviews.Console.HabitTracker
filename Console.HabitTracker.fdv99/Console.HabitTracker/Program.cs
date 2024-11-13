@@ -90,6 +90,12 @@ internal class Program
 
     }
 
+    public static void EditHabit()
+    {
+        // TODO Display all values from a certain Habit
+        // Input id to edit that record
+    }
+
     private static void Main(string[] args)
     {
         Console.WriteLine("Welcome to the Habit Tracker!\n");
