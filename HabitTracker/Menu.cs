@@ -11,7 +11,7 @@
 
             while (!isSelected)
             {
-                Console.WriteLine("\nPlease, choose an option from below: ");
+                Console.WriteLine("\nPlease, choose an option from below. Use your keyboard's arrows to navigate: ");
                 Console.WriteLine($"{(option == 1 ? color : "    ")}Current Habits\u001b[0m");
                 Console.WriteLine($"{(option == 2 ? color : "    ")}Create a Habit\u001b[0m");
                 Console.WriteLine($"{(option == 3 ? color : "    ")}Show all Habit Records\u001b[0m");
@@ -23,6 +23,7 @@
 
                 key = Console.ReadKey();
                 Console.Clear();
+                Console.WriteLine("\x1b[3J");
                 switch (key.Key)
                 {
                     case ConsoleKey.DownArrow:
@@ -44,6 +45,8 @@
 
         public static void SelectMenuItem(int option)
         {
+            Console.Clear();
+            Console.WriteLine("\x1b[3J");
             switch (option)
             {
                 case 1:

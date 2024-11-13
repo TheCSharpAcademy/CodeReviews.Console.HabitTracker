@@ -14,24 +14,14 @@ Welcome to HabitLogger, a console-based habit tracking application written in C#
 - Habit Tracking: Record daily habits and keep track of your activities.
 - Date-wise Records: Track habits based on specific dates.
 - Review Progress: View a summary of your tracked habits.
-- Simple Console Interface: Easy to navigate with clear console commands.
+- Simple Console Interface: Use the arrows on your keyboard to navigate.
 
 # Usage
 
+- Check Current Habits: Check all current habits.
 - Add Habit: Add a new habit to track.
-- Log Habit Activity: Record the completion of a habit on a specific day.
-- View Habit Logs: View all recorded entries for a habit.
+- View Habit Records: View all recorded entries for a habit.]
+- Add Habit Record: Add a new habit record to the list.
 - Delete Habit: Remove a habit from your tracking list.
-- Simply follow the on-screen instructions to interact with the application.
-
-# Future Enhancements
-
-- Reporting: Generate reports or summaries for weekly/monthly progress.
-- Habit Reminders: Include reminders or notifications for daily habits.
-- Data Persistence: Store habit data in a local database or file for persistence.
-
-# Resources Used
-
-- [ADO.NET - Microsoft Official Documentation](https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/)
-- [SQLite Tutorial For Beginners Make A Database In No Time](https://www.youtube.com/watch?v=HQKwgk6XkIA)
-- [Habit Tracker App. C# Beginner Project. CRUD Console, Sqlite, VSCode](https://www.youtube.com/watch?v=d1JIJdDVFjs)
+- Update Habit: Update a habit based on its ID.
+- Generate a report: Generate a report of some useful and interesting information based on your habits.

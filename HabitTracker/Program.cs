@@ -6,7 +6,7 @@ namespace HabitTracker
     {
         static void Main(string[] args)
         {
-            DbConnection.GetConnection();
+            DbConnection.GetConnection(true);
             Menu.ShowMenu();
         }
     }
