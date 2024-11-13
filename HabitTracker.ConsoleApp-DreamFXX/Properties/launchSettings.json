@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "HabitTracker_ConsoleApp": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\marti\\csharp-academy-learning\\Projects\\HabitTracker_ConsoleApp",
+      "nativeDebugging": true,
+      "sqlDebugging": false,
+      "hotReloadEnabled": false
+    }
+  }
+}
