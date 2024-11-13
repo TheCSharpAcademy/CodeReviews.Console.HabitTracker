@@ -1,4 +1,3 @@
-## HabitTracker.ConsoleApp - by DreamFXX
 # Cigarettes Consumption Tracker
 
 Console based CRUD application to track time spent coding. Developed using C# and SQLite.
