@@ -14,10 +14,6 @@ public enum MeasurementType
     kg,
     lbs,
     stones,
-    s,
-    min,
-    hr,
-    d
 }
 
 public enum MeasurementDivision
@@ -44,10 +40,6 @@ internal class MeasurementUnits
         { MeasurementType.kg, MeasurementDivision.Weight },
         { MeasurementType.lbs, MeasurementDivision.Weight },
         { MeasurementType.stones, MeasurementDivision.Weight },
-        { MeasurementType.s, MeasurementDivision.Time },
-        { MeasurementType.min, MeasurementDivision.Time },
-        { MeasurementType.hr, MeasurementDivision.Time },
-        { MeasurementType.d, MeasurementDivision.Time },
     }; 
 
     internal static Dictionary<MeasurementType, string> MeasurementFullName { get; private set; } = new Dictionary<MeasurementType, string>
@@ -64,10 +56,6 @@ internal class MeasurementUnits
         { MeasurementType.kg, "kilograms" },
         { MeasurementType.lbs, "pounds" },
         { MeasurementType.stones, "stones" },
-        { MeasurementType.s, "seconds" },
-        { MeasurementType.min, "minutes" },
-        { MeasurementType.hr, "hours" },
-        { MeasurementType.d, "days" },
     };
 
     internal static MeasurementType[] DisplayMeasurements()

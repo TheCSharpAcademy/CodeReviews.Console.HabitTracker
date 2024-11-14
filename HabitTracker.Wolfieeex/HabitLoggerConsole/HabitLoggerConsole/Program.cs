@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
+
 namespace HabitLoggerConsole;
 
 public class Program
@@ -33,8 +34,8 @@ public class Program
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
                 Console.OutputEncoding = Encoding.UTF8;
 
-                Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-                Console.SetWindowPosition(0, 0);
+                Console.SetWindowSize(Console.LargestWindowWidth / 3 * 2, Console.LargestWindowHeight / 3 * 2);
+
 
                 MainMenu();
             }

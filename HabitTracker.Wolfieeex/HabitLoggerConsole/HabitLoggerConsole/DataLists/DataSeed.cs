@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Xml.Linq;
 using Microsoft.Data.Sqlite;
 
 namespace HabitLoggerConsole.Models;
@@ -79,7 +78,7 @@ class DataSeed()
 
                 cmd.ExecuteNonQuery();
 
-                sequence = random.Next(1, 300);
+                sequence = random.Next(1, 2001);
 
                 for (int i = 0; i < sequence; i++)
                 {
