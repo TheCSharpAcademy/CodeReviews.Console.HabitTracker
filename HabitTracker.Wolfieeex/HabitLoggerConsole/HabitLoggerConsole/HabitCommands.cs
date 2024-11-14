@@ -55,7 +55,6 @@ internal class HabitCommands
             return;
         }
         measurementType = sortedMeasurements[userInput - 1];
-        string stringMeasurementType = Enum.GetName(typeof(MeasurementType), measurementType);
 
         Console.Clear();
         Console.BackgroundColor = ConsoleColor.Red;
@@ -65,7 +64,7 @@ internal class HabitCommands
 
         exitFunction = Program.AssingNameInput(ref nameOfTheTrackingVariable, "Your name must not be empty. Please, try inserting variable's name again: ", exitChar: exitChar, excludeSymbols: true);
 
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
@@ -90,7 +89,7 @@ internal class HabitCommands
         Console.WriteLine($"{new string('-', Console.BufferWidth)}");
         Console.WriteLine();
 
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
@@ -198,7 +197,7 @@ internal class HabitCommands
 
             while (true)
             {
-                using (var connection = new SqliteConnection(Program.connectionString))
+                using (var connection = new SqliteConnection(Program.ConnectionString))
                 {
                     connection.Open();
 
@@ -230,7 +229,7 @@ internal class HabitCommands
 
     internal static bool IsTableNameDuplicate(string name)
     {
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
@@ -264,7 +263,7 @@ internal class HabitCommands
     {
         updatingHabit = "";
 
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 

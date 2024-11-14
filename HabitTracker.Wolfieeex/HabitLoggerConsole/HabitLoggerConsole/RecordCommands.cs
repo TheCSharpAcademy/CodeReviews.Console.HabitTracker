@@ -1,8 +1,5 @@
-﻿using HabitLoggerConsole.Models;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
-using System.Numerics;
 
 namespace HabitLoggerConsole;
 
@@ -12,7 +9,7 @@ internal class RecordCommands
 
     internal static Dictionary<int, int> GetAllRecords(bool pauseScreening, string habit)
     {
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
@@ -112,7 +109,7 @@ internal class RecordCommands
             return;
         }
 
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
@@ -160,7 +157,7 @@ internal class RecordCommands
             }
 
             int rowCount = idMap[selectedRow];
-            using (var connection = new SqliteConnection(Program.connectionString))
+            using (var connection = new SqliteConnection(Program.ConnectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -212,7 +209,7 @@ internal class RecordCommands
         bool shouldExit;
         while (true)
         {
-            using (var connection = new SqliteConnection(Program.connectionString))
+            using (var connection = new SqliteConnection(Program.ConnectionString))
             {
                 connection.Open();
 
@@ -334,7 +331,7 @@ public class DataRetreive
 {
     public int Id { get; set; }
     public string Date { get; set; }
-    public DateTime dateTimeFormatDate { get; set; }
+    public DateTime DateTimeFormatDate{ get; set; }
     public double HabitTracked { get; set; }
 
 }

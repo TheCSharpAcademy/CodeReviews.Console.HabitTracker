@@ -7,7 +7,7 @@ internal class HabitUpdate
 {
     internal static bool RunHabitUpdateMenu(string habit, char exitChar)
     {
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open(); 
 

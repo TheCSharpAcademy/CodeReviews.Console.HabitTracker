@@ -29,7 +29,7 @@ class DataSeed()
 
         int habitsCreatedCounter = 0;
 
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
             var cmd = connection.CreateCommand();

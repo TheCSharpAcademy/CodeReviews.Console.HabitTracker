@@ -9,7 +9,7 @@ namespace HabitLoggerConsole;
 
 public class Program
 {
-    public static string connectionString { private set; get; } = @"Data Source=HabitLoggerConsole.db";
+    public static string ConnectionString { private set; get; } = @"Data Source=HabitLoggerConsole.db";
 
     public static char exitChar = 'E';
 
@@ -19,7 +19,7 @@ public class Program
     {
         try
         {
-            using (var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(ConnectionString))
             {
                 connection.Open();
                 connection.Close();
@@ -34,7 +34,8 @@ public class Program
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
                 Console.OutputEncoding = Encoding.UTF8;
 
-                Console.SetWindowSize(Console.LargestWindowWidth / 3 * 2, Console.LargestWindowHeight / 3 * 2);
+                Console.SetWindowSize(Console.LargestWindowWidth / 4 * 3, Console.LargestWindowHeight / 4 * 3
+                    );
 
 
                 MainMenu();
@@ -183,7 +184,6 @@ public class Program
                         break;
                     case 5:
                         Console.Clear();
-                        //RecordCommands.GenerateReport(habitName);
                         ReportClass.GenerateReportV2(habitName);
                         break;
                 }
@@ -237,7 +237,6 @@ public class Program
         while (inputChecksNotComplete)
         {
             string? Input = Console.ReadLine();
-            string reason = "";
 
             if (string.IsNullOrEmpty(Input))
             {

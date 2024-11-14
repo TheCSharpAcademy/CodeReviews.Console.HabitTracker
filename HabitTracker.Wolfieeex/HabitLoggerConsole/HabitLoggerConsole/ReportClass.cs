@@ -36,7 +36,7 @@ internal class ReportClass
         Console.Clear();
         bool[] userOptions = new bool[8];
 
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
@@ -435,21 +435,14 @@ internal class ReportClass
     public static List<Tuple<int, ReportDataCoded[]>> GatherData(string habitName)
     {
         List<Tuple<int, ReportDataCoded[]>> data = new List<Tuple<int, ReportDataCoded[]>>();
-        CultureInfo culture = new CultureInfo("en-GB");
 
-        int longestInsert = 3;
-
-        using (var connection = new SqliteConnection(Program.connectionString))
+        using (var connection = new SqliteConnection(Program.ConnectionString))
         {
             connection.Open();
 
             var tblCmd = connection.CreateCommand();
 
-            int numberOfYears = 0;
-            int[] longestWordInColumn = new int[12];
-
             tblCmd.CommandText = $"SELECT COUNT(*) FROM (SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}')";
-            int differentYearsCount = (int)(long)tblCmd.ExecuteScalar();
 
             tblCmd.CommandText = $"SELECT DISTINCT SUBSTR(Date, LENGTH(Date) - 3, 4) FROM '{habitName}'";
 
@@ -514,7 +507,6 @@ internal class ReportClass
             double highiestValue = 0;
             double smallestValue = 0;
 
-            ReportDataCoded currentMonthSummation = new ReportDataCoded();
             var summationTblCmd = connection.CreateCommand();
 
             summationTblCmd.CommandText = $"SELECT SUM({trackedName}) FROM '{habitName}' WHERE Date LIKE '%{year}'{yearlyCalculator}";
