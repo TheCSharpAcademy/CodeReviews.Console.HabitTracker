@@ -75,6 +75,7 @@ tblCmd.CommandText = $"SELECT * FROM '{habitName}' WHERE Date LIKE '%{year}'{yea
 - User Input code started to get a bit messy, especially judging from the data validation angle. Further experimentation is needed to improve the habits I continued from my second software.
 - I could possibly break down some of the classes into even smaller ones, just to improve the readability of the code. For example, the report class could have its *table writing function* in a separate class, as this is quite a long algorithm that works independently from the data calculator function.
 - Consistency. Yes, I am lacking this a lot. And as much as I love programming, I sometimes keep my breaks for too long. Maybe I should program less on my programming days, but then plan them more often?
+I need to save the references that I am using to learn additional program features to my bookmarks so that I can return to them, refresh my knowledge, and reference them later in my documentation.
 
 ### *References:*
 - Google search that directed me to several useful [Stack Overflow](https://stackoverflow.com/) and [Reddit](https://www.reddit.com/) conversations that talked over extensively.
