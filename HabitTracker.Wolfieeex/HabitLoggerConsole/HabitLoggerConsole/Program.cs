@@ -283,7 +283,6 @@ public class Program
         while (inputChecksNotComplete)
         {
             string? Input = Console.ReadLine();
-            string reason = "";
 
             if (string.IsNullOrEmpty(Input))
             {

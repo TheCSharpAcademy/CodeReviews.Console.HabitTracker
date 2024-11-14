@@ -1,8 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using System.Data;
-using System.Globalization;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace HabitLoggerConsole;

@@ -123,7 +123,6 @@ internal class HabitCommands
                 reader = tableCmd.ExecuteReader();
 
                 Console.WriteLine($"{"Number of entries: ".PadRight(paddingLength)}Habit name:");
-                int counter = 0;
                 while (reader.Read())
                 {
                     if (reader.GetString(0) == "sqlite_sequence")
