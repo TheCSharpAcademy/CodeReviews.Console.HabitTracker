@@ -3,28 +3,39 @@ using System.Globalization;
 
 internal class Program
 {
-    static string connectionString = @"Data Source=HabitTracker-ConsoleApp.db";
+    static string connectionString = @"Data Source=HabitTrackerPersonal-ConsoleApp.db";
 
-    static void Main(string[] args)
+    static void Main()
     {
         using (var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = 
-                @"CREATE TABLE IF NOT EXISTS cigarettes_smoked(
+            tableCmd.CommandText =
+                @"CREATE TABLE IF NOT EXISTS Habits (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date DateTime,
-                    Time Text,
-                    CountOfCigs INTEGER
-                    )"; 
+                    Name TEXT NOT NULL,
+                    Unit TEXT NOT NULL
+                    )";
+            tableCmd.ExecuteNonQuery();
 
+            tableCmd.CommandText =
+                @"CREATE TABLE IF NOT EXISTS HabitRecords (
+                  Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  HabitId INTEGER,
+                  Date Text,
+                  Time Text,
+                  Quantity INTEGER,
+                  FOREIGN KEY (HabitId) REFERENCES Habits(Id)
+                  )";
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
+
         }
-        
+
+        //FillDatatables();
         GetUserInput();
     }
 
@@ -35,14 +46,15 @@ internal class Program
         bool closeApp = false;
         while (closeApp == false)
         {
-            Console.WriteLine("Welcome to Smoke Tracker!");
-            Console.WriteLine("\nMAIN MENU");
+            Console.WriteLine("Welcome to Habit Tracker!\n\n");
+            Console.WriteLine("MAIN MENU");
             Console.WriteLine("0 -> Save and Exit App\n");
             Console.WriteLine("------------------------------------------");
             Console.WriteLine("1 -> Show All records.");
             Console.WriteLine("2 -> Add a record.");
             Console.WriteLine("3 -> Delete a record");
             Console.WriteLine("4 -> Modify a record.");
+            Console.WriteLine("5 -> Add your own Habit to this App.");
             Console.WriteLine("------------------------------------------");
 
             string command = Console.ReadLine();
@@ -61,13 +73,16 @@ internal class Program
                     AddRecord();
                     break;
                 case "3":
-                    DeleteRecod();
+                    DeleteRecord();
                     break;
                 case "4":
                     ChangeRecord();
                     break;
+                case "5":
+                    AddNewHabit();
+                    break;
                 default:
-                    Console.WriteLine("\n\nInvalid number of operation. Try Again. (0 - 4).\n\n");
+                    Console.WriteLine("\n\nInvalid number of operation. Try again, valid operations are in range 0 - 5.\n\n");
                     break;
             }
         }
@@ -81,10 +96,9 @@ internal class Program
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = "SELECT * FROM cigarettes_smoked";
+            tableCmd.CommandText = "SELECT * FROM HabitRecords";
 
-            List<CigarettesSmoked> tableData = new();
-
+            List<HabitRecord> tableData = new List<HabitRecord>();
             SQLiteDataReader reader = tableCmd.ExecuteReader();
 
             if (reader.HasRows)
@@ -92,112 +106,108 @@ internal class Program
                 while (reader.Read())
                 {
                     tableData.Add(
-                        new CigarettesSmoked
+                        new HabitRecord
                         {
                             Id = reader.GetInt32(0),
-                            Date = reader.GetString(1),
-                            Time = reader.GetString(2),
-                            CountOfCigs = reader.GetInt32(3)
+                            HabitId = reader.GetInt32(1),
+                            Date = reader.GetString(2),
+                            Time = reader.GetString(3),
+                            Quantity = reader.GetInt32(4),
                         });
                 }
             }
             else
             {
-                Console.WriteLine("\n\nNo records added to show. Start noting your consumption!\n\n");
+                Console.WriteLine("\n\nNo records were found!\n\n");
             }
 
             connection.Close();
 
-
-            Console.WriteLine("------------CIGARETTES SMOKED LIST-----------\n");
-            foreach (var dw in tableData)
+            Console.WriteLine("------------HABIT RECORDS-----------\n");
+            foreach (var record in tableData)
             {
-                Console.WriteLine($"{dw.Id} -> {dw.Date} in {dw.Time}h // {dw.CountOfCigs} Cigarettes.");
+                Console.WriteLine($"{record.Id} -> {record.Date} in {record.Time}h // {record.Quantity}");
             }
-            Console.WriteLine("---------------------------------------------\n");
+            Console.WriteLine("------------------------------------\n");
         }
-
-        
     }
 
     private static void AddRecord()
     {
+        Console.WriteLine("Choose a habit by entering Habits ID number below!");
+        ViewHabits();
+
+        int habitId = GetNumberInput("Habit ID:");
         string date = GetDate();
         string time = GetTime();
-        
-        int countOfCigs = CigsCountInput("\n\nEnter number of cigarettes you smoked.\n\n");
+        int quantity = GetNumberInput("Enter quantity of habit you consumed // ran // did in units you selected in specified habit tracking.");
 
         using (var connection = new SQLiteConnection(connectionString))
         {
-            connection.Open(); 
+            connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"INSERT INTO cigarettes_smoked(date, time, countOfCigs) VALUES('{date}', '{time}', {countOfCigs})";
+            tableCmd.CommandText = $"INSERT INTO HabitRecords (HabitId, Date, Time, Quantity) VALUES ({habitId}, '{date}', '{time}', {quantity})";
 
             tableCmd.ExecuteNonQuery();
-
             connection.Close();
         }
+
+        Console.WriteLine("\nNew record was added sucessfully!\n\n");
     }
 
     internal static void ChangeRecord()
     {
         ViewAllRecords();
 
-        var recordId = CigsCountInput("\n\nEnter ID number of record you want to modify.\n\n");
+        var recordId = GetNumberInput("\n\nEnter ID number of record you want to modify.\n\n");
 
         using (var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
-
             var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM cigarettes_smoked WHERE Id = {recordId})";
+            checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM HabitRecords WHERE Id = {recordId})";
 
             int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
             if (checkQuery == 0)
             {
-                Console.WriteLine($"\n\nRecord with ID {recordId} does not exist. Enter ID number of an existing record.\n\n");
+                Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
                 connection.Close();
                 ChangeRecord();
             }
 
             string date = GetDate();
             string time = GetTime();
-
-            int countOfCigs = CigsCountInput("\n\nEnter how many cigarettes you smoked.\n\n");
+            int quantity = GetNumberInput("\n\nEnter the quantity:\n\n");
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"UPDATE cigarettes_smoked SET date = '{date}', time = '{time}', CountOfCigs = {countOfCigs} WHERE Id = {recordId}";
-
+            tableCmd.CommandText = $"UPDATE HabitRecords SET Date = '{date}', Time = '{time}', Quantity = {quantity} WHERE Id = {recordId}";
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
         }
-
-
     }
 
-    private static void DeleteRecod()
+    private static void DeleteRecord()
     {
         Console.Clear();
         ViewAllRecords();
 
-        var recordId = CigsCountInput("Enter ID number of the record you want to DELETE.");
+        var recordId = GetNumberInput("Enter ID number of the record you want to DELETE.");
 
 
         using (var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"DELETE from cigarettes_smoked WHERE Id = {recordId}";
+            tableCmd.CommandText = $"DELETE FROM HabitRecords WHERE Id = {recordId}";
 
             int rowCount = tableCmd.ExecuteNonQuery();
-
-            if(rowCount == 0)
+            if (rowCount == 0)
             {
                 Console.WriteLine($"Record with ID {recordId} does not exist. Try Again.");
-                DeleteRecod();
+                DeleteRecord();
             }
+            connection.Close();
         }
 
         Console.WriteLine($"Record with {recordId} was succesfully deleted. Press ENTER to go back to the MENU.");
@@ -205,23 +215,23 @@ internal class Program
         GetUserInput();
     }
 
-
+    // Get user values section
 
     internal static string GetTime()
     {
-        Console.WriteLine("\n\nEnter a time of the day you smoked. //\n0 -> menu\n");
-        Console.Write("Please, Enter in this Format -> hh:mm - ");
+        Console.WriteLine("\n\nEnter what time was when you did your Habit. // Type 0 to go back to Main Menu.");
+        Console.Write("Please enter time in this format -> hh:mm - ");
 
         string timeinput = Console.ReadLine();
 
         if (timeinput == "0") GetUserInput();
 
-       return timeinput;
+        return timeinput;
     }
 
     internal static string GetDate()
     {
-        Console.WriteLine("\n\nEnter a date.    //      Enter 0 to go back to the menu.\n\n");
+        Console.WriteLine("\n\nEnter a date. // Enter 0 to go back to the menu.\n\n");
         Console.Write("Type the date in this order -> DD-MM-YYYY - ");
 
         string dateInput = Console.ReadLine();
@@ -235,7 +245,7 @@ internal class Program
         return dateInput;
     }
 
-    internal static int CigsCountInput(string message)
+    internal static int GetNumberInput(string message)
     {
         Console.WriteLine(message);
 
@@ -253,12 +263,104 @@ internal class Program
 
         return intCountInput;
     }
+
+    // Users own Habit to Add
+
+    static void AddNewHabit()
+    {
+        Console.WriteLine("\nEnter the name of the habit you want to track: ");
+        string? habitName = Console.ReadLine();
+
+        Console.WriteLine("\nEnter the unit of measurement (e.g: Amount consumed {ml, g, liters Etc.} or anything like minutes, hours, kilometers): ");
+        string? habitUnit = Console.ReadLine();
+
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = $"INSERT into Habits (Name, Unit) VALUES ('{habitName}', '{habitUnit}')";
+
+            tableCmd.ExecuteNonQuery();
+            connection.Close();
+        }
+        Console.WriteLine($"New Habit named - '{habitName}' was sucessfully added");
+    }
+
+    static void ViewHabits()
+    {
+        using(var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+            tableCmd.CommandText = "SELECT * FROM Habits";
+
+            using(var reader = tableCmd.ExecuteReader())
+            {
+                Console.WriteLine("\nHabits available to track in this App: ");
+
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    string name = reader.GetString(1);
+                    string unit = reader.GetString(2);
+                    Console.WriteLine($"{id}. {name} ({unit})");
+                }
+            }
+            connection.Close();
+        }
+    }
+
+    static void FillDatatables()
+    {
+        using(var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText = "SELECT Id FROM Habits LIMIT 1";
+            var habitIdObj = tableCmd.ExecuteScalar();
+
+            int habitId;
+            if (habitIdObj == null)
+            {
+                tableCmd.CommandText = "INSERT INTO Habits (Name, Unit) VALUES ('Cycling', 'kilometers')";
+                tableCmd.ExecuteNonQuery();
+
+                tableCmd.CommandText = "SELECT Id FROM Habits LIMIT 1";
+                habitId = Convert.ToInt32(tableCmd.ExecuteScalar());
+            }
+            else
+            {
+                habitId = Convert.ToInt32(habitIdObj);
+            }
+
+            Random random = new Random();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var date = DateTime.Today.AddDays(-random.Next(0, 365)).ToString("dd-MM-yy");
+
+                DateTime datetime = DateTime.Now;
+                var time = TimeOnly.FromDateTime(datetime).ToString(); ; // Just now time..
+
+                int quantity = random.Next(1, 100);
+                tableCmd.CommandText = $"INSERT INTO HabitRecords (HabitId, Date, Time, Quantity) VALUES({habitId}, '{date}', '{time}', {quantity})";
+                tableCmd.ExecuteNonQuery();
+            }
+            connection.Close();
+        }
+        Console.WriteLine("Testing records (100) were sucessfully created and added to their specified tables.");
+    }
+
+    // Properties class
+
+    public class HabitRecord
+    {
+        public int Id { get; set; }
+        public int HabitId { get; set; }
+        public string Time { get; set; }
+        public string Date { get; set; }
+        public int Quantity { get; set; }
+    }
 }
 
-public class CigarettesSmoked
-{
-    public int Id { get; set; }
-    public string Time { get; set; }
-    public string Date { get; set; }
-    public int CountOfCigs { get; set; }
-}

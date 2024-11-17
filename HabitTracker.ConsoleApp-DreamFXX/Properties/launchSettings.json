@@ -2,7 +2,7 @@
   "profiles": {
     "HabitTracker_ConsoleApp": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\marti\\csharp-academy-learning\\Projects\\HabitTracker_ConsoleApp",
+      "workingDirectory": "C:\\Users\\marti\\source\\repos\\HabitTracker.ConsoleApp-DreamFXX",
       "nativeDebugging": true,
       "sqlDebugging": false,
       "hotReloadEnabled": false
