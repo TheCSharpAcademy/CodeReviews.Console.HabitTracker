@@ -35,7 +35,7 @@ internal class Program
 
         }
 
-        //FillDatatables();
+        FillDatatables();
         GetUserInput();
     }
 
@@ -341,7 +341,7 @@ internal class Program
                 var date = DateTime.Today.AddDays(-random.Next(0, 365)).ToString("dd-MM-yy");
 
                 DateTime datetime = DateTime.Now;
-                var time = TimeOnly.FromDateTime(datetime).ToString(); ; // Just now time..
+                var time = TimeOnly.FromDateTime(datetime).ToString();
 
                 int quantity = random.Next(1, 100);
                 tableCmd.CommandText = $"INSERT INTO HabitRecords (HabitId, Date, Time, Quantity) VALUES({habitId}, '{date}', '{time}', {quantity})";
