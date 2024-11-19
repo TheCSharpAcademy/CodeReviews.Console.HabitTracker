@@ -40,43 +40,26 @@ internal class Program
         Console.WriteLine("What habit would you like to track: ");
         habit.Habit = Console.ReadLine();
 
-        Console.WriteLine("Please enter the date, or press T to use today: ");
-        string dateInputString = Console.ReadLine();
-        
+        habit.Date = GetDate();
 
-        if (dateInputString.ToLower() == "t")
-        {
-            habit.Date = DateTime.Now.ToString("MM/dd/yyyy");
-            Console.WriteLine(habit.Date);
-        }
-        else 
-        {
-            DateTime parsedDate;
-            if (DateTime.TryParse(dateInputString, out parsedDate))
-            {
-                habit.Date = parsedDate.ToString("MM/dd/yyyy");
-            }
-            else
-            {
-                Console.WriteLine("Invalid date format. Setting date to today.");
-                Console.WriteLine("You can update the date from the menu");
-                habit.Date = DateTime.Now.ToString("MM/dd/yyyy");
-            }
-        }
+        habit.Quantity = GetQuantity();
 
+        SqliteDataAccess dataAccess = new SqliteDataAccess();
+        dataAccess.InsertHabit(habit);
+    }
+
+    private static int GetQuantity()
+    {
         bool quantityValid = false;
-       
-        string quantityInput = "";
-        int quantity;
+        int quantity = 0;
 
         while (quantityValid == false)
         {
             Console.WriteLine("Please enter the quantity: ");
-            quantityInput = Console.ReadLine();
+            string? quantityInput = Console.ReadLine();
 
-            if (int.TryParse(quantityInput, out quantity) == true)
+            if (int.TryParse(quantityInput, out quantity))
             {
-                habit.Quantity = quantity;
                 quantityValid = true;
             }
             else
@@ -85,15 +68,46 @@ internal class Program
             }
         }
 
-        SqliteDataAccess dataAccess = new SqliteDataAccess();
-        dataAccess.InsertHabit(habit);
+        return quantity;
+    }
 
+    private static string GetDate()
+    {
+        Console.WriteLine("Please enter the date, or press T to use today: ");
+        string dateInputString = Console.ReadLine();
+
+        if (dateInputString.ToLower() == "t")
+        {
+            return DateTime.Now.ToString("MM/dd/yyyy");
+        }
+        else
+        {
+            DateTime parsedDate;
+            if (DateTime.TryParse(dateInputString, out parsedDate))
+            {
+                return parsedDate.ToString("MM/dd/yyyy");
+            }
+            else
+            {
+                Console.WriteLine("Invalid date format. Setting date to today.");
+                Console.WriteLine("You can update the date from the menu");
+                return DateTime.Now.ToString("MM/dd/yyyy");
+            }
+        }
     }
 
     public static void EditHabit()
     {
-        // TODO Display all values from a certain Habit
-        // Input id to edit that record
+        ShowHabits();
+        Console.WriteLine("Please enter the Id of the habit you would like to edit: ");
+        int habitId = Convert.ToInt32(Console.ReadLine());
+        SqliteDataAccess dataAccess = new SqliteDataAccess();
+        HabitModel habit = dataAccess.GetHabitById(habitId);
+
+        Console.WriteLine($"Habit: {habit.Habit}");
+        Console.WriteLine($"Enter a new Date ({habit.Date}: ");
+        habit.Date = GetDate();
+        habit.Quantity = GetQuantity();
     }
 
     public static void ShowHabits()

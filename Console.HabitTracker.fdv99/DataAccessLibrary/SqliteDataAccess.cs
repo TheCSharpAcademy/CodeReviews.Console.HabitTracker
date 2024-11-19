@@ -63,4 +63,35 @@ public class SqliteDataAccess
         }
         return habits;
     }
+
+    public HabitModel GetHabitById(int id)
+    {
+        string sqlStatement = "SELECT Id, Habit, Quantity, Date FROM Habits WHERE Id = @Id";
+
+        using (var cnn = CreateConnection())
+        {
+            using (var command = new SQLiteCommand(sqlStatement, cnn))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new HabitModel
+                        {
+                            Id = Convert.ToInt32(reader.GetInt64(0)),
+                            Habit = reader.GetString(1),
+                            Quantity = Convert.ToInt32(reader.GetInt64(2)),
+                            Date = reader.GetString(3)
+                        };
+                    }
+                    else
+                    {
+                        return null; // or throw an exception if preferred
+                    }
+                }
+            }
+        }
+    }
 }
