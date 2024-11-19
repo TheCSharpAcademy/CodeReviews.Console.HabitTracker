@@ -23,7 +23,7 @@ namespace DataAccessLibrary
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
                             Habit TEXT NOT NULL,
                             Date TEXT,
-                            Quantity INT NOT NULL
+                            Quantity INTEGER NOT NULL
                         );";
 
                     using (var command = new SQLiteCommand(createTableQuery, connection))

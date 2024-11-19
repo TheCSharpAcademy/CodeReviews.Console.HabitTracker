@@ -96,6 +96,23 @@ internal class Program
         // Input id to edit that record
     }
 
+    public static void ShowHabits()
+    {
+        Console.Clear();
+
+        string sqlStatement = "SELECT * FROM Habits";
+        SqliteDataAccess dataAccess = new SqliteDataAccess();
+        var habits = dataAccess.LoadData(sqlStatement);
+
+        foreach (var habit in habits)
+        {
+            Console.WriteLine($"Id: {habit.Id}---Habit: {habit.Habit}---Quantity: {habit.Quantity}---Date: {habit.Date}");
+        }
+
+        Console.WriteLine("Press any key to continue:");
+        Console.ReadLine();
+    }
+
     private static void Main(string[] args)
     {
         Console.WriteLine("Welcome to the Habit Tracker!\n");
@@ -115,6 +132,7 @@ internal class Program
                     break;
                 case 2:
                     // Edit Habit
+                    ShowHabits();
                     break;
                 case 3:
                     // Delete Habit
