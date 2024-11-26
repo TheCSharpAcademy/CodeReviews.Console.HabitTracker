@@ -62,7 +62,7 @@ public class HabitManager
             SET Body = @body, Date = @date, Quantity = @quantity
             WHERE Id = @id
             """;
-        
+
         var command = connection.CreateCommand();
         command.CommandText = updateQuery;
         command.Parameters.Add(new SQLiteParameter("@id", id));

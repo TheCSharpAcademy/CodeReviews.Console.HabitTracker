@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitLoggerApp", "HabitLoggerApp\HabitLoggerApp.csproj", "{1ECCD3F7-62E5-4888-AE98-9453939B2C72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "habitLoggerApp.Natephor", "habitLoggerApp.Natephor\habitLoggerApp.Natephor.csproj", "{1ECCD3F7-62E5-4888-AE98-9453939B2C72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
