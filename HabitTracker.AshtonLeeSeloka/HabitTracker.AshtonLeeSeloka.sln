@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTracker.AshtonLeeSeloka", "HabitTracker.AshtonLeeSeloka\HabitTracker.AshtonLeeSeloka.csproj", "{0613E92E-786A-4B66-B4B7-D9CFF4300FE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService", "DataService\DataService.csproj", "{24335AF7-87A5-4434-A175-13282891B8A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0613E92E-786A-4B66-B4B7-D9CFF4300FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0613E92E-786A-4B66-B4B7-D9CFF4300FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0613E92E-786A-4B66-B4B7-D9CFF4300FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24335AF7-87A5-4434-A175-13282891B8A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24335AF7-87A5-4434-A175-13282891B8A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24335AF7-87A5-4434-A175-13282891B8A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24335AF7-87A5-4434-A175-13282891B8A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
