@@ -9,22 +9,27 @@ StartMenu();
 	{
 		Console.WriteLine("\n\n\n+==============================================================================+\r\n|  _   _    _    ____ ___ _____   _____ ____      _    ____ _  _______ ____    |\r\n| | | | |  / \\  | __ )_ _|_   _| |_   _|  _ \\    / \\  / ___| |/ / ____|  _ \\   |\r\n| | |_| | / _ \\ |  _ \\| |  | |     | | | |_) |  / _ \\| |   | ' /|  _| | |_) |  |\r\n| |  _  |/ ___ \\| |_) | |  | |     | | |  _ <  / ___ \\ |___| . \\| |___|  _ <   |\r\n| |_| |_/_/   \\_\\____/___| |_|     |_| |_| \\_\\/_/   \\_\\____|_|\\_\\_____|_| \\_\\  |\r\n+==============================================================================+");
 		Console.WriteLine("\nSelect from the below menu");
-		Console.WriteLine("\ni) Insert Habit Data");
-		Console.WriteLine("u) Update Habit Data");
-		Console.WriteLine("m) Modify Habit Data");
-		Console.WriteLine("d) Delete Habit Data\n");
+		Console.WriteLine("\n1) Insert Habit Data");
+		Console.WriteLine("2) Update Habit Data");
+		Console.WriteLine("3) Modify Habit Data");
+		Console.WriteLine("4) Delete Habit Data\n");
+		Console.WriteLine("\0) Type 0 to exit\n");
 
 		string userInput =  Console.ReadLine();
 
 		switch (userInput) 
 		{
-			case "i":
+			case "1":
 				break;
-			case "u":
+			case "2":
 				break;
-			case "m":
+			case "3":
 				break;
-			case "d":
+			case "4":
+				break;
+			case "0":
+				Console.WriteLine("Good Bye...");
+				Environment.Exit(0);
 				break;
 			default:
 				Console.WriteLine("\nPlease Enter a valid menu item");
