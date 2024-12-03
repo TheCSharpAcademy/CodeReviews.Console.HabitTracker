@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Globalization;
+using DBItem;
 namespace DataService
 {
 	public class DataServices
@@ -20,13 +22,35 @@ namespace DataService
 			return Console.ReadLine(); 
 		}
 
+		/// <summary>
+		/// Validates user date input and saves to variable if succesful
+		/// </summary>
+		/// <param name="messageToUser">Prompt displayed to user</param>
+		/// <returns>Correct date value or null</returns>
+		public string? DateInput(string messageToUser) 
+		{
+			Console.Write(messageToUser);
+			string? date = Console.ReadLine();
+
+			if (date == "0")
+				return null;
+
+			while (!DateTime.TryParseExact(date, "dd-MM-yyyy", new CultureInfo("en-Us"), DateTimeStyles.None, out _)) 
+			{
+				Console.Write("\n Invalid date. Enter Date with format of 'dd-MM-yy', or type '0 to exit'\n");
+				date = Console.ReadLine();
+
+				if (date == "0")
+					return null;
+			}
+			return date;	
+		}
+
 
 		/// <summary>
 		/// Creates an instance of the HabbitLogger Database if not present
 		/// </summary>
 		public void CreateDB() 
-
-
 		{
 			var connectionString = @"Data Source = HabbitLogger.db";
 
@@ -38,9 +62,11 @@ namespace DataService
 					var tableCmd = connection.CreateCommand();
 					tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS habbit_logger (
 											Id INTEGER PRIMARY KEY AUTOINCREMENT,
+											Habit Text,
 											Date Text,
 											Quantity Integer						
 											)";
+					tableCmd.ExecuteNonQuery();
 				}
 			}
 			catch (Exception ex) 
@@ -49,11 +75,92 @@ namespace DataService
 			}
 		}
 
+
+		/// <summary>
+		/// Inserts data into the table Database 
+		/// </summary>
 		public void InsertRecord() 
 		{
-		
-		
+			CreateDB();
+			string habbit = UserUnput("\nEnter the habit name");
+			string? date = DateInput("\nPlease enter the date ('dd-MM-yyyy'), or Type 0 to exit \n");
+
+			if (date == null)
+				return;
+
+			string Qty = UserUnput("\nEnter the Quantity");
+
+			var connectionString = @"Data Source = HabbitLogger.db";
+			try
+			{
+				using (var connection = new SqliteConnection(connectionString)) 
+				{
+					connection.Open();
+
+					var dbCommand = connection.CreateCommand();
+					dbCommand.CommandText = $"INSERT INTO habbit_logger(habit, Date, Quantity) VALUES('{habbit}','{date}',{Qty})" ;
+					dbCommand.ExecuteNonQuery();
+					connection.Close();
+				}
+			}
+			catch (Exception ex) 
+			{
+			
+			
+			}
 		}
+
+		public void GetAllRecords() 
+		{
+
+			var connectionString = @"Data Source = HabbitLogger.db";
+
+			using (var conection = new SqliteConnection(connectionString))
+			{
+				conection.Open();
+				var dbCommand = conection.CreateCommand();
+				dbCommand.CommandText = $"SELECT * FROM habbit_logger";
+				List<DBItems> dataRecords = new List<DBItems>();
+				SqliteDataReader reader = dbCommand.ExecuteReader();
+
+				if (reader.HasRows)
+				{
+					while (reader.Read())
+					{
+						dataRecords.Add(new DBItems()
+						{
+							id = reader.GetInt32(0),
+							habbit = reader.GetString(1),
+							Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yyyy", new CultureInfo("en-US")),
+							Quantity = reader.GetInt32(3)
+						});
+					}
+				}
+				else
+				{
+					Console.WriteLine("No Rows Found");
+					return;
+				}
+
+				conection.Close();
+
+				Console.WriteLine("\n____________________________________________\n");
+				foreach (DBItems item in dataRecords) 
+				{
+					Console.WriteLine($"{item.id} - {item.Date.ToString()} - Quantity: {item.Quantity}");
+				
+				}
+				Console.WriteLine("\n____________________________________________\n");
+
+
+
+
+			}
+
+
+
+		}
+
 
 	}
 }

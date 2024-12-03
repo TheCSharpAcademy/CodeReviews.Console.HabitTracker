@@ -1,5 +1,8 @@
 ﻿
+using DataService;
+
 bool closeApplication = false;
+DataServices data = new DataServices();
 
 StartMenu();
 
@@ -12,16 +15,19 @@ StartMenu();
 		Console.WriteLine("\n1) Insert Habit Data");
 		Console.WriteLine("2) Update Habit Data");
 		Console.WriteLine("3) Modify Habit Data");
-		Console.WriteLine("4) Delete Habit Data\n");
-		Console.WriteLine("\0) Type 0 to exit\n");
+		Console.WriteLine("4) Delete Habit Data");
+		Console.WriteLine("5) Generate report");
+		Console.WriteLine("\nType 0 to exit\n");
 
 		string userInput =  Console.ReadLine();
 
 		switch (userInput) 
 		{
 			case "1":
+				data.InsertRecord();
 				break;
 			case "2":
+				data.GetAllRecords();
 				break;
 			case "3":
 				break;
