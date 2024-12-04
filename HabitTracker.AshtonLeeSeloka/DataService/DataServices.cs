@@ -110,6 +110,9 @@ namespace DataService
 			}
 		}
 
+		/// <summary>
+		/// Displays a list of all records
+		/// </summary>
 		public void GetAllRecords() 
 		{
 
@@ -147,7 +150,7 @@ namespace DataService
 				Console.WriteLine("\n____________________________________________\n");
 				foreach (DBItems item in dataRecords) 
 				{
-					Console.WriteLine($"{item.id} - {item.Date.ToString()} - Quantity: {item.Quantity}");
+					Console.WriteLine($"{item.id} - {item.habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
 				
 				}
 				Console.WriteLine("\n____________________________________________\n");
@@ -161,6 +164,64 @@ namespace DataService
 
 		}
 
+		/// <summary>
+		/// Upadates a record as per record ID
+		/// </summary>
+		public void UpdateRecords() 
+		{
+			Console.Clear();
+			GetAllRecords();
+			var recordToUpdate = UserUnput("\nEnter the ID of the record you would like to delete, Type 0 to exit");
+			int id = Convert.ToInt32(recordToUpdate);
 
+			if (id == 0)
+				return;
+
+			var connectionString = @"Data Source = HabbitLogger.db";
+
+			try
+			{
+				using (var connection = new SqliteConnection(connectionString)) 
+				{
+					connection.Open();
+					var  command = connection.CreateCommand();
+					command.CommandText = $"SELECT EXISTS(SELECT 1 FROM  habbit_logger WHERE id = {recordToUpdate})";
+					int? checkIfPresent = Convert.ToInt32(command.ExecuteScalar());
+
+					if (checkIfPresent == 0) 
+					{
+						Console.WriteLine($"\nRecord with ID of - {recordToUpdate} does not exist ");
+						connection.Close();
+						UpdateRecords();
+					}
+
+					string habbit = UserUnput("\nEnter the habit name");
+					string? date = DateInput("\nPlease enter the date ('dd-MM-yyyy'), or Type 0 to exit \n");
+					string Qty = UserUnput("\nEnter the Quantity");
+
+					var updteCmd = connection.CreateCommand();
+					updteCmd.CommandText = $"UPDATE habbit_logger SET habit = '{habbit}' , Date = '{date}', Quantity = '{Qty}' WHERE Id = {recordToUpdate}";
+					updteCmd.ExecuteNonQuery();
+
+					connection.Close();
+				}
+
+			}
+			catch 
+			{
+				Console.WriteLine("The Record was not updated");
+			
+			}
+
+
+
+
+		}
+
+		public void DeleteRecord() 
+		{
+		
+		}
+		
 	}
 }

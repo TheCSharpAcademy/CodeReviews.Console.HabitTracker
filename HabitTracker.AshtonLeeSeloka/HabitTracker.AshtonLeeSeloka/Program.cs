@@ -14,8 +14,8 @@ StartMenu();
 		Console.WriteLine("\nSelect from the below menu");
 		Console.WriteLine("\n1) Insert Habit Data");
 		Console.WriteLine("2) Update Habit Data");
-		Console.WriteLine("3) Modify Habit Data");
-		Console.WriteLine("4) Delete Habit Data");
+		Console.WriteLine("3) Delete Habit Data");
+		Console.WriteLine("4) View Stored Habbits");
 		Console.WriteLine("5) Generate report");
 		Console.WriteLine("\nType 0 to exit\n");
 
@@ -27,11 +27,13 @@ StartMenu();
 				data.InsertRecord();
 				break;
 			case "2":
-				data.GetAllRecords();
+				data.UpdateRecords();
 				break;
 			case "3":
 				break;
 			case "4":
+				break;
+			case "5":
 				break;
 			case "0":
 				Console.WriteLine("Good Bye...");
