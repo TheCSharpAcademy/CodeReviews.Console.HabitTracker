@@ -5,6 +5,7 @@ namespace DataService
 {
 	public class DataServices
 	{
+		public List<DBItems> dataRecords = new List<DBItems>();
 		public DataServices() 
 		{
 		
@@ -103,8 +104,9 @@ namespace DataService
 					connection.Close();
 				}
 			}
-			catch (Exception ex) 
+			catch 
 			{
+				Console.WriteLine("\nFailed to insert Habbit\n");
 			
 			
 			}
@@ -115,6 +117,7 @@ namespace DataService
 		/// </summary>
 		public void GetAllRecords() 
 		{
+			dataRecords.Clear();
 
 			var connectionString = @"Data Source = HabbitLogger.db";
 
@@ -123,7 +126,7 @@ namespace DataService
 				conection.Open();
 				var dbCommand = conection.CreateCommand();
 				dbCommand.CommandText = $"SELECT * FROM habbit_logger";
-				List<DBItems> dataRecords = new List<DBItems>();
+				
 				SqliteDataReader reader = dbCommand.ExecuteReader();
 
 				if (reader.HasRows)
@@ -147,21 +150,19 @@ namespace DataService
 
 				conection.Close();
 
-				Console.WriteLine("\n____________________________________________\n");
+				Console.WriteLine("\nRecords");
+				Console.WriteLine("________________________________________________________________________________\n");
 				foreach (DBItems item in dataRecords) 
 				{
 					Console.WriteLine($"{item.id} - {item.habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
 				
 				}
-				Console.WriteLine("\n____________________________________________\n");
+				Console.WriteLine("\n________________________________________________________________________________\n");
 
 
 
 
 			}
-
-
-
 		}
 
 		/// <summary>
@@ -220,8 +221,62 @@ namespace DataService
 
 		public void DeleteRecord() 
 		{
-		
+			GetAllRecords();
+			var recordToDelete = UserUnput("\nEnter the ID of the record you would liket to remove, or type 0 to exit\n");
+			int id = Convert.ToInt32(recordToDelete);
+
+			if (id == 0)
+				return;
+
+			var connectionString = @"Data Source = HabbitLogger.db";
+
+			try
+			{
+				using (var connection = new SqliteConnection(connectionString)) 
+				{
+					connection.Open();
+					var deleteCmd = connection.CreateCommand();
+					deleteCmd.CommandText = $"DELETE FROM habbit_logger WHERE Id ={recordToDelete} ";
+					deleteCmd.ExecuteNonQuery();
+					Console.WriteLine($"\nRecord with ID of {recordToDelete} was succesfully deleted\n");
+					connection.Close();
+				}
+			}
+			catch 
+			{
+				Console.WriteLine("No Record has been deleted please enter a valid ID");
+			
+			}
 		}
-		
+
+		public void GenerateReport() 
+		{
+		;
+			GetAllRecords();
+			string habitName = UserUnput("\nEnter the name of the Habit to generate the report");
+
+			int? sum = 0; 
+			int? numberOfEntries= 0;
+
+			foreach (DBItems entry in dataRecords) 
+			{
+				if (entry.habbit == habitName) 
+				{
+					numberOfEntries ++;
+					sum = sum + entry.Quantity;
+				}
+			}
+
+			if (numberOfEntries == 0)
+			{
+				Console.WriteLine("Enter a valid habbit");
+				return;
+			}
+
+			Console.WriteLine($"\nReport of {habitName}");
+			Console.WriteLine("______________________________________________________________________________________________________\n");
+			Console.WriteLine($"Habit : {habitName} has {numberOfEntries} Entries with a sum of {sum}");
+			Console.WriteLine("\n____________________________________________________________________________________________________\n");
+		}
 	}
 }
