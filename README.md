@@ -31,7 +31,7 @@ Developed using C# and SQLite.
    - The user can use CRUB functions from the main menu.
 
 * A console based UI controlled with key presses
- -![image](../images/HabitTracker-MainMenu.png)
+ -![image](/images/HabitTracker-MainMenu.PNG)
 
 * Easy to look at tables using *Spectre Library*
--![image](../images/HabitTracker-ViewRecords.png)
+-![image](/images/HabitTracker-ViewRecords.PNG)
