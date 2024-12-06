@@ -29,7 +29,13 @@ internal class Database
     internal static void AddRecord()
     {
         var date = GetDate("\nEnter the date (format - dd-MM-yy) or insert 0 to go back to Main Menu:\n");
+        if (date == null) return;
         var quantity = GetNumber("\nEnter the number of meters walked(positive integers only) or enter 0 to go back to Main Menu:\n");
+        if (quantity == -1)
+        {
+            Console.Clear();
+            return;
+        }
         Console.Clear();
 
         using (var connection = new SqliteConnection(ConnectionString))
@@ -49,9 +55,23 @@ internal class Database
 
     internal static void DeleteRecord()
     {
-        GetRecords();
-
-        var id = GetNumber("Please type the id of the record you want to delete.");
+        int id = 0;
+        while (true)
+        {
+            GetRecords();
+            id = GetNumber("Please type the id of the record you want to delete or insert 0 to Go Back to Main Menu:\n");
+            if (id == -1)
+            {
+                Console.Clear();
+                return;
+            }
+            if (CheckIfIdExists(id)) break;
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("Id does not exist.");
+            }
+        }
 
         using (var connection = new SqliteConnection(ConnectionString))
         {
@@ -64,22 +84,34 @@ internal class Database
                 command.ExecuteNonQuery();
             }
         }
-
-        Console.WriteLine("\nPress any key to continue");
-        Console.ReadKey();
-        Console.Clear();
     }
 
     internal static void UpdateRecord()
     {
-        GetRecords();
-        var id = GetNumber("Please type the id of the record you want to delete.");
+        int id = 0;
+        while (true)
+        {
+            GetRecords();
+            id = GetNumber("Please type the id of the record you want to update or insert 0 to Go Back to Main Menu:\n");
+            if (id == -1)
+            {
+                Console.Clear();
+                return;
+            }
+            if (CheckIfIdExists(id)) break;
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("Id does not exist.");
+            }
+        }
 
         string date = "";
         bool updateDate = AnsiConsole.Confirm("Update date?");
         if (updateDate)
         {
             date = GetDate("\nEnter the date (format : dd-mm-yy) or insert 0 to Go Back to Main Menu:\n");
+            if (date == null) return;
         }
 
         int quantity = 0;
@@ -90,6 +122,7 @@ internal class Database
         }
 
         string query;
+
         if (updateDate && updateQuantity)
         {
             query = $"UPDATE walkingHabit SET Date = '{date}', Quantity = {quantity} WHERE Id = {id}";
@@ -127,14 +160,28 @@ internal class Database
 
         foreach (var record in records)
         {
-            table.AddRow(record.Id.ToString(), record.Date.ToString(), record.Quantity.ToString());
+            table.AddRow(record.Id.ToString(), record.Date.ToShortDateString(), record.Quantity.ToString("N0"));
         }
-
         AnsiConsole.Write(table);
 
     }
 
-    internal static void GetRecords()
+    internal static bool CheckIfIdExists(int id)
+    {
+        using (SqliteConnection connection = new(ConnectionString))
+        {
+            connection.Open();
+            using (SqliteCommand tableCmd = connection.CreateCommand())
+            {
+                tableCmd.CommandText = $"SELECT count(1) FROM walkingHabit WHERE Id = {id}";
+                var result = (long)tableCmd.ExecuteScalar();
+                return result == 1 ? true : false;
+            }
+
+        }
+    }
+
+    internal static void GetRecords(bool isFromMenu = false)
     {
         List<WalkingRecord> records = new List<WalkingRecord>();
 
@@ -169,6 +216,7 @@ internal class Database
                 else Console.WriteLine("No rows found.");
             }
         }
+        if (isFromMenu) Console.Clear();
         ViewRecords(records);
     }
 
@@ -178,7 +226,7 @@ internal class Database
 
         string? dateInput = Console.ReadLine();
 
-        if (dateInput == "0") Menu.MainMenu();
+        if (dateInput == "0") return null;
 
         while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
         {
@@ -197,7 +245,7 @@ internal class Database
         string? numberInput = Console.ReadLine();
         int output;
 
-        if (numberInput == "0") Menu.MainMenu();
+        if (numberInput == "0") return -1;
 
         while (!int.TryParse(numberInput, out output) || Convert.ToInt32(numberInput) <= 0)
         {

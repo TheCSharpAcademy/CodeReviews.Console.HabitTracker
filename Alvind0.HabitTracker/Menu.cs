@@ -21,6 +21,7 @@ internal class Menu
                     "Quit")
                     );
 
+            //Console.Clear();
             switch (usersChoice)
             {
                 case "Add Record":
@@ -30,7 +31,7 @@ internal class Menu
                     Database.DeleteRecord();
                     break;
                 case "View Records":
-                    Database.GetRecords();
+                    Database.GetRecords(true);
                     break;
                 case "Update Record":
                     Database.UpdateRecord();
