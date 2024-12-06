@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.CabyDJ": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Caby\\Documents\\GitHub\\C# Academy\\Console\\HabitTracker\\CodeReviews.Console.HabitTracker\\HabitTracker.CabyDJ\\"
+    }
+  }
+}
