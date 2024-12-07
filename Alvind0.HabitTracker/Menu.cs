@@ -18,23 +18,35 @@ internal class Menu
                     "Delete Record",
                     "View Records",
                     "Update Record",
+                    "Add Habit",
+                    "Delete Habit",
                     "Quit")
                     );
 
-            //Console.Clear();
+            
             switch (usersChoice)
             {
                 case "Add Record":
                     Database.AddRecord();
+                    Console.Clear();
                     break;
                 case "Delete Record":
                     Database.DeleteRecord();
+                    //Console.Clear();
                     break;
                 case "View Records":
                     Database.GetRecords(true);
                     break;
                 case "Update Record":
                     Database.UpdateRecord();
+                    Console.Clear();
+                    break;
+                case "Add Habit":
+                    Database.AddHabit();
+                    Console.Clear();
+                    break;
+                case "Delete Habit":
+                    Database.DeleteHabit();
                     break;
                 case "Quit":
                     Console.WriteLine("Goodbye");
