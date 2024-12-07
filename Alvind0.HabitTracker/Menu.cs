@@ -15,13 +15,14 @@ internal class Menu
                     .Title("What would you like to do?")
                     .AddChoices(
                     "Add Record",
-                    "Delete Record",
-                    "View Records",
-                    "Update Record",
                     "Add Habit",
+                    "View Records",
+                    "View Statistics",
+                    "Update Record",
+                    "Delete Record",
                     "Delete Habit",
-                    "Quit")
-                    );
+                    "Quit"
+                    ));
 
             
             switch (usersChoice)
@@ -30,32 +31,47 @@ internal class Menu
                     Database.AddRecord();
                     Console.Clear();
                     break;
-                case "Delete Record":
-                    Database.DeleteRecord();
-                    //Console.Clear();
+                case "Add Habit":
+                    Database.AddHabit();
+                    Console.Clear();
                     break;
                 case "View Records":
                     Database.GetRecords(true);
+                    break;
+                case "View Statistics":
+                    Database.GetStatistics();
                     break;
                 case "Update Record":
                     Database.UpdateRecord();
                     Console.Clear();
                     break;
-                case "Add Habit":
-                    Database.AddHabit();
-                    Console.Clear();
+                case "Delete Record":
+                    Database.DeleteRecord();
                     break;
                 case "Delete Habit":
                     Database.DeleteHabit();
                     break;
                 case "Quit":
+                    Console.Clear();
                     Console.WriteLine("Goodbye");
                     isMenuRunning = false;
                     break;
-                default:
-                    Console.WriteLine("Invalid choice. Please choose one of the above");
-                    break;
             }
         }
+    }
+
+    internal static string StatisticsMenu()
+    {
+        Console.Clear();
+        var usersChoice = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                            .Title("What statistics would you like to check?")
+                            .AddChoices(
+                            "All Time",
+                            "This Year",
+                            "This Month"
+                            ));
+
+        return usersChoice;
     }
 }

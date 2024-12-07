@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 
@@ -10,6 +9,7 @@ internal class Database
     private const string ConnectionString = @"Data Source=Habit-Tracker.db";
     internal record WalkingRecord(int Id, string Habit, DateTime Date, int Quantity, string Unit);
     internal record HabitTypes(string Habit, string Unit);
+    internal record StatisticRecord(int Total, string Unit);
 
     internal static void CreateDatabase()
     {
@@ -38,7 +38,7 @@ internal class Database
                     Habit TEXT,
                     Unit TEXT
                     )";
-                tableCmd.ExecuteNonQuery();              
+                tableCmd.ExecuteNonQuery();
             }
         }
         if (!isExists) SeedDatabase();
@@ -94,14 +94,14 @@ INSERT INTO HabitTypes(Habit, Unit) VALUES
                         case "Cups":
                             maxValue = 13; minValue = 5; break;
                         case "Pages":
-                            maxValue = 50; minValue = 1;  break;
+                            maxValue = 50; minValue = 1; break;
                     }
 
                     tableCmd.Parameters.Clear();
                     tableCmd.Parameters.AddWithValue("@habit", habit);
                     tableCmd.Parameters.AddWithValue("@date", dates[i].ToString("dd-MM-yy"));
                     tableCmd.Parameters.AddWithValue("@quantity", random.Next(minValue, maxValue));
-                    
+
                     tableCmd.ExecuteNonQuery();
                 }
 
@@ -110,7 +110,7 @@ INSERT INTO HabitTypes(Habit, Unit) VALUES
             }
         }
     }
-   
+
     internal static void AddRecord()
     {
         string habit;
@@ -134,12 +134,13 @@ INSERT INTO HabitTypes(Habit, Unit) VALUES
             break;
         }
 
-        var date = GetDate("\nEnter the date (format - dd-MM-yy) or insert 0 to go back to Main Menu:\n");
-        if (date == null)
+        var date = GetDate("\nEnter the date (dd-MM-yy or today) or insert 0 to go back to Main Menu:\n");
+        if (date == "")
         {
             Console.Clear();
             return;
         }
+
 
         var quantity = GetNumber("\nEnter quantity or enter 0 to go back to Main Menu:\n");
         if (quantity == 0)
@@ -243,8 +244,8 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
         bool updateDate = AnsiConsole.Confirm("Update date?");
         if (updateDate)
         {
-            date = GetDate("\nEnter the date (format : dd-mm-yy) or insert 0 to Go Back to Main Menu:\n");
-            if (date == null) return;
+            date = GetDate("\nEnter the date (dd-mm-yy or Today) or insert 0 to Go Back to Main Menu:\n");
+            if (date == "") return;
         }
 
         int quantity = 0;
@@ -433,7 +434,7 @@ DELETE FROM Habits WHERE Habit = @habit";
         {
             table.AddRow(habit.Habit, habit.Unit);
         }
-        
+
         AnsiConsole.Write(table);
     }
 
@@ -484,7 +485,7 @@ DELETE FROM Habits WHERE Habit = @habit";
         {
             table.AddRow(record.Id.ToString(), record.Habit, record.Date.ToShortDateString(), record.Quantity.ToString("N0"), record.Unit);
         }
-        
+
         AnsiConsole.Write(table);
     }
 
@@ -531,11 +532,14 @@ DELETE FROM Habits WHERE Habit = @habit";
 
     internal static string GetDate(string message)
     {
-        Console.WriteLine(message);
+        var dateInput = AnsiConsole.Ask<string>(message);
 
-        string? dateInput = Console.ReadLine();
+        if (dateInput.ToLower().Trim() == "today")
+        {
+            return DateTime.Today.ToString("dd-MM-yy");
+        }
 
-        if (dateInput == "0") return String.Empty;
+        if (dateInput == "0") return "";
 
         while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
         {
@@ -561,6 +565,112 @@ DELETE FROM Habits WHERE Habit = @habit";
         }
         return output;
     }
+    internal static void ViewStatistics(List<StatisticRecord> records, string habit)
+    {
+        Table table = new();
+        table.Border = TableBorder.Simple;
+        table.AddColumn("[bold]Habit[/]");
+        table.AddColumn("[bold]Total[/]");
+
+        foreach (StatisticRecord record in records)
+        {
+            table.AddRow(habit, $"{record.Total} {record.Unit}");
+        }
+        AnsiConsole.Write(table);
+    }
+
+    internal static void GetStatistics()
+    {
+        Console.Clear();
+        string habit;
+        GetHabits();
+        while (true)
+        {
+            habit = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter which habit to add a record to insert 0 to go back to Main Menu:\n"));
+            if (habit == "0")
+            {
+                Console.Clear();
+                return;
+            }
+            else if (!CheckIfHabitExists(habit))
+            {
+                Console.Clear();
+                Console.WriteLine("Habit does not exist.");
+                GetHabits();
+                continue;
+            }
+            break;
+        }
+
+        List<StatisticRecord> statistics = new();
+        string reportRange = Menu.StatisticsMenu();
+        string thisMonth = DateTime.Today.ToString("MM");
+        string thisYear = DateTime.Today.ToString("yy");
+
+        using (SqliteConnection connection = new(ConnectionString))
+        {
+            using (SqliteCommand tableCmd = connection.CreateCommand())
+            {
+                connection.Open();
+
+                switch (reportRange)
+                {
+                    case "All Time":
+                        tableCmd.CommandText = @"
+SELECT SUM(Quantity) AS Sum 
+FROM Habits 
+WHERE Habits.Habit = @habit";
+                        break;
+                    case "This Year":
+                        tableCmd.CommandText = @"
+SELECT SUM(Quantity) AS Sum 
+FROM Habits 
+WHERE Habit = @habit AND 
+Date LIKE '%' || @year";
+                        tableCmd.Parameters.AddWithValue("@year", thisYear);
+                        break;
+                    case "This Month":
+                        tableCmd.CommandText = @"
+SELECT SUM(Quantity) AS Sum 
+FROM Habits 
+WHERE Habit = @habit AND 
+Date LIKE '%' || @month || '-%'";
+                        tableCmd.Parameters.AddWithValue("@month", thisMonth);
+                        break;
+                }
+
+                tableCmd.Parameters.AddWithValue("@habit", habit);
+                int quantitySum = Convert.ToInt32(tableCmd.ExecuteScalar());
 
 
+                tableCmd.CommandText = $"SELECT Unit FROM HabitTypes WHERE Habit = \'{habit}\'";
+
+                using (SqliteDataReader reader = tableCmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            try
+                            {
+                                statistics.Add(
+                                    new StatisticRecord(
+                                        quantitySum,
+                                        reader.GetString(0)
+                                    ));
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"{ex.Message}");
+                            }
+                        }
+                    }
+                    else Console.WriteLine("No rows found.");
+                }
+            }
+            Console.Clear();
+            ViewStatistics(statistics, habit);
+        }
+    }
 }
