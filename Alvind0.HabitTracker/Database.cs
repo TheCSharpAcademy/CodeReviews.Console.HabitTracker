@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 
@@ -12,13 +13,15 @@ internal class Database
 
     internal static void CreateDatabase()
     {
-        using (SqliteConnection connection = new SqliteConnection(ConnectionString))
+        bool isExists = false;
+        using (SqliteConnection connection = new(ConnectionString))
         {
             using (SqliteCommand tableCmd = connection.CreateCommand())
             {
                 connection.Open();
+                tableCmd.CommandText = @"SELECT count(1) FROM sqlite_master WHERE type = 'table' and name = 'Habits'";
+                isExists = Convert.ToInt64(tableCmd.ExecuteScalar()) == 1 ? true : false;
 
-                // TODO: Seed data automatically on DB creation
                 tableCmd.CommandText =
                     @"CREATE TABLE IF NOT EXISTS Habits(
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,17 +38,85 @@ internal class Database
                     Habit TEXT,
                     Unit TEXT
                     )";
+                tableCmd.ExecuteNonQuery();              
+            }
+        }
+        if (!isExists) SeedDatabase();
+    }
+
+    internal static void SeedDatabase()
+    {
+        using (SqliteConnection connection = new(ConnectionString))
+        {
+            using (SqliteCommand tableCmd = connection.CreateCommand())
+            {
+                connection.Open();
+                tableCmd.CommandText = @"
+INSERT INTO HabitTypes(Habit, Unit) VALUES
+('Walking', 'Steps'), ('Running', 'Km'),
+('Drink Water', 'Cups'), ('Reading', 'Pages');";
+
+                tableCmd.ExecuteNonQuery();
+
+                tableCmd.CommandText = @"INSERT INTO Habits(Habit, Date, Quantity) VALUES(@habit, @date, @quantity)";
+
+                string[] habits = ["Walking", "Running", "Drink Water", "Reading"];
+                string[] units = ["Steps", "Km", "Cups", "Pages"];
+
+                Random random = new();
+                DateTime startDate = DateTime.ParseExact("10-11-24", "dd-MM-yy", CultureInfo.InvariantCulture);
+                DateTime endDate = DateTime.Today;
+                List<DateTime> dates = new();
+
+                for (int i = 0; i < 100; i++)
+                {
+                    int daysRange = (endDate - startDate).Days;
+                    DateTime randomDate = startDate.AddDays(random.Next(0, daysRange + 1));
+
+                    dates.Add(randomDate);
+                }
+
+                dates.Sort();
+
+                for (int i = 0; i < 100; i++)
+                {
+                    int randomHabit = random.Next(habits.Length);
+                    int minValue = 0, maxValue = 0;
+                    string habit = habits[randomHabit];
+                    string unit = units[randomHabit];
+
+                    switch (unit)
+                    {
+                        case "Steps":
+                            maxValue = 15000; minValue = 2500; break;
+                        case "Km":
+                            maxValue = 35; minValue = 2; break;
+                        case "Cups":
+                            maxValue = 13; minValue = 5; break;
+                        case "Pages":
+                            maxValue = 50; minValue = 1;  break;
+                    }
+
+                    tableCmd.Parameters.Clear();
+                    tableCmd.Parameters.AddWithValue("@habit", habit);
+                    tableCmd.Parameters.AddWithValue("@date", dates[i].ToString("dd-MM-yy"));
+                    tableCmd.Parameters.AddWithValue("@quantity", random.Next(minValue, maxValue));
+                    
+                    tableCmd.ExecuteNonQuery();
+                }
+
+                tableCmd.CommandText = "UPDATE Habits SET Unit = (SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
                 tableCmd.ExecuteNonQuery();
             }
         }
     }
-
+   
     internal static void AddRecord()
     {
         string habit;
         GetHabits();
         while (true)
-        { 
+        {
             habit = AnsiConsole.Prompt(
                 new TextPrompt<string>("Enter which habit to add a record to insert 0 to go back to Main Menu:\n"));
             if (habit == "0")
@@ -155,6 +226,7 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
                 Console.WriteLine("Id does not exist.");
             }
         }
+
         string habit;
         bool updateHabit = AnsiConsole.Confirm("Update habit type?");
         if (updateHabit)
@@ -181,7 +253,6 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
         {
             quantity = GetNumber("\nPlease enter number of meters walked (no decimals or negatives allowed) or enter 0 to go back to Main Menu.");
         }
-
 
         Console.Clear();
 
@@ -234,8 +305,6 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
         Console.Clear();
         Console.WriteLine("Action completed successfully..");
     }
-
-
 
     internal static void AddHabit()
     {
@@ -364,6 +433,7 @@ DELETE FROM Habits WHERE Habit = @habit";
         {
             table.AddRow(habit.Habit, habit.Unit);
         }
+        
         AnsiConsole.Write(table);
     }
 
@@ -400,13 +470,11 @@ DELETE FROM Habits WHERE Habit = @habit";
         }
     }
 
-        
-
     internal static void ViewRecords(List<WalkingRecord> records)
     {
         var table = new Table();
         table.Border = TableBorder.Square;
-        table.AddColumn(new TableColumn("[bold]Id[/]").Centered());
+        table.AddColumn(new TableColumn("[bold]Id[/]").RightAligned());
         table.AddColumn(new TableColumn("[bold]Habit[/]"));
         table.AddColumn(new TableColumn("[bold]Date[/]"));
         table.AddColumn(new TableColumn("[bold]Amount[/]"));
@@ -416,8 +484,8 @@ DELETE FROM Habits WHERE Habit = @habit";
         {
             table.AddRow(record.Id.ToString(), record.Habit, record.Date.ToShortDateString(), record.Quantity.ToString("N0"), record.Unit);
         }
+        
         AnsiConsole.Write(table);
-
     }
 
     internal static void GetRecords(bool isFromMenu = false)
