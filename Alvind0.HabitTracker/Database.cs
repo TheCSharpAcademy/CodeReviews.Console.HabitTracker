@@ -6,9 +6,9 @@ namespace Alvind0.HabitTracker;
 
 internal class Database
 {
-    private const string ConnectionString = @"Data Source=habit-Tracker.db";
-    internal record WalkingRecord(int Id, DateTime Date, int Quantity, string Unit);
-    internal record HabitTypes(string Habit);
+    private const string ConnectionString = @"Data Source=Habit-Tracker.db";
+    internal record WalkingRecord(int Id, string Habit, DateTime Date, int Quantity, string Unit);
+    internal record HabitTypes(string Habit, string Unit);
 
     internal static void CreateDatabase()
     {
@@ -20,10 +20,19 @@ internal class Database
 
                 // TODO: Seed data automatically on DB creation
                 tableCmd.CommandText =
-                    @"CREATE TABLE IF NOT EXISTS walkingHabit(
+                    @"CREATE TABLE IF NOT EXISTS Habits(
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Habit TEXT,
                     Date TEXT,
                     Quantity INTEGER,
+                    Unit TEXT
+                    )";
+                tableCmd.ExecuteNonQuery();
+
+                tableCmd.CommandText =
+                    @"CREATE TABLE IF NOT EXISTS HabitTypes(
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Habit TEXT,
                     Unit TEXT
                     )";
                 tableCmd.ExecuteNonQuery();
@@ -33,6 +42,27 @@ internal class Database
 
     internal static void AddRecord()
     {
+        string habit;
+        GetHabits();
+        while (true)
+        { 
+            habit = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter which habit to add a record to insert 0 to go back to Main Menu:\n"));
+            if (habit == "0")
+            {
+                Console.Clear();
+                return;
+            }
+            else if (!CheckIfHabitExists(habit))
+            {
+                Console.Clear();
+                Console.WriteLine("Habit does not exist.");
+                GetHabits();
+                continue;
+            }
+            break;
+        }
+
         var date = GetDate("\nEnter the date (format - dd-MM-yy) or insert 0 to go back to Main Menu:\n");
         if (date == null)
         {
@@ -40,8 +70,8 @@ internal class Database
             return;
         }
 
-        var quantity = GetNumber("\nEnter the number of meters walked(positive integers only) or enter 0 to go back to Main Menu:\n");
-        if (quantity == -1)
+        var quantity = GetNumber("\nEnter quantity or enter 0 to go back to Main Menu:\n");
+        if (quantity == 0)
         {
             Console.Clear();
             return;
@@ -54,14 +84,19 @@ internal class Database
             connection.Open();
             var tableCmd = connection.CreateCommand();
 
-            tableCmd.CommandText = $"INSERT INTO walkingHabit(date, quantity, unit) VALUES(@date, @quantity, \'Km\')";
+            tableCmd.CommandText = @"
+INSERT INTO Habits(habit, date, quantity) VALUES(@habit, @date, @quantity);
+UPDATE Habits SET Unit = (
+SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
 
+            Console.Clear();
+            tableCmd.Parameters.AddWithValue("@habit", habit);
             tableCmd.Parameters.AddWithValue("@date", date);
             tableCmd.Parameters.AddWithValue("@quantity", quantity);
             tableCmd.ExecuteNonQuery();
         }
         Console.Clear();
-        Console.WriteLine("Successful.");
+        Console.WriteLine("Action completed successfully..");
     }
 
     internal static void DeleteRecord()
@@ -72,7 +107,7 @@ internal class Database
         {
             GetRecords();
             id = GetNumber("Please type the id of the record you want to delete or insert 0 to Go Back to Main Menu:\n");
-            if (id == -1)
+            if (id == 0)
             {
                 Console.Clear();
                 return;
@@ -91,13 +126,13 @@ internal class Database
             {
                 connection.Open();
 
-                tableCmd.CommandText = @$"DELETE FROM walkingHabit WHERE Id = @id";
+                tableCmd.CommandText = @$"DELETE FROM Habits WHERE Id = @id";
                 tableCmd.Parameters.AddWithValue("@id", id);
                 tableCmd.ExecuteNonQuery();
             }
         }
         Console.Clear();
-        Console.WriteLine("Successful.");
+        Console.WriteLine("Action completed successfully..");
     }
 
     internal static void UpdateRecord()
@@ -108,7 +143,7 @@ internal class Database
         {
             GetRecords();
             id = GetNumber("Please type the id of the record you want to update or insert 0 to Go Back to Main Menu:\n");
-            if (id == -1)
+            if (id == 0)
             {
                 Console.Clear();
                 return;
@@ -118,6 +153,17 @@ internal class Database
             {
                 Console.Clear();
                 Console.WriteLine("Id does not exist.");
+            }
+        }
+        string habit;
+        bool updateHabit = AnsiConsole.Confirm("Update habit type?");
+        if (updateHabit)
+        {
+            habit = AnsiConsole.Ask<string>("Enter the habit or input 0 to go back to main menu");
+            if (habit == "0")
+            {
+                Console.Clear();
+                return;
             }
         }
 
@@ -130,28 +176,52 @@ internal class Database
         }
 
         int quantity = 0;
-        bool updateQuantity = AnsiConsole.Confirm("Update distance?");
+        bool updateQuantity = AnsiConsole.Confirm("Update quantity?");
         if (updateQuantity)
         {
             quantity = GetNumber("\nPlease enter number of meters walked (no decimals or negatives allowed) or enter 0 to go back to Main Menu.");
         }
 
-        string query;
+
+        Console.Clear();
+
+        string query = "";
+
         using (var connection = new SqliteConnection(ConnectionString))
         {
             connection.Open();
             var tableCmd = connection.CreateCommand();
-            if (updateDate && updateQuantity)
+
+            int flags = (updateHabit ? 1 : 0)
+                      | (updateDate ? 2 : 0)
+                      | (updateQuantity ? 4 : 0);
+
+            switch (flags)
             {
-                query = $"UPDATE walkingHabit SET Date = @date, Quantity = @quantity WHERE Id = @id";
-            }
-            else if (updateDate && !updateQuantity)
-            {
-                query = $"UPDATE walkingHabit SET Date = @date WHERE Id = @id";
-            }
-            else
-            {
-                query = $"UPDATE walkingHabit SET Quantity = '@quantity' WHERE Id = @id";
+                case 0:
+                    Console.WriteLine("No updates needed.");
+                    return;
+                case 1:
+                    query = "UPDATE Habits SET habit = @habit WHERE Id = @id";
+                    break;
+                case 2:
+                    query = "UPDATE Habits SET Date = @date WHERE Id = @id";
+                    break;
+                case 3:
+                    query = "UPDATE Habits SET habit = @habit, Date = @date WHERE Id = @id";
+                    break;
+                case 4:
+                    query = "UPDATE Habits SET Quantity = @quantity WHERE Id = @id";
+                    break;
+                case 5:
+                    query = "UPDATE Habits SET habit = @habit, Quantity = @quantity WHERE Id = @id";
+                    break;
+                case 6:
+                    query = "UPDATE Habits SET Date = @date, Quantity = @quantity WHERE Id = @id";
+                    break;
+                case 7:
+                    query = "UPDATE Habits SET habit = @habit, Date = @date, Quantity = @quantity WHERE Id = @id";
+                    break;
             }
 
             tableCmd.CommandText = query;
@@ -162,44 +232,31 @@ internal class Database
         }
 
         Console.Clear();
-        Console.WriteLine("Successful.");
+        Console.WriteLine("Action completed successfully..");
     }
 
-    internal static void ViewRecords(List<WalkingRecord> records)
-    {
-        var table = new Table();
-        table.AddColumn(new TableColumn("Id").Centered());
-        table.AddColumn(new TableColumn("Date"));
-        table.AddColumn(new TableColumn("Amount"));
 
-        foreach (var record in records)
-        {
-            table.AddRow(record.Id.ToString(), record.Date.ToShortDateString(), record.Quantity.ToString("N0") + record.Unit);
-        }
-        AnsiConsole.Write(table);
-
-    }
 
     internal static void AddHabit()
     {
-        string habitName, unitOfMeasurement;
+        string habit, unit;
 
         while (true)
         {
             GetHabits();
-            habitName = AnsiConsole.Prompt(
+            habit = AnsiConsole.Prompt(
                 new TextPrompt<string>("Enter the habit or input 0 to go back to main menu"));
-            if (habitName == "0") return;
+            if (habit == "0") return;
 
-            if (CheckIfHabitExists(habitName))
+            if (CheckIfHabitExists(habit))
             {
                 Console.Clear();
                 Console.WriteLine("Habit already exists.");
                 continue;
             }
 
-            unitOfMeasurement = AnsiConsole.Ask<string>("Enter the unit of measurement or input 0 to go back to main menu\n");
-            if (unitOfMeasurement == "0") return;
+            unit = AnsiConsole.Ask<string>("Enter the unit of measurement or input 0 to go back to main menu\n");
+            if (unit == "0") return;
             else break;
         }
 
@@ -208,14 +265,10 @@ internal class Database
             using (SqliteCommand tableCmd = connection.CreateCommand())
             {
                 connection.Open();
-                tableCmd.CommandText = $@"
-CREATE TABLE IF NOT EXISTS {habitName}(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-Date TEXT,
-Quantity INTEGER,
-{unitOfMeasurement} TEXT
-)";
+                tableCmd.CommandText = $"INSERT INTO HabitTypes(Habit, Unit) VALUES (@habit, @unit)";
 
+                tableCmd.Parameters.AddWithValue("@habit", habit);
+                tableCmd.Parameters.AddWithValue("@unit", unit);
                 tableCmd.ExecuteNonQuery();
             }
         }
@@ -223,16 +276,16 @@ Quantity INTEGER,
 
     internal static void DeleteHabit()
     {
-        string habitName;
+        string habit;
 
         while (true)
         {
             GetHabits();
-            habitName = AnsiConsole.Prompt(
+            habit = AnsiConsole.Prompt(
                 new TextPrompt<string>("Enter the habit or input 0 to go back to main menu"));
-            if (habitName == "0") return;
+            if (habit == "0") return;
 
-            if (!CheckIfHabitExists(habitName))
+            if (!CheckIfHabitExists(habit))
             {
                 Console.Clear();
                 Console.WriteLine("Habit does not exist");
@@ -241,18 +294,28 @@ Quantity INTEGER,
             break;
         }
 
+        var isSure = AnsiConsole.Confirm($"Are you sure? This will delete all entries of [italic]{habit}[/]");
+        if (!isSure)
+        {
+            Console.Clear();
+            return;
+        }
+
         using (SqliteConnection connection = new(ConnectionString))
         {
             using (SqliteCommand tableCmd = connection.CreateCommand())
             {
                 connection.Open();
-                tableCmd.CommandText = $"DROP TABLE IF EXISTS {habitName}";
+                tableCmd.CommandText = @"
+DELETE FROM HabitTypes WHERE Habit = @habit;
+DELETE FROM Habits WHERE Habit = @habit";
+
                 tableCmd.ExecuteNonQuery();
             }
         }
 
         Console.Clear();
-        Console.WriteLine("Successful.");
+        Console.WriteLine("Action completed successfully..");
     }
 
     internal static bool CheckIfIdExists(int id)
@@ -264,71 +327,99 @@ Quantity INTEGER,
             {
                 tableCmd.CommandText = $"SELECT count(1) FROM walkingHabit WHERE Id = @id";
                 tableCmd.Parameters.AddWithValue("@id", id);
-                var result = (long)tableCmd.ExecuteScalar();
-                return result == 1 ? true : false;
+                return Convert.ToInt64(tableCmd.ExecuteScalar()) == 1 ? true : false;
             }
 
         }
     }
 
-    internal static bool CheckIfHabitExists(string table)
+    internal static bool CheckIfHabitExists(string habit)
     {
         using (SqliteConnection connection = new(ConnectionString))
         {
             using (SqliteCommand tableCmd = connection.CreateCommand())
             {
                 connection.Open();
-                tableCmd.CommandText = $"SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = \"{table}\"";
+                tableCmd.CommandText = $"SELECT 1 FROM HabitTypes WHERE Habit = @habit";
+                tableCmd.Parameters.AddWithValue("@habit", habit);
                 return Convert.ToInt64(tableCmd.ExecuteScalar()) == 1 ? true : false;
             }
         }
     }
 
-    // TODO: Implement
     internal static void ViewHabits(List<HabitTypes> habits)
     {
+        if (habits.Count == 0)
+        {
+            Console.WriteLine("No habits yet!");
+            return;
+        }
+
         var table = new Table();
-        table.Border = TableBorder.Horizontal;
-        table.AddColumn(new TableColumn("Habits"));
+        table.Border = TableBorder.Minimal;
+        table.AddColumn(new TableColumn("[bold]Habits[/]"));
+        table.AddColumn(new TableColumn("[bold]Unit[/]"));
 
         foreach (var habit in habits)
         {
-            table.AddRow(habit.Habit);
+            table.AddRow(habit.Habit, habit.Unit);
         }
         AnsiConsole.Write(table);
-
     }
-    // TODO: Implement
+
     internal static void GetHabits()
     {
+        List<HabitTypes> habitTypes = new();
         using (var connection = new SqliteConnection(ConnectionString))
         {
-            List<HabitTypes> habitTypes = new();
             connection.Open();
             using (SqliteCommand tableCmd = connection.CreateCommand())
             {
-                tableCmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND NOT name = \'sqlite_sequence\'";
+                tableCmd.CommandText = "SELECT Habit, Unit FROM HabitTypes";
 
                 using (SqliteDataReader reader = tableCmd.ExecuteReader())
                 {
                     if (reader.HasRows)
                     {
                         while (reader.Read())
-                        {
+
                             habitTypes.Add(
                                 new HabitTypes(
-                                    reader.GetString(0)
+                                    reader.GetString(0),
+                                    reader.GetString(1)
                                 ));
-                        }
+
+
                     }
                     else Console.WriteLine("No rows found.");
                 }
+
             }
 
-            Console.Clear();
             ViewHabits(habitTypes);
         }
     }
+
+        
+
+    internal static void ViewRecords(List<WalkingRecord> records)
+    {
+        var table = new Table();
+        table.Border = TableBorder.Square;
+        table.AddColumn(new TableColumn("[bold]Id[/]").Centered());
+        table.AddColumn(new TableColumn("[bold]Habit[/]"));
+        table.AddColumn(new TableColumn("[bold]Date[/]"));
+        table.AddColumn(new TableColumn("[bold]Amount[/]"));
+        table.AddColumn(new TableColumn("[bold]Unit[/]"));
+
+        foreach (var record in records)
+        {
+            table.AddRow(record.Id.ToString(), record.Habit, record.Date.ToShortDateString(), record.Quantity.ToString("N0"), record.Unit);
+        }
+        AnsiConsole.Write(table);
+
+    }
+
     internal static void GetRecords(bool isFromMenu = false)
     {
         List<WalkingRecord> records = new List<WalkingRecord>();
@@ -338,7 +429,7 @@ Quantity INTEGER,
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
-            tableCmd.CommandText = $"SELECT * FROM walkingHabit";
+            tableCmd.CommandText = $"SELECT * FROM Habits";
 
             using (SqliteDataReader reader = tableCmd.ExecuteReader())
             {
@@ -351,9 +442,10 @@ Quantity INTEGER,
                             records.Add(
                                 new WalkingRecord(
                                     reader.GetInt32(0),
-                                    DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                                    reader.GetInt32(2),
-                                    reader.GetString(3)
+                                    reader.GetString(1),
+                                    DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
+                                    reader.GetInt32(3),
+                                    reader.GetString(4)
                                 ));
                         }
                         catch (FormatException ex)
@@ -375,7 +467,7 @@ Quantity INTEGER,
 
         string? dateInput = Console.ReadLine();
 
-        if (dateInput == "0") return null;
+        if (dateInput == "0") return String.Empty;
 
         while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
         {
@@ -393,10 +485,7 @@ Quantity INTEGER,
 
         string? numberInput = Console.ReadLine();
         int output;
-
-        if (numberInput == "0") return -1;
-
-        while (!int.TryParse(numberInput, out output) || Convert.ToInt32(numberInput) <= 0)
+        while (!int.TryParse(numberInput, out output) || Convert.ToInt32(numberInput) < 0)
         {
             Console.Clear();
             Console.WriteLine("Invalid number (positive integers only). Please try again.\n");
