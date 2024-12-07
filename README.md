@@ -39,11 +39,11 @@ Developed using C# and SQLite.
  -![image](/images/HabitTracker-MainMenu.PNG)
 
 * Easy to look at tables using *Spectre Library*
--![image](/images/HabitTracker-ViewRecords.png)
+-![image](/images/HabitTracker-ViewRecords.PNG)
 
 * Statistics for current year, month, and all time
--![image](/images/HabitTracker-StatisticsMenu.png)
--![image](/images/HabitTracker-Statistics.png)
+-![image](/images/HabitTracker-StatisticsMenu.PNG)
+-![image](/images/HabitTracker-Statistics.PNG)
 
 # Challenges
    - This my first time user SQLite so I had a hard time with the syntax
