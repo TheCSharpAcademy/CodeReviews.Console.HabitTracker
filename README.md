@@ -5,7 +5,7 @@ Developed using C# and SQLite.
 
 # Requirements
 - Register records related to a habit
-- Habits should only be tracked by quantity(e.g. number of water glasses in a day)
+- Habits should only be tracked by quantity (e.g. number of water glasses in a day)
 - Store and retrieve data from an external DB
 - Handle errors to never crash
 - If one doesn't exist, create an *SQLite* DB at launch
@@ -33,8 +33,6 @@ Developed using C# and SQLite.
    - Can also delete habits
    - The program first searches for the existence of the habit
 
-* Easy to look at tables
-   - Look 
 * A console based UI controlled with key presses
  -![image](/images/HabitTracker-MainMenu.PNG)
 
@@ -46,14 +44,14 @@ Developed using C# and SQLite.
 -![image](/images/HabitTracker-Statistics.PNG)
 
 # Challenges
-   - This my first time user SQLite so I had a hard time with the syntax
-   - The first iteration of this app had more than 10 classes and I couldn't make it work
-   - I had a lot of trouble with *DateTime* taking a lot of time to understand the documentation
+   - This my first time user SQLite so I had a hard time with the syntax.
+   - The first iteration of this app had more than 10 classes and I couldn't make it work.
+   - I had a lot of trouble with *DateTime* taking a lot of time to understand the documentation.
    - It is also my first time using *Spectre*, it was difficult to understand at first, but in the end helped me lower my code lines.
    - This was the hardest project I've ever done in my life. It took me one day and a half to finish and most of the time was spend pondering on how to connect parts of my project.
 
 # Lessons Learned
-   - After struggling to do anything, I tried making a flowchard using pen and paper. It helped me think of the structure of my program and I couldn't have finished the project without it.
+   - After struggling to do anything, I tried making a flowchart using pen and paper. It helped me think of the structure of my program and I couldn't have finished the project without it.
    - ChatGPT is great at teaching, but I told him to never teach me the answer in code and just give me "obscure hints" so I can solve it myself.
    - Learning shortcuts for VS helped in my efficiency. To name a few, "F2" changes all instances of anything in the scope it is in. "F5" to start debugging. "Alt + Shift + C" to add a new item(e.g. classes).
    - Breakpoints are a godsend. A lot of bugs I couldn't figure out by reading code got solved just by running the code one statement at a time.
