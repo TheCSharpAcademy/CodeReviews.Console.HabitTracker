@@ -16,11 +16,6 @@ namespace habit_tracker
             {
                 connection.Open();
 
-                // Uncomment this code to delete the table (for debugging)
-                // var dropCmd = connection.CreateCommand();
-                // dropCmd.CommandText = "DROP TABLE IF EXISTS hours_played";
-                // dropCmd.ExecuteNonQuery();
-
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
@@ -33,7 +28,15 @@ namespace habit_tracker
 
                 tableCmd.ExecuteNonQuery();
 
-                SeedDatabase(connection);
+                // Check if the table is empty, if so, seed it
+                var checkCmd = connection.CreateCommand();
+                checkCmd.CommandText = "SELECT COUNT(*) FROM hours_played";
+                var count = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                if (count == 0)
+                {
+                    SeedDatabase(connection);
+                }
 
                 connection.Close();
             }
@@ -43,6 +46,9 @@ namespace habit_tracker
 
         private static void SeedDatabase(SqliteConnection connection)
         {
+            Console.Clear();
+            Console.WriteLine("Please wait, seeding database on first initialisation (up to 20 seconds...)");
+
             var random = new Random();
             var insertCmd = connection.CreateCommand();
             var numberOfRecords = 100;
@@ -74,7 +80,7 @@ namespace habit_tracker
 
         private static string GetRandomUnit(Random random)
         {
-            string[] units = { "seconds", "hours", "minutes", "sessions" };
+            string[] units = { "hours", "minutes" };
             return units[random.Next(units.Length)];
         }
 
@@ -152,7 +158,7 @@ namespace habit_tracker
                             Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                             Quantity = reader.GetInt32(2),
                             Unit = reader.GetString(3)
-                        }); ;
+                        });
                     }
                 }
                 else
@@ -175,8 +181,8 @@ namespace habit_tracker
         {
             string date = GetDateInput();
 
-            int quantity = GetNumberInput("\n\nPlease insert quantity: (then we will ask you the units of measure.))\n\n");
-            string unit = GetStringInput("\n\nPlease insert the unit of measure: )\n\n");
+            int quantity = GetNumberInput("\n\nPlease insert the quantity (minutes or hours) :\n\n");
+            string unit = GetStringInput("\n\nPlease insert the unit of measure (i.e minutes or hours) : \n\n");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -235,12 +241,17 @@ namespace habit_tracker
 
                 if (rowCount == 0)
                 {
-                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. \n\n");
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. Press any key to continue... \n\n");
+                    connection.Close();
+                    Console.ReadKey();
                     Delete();
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
                 }
             }
-
-            Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
 
             GetUserInput();
         }
@@ -264,15 +275,16 @@ namespace habit_tracker
 
                 if (checkQuery == 0)
                 {
-                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. Press any key to continue... \n\n");
                     connection.Close();
+                    Console.ReadKey();
                     Update();
                     return;
                 }
 
                 string date = GetDateInput();
-                int quantity = GetNumberInput("\n\nPlease insert number of hours of games played this session:\n\n");
-                string unit = GetStringInput("\n\nPlease insert the unit of measure: )\n\n");
+                int quantity = GetNumberInput("\n\nPlease insert the quantity (minutes or hours) :\n\n");
+                string unit = GetStringInput("\n\nPlease insert the unit of measure (i.e minutes or hours) : \n\n");
 
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText = "UPDATE hours_played SET Date = @date, Quantity = @quantity, Unit = @unit WHERE Id = @recordId";
