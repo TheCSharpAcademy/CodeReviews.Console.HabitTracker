@@ -28,4 +28,5 @@ HabitTracker is a simple C# console app that interacts with a SQlite Database to
 * I researched DRY principles and tried to incorporate them as far as possible.
 
 # Resources
+* Basic HabitTracker Tutorial from [TheC#Acadeny](https://www.youtube.com/watch?v=d1JIJdDVFjs&embeds_referring_euri=https%3A%2F%2Fwww.thecsharpacademy.com%2F&source_ve_path=MjM4NTE)
 
