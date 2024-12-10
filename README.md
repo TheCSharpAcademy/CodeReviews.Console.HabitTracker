@@ -20,4 +20,12 @@ HabitTracker is a simple C# console app that interacts with a SQlite Database to
   - Number of entries.
   - Sum of entries.
   - Average value of entries.
-  - List of all entriess of specified habit
+  - List of all entriess of specified habit.
+ 
+## Lessons Learned
+* To complete this project I was required to learn basic SQL functionality.
+* I learned how to perform CRUD operations using ADO.Net on a SQLite Databse.
+* I researched DRY principles and tried to incorporate them as far as possible.
+
+# Resources
+
