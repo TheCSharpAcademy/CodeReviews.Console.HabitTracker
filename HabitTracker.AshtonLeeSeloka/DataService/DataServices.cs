@@ -130,8 +130,8 @@ namespace DataService
 					{
 						dataRecords.Add(new DBItems()
 						{
-							id = reader.GetInt32(0),
-							habbit = reader.GetString(1),
+							Id = reader.GetInt32(0),
+							Habbit = reader.GetString(1),
 							Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yyyy", new CultureInfo("en-US")),
 							Quantity = reader.GetInt32(3)
 						});
@@ -149,7 +149,7 @@ namespace DataService
 				Console.WriteLine("________________________________________________________________________________\n");
 				foreach (DBItems item in dataRecords) 
 				{
-					Console.WriteLine($"{item.id} - {item.habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
+					Console.WriteLine($"{item.Id} - {item.Habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
 				
 				}
 				Console.WriteLine("\n________________________________________________________________________________\n");
@@ -264,7 +264,7 @@ namespace DataService
 
 			foreach (DBItems entry in dataRecords) 
 			{
-				if (entry.habbit == habitName) 
+				if (entry.Habbit == habitName) 
 				{
 					numberOfEntries ++;
 					sum = sum + entry.Quantity;
@@ -293,8 +293,8 @@ namespace DataService
 
 				foreach (DBItems item in dataRecords) 
 				{
-					if(item.habbit == habitName)
-					Console.WriteLine($"{item.habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
+					if(item.Habbit == habitName)
+					Console.WriteLine($"{item.Habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
 				}
 
 

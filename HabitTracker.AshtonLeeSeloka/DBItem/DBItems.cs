@@ -2,8 +2,8 @@
 {
 	public class DBItems
 	{
-		public int? id { get; set; }
-		public string? habbit { get; set; }
+		public int? Id { get; set; }
+		public string? Habbit { get; set; }
 		public DateTime? Date { get; set; }
 		public int? Quantity { get; set; }
 	}
