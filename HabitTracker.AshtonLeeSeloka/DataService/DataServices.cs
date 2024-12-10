@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using System.Globalization;
 using DBItem;
 namespace DataService
@@ -6,11 +6,6 @@ namespace DataService
 	public class DataServices
 	{
 		public List<DBItems> dataRecords = new List<DBItems>();
-		public DataServices() 
-		{
-		
-		}
-
 
 		/// <summary>
 		/// General methode used to recieve user input
@@ -219,6 +214,9 @@ namespace DataService
 
 		}
 
+		/// <summary>
+		/// Deletes a Record based on ID
+		/// </summary>
 		public void DeleteRecord() 
 		{
 			GetAllRecords();
@@ -249,14 +247,20 @@ namespace DataService
 			}
 		}
 
+		/// <summary>
+		/// Generates a simple report on the selected habbit
+		/// </summary>
 		public void GenerateReport() 
 		{
-		;
+			
+
+			Console.Clear();
 			GetAllRecords();
 			string habitName = UserUnput("\nEnter the name of the Habit to generate the report");
 
 			int? sum = 0; 
 			int? numberOfEntries= 0;
+
 
 			foreach (DBItems entry in dataRecords) 
 			{
@@ -267,16 +271,42 @@ namespace DataService
 				}
 			}
 
+			float? average = sum / numberOfEntries;
+
+
 			if (numberOfEntries == 0)
 			{
-				Console.WriteLine("Enter a valid habbit");
-				return;
+				Console.WriteLine("\nEnter a valid habbit\n");
+				GenerateReport();
+			}
+			else 
+			{
+				Console.Clear();
+				Console.WriteLine($"\nReport of {habitName}");
+				Console.WriteLine("______________________________________________________________________________________________________\n");
+				Console.WriteLine($"Habit Name : {habitName}");
+				Console.WriteLine($"Number of Entries : {numberOfEntries}");
+				Console.WriteLine($"Total Sum of Entries : {sum}");
+				Console.WriteLine($"Average vaue per entry: {average}");
+				Console.WriteLine("\n\nEntries: \n");
+				Console.WriteLine("________________\n");
+
+				foreach (DBItems item in dataRecords) 
+				{
+					if(item.habbit == habitName)
+					Console.WriteLine($"{item.habbit} - {item.Date.ToString()} - Quantity: {item.Quantity}");
+				}
+
+
+
+				Console.WriteLine("\n_____________________________________________________________________________________________________\n");
+
+
+
 			}
 
-			Console.WriteLine($"\nReport of {habitName}");
-			Console.WriteLine("______________________________________________________________________________________________________\n");
-			Console.WriteLine($"Habit : {habitName} has {numberOfEntries} Entries with a sum of {sum}");
-			Console.WriteLine("\n____________________________________________________________________________________________________\n");
+
 		}
+
 	}
 }
