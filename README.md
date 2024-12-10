@@ -8,3 +8,16 @@ HabitTracker is a simple C# console app that interacts with a SQlite Database to
 - [x] The users should be able to insert, delete, update and view their logged habit.
 - [x] You should handle all possible errors so that the application never crashes.
 - [x] You can only interact with the database using ADO.NET. You can’t use mappers such as Entity Framework or Dapper.
+
+## Features
+* SQlite Database
+  - Creates a Databse if one is not presents.
+  - Allows users to perform CRUD operations against the databse.
+* User Interface
+  - Neat Console user Interface.
+  - Allows users to navigate through various operations through keyboard.
+* Simple Report function
+  - Number of entries.
+  - Sum of entries.
+  - Average value of entries.
+  - List of all entriess of specified habit
