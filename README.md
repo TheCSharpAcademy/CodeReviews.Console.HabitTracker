@@ -1,6 +1,6 @@
 # Console.HabitTracker by fdv
 
-## My Project for creating a habit tracker in C#.  When you start the program, you can add, delete, update, or view habits and there quantities.
+## My Project for creating a habit tracker in C#.  When you start the program, you can add, delete, update, or view habits and their quantities.  
 
 ### Given Requirements:
 1. This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
