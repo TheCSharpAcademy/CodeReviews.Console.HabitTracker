@@ -16,7 +16,7 @@ internal class Program
             Console.WriteLine("1. Enter a Habit");
             Console.WriteLine("2. Edit a Habit");
             Console.WriteLine("3. Delete a Habit");
-            Console.WriteLine("4. Search Habit Results");
+            Console.WriteLine("4. View All Habit Results");
             Console.WriteLine("5. Quit");
 
             int.TryParse(Console.ReadLine(), out userInput);
@@ -27,7 +27,9 @@ internal class Program
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("That was not a valid input.\n");
+                
             }
         }
         return userInput;
@@ -36,7 +38,7 @@ internal class Program
     public static void EnterHabit()
     {
         HabitModel habit = new HabitModel();
-
+        Console.Clear();
         Console.WriteLine("What habit would you like to track: ");
         habit.Habit = Console.ReadLine();
 
@@ -90,7 +92,7 @@ internal class Program
             else
             {
                 Console.WriteLine("Invalid date format. Setting date to today.");
-                Console.WriteLine("You can update the date from the menu");
+                Console.WriteLine("You can update the date from the menu/n");
                 return DateTime.Now.ToString("MM/dd/yyyy");
             }
         }
@@ -105,9 +107,11 @@ internal class Program
         HabitModel habit = dataAccess.GetHabitById(habitId);
 
         Console.WriteLine($"Habit: {habit.Habit}");
-        Console.WriteLine($"Enter a new Date ({habit.Date}: ");
+        Console.WriteLine($"Enter a new Date ({habit.Date}): ");
         habit.Date = GetDate();
         habit.Quantity = GetQuantity();
+
+        dataAccess.UpdateHabit(habit);
     }
 
     public static void ShowHabits()
@@ -122,9 +126,6 @@ internal class Program
         {
             Console.WriteLine($"Id: {habit.Id}---Habit: {habit.Habit}---Quantity: {habit.Quantity}---Date: {habit.Date}");
         }
-
-        Console.WriteLine("Press any key to continue:");
-        Console.ReadLine();
     }
 
     private static void Main(string[] args)
@@ -146,19 +147,19 @@ internal class Program
                     break;
                 case 2:
                     // Edit Habit
-                    ShowHabits();
+                    EditHabit();
                     break;
                 case 3:
                     // Delete Habit
                     break;
                 case 4:
-                    // Search Habit
+                    ShowHabits();
                     break;
                 case 5:
                     // Quit Program
                     return;
             } 
-            Console.Clear();
+           
         }
 
     }

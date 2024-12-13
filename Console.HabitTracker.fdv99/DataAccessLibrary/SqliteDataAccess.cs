@@ -37,6 +37,18 @@ public class SqliteDataAccess
         ExecuteCommand(sqlStatement, parameters);
     }
 
+    public void UpdateHabit(HabitModel habit)
+    {
+        string sqlStatement = "UPDATE Habits SET Habit = @Habit, Quantity = @Quantity, Date = @Date WHERE Id = @Id";
+        SQLiteParameter[] parameters = {
+            new SQLiteParameter("@Habit", habit.Habit),
+            new SQLiteParameter("@Quantity", habit.Quantity),
+            new SQLiteParameter("@Date", habit.Date),
+            new SQLiteParameter("@Id", habit.Id)
+        };
+        ExecuteCommand(sqlStatement, parameters);
+    }
+
     public List<HabitModel> LoadData(string sqlStatement, params object[] parameters)
     {
         List<HabitModel> habits = new();
