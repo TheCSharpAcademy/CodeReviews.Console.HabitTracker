@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SQLite;
 using DataAccessLibrary;
 using HabitData;
 
@@ -137,32 +138,50 @@ internal class Program
         SqliteDataAccess dataAccess = new SqliteDataAccess();
         dataAccess.DeleteHabit(habitId);
         Console.Clear();
-        Console.WriteLine($"Habit ID: {habitId} deleted.");
+        Console.WriteLine($"\nHabit ID: {habitId} deleted.\n");
     }
 
     public static void ReportHabit()
     {
         ShowHabits();
-        Console.WriteLine("Please enter the habit you would like a report on: ");
+        Console.WriteLine("\nPlease enter the habit you would like a report on: ");
         
         string habitName = Console.ReadLine().ToLower();
-        // Input validation
+
+        if (string.IsNullOrWhiteSpace(habitName))
+        {
+            Console.WriteLine("Invalid input. Please enter a valid habit name.");
+            return;
+        }
 
         SqliteDataAccess dataAccess = new SqliteDataAccess();
 
         try
         {
-            string sqlStatement = $"SELECT * FROM Habits WHERE Habit = '{habitName}'";
+            string sqlStatement = "SELECT * FROM Habits WHERE Habit = @HabitName";
+            SQLiteParameter parameter = new SQLiteParameter("@HabitName", habitName);
 
-            var habits = dataAccess.LoadData(sqlStatement);
+            var habits = dataAccess.LoadData(sqlStatement, parameter);
 
-            int total = habits.Count;
-            Console.WriteLine(total);
+            if (habits == null || habits.Count == 0)
+            {
+                Console.Clear();
+                Console.WriteLine("Habit does not exist.\n");
+                return;
+            }
+            
+            int totalQuantity = 0;
+
+            foreach (var habit in habits)
+            {
+                totalQuantity += habit.Quantity;
+            }
+            Console.Clear();
+            Console.WriteLine($"\nTotal quantity of {habitName}: {totalQuantity}\n");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Habit does not exist");
-            throw;
+            Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
 
