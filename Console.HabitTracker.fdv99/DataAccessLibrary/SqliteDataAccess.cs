@@ -106,4 +106,13 @@ public class SqliteDataAccess
             }
         }
     }
+
+    public void DeleteHabit(int id)
+    {
+        string sqlStatement = "DELETE FROM Habits WHERE Id = @Id";
+        SQLiteParameter[] parameters = {
+            new SQLiteParameter("@Id", id)
+        };
+        ExecuteCommand(sqlStatement, parameters);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿// DataBaseCreate.cs
+using HabitData;
 using System.Data.SQLite;
 
 namespace DataAccessLibrary
@@ -32,10 +33,34 @@ namespace DataAccessLibrary
                         Console.WriteLine("Table 'Habit' created.");
                     }
                 }
+                SeedDatabase();
             }
             else
             {
                 Console.WriteLine("Database file already exists.");
+            }
+        }
+
+        public static void SeedDatabase()
+        {
+            // Seed the database with 50 random samples of Habit, Date, and Quantity
+            HabitModel habit = new HabitModel();
+            Random random = new Random();
+            string[] habits = { "walk", "run", "read", "write", "code", "relax" };
+            // make a random date in MM/DD/YYYY format
+            int count = 0;
+
+            while (count < 50)
+            {
+                int habitIndex = random.Next(habits.Length);
+                habit.Habit = habits[habitIndex];
+                habit.Quantity = random.Next(1, 10);
+                habit.Date = $"{random.Next(1, 12)}/{random.Next(1, 28)}/{random.Next(2000, 2024)}";
+
+                SqliteDataAccess dataAccess = new SqliteDataAccess();
+                dataAccess.InsertHabit(habit);
+
+                count++;
             }
         }
     }

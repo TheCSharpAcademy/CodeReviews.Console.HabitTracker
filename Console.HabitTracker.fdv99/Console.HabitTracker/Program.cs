@@ -40,7 +40,7 @@ internal class Program
         HabitModel habit = new HabitModel();
         Console.Clear();
         Console.WriteLine("What habit would you like to track: ");
-        habit.Habit = Console.ReadLine();
+        habit.Habit = Console.ReadLine().ToLower();
 
         habit.Date = GetDate();
 
@@ -128,6 +128,17 @@ internal class Program
         }
     }
 
+    public static void DeleteHabit()
+    {
+        ShowHabits();
+        Console.WriteLine("Please enter the Id of the habit you would like to delete: ");
+        int habitId = Convert.ToInt32(Console.ReadLine());
+        SqliteDataAccess dataAccess = new SqliteDataAccess();
+        dataAccess.DeleteHabit(habitId);
+        Console.Clear();
+        Console.WriteLine($"Habit ID: {habitId} deleted.");
+    }
+
     private static void Main(string[] args)
     {
         Console.WriteLine("Welcome to the Habit Tracker!\n");
@@ -150,7 +161,7 @@ internal class Program
                     EditHabit();
                     break;
                 case 3:
-                    // Delete Habit
+                    DeleteHabit();
                     break;
                 case 4:
                     ShowHabits();
