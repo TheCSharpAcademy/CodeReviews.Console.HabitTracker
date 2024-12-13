@@ -31,7 +31,6 @@ internal class Program
             {
                 Console.Clear();
                 Console.WriteLine("That was not a valid input.\n");
-                
             }
         }
         return userInput;
@@ -41,8 +40,8 @@ internal class Program
     {
         HabitModel habit = new HabitModel();
         Console.Clear();
-        Console.WriteLine("What habit would you like to track: ");
-        habit.Habit = Console.ReadLine().ToLower();
+
+        habit.Habit = GetInput("What habit would you like to track: ").ToLower();
 
         habit.Date = GetDate();
 
@@ -54,62 +53,45 @@ internal class Program
 
     private static int GetQuantity()
     {
-        bool quantityValid = false;
-        int quantity = 0;
-
-        while (quantityValid == false)
+        while (true)
         {
-            Console.WriteLine("Please enter the quantity: ");
-            string? quantityInput = Console.ReadLine();
+            string quantityInput = GetInput("Please enter the quantity: ");
+            if (int.TryParse(quantityInput, out int quantity))
+            {
+                return quantity;
+            }
 
-            if (int.TryParse(quantityInput, out quantity))
-            {
-                quantityValid = true;
-            }
-            else
-            {
-                Console.WriteLine("Value must be an integer.");
-            }
+            Console.WriteLine("Value must be an integer.");
         }
-
-        return quantity;
     }
 
     private static string GetDate()
     {
-        Console.WriteLine("Please enter the date, or press T to use today: ");
-        string dateInputString = Console.ReadLine();
+        string dateInputString = GetInput("Please enter the date, or press T to use today: ");
 
         if (dateInputString.ToLower() == "t")
         {
             return DateTime.Now.ToString("MM/dd/yyyy");
         }
-        else
+
+        if (DateTime.TryParse(dateInputString, out DateTime parsedDate))
         {
-            DateTime parsedDate;
-            if (DateTime.TryParse(dateInputString, out parsedDate))
-            {
-                return parsedDate.ToString("MM/dd/yyyy");
-            }
-            else
-            {
-                Console.WriteLine("Invalid date format. Setting date to today.");
-                Console.WriteLine("You can update the date from the menu/n");
-                return DateTime.Now.ToString("MM/dd/yyyy");
-            }
+            return parsedDate.ToString("MM/dd/yyyy");
         }
+
+        Console.WriteLine("Invalid date format. Setting date to today.");
+        return DateTime.Now.ToString("MM/dd/yyyy");
     }
 
     public static void EditHabit()
     {
         ShowHabits();
-        Console.WriteLine("Please enter the Id of the habit you would like to edit: ");
-        int habitId = Convert.ToInt32(Console.ReadLine());
+        int habitId = GetValidHabitId("Please enter the Id of the habit you would like to edit: ");
+
         SqliteDataAccess dataAccess = new SqliteDataAccess();
         HabitModel habit = dataAccess.GetHabitById(habitId);
 
         Console.WriteLine($"Habit: {habit.Habit}");
-        Console.WriteLine($"Enter a new Date ({habit.Date}): ");
         habit.Date = GetDate();
         habit.Quantity = GetQuantity();
 
@@ -134,9 +116,12 @@ internal class Program
     {
         ShowHabits();
         Console.WriteLine("Please enter the Id of the habit you would like to delete: ");
-        int habitId = Convert.ToInt32(Console.ReadLine());
+        int habitId = GetValidHabitId("Please enter the Id of the habit you would like to delete: ");
+
         SqliteDataAccess dataAccess = new SqliteDataAccess();
+
         dataAccess.DeleteHabit(habitId);
+
         Console.Clear();
         Console.WriteLine($"\nHabit ID: {habitId} deleted.\n");
     }
@@ -144,9 +129,7 @@ internal class Program
     public static void ReportHabit()
     {
         ShowHabits();
-        Console.WriteLine("\nPlease enter the habit you would like a report on: ");
-        
-        string habitName = Console.ReadLine().ToLower();
+        string habitName = GetInput("\nPlease enter the habit you would like a report on: ").ToLower();
 
         if (string.IsNullOrWhiteSpace(habitName))
         {
@@ -183,6 +166,26 @@ internal class Program
         {
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
+    }
+
+    private static int GetValidHabitId(string prompt)
+    {
+        while (true)
+        {
+            string input = GetInput(prompt);
+            if (int.TryParse(input, out int habitId))
+            {
+                return habitId;
+            }
+
+            Console.WriteLine("Invalid input. Please enter a valid habit Id.");
+        }
+    }
+
+    private static string GetInput(string prompt)
+    {
+        Console.WriteLine(prompt);
+        return Console.ReadLine();
     }
 
     private static void Main(string[] args)
