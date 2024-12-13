@@ -1,5 +1,4 @@
-﻿// DataBaseCreate.cs
-using HabitData;
+﻿using HabitData;
 using System.Data.SQLite;
 
 namespace DataAccessLibrary
