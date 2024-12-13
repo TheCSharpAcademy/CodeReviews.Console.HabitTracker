@@ -17,7 +17,8 @@ internal class Program
             Console.WriteLine("2. Edit a Habit");
             Console.WriteLine("3. Delete a Habit");
             Console.WriteLine("4. View All Habit Results");
-            Console.WriteLine("5. Quit");
+            Console.WriteLine("5. Report on a Habit");
+            Console.WriteLine("6. Quit Program");
 
             int.TryParse(Console.ReadLine(), out userInput);
 
@@ -139,6 +140,32 @@ internal class Program
         Console.WriteLine($"Habit ID: {habitId} deleted.");
     }
 
+    public static void ReportHabit()
+    {
+        ShowHabits();
+        Console.WriteLine("Please enter the habit you would like a report on: ");
+        
+        string habitName = Console.ReadLine().ToLower();
+        // Input validation
+
+        SqliteDataAccess dataAccess = new SqliteDataAccess();
+
+        try
+        {
+            string sqlStatement = $"SELECT * FROM Habits WHERE Habit = '{habitName}'";
+
+            var habits = dataAccess.LoadData(sqlStatement);
+
+            int total = habits.Count;
+            Console.WriteLine(total);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Habit does not exist");
+            throw;
+        }
+    }
+
     private static void Main(string[] args)
     {
         Console.WriteLine("Welcome to the Habit Tracker!\n");
@@ -167,6 +194,9 @@ internal class Program
                     ShowHabits();
                     break;
                 case 5:
+                    ReportHabit();
+                    break;
+                case 6:
                     // Quit Program
                     return;
             } 

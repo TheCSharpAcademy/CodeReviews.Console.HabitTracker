@@ -12,6 +12,17 @@ public class SqliteDataAccess
         return cnn;
     }
 
+    private SQLiteParameter[] GetHabitParameters(HabitModel habit)
+    {
+        return new SQLiteParameter[]
+        {
+            new SQLiteParameter("@Habit", habit.Habit),
+            new SQLiteParameter("@Quantity", habit.Quantity),
+            new SQLiteParameter("@Date", habit.Date),
+            new SQLiteParameter("@Id", habit.Id)
+        };
+    }
+
     public void ExecuteCommand(string sqlStatement, params object[] parameters)
     {
         using (var cnn = CreateConnection())
@@ -28,11 +39,7 @@ public class SqliteDataAccess
     {
         string sqlStatement = "INSERT INTO Habits (Habit, Quantity, Date) VALUES (@Habit, @Quantity, @Date)";
 
-        SQLiteParameter[] parameters = {
-            new SQLiteParameter("@Habit", habit.Habit),
-            new SQLiteParameter("@Quantity", habit.Quantity),
-            new SQLiteParameter("@Date", habit.Date)
-        };
+        var parameters = GetHabitParameters(habit).Where(p => p.ParameterName != "@Id").ToArray();
 
         ExecuteCommand(sqlStatement, parameters);
     }
@@ -40,12 +47,9 @@ public class SqliteDataAccess
     public void UpdateHabit(HabitModel habit)
     {
         string sqlStatement = "UPDATE Habits SET Habit = @Habit, Quantity = @Quantity, Date = @Date WHERE Id = @Id";
-        SQLiteParameter[] parameters = {
-            new SQLiteParameter("@Habit", habit.Habit),
-            new SQLiteParameter("@Quantity", habit.Quantity),
-            new SQLiteParameter("@Date", habit.Date),
-            new SQLiteParameter("@Id", habit.Id)
-        };
+        
+        var parameters = GetHabitParameters(habit);
+
         ExecuteCommand(sqlStatement, parameters);
     }
 
