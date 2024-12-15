@@ -7,6 +7,6 @@ a CRUD application to track habits.
 # Features
 * SQLite Database Connection
 * Showing all records
-* Inserting records
-* Deleting records
-* Updating records
+* Inserting record
+* Deleting record
+* Updating record
