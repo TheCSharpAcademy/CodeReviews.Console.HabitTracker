@@ -21,8 +21,11 @@ public class Database
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
+
+            tableCmd.Parameters.Add("@Date", SqliteType.Text).Value = date.ToString("dd/MM/yyyy");
+            tableCmd.Parameters.Add("@Quantity", SqliteType.Integer).Value = quantity;
             tableCmd.CommandText =
-                $"INSERT INTO drinking_water(date, quantity) VALUES('{date.ToString("dd/MM/yyyy")}', '{quantity}')";
+                "INSERT INTO drinking_water(date, quantity) VALUES(@Date, @Quantity)";
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
@@ -36,8 +39,9 @@ public class Database
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
+            tableCmd.Parameters.Add("@Id", SqliteType.Integer).Value = record.Id;
             tableCmd.CommandText =
-                $"DELETE FROM drinking_water WHERE Id = '{record.Id}'";
+                "DELETE FROM drinking_water WHERE Id = @Id";
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
@@ -100,8 +104,11 @@ public class Database
             connection.Open();
 
             var tableCmd = connection.CreateCommand();
+            tableCmd.Parameters.Add("@Date", SqliteType.Text).Value = date.ToString("dd/MM/yyyy");
+            tableCmd.Parameters.Add("@Id", SqliteType.Integer).Value = record.Id;
+            tableCmd.Parameters.Add("@Quantity", SqliteType.Integer).Value = quantity;
             tableCmd.CommandText =
-                $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {record.Id}";
+                "UPDATE drinking_water SET date = @Date, quantity = @Quantity WHERE Id = @Id";
             tableCmd.ExecuteNonQuery();
 
             connection.Close();
