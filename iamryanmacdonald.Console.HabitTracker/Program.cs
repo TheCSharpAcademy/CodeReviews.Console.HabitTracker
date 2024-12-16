@@ -1,3 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using iamryanmacdonald.Console.HabitTracker;
 
-Console.WriteLine("Hello, World!");
+var database = new Database("habit-tracker.db");
+var userInterface = new UserInterface(database);
+userInterface.MainMenu();
