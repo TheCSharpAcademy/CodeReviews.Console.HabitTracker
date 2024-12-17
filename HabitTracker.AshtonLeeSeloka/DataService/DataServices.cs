@@ -9,7 +9,7 @@ namespace DataService
 		public bool recordsPresent = true;
 
 		/// <summary>
-		/// General methode used to recieve user input
+		/// General methode used to recieve user input.
 		/// </summary>
 		/// <param name="messageToUser">Message to write to console</param>
 		/// <returns>USer input as a string value</returns>

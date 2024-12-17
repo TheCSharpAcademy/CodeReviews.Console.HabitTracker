@@ -21,7 +21,7 @@ void StartMenu()
 		Console.WriteLine("5) Generate report");
 		Console.WriteLine("\nType 0 to exit\n");
 
-		string userInput = Console.ReadLine();
+		string? userInput = Console.ReadLine();
 
 		switch (userInput)
 		{
