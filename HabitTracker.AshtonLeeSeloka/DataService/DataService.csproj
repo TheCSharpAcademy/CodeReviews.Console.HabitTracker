@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DBItem\Habits.csproj" />
+    <ProjectReference Include="..\DBItem\Habit.csproj" />
   </ItemGroup>
 
 </Project>

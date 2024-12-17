@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HabitTracker.AshtonLeeSelok
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataService", "DataService\DataService.csproj", "{24335AF7-87A5-4434-A175-13282891B8A1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habits", "DBItem\Habits.csproj", "{E304AA4B-019A-48F0-84F6-0047D544CF35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habit", "DBItem\Habit.csproj", "{E304AA4B-019A-48F0-84F6-0047D544CF35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
