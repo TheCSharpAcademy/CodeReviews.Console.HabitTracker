@@ -6,10 +6,12 @@ DataServices data = new DataServices();
 
 StartMenu();
 
- void StartMenu()
+void StartMenu()
 {
-	while (!closeApplication) 
+	data.CreateDB();
+	while (!closeApplication)
 	{
+		Console.Clear();
 		Console.WriteLine("\n\n\n+==============================================================================+\r\n|  _   _    _    ____ ___ _____   _____ ____      _    ____ _  _______ ____    |\r\n| | | | |  / \\  | __ )_ _|_   _| |_   _|  _ \\    / \\  / ___| |/ / ____|  _ \\   |\r\n| | |_| | / _ \\ |  _ \\| |  | |     | | | |_) |  / _ \\| |   | ' /|  _| | |_) |  |\r\n| |  _  |/ ___ \\| |_) | |  | |     | | |  _ <  / ___ \\ |___| . \\| |___|  _ <   |\r\n| |_| |_/_/   \\_\\____/___| |_|     |_| |_| \\_\\/_/   \\_\\____|_|\\_\\_____|_| \\_\\  |\r\n+==============================================================================+");
 		Console.WriteLine("\nSelect from the below menu");
 		Console.WriteLine("\n1) Insert Habit Data");
@@ -19,9 +21,9 @@ StartMenu();
 		Console.WriteLine("5) Generate report");
 		Console.WriteLine("\nType 0 to exit\n");
 
-		string userInput =  Console.ReadLine();
+		string userInput = Console.ReadLine();
 
-		switch (userInput) 
+		switch (userInput)
 		{
 			case "1":
 				data.InsertRecord();
@@ -33,7 +35,7 @@ StartMenu();
 				data.DeleteRecord();
 				break;
 			case "4":
-				data.GetAllRecords();
+				data.DisplayAllRecords();
 				break;
 			case "5":
 				data.GenerateReport();

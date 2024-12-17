@@ -1,6 +1,6 @@
 ﻿namespace DBItem
 {
-	public class DBItems
+	public class Habit
 	{
 		public int? Id { get; set; }
 		public string? Habbit { get; set; }
