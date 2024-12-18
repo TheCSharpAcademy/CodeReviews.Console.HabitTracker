@@ -145,7 +145,6 @@ internal class Interface
         }
         else
         {
-            DateTime dateAndTime = DateTime.Now;
             date = DateTime.Now.ToString("yyyy-MM-dd");
             Console.WriteLine(date);
         }

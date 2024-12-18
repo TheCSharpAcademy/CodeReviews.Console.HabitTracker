@@ -2,7 +2,7 @@
 
 internal class Program
 {
-    static bool userSpeechInput = false;
+    static bool userSpeechInput;
     static void Main(string[] args)
     {
         if (!File.Exists("Habits.db"))
