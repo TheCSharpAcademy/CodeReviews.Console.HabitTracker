@@ -28,10 +28,10 @@ namespace habit_tracker {
                 connection.Close();
             }
 
-            getUserInput();
+            GetUserInput();
         }
 
-        static void getUserInput() {
+        static void GetUserInput() {
             Console.Clear();
             bool closeApp = false; 
 
@@ -121,7 +121,7 @@ namespace habit_tracker {
                 if (checkQuery == 0) {
                     Console.WriteLine($"\nRecord with id {recordId} does not exist");
                     connection.Close();
-                    getUserInput();
+                    GetUserInput();
                 }
 
                 string date = GetDateInput();   
@@ -189,7 +189,7 @@ namespace habit_tracker {
 
             string dateInput = Console.ReadLine();
             if (dateInput == "0") {
-                getUserInput();
+                GetUserInput();
             }
 
             while (!DateTime.TryParseExact(dateInput, "mm-DD-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _)) {
@@ -205,7 +205,7 @@ namespace habit_tracker {
 
             string numberInput = Console.ReadLine();
             if (numberInput == "0") {
-                getUserInput();
+                GetUserInput();
             }
 
             int finalInput = Convert.ToInt32(numberInput);
