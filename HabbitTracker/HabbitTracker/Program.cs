@@ -220,7 +220,6 @@ namespace HabbitTracker
                 if (checkQuery == 0)
                 {
                     Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
-                    //connection.Close();
                     Thread.Sleep(2000);
                     Update();
                 }
