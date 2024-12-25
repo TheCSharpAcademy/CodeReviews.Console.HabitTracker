@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\admin\\Desktop\\CSharpAcademy\\HabitTracker\\CodeReviews.Console.HabitTracker"
+    }
+  }
+}
