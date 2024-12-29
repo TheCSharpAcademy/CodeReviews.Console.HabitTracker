@@ -1,4 +1,4 @@
-﻿namespace HabitTracker.joshluca98;
+﻿namespace HabitTracker.joshluca98.Models;
 
 public class DrinkingWater
 {
