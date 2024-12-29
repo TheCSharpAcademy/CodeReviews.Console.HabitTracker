@@ -35,7 +35,8 @@ public class Database
     {
         Console.Clear();
         string date = Helper.GetDateInput();
-        int quantity = Helper.GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+        if (date == "0") return;
+        int quantity = Helper.GetNumberInput("\nPlease type number of glasses (no decimals allowed):\n");
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
@@ -48,7 +49,6 @@ public class Database
 
     public void GetAllRecords()
     {
-        //Console.Clear();
         using (var connection = new SqliteConnection(_connectionString))
         {
             connection.Open();
@@ -73,21 +73,20 @@ public class Database
                     }); ;
                 }
             }
-            else
-            {
-                Console.WriteLine("No rows found");
-            }
 
             connection.Close();
             Console.Clear();
+
             Console.WriteLine("------------------------------------------\n");
-            foreach (var entry in tableData)
+            if (tableData.Count > 0)
             {
-                Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yyyy")} - Quantity: {entry.Quantity}");
+                foreach (var entry in tableData)
+                {
+                    Console.WriteLine($"{entry.Id} - {entry.Date.ToString("dd-MMM-yyyy")} - Quantity: {entry.Quantity}");
+                }
+                Console.WriteLine("\n------------------------------------------\n");
             }
-            Console.WriteLine("------------------------------------------\n");
-            Console.WriteLine("Press ENTER to continue..");
-            Console.ReadLine();
+            else Console.WriteLine("(!) No records exist in the database\n");
         }
     }
 
@@ -96,7 +95,7 @@ public class Database
         Console.Clear();
         GetAllRecords();
 
-        int recordId = Helper.GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to go back to Main Menu\n\n");
+        int recordId = Helper.GetNumberInput("\nPlease type the ID of the record to delete or type 0 to go back to the menu\n");
         if (recordId == 0) return;
 
         using (var connection = new SqliteConnection(_connectionString))
@@ -107,12 +106,14 @@ public class Database
             int rowCount = tableCmd.ExecuteNonQuery();
             if (rowCount == 0)
             {
-                Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. \n\n");
+                Console.WriteLine($"\nRecord with ID '{recordId}' does NOT exist.\n");
                 Delete();
             }
             connection.Close();
         }
-        Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
+        Console.WriteLine($"\nRecord with ID number '{recordId}' was deleted.\n");
+        Console.WriteLine("Press ENTER to continue..");
+        Console.ReadLine();
     }
 
     public void Update()
@@ -120,7 +121,7 @@ public class Database
         Console.Clear();
         GetAllRecords();
 
-        int recordId = Helper.GetNumberInput("\n\nPlease type the Id of the record you want to update or type 0 to go back to Main Menu\n\n");
+        int recordId = Helper.GetNumberInput("\n\nPlease type the ID of the record you want to update or type 0 to go back to the menu:\n");
         if (recordId == 0) return;
 
         using (var connection = new SqliteConnection(_connectionString))
@@ -133,14 +134,14 @@ public class Database
 
             if (checkQuery == 0)
             {
-                Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+                Console.WriteLine($"\n\nRecord with ID {recordId} doesn't exist.\n\n");
                 connection.Close();
                 Update();
             }
 
             string date = Helper.GetDateInput();
             if (date == "0") { return; }
-            int quantity = Helper.GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+            int quantity = Helper.GetNumberInput("\nPlease type number of glasses (no decimals allowed):\n");
 
             var tableCmd = connection.CreateCommand();
             tableCmd.CommandText = $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id =  {recordId}";
@@ -149,7 +150,8 @@ public class Database
 
             connection.Close();
         }
-        Console.WriteLine($"\n\nRecord with Id {recordId} was updated. \n\n");
+        Console.WriteLine($"\nRecord with Id {recordId} was updated.\n");
+        Console.WriteLine("Press ENTER to continue..");
+        Console.ReadLine();
     }
-
 }

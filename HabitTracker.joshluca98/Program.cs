@@ -24,12 +24,14 @@ void UserMenu()
         switch (commandInput)
         {
             case "0":
-                Console.WriteLine("\nGoodbye!\n");
-                closeApp = true;
+                Console.Clear();
+                Console.WriteLine("Terminating..");
                 Environment.Exit(0);
                 break;
             case "1":
                 db.GetAllRecords();
+                Console.WriteLine("Press ENTER to continue..");
+                Console.ReadLine();
                 break;
             case "2":
                 db.Insert();

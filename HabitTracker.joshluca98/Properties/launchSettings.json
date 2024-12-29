@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.joshluca98": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}
