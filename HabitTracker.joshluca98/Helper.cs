@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-
 namespace HabitTracker.joshluca98;
 
 public static class Helper
@@ -15,7 +14,6 @@ public static class Helper
             Console.WriteLine("\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main menu or try again:\n");
             dateInput = Console.ReadLine();
         }
-
         return dateInput;
     }
 

@@ -20,7 +20,6 @@ void UserMenu()
         Console.WriteLine("------------------------------------------\n");
 
         string commandInput = Console.ReadLine();
-
         switch (commandInput)
         {
             case "0":
