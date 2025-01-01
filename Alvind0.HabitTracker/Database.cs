@@ -228,15 +228,34 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
             }
         }
 
-        string habit;
+        string habit = "";
+        string unit = "";
         bool updateHabit = AnsiConsole.Confirm("Update habit type?");
         if (updateHabit)
         {
-            habit = AnsiConsole.Ask<string>("Enter the habit or input 0 to go back to main menu");
-            if (habit == "0")
+            while (true)
             {
-                Console.Clear();
-                return;
+                habit = AnsiConsole.Ask<string>("Enter the habit or input 0 to go back to main menu");
+                if (habit == "0")
+                {
+                    Console.Clear();
+                    return;
+                }
+                else if (!CheckIfHabitExists(habit))
+                {
+                    AnsiConsole.WriteLine($"Habit does not exist.");
+                    continue;
+                }
+                break;
+            }
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = @"SELECT Unit FROM HabitTypes WHERE Habit = @habit";
+                tableCmd.Parameters.AddWithValue("@habit", habit);
+                var result = tableCmd.ExecuteScalar()?.ToString() ?? "Undefined";
+                unit = result;
             }
         }
 
@@ -300,6 +319,7 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
             tableCmd.Parameters.AddWithValue("@date", date);
             tableCmd.Parameters.AddWithValue("@quantity", quantity);
             tableCmd.Parameters.AddWithValue("@id", id);
+            tableCmd.Parameters.AddWithValue("@habit", habit);
             tableCmd.ExecuteNonQuery();
         }
 
@@ -379,7 +399,7 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
                 tableCmd.CommandText = @"
 DELETE FROM HabitTypes WHERE Habit = @habit;
 DELETE FROM Habits WHERE Habit = @habit;";
-                tableCmd.Parameters.AddWithValue("@habit",habit);
+                tableCmd.Parameters.AddWithValue("@habit", habit);
                 tableCmd.ExecuteNonQuery();
             }
         }
@@ -565,7 +585,7 @@ DELETE FROM Habits WHERE Habit = @habit;";
         }
         return output;
     }
-    
+
     internal static void ViewStatistics(List<StatisticRecord> records, string habit)
     {
         Table table = new();
@@ -641,7 +661,7 @@ Date LIKE '%' || @month || '-' || @thisYear";
                         tableCmd.Parameters.AddWithValue("@thisYear", thisYear);
                         break;
                 }
-                
+
                 tableCmd.Parameters.AddWithValue("@habit", habit);
                 var queryResult = tableCmd.ExecuteScalar();
                 int quantitySum = queryResult != DBNull.Value ? Convert.ToInt32(queryResult) : 0;
