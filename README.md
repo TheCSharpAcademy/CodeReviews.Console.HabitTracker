@@ -35,6 +35,7 @@ Console based application to track book reading.
 * Console based UI
   * ![VsDebugConsole_RdJPF03RBG](https://github.com/user-attachments/assets/c9c037b0-6529-42ff-9388-e245f3f81ed8)
 * Date must be inserted in dd.mm.yyyy format
+* Date cannot be in the future
 * Every input is protected from potential errors
 
 ## Challenges
@@ -47,3 +48,4 @@ Console based application to track book reading.
 * I need to start planning my code instead of going with the flow
 * In next project i will focus on splitting project into more files, working in on big file of code is not great in terms of readability
 * I want to get comfortable using Debugger in Visual Studio
+* I will start using comments so getting back to code would be easier
