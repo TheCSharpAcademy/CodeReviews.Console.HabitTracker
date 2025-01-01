@@ -252,7 +252,7 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
         bool updateQuantity = AnsiConsole.Confirm("Update quantity?");
         if (updateQuantity)
         {
-            quantity = GetNumber("\nPlease enter number of meters walked (no decimals or negatives allowed) or enter 0 to go back to Main Menu.");
+            quantity = GetNumber("\nPlease enter quantity(no decimals or negatives allowed) or enter 0 to go back to Main Menu.");
         }
 
         Console.Clear();
@@ -378,8 +378,8 @@ SELECT HabitTypes.Unit FROM HabitTypes WHERE HabitTypes.Habit = Habits.Habit);";
                 connection.Open();
                 tableCmd.CommandText = @"
 DELETE FROM HabitTypes WHERE Habit = @habit;
-DELETE FROM Habits WHERE Habit = @habit";
-
+DELETE FROM Habits WHERE Habit = @habit;";
+                tableCmd.Parameters.AddWithValue("@habit",habit);
                 tableCmd.ExecuteNonQuery();
             }
         }
@@ -395,7 +395,7 @@ DELETE FROM Habits WHERE Habit = @habit";
             connection.Open();
             using (SqliteCommand tableCmd = connection.CreateCommand())
             {
-                tableCmd.CommandText = $"SELECT count(1) FROM walkingHabit WHERE Id = @id";
+                tableCmd.CommandText = $"SELECT count(1) FROM Habits WHERE Id = @id";
                 tableCmd.Parameters.AddWithValue("@id", id);
                 return Convert.ToInt64(tableCmd.ExecuteScalar()) == 1 ? true : false;
             }
@@ -565,6 +565,7 @@ DELETE FROM Habits WHERE Habit = @habit";
         }
         return output;
     }
+    
     internal static void ViewStatistics(List<StatisticRecord> records, string habit)
     {
         Table table = new();
@@ -635,14 +636,15 @@ Date LIKE '%' || @year";
 SELECT SUM(Quantity) AS Sum 
 FROM Habits 
 WHERE Habit = @habit AND 
-Date LIKE '%' || @month || '-%'";
+Date LIKE '%' || @month || '-' || @thisYear";
                         tableCmd.Parameters.AddWithValue("@month", thisMonth);
+                        tableCmd.Parameters.AddWithValue("@thisYear", thisYear);
                         break;
                 }
-
+                
                 tableCmd.Parameters.AddWithValue("@habit", habit);
-                int quantitySum = Convert.ToInt32(tableCmd.ExecuteScalar());
-
+                var queryResult = tableCmd.ExecuteScalar();
+                int quantitySum = queryResult != DBNull.Value ? Convert.ToInt32(queryResult) : 0;
 
                 tableCmd.CommandText = $"SELECT Unit FROM HabitTypes WHERE Habit = \'{habit}\'";
 
