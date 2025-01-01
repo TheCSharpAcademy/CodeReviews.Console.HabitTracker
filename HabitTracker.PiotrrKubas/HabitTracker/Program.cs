@@ -268,7 +268,7 @@ namespace HabitTracker
                 string? temp;
                 do
                 {
-                    temp = GetInputLowerCase("How many times habit has occured?"); ;
+                    temp = GetInputLowerCase("How many times habit has occured?");
                 } while (!uint.TryParse(temp, out number));
                 Console.WriteLine(number);
                 return number;
