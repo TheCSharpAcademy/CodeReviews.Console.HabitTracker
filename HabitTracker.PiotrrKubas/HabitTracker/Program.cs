@@ -72,7 +72,7 @@ namespace HabitTracker
             void InsertRecord()
             {
                 string date = GetDate();
-                int number = GetQuantity();
+                uint number = GetQuantity();
 
                 using var connection = new SqliteConnection("Data Source=HabitTracker.db");
                 connection.Open();
@@ -112,7 +112,7 @@ namespace HabitTracker
                 while (string.IsNullOrEmpty(option) || !validOptions.Contains(option));
 
                 string? newDate = null;
-                int? newQuantity = null;
+                uint? newQuantity = null;
 
                 using var connection = new SqliteConnection("Data Source=HabitTracker.db");
                 connection.Open();
@@ -170,7 +170,6 @@ namespace HabitTracker
                 }
                 Console.ReadLine();
             }
-
 
             void DeleteRecord()
             {
@@ -248,9 +247,9 @@ namespace HabitTracker
                 }
                 else
                 {
-                    while (!DateTime.TryParseExact(input, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out thisDate))
+                    while (!DateTime.TryParseExact(input, "dd.MM.yyyy", CultureInfo.CreateSpecificCulture("pl-PL"), DateTimeStyles.None, out thisDate) || thisDate > DateTime.Today)
                     {
-                        input = GetInputLowerCase("Invalid date format.Please enter a date in the format dd.MM.yyyy, or type 'T' for today's date:");
+                        input = GetInputLowerCase("Invalid date. Please enter a date in the format dd.MM.yyyy, or type 'T' for today's date:");
                         if (input.Equals("t"))
                         {
                             thisDate = DateTime.Today;
@@ -263,14 +262,14 @@ namespace HabitTracker
                 return date;
             }
 
-            int GetQuantity()
+            uint GetQuantity()
             {
-                int number;
+                uint number;
                 string? temp;
                 do
                 {
                     temp = GetInputLowerCase("How many times habit has occured?"); ;
-                } while (!int.TryParse(temp, out number) || temp == "0");
+                } while (!uint.TryParse(temp, out number));
                 Console.WriteLine(number);
                 return number;
             }
