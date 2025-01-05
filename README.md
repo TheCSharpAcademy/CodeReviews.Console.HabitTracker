@@ -18,7 +18,12 @@ using C# and Visual Studio Code.
 - [x] Follow the DRY Principle, and avoid code repetition.
 - [x] Your project needs to contain a Read Me file where you'll explain how your app works.
 
+# Added Features
+- I managed to add another column to the table called 'Name'. When the user is prompted for Habit info, it now asks for the name of the Habit as well as the date performed and the quantity.
+- When prompted to input a date, the user can now type 'today' and the program will automatically fill in the current date.
+- Created a more user-friendly experience that doesn't clutter the console/terminal and leaves a friendly 'Goodbye' message when exiting.
+
 # Challenges
 - This was my first ever experience using SQL/SQLite. The most challenging part was learning how it all worked. I learned how to create connections and commands, how to interact with the tables using those commands, how to execute the different types of commands(ExecuteNonQuery, ExecuteReader, and ExecuteScalar), etc.
-- I think trying to learn how the SqliteDataReader works was pretty tough, but I was able to get it working enough to suit my needs.
-- I managed to add another column to the table called 'Name'. When the user is prompted for Habit info, it now asks for the name of the Habit as well as the date performed and the quantity.
+- I think trying to learn how the SqliteDataReader works was pretty tough (and to be honest I'm still not entirely about it).
+- In my attempt to create a more user-friendly experience I ended up using Console.Clear() much more often than I would like, and it feels a bit messy to me. However I'm unsure if there is a better way to do it.
