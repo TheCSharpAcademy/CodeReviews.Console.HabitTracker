@@ -111,7 +111,7 @@ namespace HabitTracker
                 Console.WriteLine("--------------------------------------------");
                 foreach (Habit dw in tableData)
                 {
-                    Console.WriteLine($"{dw.Id} - {dw.Name.ToString()} - {dw.Date.ToString("dd-MMM-yyyy")} - Quantity: {dw.Quantity}");
+                    Console.WriteLine($"{dw.Id} - {dw.Name} - {dw.Date.ToString("dd-MMM-yyyy")} - Quantity: {dw.Quantity}");
                 }
                 Console.WriteLine("--------------------------------------------\n");
 
