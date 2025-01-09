@@ -1,7 +1,5 @@
 See https://www.thecsharpacademy.com/project/12/habit-logger for more details.
 
-Still WIP
-
 ## Requirements
 
 ### Rules
