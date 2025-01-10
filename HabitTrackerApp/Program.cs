@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.VisualBasic.FileIO;
 using System.Data;
 using System.Globalization;
 
@@ -79,7 +78,7 @@ namespace HabitTrackerApp
         }
         private static void Insert()
         {
-            string date = GetDateInput();
+            string date = CurrentDate();
 
             int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed). Type 0 to return to main menu. \n\n");
 
@@ -87,13 +86,45 @@ namespace HabitTrackerApp
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"INSERT INTO drinking_water(Date, Quantity) VALUES('{date}', {quantity})";
+                tableCmd.CommandText = "INSERT INTO drinking_water(Date, Quantity) VALUES(@Date, @Quantity)";
+                tableCmd.Parameters.AddWithValue("@Date", date);
+                tableCmd.Parameters.AddWithValue("@Quantity", quantity);
+
+                //tableCmd.CommandText = $"INSERT INTO drinking_water(Date, Quantity) VALUES('{date}', {quantity})";
 
                 tableCmd.ExecuteNonQuery();
 
                 connection.Close();
             }
         }
+
+        private static string CurrentDate()
+        {
+            string date = DateTime.Now.ToString("dd-MM-yy");
+            bool validInput = false;
+            while (validInput == false)
+            {
+                Console.WriteLine("Use current date? Y/N");
+                string userInput = Console.ReadLine().ToUpper();
+                switch (userInput)
+                {
+                    case "Y":
+                        //date already set in intialization
+                        validInput = true;
+                        break;
+                    case "N":
+                        date = GetDateInput();
+                        validInput = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input. Enter 'Y' to use current date or 'N' to manually input a date");
+                        break;
+                }
+            }
+
+            return date;
+        }
+
         internal static string GetDateInput()
         {
             Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main menu.\n\n");
@@ -178,7 +209,8 @@ namespace HabitTrackerApp
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"Delete from drinking_water WHERE Id = '{recordId}'";
+                tableCmd.CommandText = $"Delete from drinking_water WHERE Id = @RecordID";
+                tableCmd.Parameters.AddWithValue("@RecordID", recordId);
 
                 int rowCount = tableCmd.ExecuteNonQuery();
 
@@ -202,12 +234,14 @@ namespace HabitTrackerApp
 
             var recordId = GetNumberInput($"\n\nPlease type the Id of the record you want to update or type 0 to return to the Main Menu\n\n");
 
-            using(var connection = new SqliteConnection(connectionString))
+            using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
 
                 var checkCmd = connection.CreateCommand();
-                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = {recordId})";
+                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = @RecordID)";
+                checkCmd.Parameters.AddWithValue("@RecordID", recordId);
+
                 int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
 
                 if (checkQuery == 0)
@@ -217,12 +251,15 @@ namespace HabitTrackerApp
                     Update();
                 }
 
-                string date = GetDateInput();
+                string date = CurrentDate();
 
                 int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed). Type 0 to return to main menu. \n\n");
 
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText= $"UPDATE drinking_water SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+                tableCmd.CommandText = $"UPDATE drinking_water SET date = @Date, quantity = @Quantity WHERE Id = @RecordID";
+                tableCmd.Parameters.AddWithValue("@Date", date);
+                tableCmd.Parameters.AddWithValue("@Quantity", quantity);
+                tableCmd.Parameters.AddWithValue("@RecordID", recordId);
 
                 tableCmd.ExecuteNonQuery();
 
