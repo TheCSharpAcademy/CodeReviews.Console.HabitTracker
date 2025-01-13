@@ -33,6 +33,7 @@ internal class Program
 					while (running)
 					{
 						PrintMenu();
+
 						var option = Console.ReadLine();
 						while (!Regex.IsMatch(option!, "[0|1|2|3|4|5]"))
 						{
@@ -64,8 +65,10 @@ internal class Program
 										Console.WriteLine("Habit does not exist.");
 										break;
 									}
+
 									Console.Write("-- DELETED ROW -- \n");
 									GetSingleHabit(db, toDelete);
+
 									using (var delCom = DeleteHabit(toDelete, db))
 									{
 										delCom.ExecuteNonQuery();
@@ -73,20 +76,23 @@ internal class Program
 									break;
 								case "4":
 									Console.WriteLine("What would you like to update?");
+
 									int toUpdate = GetId();
 									if (!HabitExists(db, toUpdate))
 									{
 										Console.WriteLine("Habit does not exist.");
 										break;
 									}
+
 									(string, DateTime, int) habitTuple = GetHabitFromUser();
+
 									Console.Write("-- UPDATED ROW -- \n");
 									GetSingleHabit(db, toUpdate);
+
 									using (var updateCom = UpdateHabit(toUpdate, habitTuple, db))
 									{
 										updateCom.ExecuteNonQuery();
 									}
-
 									break;
 								case "5":
 									SeedDb(db);
@@ -157,6 +163,7 @@ internal class Program
 				int range = (DateTime.Today - start).Days;
 				return start.AddDays(rand.Next(range));
 			}
+
 			for (int i = 0; i < rowsToSeed; i++)
 			{
 
@@ -179,38 +186,46 @@ internal class Program
 	{
 		var command = new SqliteCommand { Connection = dbConnection };
 		command.CommandText = @"UPDATE Habits SET Title = $title, Date = $date, Quantity = $quant WHERE ID = $id";
+		
 		command.Parameters.AddWithValue("$title", newHabitTuple.Item1);
 		command.Parameters.AddWithValue("$date", newHabitTuple.Item2);
 		command.Parameters.AddWithValue("$quant", newHabitTuple.Item3);
 		command.Parameters.AddWithValue("$id", toUpdate);
+
 		return command;
 	}
 
 	private static bool HabitExists(SqliteConnection dbConnection, int id)
 	{
 		var command = new SqliteCommand { Connection = dbConnection };
+
 		command.CommandText = @"SELECT Count(1) FROM Habits WHERE ID = $id";
 		command.Parameters.AddWithValue("$id", id);
+
 		return Convert.ToInt32(command.ExecuteScalar()) > 0;
 	}
 
 	private static SqliteCommand DeleteHabit(int id, SqliteConnection dbConnection)
 	{
 		var command = new SqliteCommand { Connection = dbConnection };
+
 		command.CommandText = @"DELETE FROM Habits WHERE ID = $id";
 		command.Parameters.AddWithValue("$id", id);
+
 		return command;
 	}
 
 	private static int GetId()
 	{
 		Console.WriteLine("Insert the ID of the row you want to update/delete.");
+
 		string? input = Console.ReadLine();
 		int id;
 		while (!int.TryParse(input, out id))
 		{
 			input = Console.ReadLine();
 		}
+
 		return id;
 	}
 
@@ -233,9 +248,11 @@ internal class Program
 		try
 		{
 			var command = new SqliteCommand { Connection = dbConnection };
+
 			command.CommandText = @"SELECT * FROM Habits WHERE Id = $id";
 			command.Parameters.AddWithValue("$id", id);
 			command.ExecuteNonQuery();
+
 			using (var reader = command.ExecuteReader())
 			{
 				while (reader.Read())
@@ -244,6 +261,7 @@ internal class Program
 					var title = reader.GetString(1);
 					var date = reader.GetDateTime(2);
 					var quantity = reader.GetInt32(3);
+
 					Console.Write($"Id: {idPk}\nTitle: {title}\nDate: {date:d}\nQuantity: {quantity}\n");
 				}
 			}
@@ -261,8 +279,10 @@ internal class Program
 		try
 		{
 			var command = new SqliteCommand { Connection = dbConnection };
+
 			command.CommandText = @"SELECT * FROM Habits";
 			command.ExecuteNonQuery();
+
 			using (var reader = command.ExecuteReader())
 			{
 				while (reader.Read())
@@ -271,6 +291,7 @@ internal class Program
 					var title = reader.GetString(1);
 					var date = reader.GetDateTime(2);
 					var quantity = reader.GetInt32(3);
+
 					Console.WriteLine($"{id}: {title} {date:d} - {quantity}");
 				}
 			}
@@ -287,28 +308,34 @@ internal class Program
 	{
 		Console.WriteLine("Enter a name (STRING) for your habit");
 		string? title = Console.ReadLine();
+
 		Console.WriteLine("Enter a date ('MM-DD-YYYY') this was completed.");
 		string? date = Console.ReadLine();
+
 		DateTime time;
 		while (!DateTime.TryParse(date, out time))
 		{
 			Console.WriteLine("Try again. 'MM-DD-YYYY' format only");
 			date = Console.ReadLine();
-		};
+		}
+
 		Console.WriteLine("Enter a quantity (INTEGER) of times this occurred");
 		string? quantity = Console.ReadLine();
+
 		int outQuantity;
 		while (!int.TryParse(quantity, out outQuantity))
 		{
 			Console.WriteLine("Not a valid integer.");
 			quantity = Console.ReadLine();
-		};
+		}
+
 		return (title!, time, outQuantity);
 	}
 
 	private static SqliteCommand InsertHabit((string, DateTime, int) habitTup, SqliteConnection dbConnection)
 	{
 		var command = new SqliteCommand { Connection = dbConnection };
+
 		command.CommandText =
 			@"
 				INSERT INTO Habits (Title, Date, Quantity) 
@@ -317,6 +344,7 @@ internal class Program
 		command.Parameters.AddWithValue("$title", habitTup.Item1);
 		command.Parameters.AddWithValue("$date", habitTup.Item2);
 		command.Parameters.AddWithValue("$quantity", habitTup.Item3);
+
 		return command;
 	}
 }
