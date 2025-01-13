@@ -2,6 +2,7 @@
 using Microsoft.Data.Sqlite;
 
 namespace HabitLogger;
+
 internal class Program
 {
 	private static void Main(string[] args)
@@ -25,7 +26,6 @@ internal class Program
 						)
 					";
 					command.ExecuteNonQuery();
-
 
 					bool running = true;
 					while (running)
@@ -56,7 +56,6 @@ internal class Program
 									}
 									break;
 								case "3":
-									//Console.WriteLine("Delete");
 									int toDelete = GetId();
 									if (!HabitExists(db, toDelete))
 									{
@@ -131,7 +130,6 @@ internal class Program
 
 			List<string> habits =
 			[
-				// HABITS TRACKED BY QUANTITY, NOT TIME
 				"Cups of Coffee Drank",
 				"Miles Ran",
 				"Pages Read",
@@ -176,7 +174,6 @@ internal class Program
 
 	private static SqliteCommand UpdateHabit(int toUpdate, (string, DateTime, int) newHabitTuple, SqliteConnection dbConnection)
 	{
-		//throw new NotImplementedException();
 		var command = new SqliteCommand { Connection = dbConnection };
 		command.CommandText = @"UPDATE Habits SET Title = $title, Date = $date, Quantity = $quant WHERE ID = $id";
 		command.Parameters.AddWithValue("$title", newHabitTuple.Item1);
@@ -196,7 +193,6 @@ internal class Program
 
 	private static SqliteCommand DeleteHabit(int id, SqliteConnection dbConnection)
 	{
-		//throw new NotImplementedException();
 		var command = new SqliteCommand { Connection = dbConnection };
 		command.CommandText = @"DELETE FROM Habits WHERE ID = $id";
 		command.Parameters.AddWithValue("$id", id);
@@ -298,14 +294,13 @@ internal class Program
 		};
 		Console.WriteLine("Enter a quantity (INTEGER) of times this occurred");
 		string? quantity = Console.ReadLine();
-		int q;
-		while (!int.TryParse(quantity, out q))
+		int outQuantity;
+		while (!int.TryParse(quantity, out outQuantity))
 		{
 			Console.WriteLine("Not a valid integer.");
 			quantity = Console.ReadLine();
 		};
-
-		return (title!, time, q);
+		return (title!, time, outQuantity);
 	}
 
 	private static SqliteCommand InsertHabit((string, DateTime, int) habitTup, SqliteConnection dbConnection)
@@ -319,8 +314,6 @@ internal class Program
 		command.Parameters.AddWithValue("$title", habitTup.Item1);
 		command.Parameters.AddWithValue("$date", habitTup.Item2);
 		command.Parameters.AddWithValue("$quantity", habitTup.Item3);
-
 		return command;
 	}
-
 }
