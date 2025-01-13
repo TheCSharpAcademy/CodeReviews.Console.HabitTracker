@@ -1,10 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 
 namespace HabitLogger;
 
 internal class Program
 {
+
 	private static void Main(string[] args)
 	{
 		const string connectionString = "Data Source=habits.db";
@@ -151,14 +153,15 @@ internal class Program
 
 			DateTime RandomDay()
 			{
-				DateTime start = new DateTime(2000, 1, 1);
+				DateTime start = new(2000, 1, 1);
 				int range = (DateTime.Today - start).Days;
 				return start.AddDays(rand.Next(range));
 			}
 			for (int i = 0; i < rowsToSeed; i++)
 			{
 
-				command.CommandText = $"INSERT INTO Habits (Title, Date, Quantity) VALUES ('{habits[rand.Next(habits.Count)]}', '{RandomDay():d}', {rand.Next(1, 10)});";
+				command.CommandText = $"INSERT INTO Habits (Title, Date, Quantity) VALUES ('{habits[rand.Next(habits.Count)]}', '{RandomDay().ToString("d", CultureInfo.CreateSpecificCulture("en-US"))}', {rand.Next(1, 10)});";
+
 				command.ExecuteNonQuery();
 			}
 
