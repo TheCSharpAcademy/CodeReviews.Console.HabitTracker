@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Data;
 using System.Globalization;
 
 namespace HabitTrackerApp
@@ -10,24 +9,113 @@ namespace HabitTrackerApp
 
         static void Main(string[] args)
         {
+            CreateHabitTable();
+            CreateHabitTrackerTable();
+            PopulateHabitTable();
+            PopulateHabitTrackerTable();
+
+            GetuserInput();
+        }
+
+        private static bool TableEmpty(string table)
+        {
+            int count;
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    @"CREATE TABLE IF NOT EXISTS drinking_water (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Date TEXT,
-                        Quantity INTEGER
+                    $@"SELECT COUNT(*) AS count FROM {table}";
+
+                count = Convert.ToInt32(tableCmd.ExecuteScalar());
+                connection.Close();
+            }
+
+            return count == 0;
+        }
+        private static void PopulateHabitTable()
+        {
+            if (TableEmpty("habits"))
+            {
+                using (var connection = new SqliteConnection(connectionString))
+                {
+                    connection.Open();
+                    var tableCmd = connection.CreateCommand();
+
+                    tableCmd.CommandText =
+                        @"INSERT INTO habits(name, unit_of_measurement) VALUES
+                    ('running', 'km'),
+                    ('studying', 'hours')";
+
+                    tableCmd.ExecuteNonQuery();
+
+                    connection.Close();
+                }
+            }
+        }
+        private static void PopulateHabitTrackerTable()
+        {
+            if (TableEmpty("habit_tracking"))
+            {
+                using (var connection = new SqliteConnection(connectionString))
+                {
+                    connection.Open();
+                    var tableCmd = connection.CreateCommand();
+
+                    tableCmd.CommandText =
+                        @"INSERT INTO habit_tracking(habit_id, date, description, quantity) VALUES
+                    (1, '05-05-24', 'morning jog', 5),
+                    (1, '06-05-24', 'evening jog', 7),
+                    (2, '07-05-24', 'programming', 3),
+                    (2, '08-05-24', 'maths', 2)";
+
+                    tableCmd.ExecuteNonQuery();
+
+                    connection.Close();
+                }
+            }
+        }
+        private static void CreateHabitTable()
+        {
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText =
+                    @"CREATE TABLE IF NOT EXISTS habits (
+                        habit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT,
+                        unit_of_measurement TEXT
                         )";
 
                 tableCmd.ExecuteNonQuery();
 
                 connection.Close();
             }
+        }
+        private static void CreateHabitTrackerTable()
+        {
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
 
-            GetuserInput();
+                tableCmd.CommandText =
+                    @"CREATE TABLE IF NOT EXISTS habit_tracking (
+                        tracking_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        habit_id INTEGER,
+                        date TEXT,
+                        description TEXT,
+                        quantity INTEGER,
+                        FOREIGN KEY (habit_id) REFERENCES habits(habit_id)
+                        )";
+
+                tableCmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
         }
 
         static void GetuserInput()
@@ -43,6 +131,10 @@ namespace HabitTrackerApp
                 Console.WriteLine("Type 2 to Insert Record.");
                 Console.WriteLine("Type 3 to Delete Record.");
                 Console.WriteLine("Type 4 to Update Record.");
+                Console.WriteLine("Type 5 to Create new Habit.");
+                Console.WriteLine("Type 6 to Delete a Habit.");
+                Console.WriteLine("Type 7 to Update a Habit.");
+
                 Console.WriteLine("------------------------------------------\n");
 
                 string commandInput = Console.ReadLine();
@@ -55,7 +147,9 @@ namespace HabitTrackerApp
                         Environment.Exit(0);
                         break;
                     case "1":
-                        GetAllRecords();
+                        GetHabitTrackingRecords();
+                        Console.WriteLine("Habits:");
+                        GetAllHabits();
                         break;
 
                     case "2":
@@ -70,27 +164,195 @@ namespace HabitTrackerApp
                         Update();
                         break;
 
+                    case "5":
+                        CreateNewHabit();
+                        break;
+
+                    case "6":
+                        DeleteHabit();
+                        break;
+
+                    case "7":
+                        UpdateHabit();
+                        break;
+                    case "8":
+                        GenerateReport();
+                        break;
                     default:
-                        Console.WriteLine("Invalid Command. Type 0 - 4.");
+                        Console.WriteLine("Invalid Command. Type 0 - 8.");
                         break;
                 }
             }
         }
+        private static void GenerateReport()
+        {
+
+        }
+        private static void UpdateHabit()
+        {
+            Console.Clear();
+            GetAllHabits();
+            int habitId;
+            do
+            {
+                habitId = GetNumberInput("Enter the ID of the habit you want to update:");
+            } while (!HabitExists(habitId));
+
+            string habitName = TableUserInput("Enter the name of the habit:");
+            string unitOfMeasurement = TableUserInput("Enter the unit of measurement:");
+
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText =
+                    $@"UPDATE habits SET name = @Name, unit_of_measurement = @Unit_of_measurement WHERE habit_id = @Habit_id";
+                tableCmd.Parameters.AddWithValue("@Name", habitName);
+                tableCmd.Parameters.AddWithValue("@Unit_of_measurement", unitOfMeasurement);
+                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+
+                tableCmd.ExecuteNonQuery();
+                connection.Close();
+
+            }
+
+        }
+        private static bool CanDeleteHabit(int habitId)
+        {
+            string checkQuery = "SELECT COUNT(*) FROM habit_tracking WHERE habit_id = @habitId";
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText =
+                    $@"SELECT COUNT(*) FROM habit_tracking WHERE habit_id = @Habit_id";
+
+                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+
+                int count = Convert.ToInt32(tableCmd.ExecuteScalar());
+                connection.Close();
+
+                return count == 0;
+            }
+        }
+        private static void DeleteHabit()
+        {
+            Console.Clear();
+            GetAllHabits();
+            int habitId;
+            do
+            {
+                habitId = GetNumberInput("Enter the ID of the habit you want to delete:");
+            } while (!HabitExists(habitId));
+
+            if (!CanDeleteHabit(habitId))
+            {
+                Console.WriteLine("There are related records in habit_tracking. Please delete them first.");
+                return;
+            }
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText =
+                    $@"DELETE FROM habits WHERE habit_id = @Habit_id";
+                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                tableCmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
+        }
+        private static void CreateNewHabit()
+        {
+            string habitName = TableUserInput("Enter the name of the habit:");
+            string unitOfMeasurement = TableUserInput("Enter the unit of measurement:");
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText =
+                    $@"INSERT INTO habits(name, unit_of_measurement) VALUES (@Name, @Unit_of_measurement)";
+                tableCmd.Parameters.AddWithValue("@Name", habitName);
+                tableCmd.Parameters.AddWithValue("@Unit_of_measurement", unitOfMeasurement);
+                tableCmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
+        }
+
+        private static string TableUserInput(string msg)
+        {
+            string userInput = "empty_table_name";
+            do
+            {
+                Console.WriteLine(msg);
+                userInput = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(userInput) || userInput == "empty_table_name")
+                {
+                    Console.WriteLine("Invalid input. Please enter a non-empty name that is not 'empty_table_name'.");
+                }
+
+            } while (string.IsNullOrWhiteSpace(userInput) || userInput == "empty_table_name");
+            return userInput;
+        }
+        private static bool HabitExists(int habitId)
+        {
+            bool exists = false;
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = "SELECT COUNT(*) FROM habits WHERE habit_id = @habitId";
+                tableCmd.Parameters.AddWithValue("@habitId", habitId);
+
+                int habitCount = Convert.ToInt32(tableCmd.ExecuteScalar());
+
+                if (habitCount == 0)
+                {
+                    Console.WriteLine("The specified habit Id doesnt exist.");
+                }
+                else
+                {
+                    exists = true;
+                }
+
+                connection.Close();
+            }
+
+            return exists;
+        }
         private static void Insert()
         {
-            string date = CurrentDate();
+            Console.Clear();
+            GetAllHabits();
+            int habitId = GetNumberInput("\n\n Please enter the habit Id:\n\n");
+            if (!HabitExists(habitId))
+            {
+                Insert();
+            }
 
+            string date = CurrentDate();
+            string description = TableUserInput("Enter the description:");
             int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed). Type 0 to return to main menu. \n\n");
 
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = "INSERT INTO drinking_water(Date, Quantity) VALUES(@Date, @Quantity)";
+                tableCmd.CommandText = "INSERT INTO habit_tracking(habit_id, date, description, quantity) VALUES(@Habit_Id, @Date, @Description, @Quantity)";
+                tableCmd.Parameters.AddWithValue("@Habit_Id", habitId);
                 tableCmd.Parameters.AddWithValue("@Date", date);
+                tableCmd.Parameters.AddWithValue("@Description", description);
                 tableCmd.Parameters.AddWithValue("@Quantity", quantity);
-
-                //tableCmd.CommandText = $"INSERT INTO drinking_water(Date, Quantity) VALUES('{date}', {quantity})";
 
                 tableCmd.ExecuteNonQuery();
 
@@ -124,7 +386,6 @@ namespace HabitTrackerApp
 
             return date;
         }
-
         internal static string GetDateInput()
         {
             Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main menu.\n\n");
@@ -157,17 +418,15 @@ namespace HabitTrackerApp
 
             return finalInput;
         }
-        internal static void GetAllRecords()
+        internal static void GetAllHabits()
         {
-            Console.Clear();
-
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = "SELECT * FROM drinking_water";
+                tableCmd.CommandText = "SELECT * FROM habits";
 
-                List<DrinkingWater> tableData = new();
+                List<Habits> tableData = new();
 
                 SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -176,11 +435,11 @@ namespace HabitTrackerApp
                     while (reader.Read())
                     {
                         tableData.Add(
-                        new DrinkingWater
+                        new Habits
                         {
-                            Id = reader.GetInt32(0),
-                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                            Quantity = reader.GetInt32(2)
+                            Habit_Id = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Unit_of_measurement = reader.GetString(2)
                         });
                     }
                 }
@@ -193,7 +452,50 @@ namespace HabitTrackerApp
                 Console.WriteLine("-------------------------------");
                 foreach (var item in tableData)
                 {
-                    Console.WriteLine($"{item.Id} - {item.Date.ToString("dd-MMM-yyyy")} - Quantity: {item.Quantity}");
+                    Console.WriteLine($"Habit ID: {item.Habit_Id} - Name: {item.Name} - Unit of Measurement: {item.Unit_of_measurement}");
+                }
+                Console.WriteLine("-------------------------------");
+            }
+        }
+        internal static void GetHabitTrackingRecords()
+        {
+            Console.Clear();
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = "SELECT * FROM habit_tracking";
+
+                List<Habit_tracking> tableData = new();
+
+                SqliteDataReader reader = tableCmd.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        tableData.Add(
+                        new Habit_tracking
+                        {
+                            Tracking_Id = reader.GetInt32(0),
+                            Habit_Id = reader.GetInt32(1),
+                            Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
+                            Description = reader.GetString(3),
+                            Quantity = reader.GetInt32(4)
+                        });
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No rows found.");
+                }
+                connection.Close();
+
+                Console.WriteLine("-------------------------------");
+                foreach (var item in tableData)
+                {
+                    Console.WriteLine($"{item.Tracking_Id} - Habit ID: {item.Habit_Id} - Date: {item.Date.ToString("dd-MMM-yyyy")} - Description: {item.Description} - Quantity: {item.Quantity}");
                 }
                 Console.WriteLine("-------------------------------");
             }
@@ -201,7 +503,7 @@ namespace HabitTrackerApp
         internal static void Delete()
         {
             Console.Clear();
-            GetAllRecords();
+            GetHabitTrackingRecords();
 
             var recordId = GetNumberInput($"\n\nPlease type the Id of the record you want to delete or type 0 to return to the Main Menu\n\n");
 
@@ -209,7 +511,7 @@ namespace HabitTrackerApp
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"Delete from drinking_water WHERE Id = @RecordID";
+                tableCmd.CommandText = $"Delete from habit_tracking WHERE tracking_id = @RecordID";
                 tableCmd.Parameters.AddWithValue("@RecordID", recordId);
 
                 int rowCount = tableCmd.ExecuteNonQuery();
@@ -230,7 +532,7 @@ namespace HabitTrackerApp
         internal static void Update()
         {
             Console.Clear();
-            GetAllRecords();
+            GetHabitTrackingRecords();
 
             var recordId = GetNumberInput($"\n\nPlease type the Id of the record you want to update or type 0 to return to the Main Menu\n\n");
 
@@ -239,7 +541,7 @@ namespace HabitTrackerApp
                 connection.Open();
 
                 var checkCmd = connection.CreateCommand();
-                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM drinking_water WHERE Id = @RecordID)";
+                checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit_tracking WHERE tracking_id = @RecordID)";
                 checkCmd.Parameters.AddWithValue("@RecordID", recordId);
 
                 int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
@@ -247,17 +549,28 @@ namespace HabitTrackerApp
                 if (checkQuery == 0)
                 {
                     Console.WriteLine($"\n\nRecord with ID {recordId} doesn't exist.\n\n");
+                    Console.ReadKey();
                     connection.Close();
                     Update();
                 }
 
-                string date = CurrentDate();
+                GetAllHabits();
+                int habitId;
+                do
+                {
+                    habitId = GetNumberInput("\n\n Please enter the habit Id:\n\n");
 
+                } while (!HabitExists(habitId));
+
+                string date = CurrentDate();
+                string description = TableUserInput("Enter the description:");
                 int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed). Type 0 to return to main menu. \n\n");
 
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"UPDATE drinking_water SET date = @Date, quantity = @Quantity WHERE Id = @RecordID";
+                tableCmd.CommandText = $"UPDATE habit_tracking SET habit_id = @Habit_id, date = @Date, description = @Description, quantity = @Quantity WHERE tracking_id = @RecordID";
+                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
                 tableCmd.Parameters.AddWithValue("@Date", date);
+                tableCmd.Parameters.AddWithValue("@Description", description);
                 tableCmd.Parameters.AddWithValue("@Quantity", quantity);
                 tableCmd.Parameters.AddWithValue("@RecordID", recordId);
 
@@ -268,9 +581,17 @@ namespace HabitTrackerApp
         }
     }
 }
-public class DrinkingWater
+public class Habits
 {
-    public int Id { get; set; }
+    public int Habit_Id { get; set; }
+    public string Name { get; set; }
+    public string Unit_of_measurement { get; set; }
+}
+public class Habit_tracking
+{
+    public int Tracking_Id { get; set; }
+    public int Habit_Id { get; set; }
     public DateTime Date { get; set; }
+    public string Description { get; set; }
     public int Quantity { get; set; }
 }
