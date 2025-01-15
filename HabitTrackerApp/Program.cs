@@ -46,6 +46,8 @@ namespace HabitTrackerApp
                     tableCmd.CommandText =
                         @"INSERT INTO habits(name, unit_of_measurement) VALUES
                     ('running', 'km'),
+                    ('reading', 'pages'),
+                    ('drink water', 'ml'),
                     ('studying', 'hours')";
 
                     tableCmd.ExecuteNonQuery();
@@ -67,8 +69,24 @@ namespace HabitTrackerApp
                         @"INSERT INTO habit_tracking(habit_id, date, description, quantity) VALUES
                     (1, '05-05-24', 'morning jog', 5),
                     (1, '06-05-24', 'evening jog', 7),
-                    (2, '07-05-24', 'programming', 3),
-                    (2, '08-05-24', 'maths', 2)";
+                    (4, '07-05-24', 'programming', 3),
+                    (4, '08-05-24', 'maths', 2),
+                    (4, '17-02-24', 'programming session', 2),
+                    (1, '16-09-24', 'evening jog', 6),
+                    (4, '06-11-24', 'programming session', 1),
+                    (4, '30-04-24', 'programming session', 1),
+                    (2, '01-03-24', 'GoT', 35),
+                    (1, '22-03-24', 'swimming laps', 1),
+                    (4, '05-07-24', 'math practice', 2),
+                    (2, '06-03-24', 'GoT', 61),
+                    (1, '16-05-24', 'evening jog', 9),
+                    (4, '24-08-24', 'programming session', 2),
+                    (2, '05-07-24', 'GoT', 100),
+                    (1, '13-07-24', 'evening jog', 4),
+                    (3, '13-07-24', 'bottled water', 1000),
+                    (3, '15-07-24', 'bottled water', 1000),
+                    (3, '11-07-24', 'bottled water', 1000),
+                    (3, '16-07-24', 'bottled water', 1000);";
 
                     tableCmd.ExecuteNonQuery();
 
@@ -134,6 +152,8 @@ namespace HabitTrackerApp
                 Console.WriteLine("Type 5 to Create new Habit.");
                 Console.WriteLine("Type 6 to Delete a Habit.");
                 Console.WriteLine("Type 7 to Update a Habit.");
+                Console.WriteLine("Type 8 Generate a report.");
+
 
                 Console.WriteLine("------------------------------------------\n");
 
@@ -175,6 +195,7 @@ namespace HabitTrackerApp
                     case "7":
                         UpdateHabit();
                         break;
+
                     case "8":
                         GenerateReport();
                         break;
@@ -186,7 +207,54 @@ namespace HabitTrackerApp
         }
         private static void GenerateReport()
         {
+            Console.Clear();
+            GetAllHabits();
+            int habitId;
+            do
+            {
+                habitId = GetNumberInput("Enter the ID of the habit you want to generate a report for:");
+            } while (!HabitExists(habitId));
 
+            Console.WriteLine("Enter the year you want a report for (YY):");
+            string date = Console.ReadLine();
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+
+                tableCmd.CommandText =
+                    $@"SELECT SUM(ht.quantity) AS total
+                    FROM habit_tracking ht
+                    WHERE ht.habit_id = @Habit_id
+                    AND SUBSTR(ht.date, 7, 2) = @Date;";
+                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                tableCmd.Parameters.AddWithValue("@Date", date);
+
+                switch (habitId)
+                {
+                    case 1:
+                        Console.WriteLine($"Total km ran for the year: {tableCmd.ExecuteScalar()}km");
+                        break;
+                    case 2:
+                        Console.WriteLine($"Total pages read for the year: {tableCmd.ExecuteScalar()} pages");
+                        break;
+
+                    case 3:
+                        Console.WriteLine($"Total water drunk for the year: {tableCmd.ExecuteScalar()}ml");
+                        break;
+
+                    case 4:
+                        Console.WriteLine($"Total hours studied for the year: {tableCmd.ExecuteScalar()} hours");
+                        break;
+
+                    default:
+                        Console.WriteLine($"Total for the year for habit {habitId}: {tableCmd.ExecuteScalar()}");
+                        break;
+                }
+                connection.Close();
+
+            }
         }
         private static void UpdateHabit()
         {
