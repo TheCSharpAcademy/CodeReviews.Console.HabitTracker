@@ -90,6 +90,7 @@ static class UserInterface
         }
         return dateInput;
     }
+
     static private int GetAmount()
     {
         int amount;
@@ -100,6 +101,7 @@ static class UserInterface
         }
         return amount;
     }
+
     static private int GetID(DatabaseHandler db)
     {
         int id;

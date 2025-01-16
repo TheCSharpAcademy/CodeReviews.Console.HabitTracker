@@ -6,6 +6,7 @@ public class DatabaseHandler
 {
     private string connectionString = "Data Source=database.db";
     private string tableName = "read_pages";
+
     public DatabaseHandler()
     {
         using (var connection = new SqliteConnection(connectionString))
