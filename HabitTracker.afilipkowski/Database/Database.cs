@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 
 namespace Database;
+
 public class DatabaseHandler
 {
     private string connectionString = "Data Source=database.db";
