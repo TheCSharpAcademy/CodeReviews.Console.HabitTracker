@@ -2,6 +2,7 @@
 using Database;
 
 namespace HabitTracker;
+
 static class UserInterface
 {
     static public void DisplayMenu()
@@ -17,6 +18,7 @@ static class UserInterface
         Console.WriteLine("5. Generate a report");
         Console.WriteLine("6. Exit the app");
     }
+
     static public bool HandleInput(DatabaseHandler db)
     {
         int choice;
@@ -24,7 +26,6 @@ static class UserInterface
         int amount;
         int id;
         List<DatabaseRecord> records;
-
         while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 6)
         {
             Console.WriteLine("Invalid input. Select an option from the menu.");
@@ -76,6 +77,7 @@ static class UserInterface
                 return false;
         }
     }
+
     static private string GetDate()
     {
         string dateInput;
