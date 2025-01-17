@@ -33,5 +33,11 @@ namespace habit_logger.Services
 
             return int.Parse(numberInput);
         }
+
+        public static string GetStringInput(string message)
+        {
+            Console.WriteLine(message);
+            return Console.ReadLine();
+        }
     }
 }

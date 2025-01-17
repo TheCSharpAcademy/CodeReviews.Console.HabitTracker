@@ -17,11 +17,23 @@ namespace habit_logger.Data
             using (var connection = GetConnection())
             {
                 var command = connection.CreateCommand();
+
                 command.CommandText = 
-                    @"CREATE TABLE IF NOT EXISTS drinking_water (
+                    @"CREATE TABLE IF NOT EXISTS habits (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date TEXT,
-                    Quantity INTEGER    
+                    Name TEXT NOT NULL,
+                    Unit TEXT NOT NULL 
+                    );
+                ";
+                command.ExecuteNonQuery();
+
+                command.CommandText = 
+                    @"CREATE TABLE IF NOT EXISTS habit_records (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    HabitId INTEGER NOT NULL,
+                    Date TEXT NOT NULL,
+                    Quantity INTEGER NOT NULL,
+                    FOREIGN KEY (HabitId) REFERENCES habits(Id) ON DELETE CASCADE
                     );
                 ";
                 command.ExecuteNonQuery();

@@ -9,64 +9,97 @@ class Program
     static void Main(string[] args)
     {
         Database.InitializeDatabase();
-        var drinkRepository = new DrinkRepository();
+        var habitRepository = new HabitRepository();
+        var habitRecordRepository = new HabitRecordRepository();
 
         bool closeApp = false;
 
         while (!closeApp)
         {
             Console.WriteLine("\n\nMAIN MENU");
-            Console.WriteLine("Type a number to select an option:");
-            Console.WriteLine("\t0. Close Application.");
-            Console.WriteLine("\t1. View All Records.");
-            Console.WriteLine("\t2. Insert Record.");
-            Console.WriteLine("\t3. Delete Record.");
-            Console.WriteLine("\t4. Update Record.");
-            Console.WriteLine("------------------------------------------\n");
-
+            Console.WriteLine("1. View All Habits");
+            Console.WriteLine("2. Add New Habit");
+            Console.WriteLine("3. Add Record for Habit");
+            Console.WriteLine("4. View Habit Records");
+            Console.WriteLine("0. Exit");
             string command = Console.ReadLine();
 
             switch (command)
             {
-                case "0":
-                    Console.WriteLine("\nGoodbye!\n");
-                    closeApp = true;
-                    break;
                 case "1":
-                    foreach (var record in drinkRepository.GetAllRecords())
+                    foreach (var habit in habitRepository.GetAllHabits())
                     {
-                        Console.WriteLine($"{record.Id}: {record.Date.ToString("dd-MM-yy")} - {record.Quantity} glasses");
+                        Console.WriteLine($"{habit.Id}: {habit.Name} (Unit: {habit.Unit})");
                     }
                     break;
                 case "2":
-                    var newRecord = new DrinkingWater
+                    var newHabit = new Habit
                     {
-                        Date = InputService.GetDateInput(),
-                        Quantity = InputService.GetNumberInput("\nInsert the quantity (no decimals): ")
+                        Name = InputService.GetStringInput("Enter habit name:"),
+                        Unit = InputService.GetStringInput("Enter unit of measurement:")
                     };
-                    drinkRepository.InsertDrinkRecord(newRecord);
-                    Console.WriteLine("Record inserted successfully.");
+                    habitRepository.InsertHabit(newHabit);
+                    Console.WriteLine("Habit added successfully.");
                     break;
                 case "3":
-                    Console.WriteLine("\nInsert the ID of the record to delete:");
-                    int deleteId = InputService.GetNumberInput("Enter ID:");
-                    drinkRepository.DeleteDrinkRecord(deleteId);
-                    Console.WriteLine("Record deleted successfully.");
-                    break;
-                case "4":
-                    Console.WriteLine("\nInsert the ID of the record to update:");
-                    int updateId = InputService.GetNumberInput("Enter ID:");
-                    var updatedRecord = new DrinkingWater
+                    Console.WriteLine("Enter the name of the habit:");
+                    string habitName = InputService.GetStringInput("Habit Name:");
+
+                    int? habitId = habitRepository.GetHabitIdByName(habitName);
+
+                    if (habitId == null)
                     {
-                        Id = updateId,
+                        Console.WriteLine($"Habit '{habitName}' does not exist. Would you like to create it? (y/n)");
+                        string response = Console.ReadLine()?.ToLower();
+
+                        if (response == "y")
+                        {
+                            var habit = new Habit
+                            {
+                                Name = habitName,
+                                Unit = InputService.GetStringInput("Enter unit of measurement for the habit:")
+                            };
+                            habitRepository.InsertHabit(habit);
+                            Console.WriteLine($"Habit '{habitName}' added successfully.");
+                            habitId = habitRepository.GetHabitIdByName(habitName);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Operation cancelled. No record added.");
+                            break;
+                        }
+                    }
+
+                    var newRecord = new HabitRecord
+                    {
+                        HabitId = habitId.Value,
                         Date = InputService.GetDateInput(),
-                        Quantity = InputService.GetNumberInput("Enter new quantity:")
+                        Quantity = InputService.GetNumberInput("Enter quantity:")
                     };
-                    drinkRepository.UpdateDrinkRecord(updatedRecord);
-                    Console.WriteLine("Record updated successfully.");
+                    habitRecordRepository.InsertHabitRecord(newRecord);
+                    Console.WriteLine("Record added successfully.");
+                    break;
+
+                case "4":
+                    Console.WriteLine("Enter the name of the habit to view records:");
+                    string viewHabitName = InputService.GetStringInput("Habit Name:");
+
+                    int? viewHabitId = habitRepository.GetHabitIdByName(viewHabitName );
+                    if(viewHabitId != null)
+                        foreach (var record in habitRecordRepository.GetRecordsForHabit(viewHabitId.Value))
+                        {
+                            Console.WriteLine($"Date: {record.Date.ToString("dd-MM-yy")}  Quantity: {record.Quantity}");
+                        }
+                    else
+                    {
+                        Console.WriteLine($"Habit '{viewHabitName}' does not exist.");
+                    }
+                    break;
+                case "0":
+                    closeApp = true;
                     break;
                 default:
-                    Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
+                    Console.WriteLine("Invalid command.");
                     break;
             }
         }
