@@ -12,7 +12,7 @@ namespace habit_logger.Repositories
         {
             using var connection = Database.GetConnection();
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT Id, HabitId, Date, Quantity FROM habit_records WHERE Id = @Id";
+            command.CommandText = "SELECT Id, HabitId, Date, Quantity FROM habit_records WHERE HabitId = @Id";
             command.Parameters.AddWithValue("@Id", id);
 
             using var reader = command.ExecuteReader();

@@ -43,11 +43,24 @@ namespace habit_logger.Repositories
         public void InsertHabit(Habit habit)
         {
             using var connection = Database.GetConnection();
+
+            var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = "SELECT COUNT(*) FROM habits WHERE Name = @Name";
+            checkCommand.Parameters.AddWithValue("@Name", habit.Name);
+
+            var count = Convert.ToInt32(checkCommand.ExecuteScalar());
+            if (count > 0)
+            {
+                Console.WriteLine($"Habit '{habit.Name}' already exists and will not be added.");
+                return;
+            }
+
             var command = connection.CreateCommand();
             command.CommandText = "INSERT INTO habits (Name, Unit) VALUES (@Name, @Unit)";
             command.Parameters.AddWithValue("@Name", habit.Name);
             command.Parameters.AddWithValue("@Unit", habit.Unit);
             command.ExecuteNonQuery();
+            Console.WriteLine($"\nHabit '{habit.Name}' added successfully.");
         }
     }
 }

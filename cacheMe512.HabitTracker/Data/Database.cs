@@ -1,6 +1,8 @@
+using System.IO;
+using Microsoft.Data.Sqlite;
+
 namespace habit_logger.Data
 {
-    using Microsoft.Data.Sqlite;
     public static class Database
     {
         private const string ConnectionString = "Data Source=habit-logger.db";
@@ -14,11 +16,17 @@ namespace habit_logger.Data
 
         public static void InitializeDatabase()
         {
+            if (File.Exists("habit-logger.db"))
+            {
+                File.Delete("habit-logger.db");
+                Console.WriteLine("Existing database deleted for testing.");
+            }
+
             using (var connection = GetConnection())
             {
                 var command = connection.CreateCommand();
 
-                command.CommandText = 
+                command.CommandText =
                     @"CREATE TABLE IF NOT EXISTS habits (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
@@ -27,7 +35,7 @@ namespace habit_logger.Data
                 ";
                 command.ExecuteNonQuery();
 
-                command.CommandText = 
+                command.CommandText =
                     @"CREATE TABLE IF NOT EXISTS habit_records (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     HabitId INTEGER NOT NULL,
@@ -39,7 +47,5 @@ namespace habit_logger.Data
                 command.ExecuteNonQuery();
             }
         }
-
-        
     }
 }
