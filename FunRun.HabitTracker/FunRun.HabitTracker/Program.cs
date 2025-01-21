@@ -1,5 +1,6 @@
 ﻿
 
+using FunRun.HabitTracker;
 using FunRun.HabitTracker.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,7 @@ var host = Host.CreateDefaultBuilder(args)
          .ConfigureServices((context, services) =>
          {
 
-             services.AddTransient<IMyService, MyService>();
+             services.AddTransient<HabitTrackerApp>();
              services.AddSingleton<SQLiteConnectionFactory>(provider =>
                  new SQLiteConnectionFactory("Data Source=mydatabase.db;")
              );
@@ -37,9 +38,8 @@ var host = Host.CreateDefaultBuilder(args)
 
 
 
-// Resolve and use services
-var myService = host.Services.GetRequiredService<IMyService>();
-await myService.RunAsync();
+var app = host.Services.GetRequiredService<HabitTrackerApp>();
+await app.RunApp();
 
-// Stop the host gracefully
+
 await host.StopAsync();
