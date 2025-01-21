@@ -96,7 +96,6 @@ class Program
                     Unit = InputService.GetStringInput("Enter unit of measurement for the habit:")
                 };
                 habitRepository.InsertHabit(habit);
-                Console.WriteLine($"Habit '{habitName}' added successfully.");
                 habitId = habitRepository.GetHabitIdByName(habitName);
             }
             else
