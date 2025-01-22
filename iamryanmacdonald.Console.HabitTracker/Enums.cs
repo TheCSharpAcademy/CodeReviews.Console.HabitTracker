@@ -4,10 +4,14 @@ internal class Enums
 {
     internal enum MenuAction
     {
-        ViewAllRecords,
-        InsertRecord,
-        DeleteRecord,
-        UpdateRecord,
+        ViewHabits,
+        NewHabit,
+        UpdateHabit,
+        DeleteHabit,
+        NewHabitEntry,
+        UpdateHabitEntry,
+        DeleteHabitEntry,
+        ViewStatistics,
         CloseApplication
     }
 }
