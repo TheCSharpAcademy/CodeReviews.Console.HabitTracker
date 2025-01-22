@@ -1,14 +1,9 @@
-﻿
-
-using FunRun.HabitTracker;
+﻿using FunRun.HabitTracker;
 using FunRun.HabitTracker.Data;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Data;
-using System.Threading.Tasks;
 
 
 var host = Host.CreateDefaultBuilder(args)
@@ -35,6 +30,7 @@ var host = Host.CreateDefaultBuilder(args)
              logging.AddDebug();      
          })
          .Build();
+
 
 
 
