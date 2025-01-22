@@ -200,9 +200,9 @@ namespace HabitTrackerApp
                 tableCmd.CommandText =
                     $@"SELECT SUM(ht.quantity) AS total
                     FROM habit_tracking ht
-                    WHERE ht.habit_id = @Habit_id
+                    WHERE ht.habit_id = @HabitId
                     AND SUBSTR(ht.date, 7, 2) = @Date;";
-                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
                 tableCmd.Parameters.AddWithValue("@Date", date);
 
                 switch (habitId)
@@ -246,10 +246,10 @@ namespace HabitTrackerApp
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $@"UPDATE habits SET name = @Name, unit_of_measurement = @Unit_of_measurement WHERE habit_id = @Habit_id";
+                    $@"UPDATE habits SET name = @Name, unit_of_measurement = @UnitOfMeasurement WHERE HabitId = @Habit_id";
                 tableCmd.Parameters.AddWithValue("@Name", habitName);
-                tableCmd.Parameters.AddWithValue("@Unit_of_measurement", unitOfMeasurement);
-                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                tableCmd.Parameters.AddWithValue("@UnitOfMeasurement", unitOfMeasurement);
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
 
                 tableCmd.ExecuteNonQuery();
                 connection.Close();
@@ -275,8 +275,8 @@ namespace HabitTrackerApp
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $@"DELETE FROM habits WHERE habit_id = @Habit_id";
-                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                    $@"DELETE FROM habits WHERE habit_id = @HabitId";
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
                 tableCmd.ExecuteNonQuery();
 
                 connection.Close();
@@ -293,9 +293,9 @@ namespace HabitTrackerApp
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $@"INSERT INTO habits(name, unit_of_measurement) VALUES (@Name, @Unit_of_measurement)";
+                    $@"INSERT INTO habits(name, unit_of_measurement) VALUES (@Name, @UnitOfMeasurement)";
                 tableCmd.Parameters.AddWithValue("@Name", habitName);
-                tableCmd.Parameters.AddWithValue("@Unit_of_measurement", unitOfMeasurement);
+                tableCmd.Parameters.AddWithValue("@UnitOfMeasurement", unitOfMeasurement);
                 tableCmd.ExecuteNonQuery();
 
                 connection.Close();
@@ -368,8 +368,8 @@ namespace HabitTrackerApp
                 int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed). Type 0 to return to main menu. \n\n");
 
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"UPDATE habit_tracking SET habit_id = @Habit_id, date = @Date, description = @Description, quantity = @Quantity WHERE tracking_id = @RecordID";
-                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                tableCmd.CommandText = $"UPDATE habit_tracking SET habit_id = @HabitId, date = @Date, description = @Description, quantity = @Quantity WHERE tracking_id = @RecordID";
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
                 tableCmd.Parameters.AddWithValue("@Date", date);
                 tableCmd.Parameters.AddWithValue("@Description", description);
                 tableCmd.Parameters.AddWithValue("@Quantity", quantity);
@@ -415,9 +415,9 @@ namespace HabitTrackerApp
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $@"SELECT COUNT(*) FROM habit_tracking WHERE habit_id = @Habit_id";
+                    $@"SELECT COUNT(*) FROM habit_tracking WHERE habit_id = @HabitId";
 
-                tableCmd.Parameters.AddWithValue("@Habit_id", habitId);
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
 
                 int count = Convert.ToInt32(tableCmd.ExecuteScalar());
                 connection.Close();
@@ -448,8 +448,8 @@ namespace HabitTrackerApp
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = "SELECT COUNT(*) FROM habits WHERE habit_id = @habitId";
-                tableCmd.Parameters.AddWithValue("@habitId", habitId);
+                tableCmd.CommandText = "SELECT COUNT(*) FROM habits WHERE habit_id = @HabitId";
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
 
                 int habitCount = Convert.ToInt32(tableCmd.ExecuteScalar());
 
@@ -481,8 +481,8 @@ namespace HabitTrackerApp
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = "INSERT INTO habit_tracking(habit_id, date, description, quantity) VALUES(@Habit_Id, @Date, @Description, @Quantity)";
-                tableCmd.Parameters.AddWithValue("@Habit_Id", habitId);
+                tableCmd.CommandText = "INSERT INTO habit_tracking(habit_id, date, description, quantity) VALUES(@HabitId, @Date, @Description, @Quantity)";
+                tableCmd.Parameters.AddWithValue("@HabitId", habitId);
                 tableCmd.Parameters.AddWithValue("@Date", date);
                 tableCmd.Parameters.AddWithValue("@Description", description);
                 tableCmd.Parameters.AddWithValue("@Quantity", quantity);
@@ -571,9 +571,9 @@ namespace HabitTrackerApp
                         tableData.Add(
                         new Habits
                         {
-                            Habit_Id = reader.GetInt32(0),
+                            HabitId = reader.GetInt32(0),
                             Name = reader.GetString(1),
-                            Unit_of_measurement = reader.GetString(2)
+                            UnitOfMeasurement = reader.GetString(2)
                         });
                     }
                 }
@@ -586,7 +586,7 @@ namespace HabitTrackerApp
                 Console.WriteLine("-------------------------------");
                 foreach (var item in tableData)
                 {
-                    Console.WriteLine($"Habit ID: {item.Habit_Id} - Name: {item.Name} - Unit of Measurement: {item.Unit_of_measurement}");
+                    Console.WriteLine($"Habit ID: {item.HabitId} - Name: {item.Name} - Unit of Measurement: {item.UnitOfMeasurement}");
                 }
                 Console.WriteLine("-------------------------------");
             }
@@ -601,7 +601,7 @@ namespace HabitTrackerApp
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText = "SELECT * FROM habit_tracking";
 
-                List<Habit_tracking> tableData = new();
+                List<HabitTracking> tableData = new();
 
                 SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -610,10 +610,10 @@ namespace HabitTrackerApp
                     while (reader.Read())
                     {
                         tableData.Add(
-                        new Habit_tracking
+                        new HabitTracking
                         {
-                            Tracking_Id = reader.GetInt32(0),
-                            Habit_Id = reader.GetInt32(1),
+                            TrackingId = reader.GetInt32(0),
+                            HabitId = reader.GetInt32(1),
                             Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
                             Description = reader.GetString(3),
                             Quantity = reader.GetInt32(4)
@@ -629,7 +629,7 @@ namespace HabitTrackerApp
                 Console.WriteLine("-------------------------------");
                 foreach (var item in tableData)
                 {
-                    Console.WriteLine($"{item.Tracking_Id} - Habit ID: {item.Habit_Id} - Date: {item.Date.ToString("dd-MMM-yyyy")} - Description: {item.Description} - Quantity: {item.Quantity}");
+                    Console.WriteLine($"{item.TrackingId} - Habit ID: {item.HabitId} - Date: {item.Date.ToString("dd-MMM-yyyy")} - Description: {item.Description} - Quantity: {item.Quantity}");
                 }
                 Console.WriteLine("-------------------------------");
             }
@@ -639,14 +639,14 @@ namespace HabitTrackerApp
 }
 public class Habits
 {
-    public int Habit_Id { get; set; }
+    public int HabitId { get; set; }
     public string Name { get; set; }
-    public string Unit_of_measurement { get; set; }
+    public string UnitOfMeasurement { get; set; }
 }
-public class Habit_tracking
+public class HabitTracking
 {
-    public int Tracking_Id { get; set; }
-    public int Habit_Id { get; set; }
+    public int TrackingId { get; set; }
+    public int HabitId { get; set; }
     public DateTime Date { get; set; }
     public string Description { get; set; }
     public int Quantity { get; set; }
