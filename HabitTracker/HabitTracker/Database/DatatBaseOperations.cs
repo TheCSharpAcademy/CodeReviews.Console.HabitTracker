@@ -15,15 +15,29 @@ internal static class DatatBaseOperations
         {
             connection.Open();
 
-            string sqlText =
-                @"CREATE TABLE WaterDringking
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @"CREATE TABLE WaterDrinking
                 (
                     Id          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,  
                     Date        TEXT    NOT NULL,
                     Quantity    INTEGER NOT NULL
                 )";
 
-            var command = new SqliteCommand(sqlText, connection);
+            command.ExecuteNonQuery();
+        }
+    }
+
+    internal static void AddData(string date, int quantity)
+    {
+        using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @$"INSERT INTO TABLE WaterDrinking (Date, Quantity)
+                Values('{date}', {quantity}";
 
             command.ExecuteNonQuery();
         }
