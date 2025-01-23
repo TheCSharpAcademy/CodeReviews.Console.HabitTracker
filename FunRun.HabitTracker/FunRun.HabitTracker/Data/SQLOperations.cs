@@ -1,0 +1,194 @@
+﻿using FunRun.HabitTracker.Data.Model;
+using System.Data;
+using System.Data.SQLite;
+
+namespace FunRun.HabitTracker.Data;
+
+public class SQLOperations
+{
+    private readonly IDbConnection _connection;
+
+    public SQLOperations(IDbConnection connection)
+    {
+        _connection = connection;
+    }
+
+
+    public List<HabitModel> SQLReadAllHabits()
+    {
+        List<HabitModel> habits = new List<HabitModel>();
+        string query =  $"SELECT * FROM {HabitTable.TableName}";
+
+        using (_connection)
+        {
+            _connection.Open();
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = query;
+
+                using (IDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var habit = new HabitModel(
+                            Convert.ToInt32(reader["Id"]),
+                            reader.IsDBNull(reader.GetOrdinal("HabitName")) ? string.Empty : reader["HabitName"].ToString(),
+                            reader.IsDBNull(reader.GetOrdinal("HabitDescription")) ? string.Empty : reader["HabitDescription"].ToString(),
+                            Convert.ToInt32(reader["HabitCounter"])
+                        );
+                        habits.Add(habit);
+                    }
+                }
+            }
+            _connection.Close();
+        }
+        return habits;
+    }
+
+    public void SQLCreateHabit(HabitModel newHabit)
+    {
+        string query = $@"
+            INSERT INTO {HabitTable.TableName} ({HabitTable.HabitName}, {HabitTable.HabitDescription}, {HabitTable.HabitCounter})
+            VALUES (@{HabitTable.HabitName}, @{HabitTable.HabitDescription}, @{HabitTable.HabitCounter});
+        ";
+
+
+        using (_connection)
+        {
+            _connection.Open();
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = query;
+
+                var habitNameParameter = CreateParameter($"@{HabitTable.HabitName}", DbType.String, newHabit.HabitName);
+                var habitDescriptionParameter = CreateParameter($"@{HabitTable.HabitDescription}", DbType.String, newHabit.HabitDescription);
+                var habitCounterParameter = CreateParameter($"@{HabitTable.HabitCounter}", DbType.Int32, newHabit.HabitCounter);
+
+                command.Parameters.Add(habitNameParameter);
+                command.Parameters.Add(habitDescriptionParameter);
+                command.Parameters.Add(habitCounterParameter);
+
+
+                command.ExecuteNonQuery();
+
+            }
+            _connection.Close();
+        }
+    }
+    public void SQLUpdateHabit(HabitModel newHabit)
+    {
+        string query = $@"
+            UPDATE {HabitTable.TableName}
+            SET {HabitTable.HabitName} = @{HabitTable.HabitName},
+                {HabitTable.HabitDescription} = @{HabitTable.HabitDescription},
+                {HabitTable.HabitCounter} = @{HabitTable.HabitCounter}
+            WHERE {HabitTable.Id} = @{HabitTable.Id};
+        ";
+
+        using (_connection)
+        {
+            _connection.Open();
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = query;
+
+                var habitIdParameter = CreateParameter($"@{HabitTable.Id}", DbType.Int32, newHabit.Id);
+                var habitNameParameter = CreateParameter($"@{HabitTable.HabitName}", DbType.String, newHabit.HabitName);
+                var habitDescriptionParameter = CreateParameter($"@{HabitTable.HabitDescription}", DbType.String, newHabit.HabitDescription);
+                var habitCounterParameter = CreateParameter($"@{HabitTable.HabitCounter}", DbType.Int32, newHabit.HabitCounter);
+
+                command.Parameters.Add(habitIdParameter);
+                command.Parameters.Add(habitNameParameter);
+                command.Parameters.Add(habitDescriptionParameter);
+                command.Parameters.Add(habitCounterParameter);
+
+
+                command.ExecuteNonQuery();
+
+            }
+            _connection.Close();
+        }
+    }
+
+    public void SQLDeleteHabit(HabitModel newHabit)
+    {
+        var selectedHabitList = SQLSelectHabit(newHabit);
+        if (selectedHabitList.Count != 1)
+        {
+            throw new Exception($"No Object was found for Habit.Id: {newHabit.Id}");
+        }
+
+        HabitModel selHabit = selectedHabitList.FirstOrDefault();
+
+        string query = $@"
+            Delete From {HabitTable.TableName}
+            WHERE {HabitTable.Id} = @{HabitTable.Id};
+        ";
+
+        using (_connection)
+        {
+            _connection.Open();
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = query;
+
+                var habitIdParameter = CreateParameter($"@{HabitTable.Id}", DbType.Int32, selHabit.Id);
+
+                command.Parameters.Add(habitIdParameter);
+
+                command.ExecuteNonQuery();
+
+            }
+            _connection.Close();
+        }
+    }
+
+    private List<HabitModel> SQLSelectHabit(HabitModel newHabit)
+    {
+
+        List<HabitModel> habits = new List<HabitModel>();
+
+        string query = $@"
+            Select * From {HabitTable.TableName}
+            WHERE {HabitTable.Id} = @{HabitTable.Id};
+        ";
+
+        using (_connection)
+        {
+            _connection.Open();
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = query;
+
+                using (IDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var habit = new HabitModel(
+                            Convert.ToInt32(reader["Id"]),
+                            reader.IsDBNull(reader.GetOrdinal("HabitName")) ? string.Empty : reader["HabitName"].ToString(),
+                            reader.IsDBNull(reader.GetOrdinal("HabitDescription")) ? string.Empty : reader["HabitDescription"].ToString(),
+                            Convert.ToInt32(reader["HabitCounter"])
+                        );
+                        habits.Add(habit);
+                    }
+                }
+            }
+            _connection.Close();
+        }
+        return habits;
+    }
+
+
+
+
+    private IDbDataParameter CreateParameter(string name, DbType type, object value)
+    {
+        var parameter = _connection.CreateCommand().CreateParameter();
+        parameter.ParameterName = name;
+        parameter.DbType = type;
+        parameter.Value = value;
+        return parameter;
+    }
+
+}

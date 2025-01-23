@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using FunRun.HabitTracker.Data.Model;
+using System.Data;
 using System.Data.SQLite;
 
 namespace FunRun.HabitTracker.Data;
@@ -26,12 +27,7 @@ public class SQLiteConnectionFactory
     {
         //TODO: Use a DataModel
         using var command = connection.CreateCommand();
-        command.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Users (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Name TEXT NOT NULL
-            );
-        ";
+        command.CommandText = HabitTable.SQLCreateTable();
         command.ExecuteNonQuery(); 
     }
 }
