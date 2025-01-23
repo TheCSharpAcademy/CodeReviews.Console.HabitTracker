@@ -11,6 +11,11 @@ internal static class DatatBaseOperations
 {
     internal static void CreateDatabase()
     {
+        if (File.Exists("HabitTracker.db"))
+        {
+            return;
+        }
+
         using(var connection = new SqliteConnection("Data Source=HabitTracker.db"))
         {
             connection.Open();
@@ -36,8 +41,8 @@ internal static class DatatBaseOperations
 
             var command = connection.CreateCommand();
             command.CommandText =
-                @$"INSERT INTO TABLE WaterDrinking (Date, Quantity)
-                Values('{date}', {quantity}";
+                @$"INSERT INTO WaterDrinking (Date, Quantity)
+                Values('{date}', {quantity})";
 
             command.ExecuteNonQuery();
         }
