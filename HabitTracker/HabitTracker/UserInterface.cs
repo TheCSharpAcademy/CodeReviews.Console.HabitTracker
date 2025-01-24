@@ -24,22 +24,22 @@ internal class UserInterface
             switch (userInput)
             {
                 case "i":
-                    Console.Clear();
+                    Clear();
                     Insert();
                     break;
 
                 case "u":
-                    Console.Clear();
+                    Clear();
                     Update();
                     break;
 
                 case "d":
-                    Console.Clear();
+                    Clear();
                     Delete();
                     break;
 
                 case "v":
-                    Console.Clear();
+                    Clear();
                     ViewAll();
                     break;
 
@@ -179,5 +179,10 @@ internal class UserInterface
         }
 
         return data.Count > 0;
+    }
+
+    private void Clear()
+    {
+        Console.Clear();
     }
 }
