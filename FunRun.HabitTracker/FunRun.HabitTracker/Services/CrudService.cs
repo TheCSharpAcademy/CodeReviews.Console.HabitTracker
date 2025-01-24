@@ -47,5 +47,33 @@ public class CrudService : ICrudService
         }
     }
 
+    public void UpdateOneHabit(HabitModel newHabit)
+    {
+        try
+        {
+            _sql.SQLUpdateHabit(newHabit);
+            _log.LogInformation($"Success: newHabit:[{newHabit.HabitName}; {newHabit.HabitDescription}; {newHabit.HabitCounter}]");
+
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("An Error happend UpdateOneHabit: {mes}", ex.Message);
+        }
+    }
+
+    public void DeleteOneHabit(HabitModel newHabit)
+    {
+        try
+        {
+            _sql.SQLDeleteHabit(newHabit);
+            _log.LogInformation($"Success: DeleteOneHabit:[{newHabit.HabitName}; {newHabit.HabitDescription}; {newHabit.HabitCounter}]");
+
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("An Error happend DeleteOneHabit: {mes}", ex.Message);
+        }
+    }
+
 
 }

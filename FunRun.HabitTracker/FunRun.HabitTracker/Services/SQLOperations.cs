@@ -102,13 +102,6 @@ public class SQLOperations : ISQLOperations
 
     public void SQLDeleteHabit(HabitModel newHabit)
     {
-        var selectedHabitList = SQLSelectHabit(newHabit);
-        if (selectedHabitList.Count != 1)
-        {
-            throw new Exception($"No Object was found for Habit.Id: {newHabit.Id}");
-        }
-
-        HabitModel selHabit = selectedHabitList.FirstOrDefault();
 
         string query = $@"
             Delete From {HabitTable.TableName}
@@ -119,7 +112,7 @@ public class SQLOperations : ISQLOperations
             {
                 command.CommandText = query;
 
-                var habitIdParameter = CreateParameter($"@{HabitTable.Id}", DbType.Int32, selHabit.Id);
+                var habitIdParameter = CreateParameter($"@{HabitTable.Id}", DbType.Int32, newHabit.Id);
 
                 command.Parameters.Add(habitIdParameter);
 

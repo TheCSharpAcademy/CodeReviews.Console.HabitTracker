@@ -10,6 +10,7 @@ namespace FunRun.HabitTracker;
 public class HabitTrackerApp
 {
     private ICrudService _crud;
+    private bool CloseApp = false;
     public HabitTrackerApp(ICrudService crud)
     {
         _crud = crud;
@@ -17,7 +18,7 @@ public class HabitTrackerApp
 
     public async Task RunApp()
     {
-        while (true)
+        while (!CloseApp)
         {
             AnsiConsole.Clear();
             AnsiConsole.Write(new FigletText("HabitTracker").Centered().Color(Color.Blue));
@@ -27,23 +28,12 @@ public class HabitTrackerApp
 
 
             var habits = _crud.ReturnAllHabits();
+            habits.Add(new HabitModel(0, "[dim]> Create a new Habit <[/]", "[dim]Select me and press [[Enter]][/]", 0));
 
-            if (habits.Count == 0)
-            {
-                AnsiConsole.MarkupLine("[grey] Oohh... seems like you dont have any Habits right now...[/]");
-                AnsiConsole.MarkupLine("[yellow] You need to have atleast one Habit. Please follow the intructions[/]");
-                var input = InputCreateHabit();
-                _crud.CreateOneHabit(input);
-
-            }
-
-            habits = _crud.ReturnAllHabits();
-            habits.Add(new HabitModel(0, "Create a new habit", "Press Enter", 999));
-
-            var table = new Table();
+            var table = new Table().Centered();
             table.Border = TableBorder.Rounded;
 
-            table.AddColumn("Id");
+            table.AddColumn(" Id").Centered();
             table.AddColumn("Name");
             table.AddColumn("Description");
             table.AddColumn("Counter");
@@ -52,24 +42,23 @@ public class HabitTrackerApp
             bool exit = false;
             HabitModel selectedHabit = null;
 
-            //TODO: TESTING
             await AnsiConsole.Live(table)
+                .Overflow(VerticalOverflow.Ellipsis)
                 .StartAsync(async ctx =>
                 {
                     while (!exit)
                     {
-
                         table.Rows.Clear();
-
+                        table.Title("[[ [green]Habit Overview [/]]]");
+                        table.Caption("[[[blue] [[Up/Down]] Navigation, [[Enter]] Select, [[ESC]] Escape[/]]]");
 
                         for (int i = 0; i < habits.Count; i++)
                         {
                             var habit = habits[i];
                             if (i == selectedIndex)
                             {
-
                                 table.AddRow(
-                                    $"[blue]{habit.Id}[/]",
+                                    $"[blue]>{habit.Id}[/]",
                                     $"[blue]{habit.HabitName}[/]",
                                     $"[blue]{habit.HabitDescription}[/]",
                                     $"[blue]{habit.HabitCounter}[/]"
@@ -88,9 +77,6 @@ public class HabitTrackerApp
 
 
                         ctx.Refresh();
-
-
-                        //AnsiConsole.MarkupLine("↑/↓ Navigation, [green]Enter[/] Select, [red]ESC[/] Escape.");
 
                         var key = Console.ReadKey(true).Key;
 
@@ -124,11 +110,55 @@ public class HabitTrackerApp
 
             if (selectedHabit != null)
             {
-                AnsiConsole.MarkupLine($"Selected: [blue]{selectedHabit.HabitName}[/]");
+                if (selectedHabit.Id == 0 && selectedHabit.HabitName == "[dim]> Create a new Habit <[/]")
+                {
+                    var newHabitInput = InputCreateHabit();
+                    _crud.CreateOneHabit(newHabitInput);
+                }
+                else
+                {
+                    var choice = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                            .PageSize(10)
+                            .AddChoices(new[] {
+                                "Update", "Delete", "Back"
+                            }));
+
+                    if (choice == "Update")
+                    {
+                        var newHabitInput = InputCreateHabit();
+                        newHabitInput.Id = selectedHabit.Id;
+                        _crud.UpdateOneHabit(newHabitInput);
+                    }
+                    if (choice == "Delete")
+                    {
+                        var confirmation = AnsiConsole.Prompt(
+                            new TextPrompt<bool>($"[yellow]Are you sure you want to [red]Delete[/] the Habit: [underline] {selectedHabit.HabitName}[/][/]")
+                                .AddChoice(true)
+                                .AddChoice(false)
+                                .DefaultValue(false)
+                                .WithConverter(choice => choice ? "y" : "n"));
+
+                        if (confirmation)
+                        {
+                            _crud.DeleteOneHabit(selectedHabit);
+                        }
+                    }
+                }
             }
-            else
+            else 
             {
-                AnsiConsole.MarkupLine("Nothing Selected!");
+                    var confirmation = AnsiConsole.Prompt(
+            new TextPrompt<bool>($"[yellow]Are you sure you want to Close the App[/]")
+                .AddChoice(true)
+                .AddChoice(false)
+                .DefaultValue(false)
+                .WithConverter(choice => choice ? "y" : "n"));
+
+                    if (confirmation)
+                    {
+                        CloseApp = true;
+                    }
             }
         }
 
