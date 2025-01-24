@@ -1,11 +1,5 @@
 ﻿using HabitTracker.Database;
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HabitTracker.Models;
 
 namespace HabitTracker;
@@ -63,16 +57,13 @@ internal class UserInterface
 
     private void ViewAll()
     {
-        var data = DatatBaseOperations.GetAll();
-
-        if (data.Count == 0)
+        List<WaterDrinkingHabit> data;
+        if (!DataExists(out data))
         {
-            Console.WriteLine("There is no data. press any key to return to the main menu");
-            Console.ReadKey();
             return;
         }
 
-        ViewData(data);
+        PrintData(data);
 
         Console.WriteLine("Press any key to go back to the menu.");
         Console.ReadKey();
@@ -81,16 +72,13 @@ internal class UserInterface
 
     private void Delete()
     {
-        var data = DatatBaseOperations.GetAll();
-
-        if (data.Count == 0)
+        List<WaterDrinkingHabit> data;
+        if (!DataExists(out data))
         {
-            Console.WriteLine("There is no data. press any key to return to the main menu");
-            Console.ReadKey();
             return;
         }
 
-        ViewData(data);
+        PrintData(data);
 
         Console.Write("Choose the id of the habit you want to delete: ");
         int id = ValidateNumber(Console.ReadLine());
@@ -104,32 +92,17 @@ internal class UserInterface
         DatatBaseOperations.Delete(id);
     }
 
-    private void ViewData(List<WaterDrinkingHabit> data)
-    {
-        Console.WriteLine("Habits:\n");
-
-        foreach (var item in data)
-        {
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine($"{nameof(item.Id)}: {item.Id}");
-            Console.WriteLine($"{nameof(item.Date)}: {item.Date.ToString("dd-MM-yyyy")}");
-            Console.WriteLine($"{nameof(item.Quantity)}: {item.Quantity}");
-            Console.WriteLine("-----------------------------\n");
-        }
-    }
 
     private void Update()
     {
-        var data = DatatBaseOperations.GetAll();
-
-        if (data.Count == 0)
+        List<WaterDrinkingHabit> data;
+        if (!DataExists(out data))
         {
-            Console.WriteLine("There is no data. press any key to return to the main menu");
-            Console.ReadKey();
             return;
         }
 
-        ViewData(data);
+        PrintData(data);
+
         Console.Write("Choose the id of the habit you want to update: ");
         int id = ValidateNumber(Console.ReadLine());
 
@@ -158,6 +131,20 @@ internal class UserInterface
         DatatBaseOperations.AddData(new WaterDrinkingHabit() { Date = DateTime.Parse(date), Quantity = quantity});
     }
 
+    private void PrintData(List<WaterDrinkingHabit> data)
+    {
+        Console.WriteLine("Habits:\n");
+
+        foreach (var item in data)
+        {
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine($"{nameof(item.Id)}: {item.Id}");
+            Console.WriteLine($"{nameof(item.Date)}: {item.Date.ToString("dd-MM-yyyy")}");
+            Console.WriteLine($"{nameof(item.Quantity)}: {item.Quantity}");
+            Console.WriteLine("-----------------------------\n");
+        }
+    }
+
     private string ValidateDate(string? date)
     {
         while (date == null || !DateTime.TryParse(date, CultureInfo.CurrentCulture, out _))
@@ -179,5 +166,18 @@ internal class UserInterface
         }
 
         return parsedNumber;
+    }
+
+    private bool DataExists(out List<WaterDrinkingHabit> data)
+    {
+        data = DatatBaseOperations.GetAll();
+
+        if (data.Count == 0)
+        {
+            Console.WriteLine("There is no data. press any key to return to the main menu");
+            Console.ReadKey();
+        }
+
+        return data.Count > 0;
     }
 }
