@@ -23,6 +23,16 @@ public class SQLiteConnectionFactory
         return connection;
     }
 
+    public IDbConnection OneTimeSetupConnection()
+    {
+        var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        EnsureTableExists(connection);
+
+        return connection;
+    }
+
     private void EnsureTableExists(IDbConnection connection)
     {
         //TODO: Use a DataModel

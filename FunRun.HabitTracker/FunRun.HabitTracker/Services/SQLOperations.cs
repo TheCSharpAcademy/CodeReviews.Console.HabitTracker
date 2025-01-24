@@ -1,10 +1,11 @@
 ﻿using FunRun.HabitTracker.Data.Model;
+using FunRun.HabitTracker.Services.Interfaces;
 using System.Data;
 using System.Data.SQLite;
 
-namespace FunRun.HabitTracker.Data;
+namespace FunRun.HabitTracker.Services;
 
-public class SQLOperations
+public class SQLOperations : ISQLOperations
 {
     private readonly IDbConnection _connection;
 
@@ -17,11 +18,9 @@ public class SQLOperations
     public List<HabitModel> SQLReadAllHabits()
     {
         List<HabitModel> habits = new List<HabitModel>();
-        string query =  $"SELECT * FROM {HabitTable.TableName}";
+        string query = $"SELECT * FROM {HabitTable.TableName}";      
+        
 
-        using (_connection)
-        {
-            _connection.Open();
             using (var command = _connection.CreateCommand())
             {
                 command.CommandText = query;
@@ -40,8 +39,8 @@ public class SQLOperations
                     }
                 }
             }
-            _connection.Close();
-        }
+
+        
         return habits;
     }
 
@@ -51,11 +50,7 @@ public class SQLOperations
             INSERT INTO {HabitTable.TableName} ({HabitTable.HabitName}, {HabitTable.HabitDescription}, {HabitTable.HabitCounter})
             VALUES (@{HabitTable.HabitName}, @{HabitTable.HabitDescription}, @{HabitTable.HabitCounter});
         ";
-
-
-        using (_connection)
-        {
-            _connection.Open();
+             
             using (var command = _connection.CreateCommand())
             {
                 command.CommandText = query;
@@ -72,8 +67,7 @@ public class SQLOperations
                 command.ExecuteNonQuery();
 
             }
-            _connection.Close();
-        }
+        
     }
     public void SQLUpdateHabit(HabitModel newHabit)
     {
@@ -84,10 +78,7 @@ public class SQLOperations
                 {HabitTable.HabitCounter} = @{HabitTable.HabitCounter}
             WHERE {HabitTable.Id} = @{HabitTable.Id};
         ";
-
-        using (_connection)
-        {
-            _connection.Open();
+      
             using (var command = _connection.CreateCommand())
             {
                 command.CommandText = query;
@@ -106,8 +97,7 @@ public class SQLOperations
                 command.ExecuteNonQuery();
 
             }
-            _connection.Close();
-        }
+     
     }
 
     public void SQLDeleteHabit(HabitModel newHabit)
@@ -123,11 +113,8 @@ public class SQLOperations
         string query = $@"
             Delete From {HabitTable.TableName}
             WHERE {HabitTable.Id} = @{HabitTable.Id};
-        ";
+        ";       
 
-        using (_connection)
-        {
-            _connection.Open();
             using (var command = _connection.CreateCommand())
             {
                 command.CommandText = query;
@@ -139,8 +126,7 @@ public class SQLOperations
                 command.ExecuteNonQuery();
 
             }
-            _connection.Close();
-        }
+       
     }
 
     private List<HabitModel> SQLSelectHabit(HabitModel newHabit)
@@ -151,11 +137,8 @@ public class SQLOperations
         string query = $@"
             Select * From {HabitTable.TableName}
             WHERE {HabitTable.Id} = @{HabitTable.Id};
-        ";
+        ";      
 
-        using (_connection)
-        {
-            _connection.Open();
             using (var command = _connection.CreateCommand())
             {
                 command.CommandText = query;
@@ -174,8 +157,8 @@ public class SQLOperations
                     }
                 }
             }
-            _connection.Close();
-        }
+
+        
         return habits;
     }
 

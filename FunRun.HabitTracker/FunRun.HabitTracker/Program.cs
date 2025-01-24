@@ -1,5 +1,7 @@
 ﻿using FunRun.HabitTracker;
 using FunRun.HabitTracker.Data;
+using FunRun.HabitTracker.Services;
+using FunRun.HabitTracker.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,7 +12,10 @@ var host = Host.CreateDefaultBuilder(args)
          .ConfigureServices((context, services) =>
          {
 
-             services.AddTransient<HabitTrackerApp>();
+             services.AddSingleton<HabitTrackerApp>();
+             services.AddScoped<ISQLOperations,SQLOperations>();
+             services.AddScoped<ICrudService, CrudService>();
+
              services.AddSingleton<SQLiteConnectionFactory>(provider =>
                  new SQLiteConnectionFactory("Data Source=mydatabase.db;")
              );
@@ -26,7 +31,7 @@ var host = Host.CreateDefaultBuilder(args)
          {
              
              logging.ClearProviders();
-             logging.AddConsole();   
+             //logging.AddConsole();   
              logging.AddDebug();      
          })
          .Build();

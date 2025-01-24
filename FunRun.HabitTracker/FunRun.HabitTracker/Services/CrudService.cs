@@ -1,11 +1,51 @@
-﻿using System.Data.Common;
-using System.Data;
+﻿using Microsoft.Extensions.Logging;
+using FunRun.HabitTracker.Data.Model;
+using FunRun.HabitTracker.Services.Interfaces;
+using Spectre.Console;
 
 namespace FunRun.HabitTracker.Services;
 
-public class CrudService
+public class CrudService : ICrudService
 {
+    private ILogger<CrudService> _log;
+    private ISQLOperations _sql;
+    public CrudService(ILogger<CrudService> log, ISQLOperations sql)
+    {
+        _log = log;
+        _sql = sql;
+    }
 
+
+    public List<HabitModel> ReturnAllHabits()
+    {
+        try
+        {
+            _log.LogInformation("Looking for all habits");
+
+            var result = _sql.SQLReadAllHabits();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("An Error happend looking for all Habbits: {mes}", ex.Message);
+            return new List<HabitModel>();
+        }
+    }
+
+    public void CreateOneHabit(HabitModel newHabit)
+    {
+        try
+        {
+             _sql.SQLCreateHabit(newHabit);
+            _log.LogInformation($"Success: newHabit:[{newHabit.HabitName}; {newHabit.HabitDescription}; {newHabit.HabitCounter}]");
+
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("An Error happend CreateOneHabit: {mes}", ex.Message);
+        }
+    }
 
 
 }
