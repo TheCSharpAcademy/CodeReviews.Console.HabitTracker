@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-
-namespace FunRun.HabitTracker.Data.Model;
+﻿namespace FunRun.HabitTracker.Data.Model;
 
 public static class HabitTable
 {

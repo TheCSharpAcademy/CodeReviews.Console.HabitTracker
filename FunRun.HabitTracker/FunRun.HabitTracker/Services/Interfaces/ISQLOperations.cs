@@ -1,12 +1,11 @@
 ﻿using FunRun.HabitTracker.Data.Model;
 
-namespace FunRun.HabitTracker.Services.Interfaces
+namespace FunRun.HabitTracker.Services.Interfaces;
+
+public interface ISqlOperations
 {
-    public interface ISQLOperations
-    {
-        void SQLCreateHabit(HabitModel newHabit);
-        void SQLDeleteHabit(HabitModel newHabit);
-        List<HabitModel> SQLReadAllHabits();
-        void SQLUpdateHabit(HabitModel newHabit);
-    }
+    void SqlCreateHabit(HabitModel newHabit);
+    void SqlDeleteHabit(HabitModel newHabit);
+    List<HabitModel> SqlReadAllHabits();
+    void SqlUpdateHabit(HabitModel newHabit);
 }
