@@ -94,6 +94,19 @@ internal static class DatatBaseOperations
         }
     }
 
+    internal static void Delete(int id)
+    {
+        using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = $"DELETE FROM WaterDrinking WHERE Id = {id}";
+
+            command.ExecuteNonQuery();
+        }
+    }
+
     internal static bool Exists(int id)
     {
         using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))

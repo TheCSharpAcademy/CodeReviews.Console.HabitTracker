@@ -30,11 +30,18 @@ internal class UserInterface
             switch (userInput)
             {
                 case "i":
+                    Console.Clear();
                     Insert();
                     break;
 
                 case "u":
+                    Console.Clear();
                     Update();
+                    break;
+
+                case "d":
+                    Console.Clear();
+                    Delete();
                     break;
 
                 default:
@@ -45,11 +52,36 @@ internal class UserInterface
         }
     }
 
-    private void ViewData()
+    private void Delete()
     {
-        var Data = DatatBaseOperations.GetAll();
+        var data = DatatBaseOperations.GetAll();
 
-        foreach (var item in Data)
+        if (data.Count == 0)
+        {
+            Console.WriteLine("There is no data. press any key to return to the main menu");
+            Console.ReadKey();
+            return;
+        }
+
+        ViewData(data);
+
+        Console.Write("Choose the id of the habit you want to delete: ");
+        int id = ValidateNumber(Console.ReadLine());
+
+        while (!DatatBaseOperations.Exists(id))
+        {
+            Console.WriteLine("this id does not exist, choose a different one!");
+            id = ValidateNumber(Console.ReadLine());
+        }
+
+        DatatBaseOperations.Delete(id);
+    }
+
+    private void ViewData(List<WaterDrinkingHabit> data)
+    {
+        Console.WriteLine("Habits:\n");
+
+        foreach (var item in data)
         {
             Console.WriteLine("-----------------------------");
             Console.WriteLine($"{nameof(item.Id)}: {item.Id}");
@@ -61,7 +93,16 @@ internal class UserInterface
 
     private void Update()
     {
-        ViewData();
+        var data = DatatBaseOperations.GetAll();
+
+        if (data.Count == 0)
+        {
+            Console.WriteLine("There is no data. press any key to return to the main menu");
+            Console.ReadKey();
+            return;
+        }
+
+        ViewData(data);
         Console.Write("Choose the id of the habit you want to update: ");
         int id = ValidateNumber(Console.ReadLine());
 
