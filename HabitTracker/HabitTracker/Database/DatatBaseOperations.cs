@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using HabitTracker.Models;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ internal static class DatatBaseOperations
         }
     }
 
-    internal static void AddData(string date, int quantity)
+    internal static void AddData(WaterDrinkingHabit habit)
     {
         using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))
         {
@@ -42,9 +43,69 @@ internal static class DatatBaseOperations
             var command = connection.CreateCommand();
             command.CommandText =
                 @$"INSERT INTO WaterDrinking (Date, Quantity)
-                Values('{date}', {quantity})";
+                Values('{habit.Date.ToString("dd-MM-yyyy")}', {habit.Quantity})";
 
             command.ExecuteNonQuery();
+        }
+    }
+
+    internal static List<WaterDrinkingHabit> GetAll()
+    {
+        var AllData = new List<WaterDrinkingHabit>();
+
+        using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM WaterDrinking";
+
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var habit = new WaterDrinkingHabit();
+
+                habit.Id = reader.GetInt32(0);
+                habit.Date = DateTime.Parse(reader.GetString(1));
+                habit.Quantity = reader.GetInt32(2);
+
+                AllData.Add(habit);
+            }
+        }
+
+        return AllData;
+    }
+
+    internal static void Update(int id, string date, int quantity)
+    {
+        using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @$"UPDATE WaterDrinking
+                SET Date = '{date}',
+                Quantity = {quantity}
+                WHERE Id = {id}";
+
+            command.ExecuteNonQuery();
+        }
+    }
+
+    internal static bool Exists(int id)
+    {
+        using (var connection = new SqliteConnection("Data Source=HabitTracker.db"))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = $"SELECT * FROM WaterDrinking WHERE Id = {id}";
+
+            var reader = command.ExecuteReader();
+
+            return reader.HasRows;
         }
     }
 }
