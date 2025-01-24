@@ -35,17 +35,6 @@ public class Database
                 tableCommand.ExecuteNonQuery();
             }
 
-            // using (var tableCommand = connection.CreateCommand())
-            // {
-            //     tableCommand.Parameters.Add("@Name", SqliteType.Text).Value = "Walking";
-            //     tableCommand.Parameters.Add("@Unit", SqliteType.Text).Value = "km";
-            //     tableCommand.CommandText =
-            //         """
-            //         INSERT INTO habits(name, unit) VALUES (@Name, @Unit)
-            //         """;
-            //     tableCommand.ExecuteNonQuery();
-            // }
-
             using (var tableCommand = connection.CreateCommand())
             {
                 tableCommand.CommandText =
@@ -64,25 +53,6 @@ public class Database
                     """;
                 tableCommand.ExecuteNonQuery();
             }
-
-            // var now = DateOnly.FromDateTime(DateTime.Now);
-            // var rand = new Random();
-            //
-            // var dummyData = new List<Tuple<DateOnly, int>>();
-            // for (var i = -50; i <= 50; i++) dummyData.Add(new Tuple<DateOnly, int>(now.AddDays(i), rand.Next(1, 11)));
-            //
-            // foreach (var row in dummyData)
-            //     using (var tableCommand = connection.CreateCommand())
-            //     {
-            //         tableCommand.Parameters.Add("@Date", SqliteType.Text).Value = row.Item1.ToString("dd/MM/yyyy");
-            //         tableCommand.Parameters.Add("@HabitId", SqliteType.Integer).Value = 1;
-            //         tableCommand.Parameters.Add("@Quantity", SqliteType.Integer).Value = row.Item2;
-            //         tableCommand.CommandText =
-            //             """
-            //             INSERT INTO habit_entries(date, habit_id, quantity) VALUES (@Date, @HabitId, @Quantity)
-            //             """;
-            //         tableCommand.ExecuteNonQuery();
-            //     }
 
             connection.Close();
         }
