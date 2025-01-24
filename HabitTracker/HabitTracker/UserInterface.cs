@@ -44,12 +44,39 @@ internal class UserInterface
                     Delete();
                     break;
 
+                case "v":
+                    Console.Clear();
+                    ViewAll();
+                    break;
+
+                case "q":
+                    Environment.Exit(0);
+                    break;
+
                 default:
                     Console.WriteLine("Invalid input, choose a letter from the menu");
                     Console.ReadKey();
                     break;
             }
         }
+    }
+
+    private void ViewAll()
+    {
+        var data = DatatBaseOperations.GetAll();
+
+        if (data.Count == 0)
+        {
+            Console.WriteLine("There is no data. press any key to return to the main menu");
+            Console.ReadKey();
+            return;
+        }
+
+        ViewData(data);
+
+        Console.WriteLine("Press any key to go back to the menu.");
+        Console.ReadKey();
+        return;
     }
 
     private void Delete()
