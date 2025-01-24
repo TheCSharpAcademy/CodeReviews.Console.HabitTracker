@@ -13,7 +13,7 @@ var host = Host.CreateDefaultBuilder(args)
          {
 
              services.AddSingleton<HabitTrackerApp>();
-             services.AddScoped<ISQLOperations,SqlOperations>();
+             services.AddScoped<ISqlOperations,SqlOperations>();
              services.AddScoped<ICrudService, CrudService>();
 
              services.AddSingleton<SQLiteConnectionFactory>(provider =>
@@ -31,7 +31,7 @@ var host = Host.CreateDefaultBuilder(args)
          {
              
              logging.ClearProviders();
-             //logging.AddConsole();   
+
              logging.AddDebug();      
          })
          .Build();

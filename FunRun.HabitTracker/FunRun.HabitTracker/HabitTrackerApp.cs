@@ -10,7 +10,7 @@ namespace FunRun.HabitTracker;
 public class HabitTrackerApp
 {
     private ICrudService _crud;
-    private bool CloseApp = false;
+
     public HabitTrackerApp(ICrudService crud)
     {
         _crud = crud;
@@ -18,7 +18,7 @@ public class HabitTrackerApp
 
     public async Task RunApp()
     {
-        while (!CloseApp)
+        while (true)
         {
             AnsiConsole.Clear();
             AnsiConsole.Write(new FigletText("HabitTracker").Centered().Color(Color.Blue));
@@ -157,7 +157,7 @@ public class HabitTrackerApp
 
                     if (confirmation)
                     {
-                        CloseApp = true;
+                        break;
                     }
             }
         }

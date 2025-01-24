@@ -11,7 +11,7 @@ public static class HabitTable
     public static string HabitDescription = "HabitDescription";
     public static string HabitCounter = "HabitCounter";
 
-    public static string SQLCreateTable()
+    public static string SqlCreateTable()
     {
         
         string tableCreateStatment = $@"
