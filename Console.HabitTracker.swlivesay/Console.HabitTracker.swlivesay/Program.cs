@@ -1,7 +1,5 @@
 
-using System.Data;
 using System.Globalization;
-using System.Xml.Serialization;
 using Microsoft.Data.Sqlite;
 
 /*
@@ -34,6 +32,9 @@ using Microsoft.Data.Sqlite;
 */
 
 // Creates database if it does not exist. also looks for and creates drinking_water table if it does not exist in the DB
+List<DrinkingWater> myRecordList = new();
+
+
 string connectionString = @"Data Source = habitTracker.db";
 using (SqliteConnection connection = new SqliteConnection(connectionString))
 {
@@ -79,7 +80,7 @@ void MainLoop ()
                 Console.Clear();
                 Console.WriteLine("The application will now close.");
                 closeApp = true;
-                System.Environment.Exit(0);
+                Environment.Exit(0);
                 break;
             case 1:
                 Console.Clear();
@@ -95,7 +96,6 @@ void MainLoop ()
             case 3:
                 Console.Clear();
                 DeleteRecord();
-                //ViewRecords();
                 Console.WriteLine("Press any key to return to the Main Menu.");
                 Console.ReadLine();
                 Console.Clear();
@@ -137,8 +137,9 @@ void InsertRecord()
 
 }
 
-void ViewRecords()
+List<DrinkingWater> ViewRecords()
 {
+    List<DrinkingWater> tableData = new();
     using (SqliteConnection connection = new SqliteConnection(connectionString))
     {
         connection.Open();
@@ -146,7 +147,7 @@ void ViewRecords()
         tableCmd.CommandText = 
         $"SELECT * FROM drinking_water";
 
-        List<DrinkingWater> tableData = new();
+        
         SqliteDataReader reader = tableCmd.ExecuteReader();
         if (reader.HasRows)
         {
@@ -173,6 +174,7 @@ void ViewRecords()
         Console.WriteLine("\n----------------------------------\n");
 
     }
+    return tableData;
 }
 
 void DeleteRecord()
@@ -203,16 +205,13 @@ void DeleteRecord()
         int rowCount = tableCmd.ExecuteNonQuery();
 
         Console.Clear();
-        ViewRecords();
+        
         if (rowCount == 0)
             Console.WriteLine($"\nRecord Id: {myRecord} not found.\n");
         else
             Console.WriteLine($"\nRecord Id: {myRecord} deleted.\n");
 
         connection.Close();
-        // Console.WriteLine("Press any key to return to the Main Menu.");
-        // Console.ReadLine();
-        // Console.Clear();
     }
 
 }
@@ -239,17 +238,28 @@ void UpdateRecord() //TODO select which field to update?
             connection.Close();
             return;
         }
-
+        List<DrinkingWater> myRecordData = ViewRecords();
+        string recordBeingUpdated = "";
+        foreach (var record in myRecordData)
+        {
+            if (record.Id == myRecordNumber)
+                {
+                    recordBeingUpdated = ($"Updating the following record:\n\n{Convert.ToString(record.Id).PadRight(3)}  -   {record.Date.ToString("MMM-dd-yyyy")}   -   Quantity: {record.Quantity}\n");
+                }
+        }
+       
         // TODO show record row. use ViewRecords and add Id as parameter. ViewRecords can return the list and use that to select the row by index or ID #
+        Console.Clear();
+        Console.WriteLine(recordBeingUpdated);
         string myNewDate = GetDate();
         if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
             return;
         
-        int myNewQuantity = GetNumber("Enter quantity of tracked habit, or enter 0 to return to the Main Menu.");
+        Console.Clear();
+        Console.WriteLine(recordBeingUpdated);
+        int myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
         if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
             return;
-    
-       
 
         SqliteCommand tableCmd = connection.CreateCommand();
         tableCmd.CommandText = 
@@ -272,6 +282,7 @@ string GetDate()
     {   
         if (readResult == "0")
             {
+                Console.Clear();
                 return "0";
             }
         //while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
