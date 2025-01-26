@@ -86,7 +86,7 @@ void MainLoop ()
                 Console.Clear();
                 ViewRecords();
                 Console.WriteLine("Press any key to return to the Main Menu.");
-                Console.ReadLine();
+                Console.ReadKey();
                 Console.Clear();
                 break;
             case 2:
@@ -97,7 +97,7 @@ void MainLoop ()
                 Console.Clear();
                 DeleteRecord();
                 Console.WriteLine("Press any key to return to the Main Menu.");
-                Console.ReadLine();
+                Console.ReadKey();
                 Console.Clear();
                 break;
             case 4:
@@ -105,8 +105,11 @@ void MainLoop ()
                 UpdateRecord();
                 ViewRecords();
                 Console.WriteLine("Press any key to return to the Main Menu.");
-                Console.ReadLine();
+                Console.ReadKey();
                 Console.Clear();
+                break;
+            default:
+                Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
                 break;
         }
     }
@@ -220,7 +223,7 @@ void UpdateRecord() //TODO select which field to update?
 {
     ViewRecords();
 
-    int myRecordNumber = GetNumber("Enter Id of  record you would like to update, , or enter 0 to return to the Main Menu.");
+    int myRecordNumber = GetNumber("Enter Id of the record you would like to update, or enter 0 to return to the Main Menu.");
     if (myRecordNumber == 0) // if user selected 0 to go back to the main menu, exit this method now
         return;
 
@@ -248,24 +251,80 @@ void UpdateRecord() //TODO select which field to update?
                 }
         }
        
-        // TODO show record row. use ViewRecords and add Id as parameter. ViewRecords can return the list and use that to select the row by index or ID #
-        Console.Clear();
-        Console.WriteLine(recordBeingUpdated);
-        string myNewDate = GetDate();
-        if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
-            return;
-        
-        Console.Clear();
-        Console.WriteLine(recordBeingUpdated);
-        int myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
-        if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
-            return;
+        Console.WriteLine("Do you want to update the Date or Quantity values, or both?"); 
+        Console.WriteLine("Enter 1 for Date, 2 for Quantity, or 3 for Both. Or Enter 0 to return to the Main Menu.");
+        int userChoice = -1;
+        string myNewDate="";
+        int myNewQuantity = -1;
+        bool validInput = false;
+        string myCommandText = "";
+        do 
+        {
+            string? readResult = Console.ReadLine();
+            if (readResult != null)
+                int.TryParse(readResult,  out userChoice);  
+            if (userChoice == 0)
+                return;
+            else
+            {        
+                switch (userChoice)
+                {
+                    case 1: 
+                        Console.Clear();
+                        Console.WriteLine(recordBeingUpdated);
+                        myNewDate = GetDate();
+                        if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
+                            return;
+                        validInput = true;
+                        myCommandText = 
+                            @$"UPDATE drinking_water 
+                            SET Date ='{myNewDate}'
+                            WHERE Id = {myRecordNumber}";
+                        break;
+                    case 2:
+                        Console.Clear();
+                        Console.WriteLine(recordBeingUpdated);
+                        myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
+                        if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
+                            return;
+                        validInput = true;
+                        myCommandText = 
+                            @$"UPDATE drinking_water 
+                            SET Quantity = {myNewQuantity}
+                            WHERE Id = {myRecordNumber}";
+                        break;
+                    case 3:
+                        Console.Clear();
+                        
+                        Console.WriteLine(recordBeingUpdated);
+                        myNewDate = GetDate();
+                        if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
+                            return;
+                        
+                        Console.WriteLine(recordBeingUpdated);
+                        myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
+                        if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
+                            return;
+                        
+                        validInput = true;
+                        myCommandText = 
+                            @$"UPDATE drinking_water 
+                            SET Date ='{myNewDate}', Quantity = {myNewQuantity}
+                            WHERE Id = {myRecordNumber}";
+                        break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine(recordBeingUpdated);
+                        Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
+                        Console.WriteLine("Enter 1 for Date, 2 for Quantity, or 3 for Both. Or Enter 0 to return to the Main Menu.");
+                        break;
+                }
+            }
+        } while (validInput == false);
 
         SqliteCommand tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = 
-            @$"UPDATE drinking_water 
-            SET Date ='{myNewDate}', Quantity = {myNewQuantity}
-            WHERE Id = {myRecordNumber}";
+        tableCmd.CommandText = myCommandText;
+            
         
         tableCmd.ExecuteNonQuery();
         connection.Close();
