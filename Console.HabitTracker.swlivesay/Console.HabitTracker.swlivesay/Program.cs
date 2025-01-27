@@ -96,8 +96,6 @@ void MainLoop ()
             case 3:
                 Console.Clear();
                 DeleteRecord();
-                //Console.WriteLine("Press any key to return to the Main Menu.");
-                //Console.ReadKey();
                 Console.Clear();
                 break;
             case 4: // delete
@@ -254,87 +252,23 @@ void UpdateRecord()
                 }
         }
        
-        Console.Clear();
+        Console.Clear();        
         Console.WriteLine(recordBeingUpdated);
-        Console.WriteLine("Do you want to update the Date or Quantity values, or both?"); 
-        Console.WriteLine("Enter 1 to change the Date, 2 to change the Quantity, or 3 to change both. Or Enter 0 to return to the Main Menu.");
-        int userChoice = -1;
-        string myNewDate="";
-        int myNewQuantity = -1;
-        bool validInput = false;
-        string myCommandText = "";
-        do 
-        {
-            string? readResult = Console.ReadLine();
-            if (readResult != null)
-                if (readResult != "0")
-                    int.TryParse(readResult,  out userChoice);
-                {      
-                    if (userChoice == 0)
-                    {
-                        Console.Clear();
-                        return;
-                    }
-                    else
-                    {        
-                        switch (userChoice)
-                        {
-                            case 1: 
-                                Console.Clear();
-                                Console.WriteLine(recordBeingUpdated);
-                                myNewDate = GetDate();
-                                if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
-                                    return;
-                                validInput = true;
-                                myCommandText = 
-                                    @$"UPDATE drinking_water 
-                                    SET Date ='{myNewDate}'
-                                    WHERE Id = {myRecordNumber}";
-                                break;
-                            case 2:
-                                Console.Clear();
-                                Console.WriteLine(recordBeingUpdated);
-                                myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
-                                if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
-                                    return;
-                                validInput = true;
-                                myCommandText = 
-                                    @$"UPDATE drinking_water 
-                                    SET Quantity = {myNewQuantity}
-                                    WHERE Id = {myRecordNumber}";
-                                break;
-                            case 3:
-                                Console.Clear();
-                                
-                                Console.WriteLine(recordBeingUpdated);
-                                myNewDate = GetDate();
-                                if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
-                                    return;
-                                
-                                Console.WriteLine(recordBeingUpdated);
-                                myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
-                                if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
-                                    return;
-                                
-                                validInput = true;
-                                myCommandText = 
-                                    @$"UPDATE drinking_water 
-                                    SET Date ='{myNewDate}', Quantity = {myNewQuantity}
-                                    WHERE Id = {myRecordNumber}";
-                                break;
-                            default:
-                                Console.Clear();
-                                Console.WriteLine(recordBeingUpdated);
-                                Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
-                                Console.WriteLine("Enter 1 to change the Date, 2 to change the Quantity, or 3 to change both Date and Quantity. Or Enter 0 to return to the Main Menu.");
-                                break;
-                        }
-                    }
-                }
-        } while (validInput == false);
-
+        string myNewDate = GetDate();
+        if (myNewDate == "0") // if user selected 0 to go back to the main menu, exit this method now
+            return;
+        
+        
+        Console.WriteLine(recordBeingUpdated);
+        int myNewQuantity = GetNumber("Enter quantity of cups of water consumed, or enter 0 to return to the Main Menu.");
+        if (myNewQuantity == 0) // if user selected 0 to go back to the main menu, exit this method now
+            return;
+    
         SqliteCommand tableCmd = connection.CreateCommand();
-        tableCmd.CommandText = myCommandText;
+        tableCmd.CommandText = 
+            @$"UPDATE drinking_water 
+            SET Date ='{myNewDate}', Quantity = {myNewQuantity}
+            WHERE Id = {myRecordNumber}";
             
         
         tableCmd.ExecuteNonQuery();
@@ -355,7 +289,6 @@ string GetDate()
                 Console.Clear();
                 return "0";
             }
-        //while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
         while (!DateTime.TryParseExact(readResult, "MM-dd-yy", new CultureInfo("en-US"),DateTimeStyles.None, out _))
         {
             Console.Clear();
@@ -385,7 +318,10 @@ int GetNumber(string message)
             Console.WriteLine("You entered an invalid number. Enter a numeric value. Try again, or enter 0 to return to the Main Menu.");
             readResult = Console.ReadLine();
             if (readResult == "0")
+            {
+                Console.Clear();
                 return 0;
+            }
         }
     }
     Console.Clear();
