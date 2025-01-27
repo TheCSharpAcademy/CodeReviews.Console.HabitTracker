@@ -10,7 +10,8 @@ Application has four main functions
 - Insert a record of habit in drinking_water table
 - Delete a record from drinking_water
 - Update a record in drinking_water
-  - Update allows the user to choose to update either the Date, Quantity or both
+  
 
 Possible next steps
- - Allow user to create their own habit to track
+- Allow user to create their own habit to track
+- Update allows the user to choose to update either the Date, Quantity or both
