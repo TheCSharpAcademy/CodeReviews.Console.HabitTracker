@@ -1,11 +1,11 @@
-﻿using FunRun.HabitTracker.Data.Model;
-using FunRun.HabitTracker.Services.Interfaces;
+﻿using HabitTracker.FunRunRushFlush.Data.Model;
+using HabitTracker.FunRunRushFlush.Services.Interfaces;
 using Spectre.Console;
 using System.Data;
 using System.Data.Common;
 
 
-namespace FunRun.HabitTracker;
+namespace HabitTracker.FunRunRushFlush;
 
 public class HabitTrackerApp
 {

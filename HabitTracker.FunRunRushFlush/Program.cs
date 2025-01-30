@@ -1,7 +1,7 @@
-﻿using FunRun.HabitTracker;
-using FunRun.HabitTracker.Data;
-using FunRun.HabitTracker.Services;
-using FunRun.HabitTracker.Services.Interfaces;
+﻿using HabitTracker.FunRunRushFlush;
+using HabitTracker.FunRunRushFlush.Data;
+using HabitTracker.FunRunRushFlush.Services;
+using HabitTracker.FunRunRushFlush.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

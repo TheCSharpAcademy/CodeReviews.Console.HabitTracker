@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
-using FunRun.HabitTracker.Data.Model;
-using FunRun.HabitTracker.Services.Interfaces;
+using HabitTracker.FunRunRushFlush.Data.Model;
+using HabitTracker.FunRunRushFlush.Services.Interfaces;
 using Spectre.Console;
 
-namespace FunRun.HabitTracker.Services;
+namespace HabitTracker.FunRunRushFlush.Services;
 
 public class CrudService : ICrudService
 {
     private ILogger<CrudService> _log;
-    private ISQLOperations _sql;
-    public CrudService(ILogger<CrudService> log, ISQLOperations sql)
+    private ISqlOperations _sql;
+    public CrudService(ILogger<CrudService> log, ISqlOperations sql)
     {
         _log = log;
         _sql = sql;
@@ -22,7 +22,7 @@ public class CrudService : ICrudService
         {
             _log.LogInformation("Looking for all habits");
 
-            var result = _sql.SQLReadAllHabits();
+            var result = _sql.SqlReadAllHabits();
 
             return result;
         }
@@ -37,7 +37,7 @@ public class CrudService : ICrudService
     {
         try
         {
-             _sql.SQLCreateHabit(newHabit);
+             _sql.SqlCreateHabit(newHabit);
             _log.LogInformation($"Success: newHabit:[{newHabit.HabitName}; {newHabit.HabitDescription}; {newHabit.HabitCounter}]");
 
         }
@@ -51,7 +51,7 @@ public class CrudService : ICrudService
     {
         try
         {
-            _sql.SQLUpdateHabit(newHabit);
+            _sql.SqlUpdateHabit(newHabit);
             _log.LogInformation($"Success: newHabit:[{newHabit.HabitName}; {newHabit.HabitDescription}; {newHabit.HabitCounter}]");
 
         }
@@ -65,7 +65,7 @@ public class CrudService : ICrudService
     {
         try
         {
-            _sql.SQLDeleteHabit(newHabit);
+            _sql.SqlDeleteHabit(newHabit);
             _log.LogInformation($"Success: DeleteOneHabit:[{newHabit.HabitName}; {newHabit.HabitDescription}; {newHabit.HabitCounter}]");
 
         }

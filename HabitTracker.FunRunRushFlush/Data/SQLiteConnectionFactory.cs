@@ -1,8 +1,8 @@
-﻿using FunRun.HabitTracker.Data.Model;
+﻿using HabitTracker.FunRunRushFlush.Data.Model;
 using System.Data;
 using System.Data.SQLite;
 
-namespace FunRun.HabitTracker.Data;
+namespace HabitTracker.FunRunRushFlush.Data;
 
 public class SQLiteConnectionFactory
 {
@@ -27,7 +27,7 @@ public class SQLiteConnectionFactory
     private void EnsureTableExists(IDbConnection connection)
     {
         using var command = connection.CreateCommand();
-        command.CommandText = HabitTable.SQLCreateTable();
+        command.CommandText = HabitTable.SqlCreateTable();
         command.ExecuteNonQuery(); 
     }
 }

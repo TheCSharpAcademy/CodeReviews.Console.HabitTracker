@@ -1,4 +1,4 @@
-﻿namespace FunRun.HabitTracker.Data.Model;
+﻿namespace HabitTracker.FunRunRushFlush.Data.Model;
 
 public static class HabitTable
 {

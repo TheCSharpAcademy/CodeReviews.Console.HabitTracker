@@ -1,6 +1,6 @@
-﻿using FunRun.HabitTracker.Data.Model;
+﻿using HabitTracker.FunRunRushFlush.Data.Model;
 
-namespace FunRun.HabitTracker.Services.Interfaces
+namespace HabitTracker.FunRunRushFlush.Services.Interfaces
 {
     public interface ICrudService
     {

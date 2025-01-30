@@ -1,9 +1,9 @@
-﻿using FunRun.HabitTracker.Data.Model;
-using FunRun.HabitTracker.Services.Interfaces;
+﻿using HabitTracker.FunRunRushFlush.Data.Model;
+using HabitTracker.FunRunRushFlush.Services.Interfaces;
 using System.Data;
 using System.Data.SQLite;
 
-namespace FunRun.HabitTracker.Services;
+namespace HabitTracker.FunRunRushFlush.Services;
 
 public class SqlOperations : ISqlOperations
 {
