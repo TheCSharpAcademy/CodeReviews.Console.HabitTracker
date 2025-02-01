@@ -32,7 +32,6 @@ using Microsoft.Data.Sqlite;
 */
 
 // Creates database if it does not exist. also looks for and creates drinking_water table if it does not exist in the DB
-List<DrinkingWater> myRecordList = new();
 
 
 string connectionString = @"Data Source = habitTracker.db";
