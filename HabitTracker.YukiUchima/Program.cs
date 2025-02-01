@@ -64,9 +64,8 @@ class Program
                     break;
                 default:
                     break;
-            };
+            }
         }
-
     }
     static bool CloseApplication()
     {
