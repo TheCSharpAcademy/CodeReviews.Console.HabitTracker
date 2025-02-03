@@ -5,6 +5,11 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyName>HabitTracker</AssemblyName>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    </ItemGroup>
 
 </Project>
