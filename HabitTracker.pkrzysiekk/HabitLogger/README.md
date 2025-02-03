@@ -1,0 +1,2 @@
+﻿Habbit logger lets you track your drinking water habbits, the menu lets you select the amount of water with date.
+You can see your statistics and save your data safely with implemented SQLite database.
