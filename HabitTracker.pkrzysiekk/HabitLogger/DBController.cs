@@ -59,10 +59,15 @@ namespace HabitLogger
             if (rowCount == 0)
             {
                 Console.WriteLine("The record doesn't exist");
+                connection.Close();
                 Delete();
             }
-            Console.WriteLine("Record deleted");
-            connection.Close();
+            else
+            {
+                Console.WriteLine("Record deleted");
+                connection.Close();
+            }
+       
         }
         public static void GetAllRecords()
         {
@@ -123,19 +128,20 @@ namespace HabitLogger
                 connection.Close();
                 Update();
             }
-
-            string date = InputHelpers.GetDateInput();
-            int quantity = InputHelpers.GetNumberInput("Insert number of glasses or other measure of your choice (no decimals)\n\n");
-            SQLiteCommand tableCmd =
-                new(@"UPDATE drinking_water SET Date= @date, " +
-                "Quantity= @quantity " +
-                "WHERE Id= @recordId",connection);
-            tableCmd.Parameters.AddWithValue("@quantity", quantity);
-            tableCmd.Parameters.AddWithValue("@date",date);
-            tableCmd.Parameters.AddWithValue("@recordId",recordId); 
-            tableCmd.ExecuteNonQuery();
-            connection.Close();
-
+            else
+            {
+                string date = InputHelpers.GetDateInput();
+                int quantity = InputHelpers.GetNumberInput("Insert number of glasses or other measure of your choice (no decimals)\n\n");
+                SQLiteCommand tableCmd =
+                    new(@"UPDATE drinking_water SET Date= @date, " +
+                    "Quantity= @quantity " +
+                    "WHERE Id= @recordId", connection);
+                tableCmd.Parameters.AddWithValue("@quantity", quantity);
+                tableCmd.Parameters.AddWithValue("@date", date);
+                tableCmd.Parameters.AddWithValue("@recordId", recordId);
+                tableCmd.ExecuteNonQuery();
+                connection.Close();
+            }
         }
 
         public static void SumWater()
