@@ -3,5 +3,37 @@
 - [x] Watch SQLite tutorial (https://www.youtube.com/watch?v=HQKwgk6XkIA)
 - [x] Add SQLite dependency
 - [x] Create SQLite DB
-- [] Check if DB exists on program startup
+- [x] Check if DB exists on program startup
+- [x] Create DBs
+
+    HabitDefs: table containing different types of habits that the user can log
+    HabitLogs: table containing actual habits and their values
+
+- [x] Outline menu
+
+- [] Implement AskMenuOption()
+- [] Implement "Add new habit definition"
+- [] Implement "[DEBUG] Fill with random entries"
+- [] Implement "View all entries"
+- [] Implement "Log new entry"
+- [] Implement "Edit existing entry"
+- [] Implement "Remove entry/all entries"
+- [] Implement "Edit existing definition"
+- [] Implement "Remove definition"
+- [] Implement "See statistics"
+
+    Ideas for habits:
+        - Glasses of water (times)
+        - Cycling (km)
+        - Running (km)
+        - Stretching (minutes)
+    
+    Ideas for queries:
+        - How many times + Total + Average per week/month/year
+        - Top 3 days with most
+        - Day with least
+        - Largest day gap
+        - Current daily streak + Longest daily streak
+
+- [] Learn SQL (codecademy.com)
 - [] Write Read me (follow https://github.com/thags/ConsoleTimeLogger)
