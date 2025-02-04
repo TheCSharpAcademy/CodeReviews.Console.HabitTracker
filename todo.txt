@@ -30,7 +30,7 @@
     
     Ideas for queries:
         - How many times + Total + Average per week/month/year
-        - Top 3 days with most
+        - Top 3 days/months with most
         - Day with least
         - Largest day gap
         - Current daily streak + Longest daily streak
