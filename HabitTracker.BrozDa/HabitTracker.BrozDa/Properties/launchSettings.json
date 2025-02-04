@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker.BrozDa": {
+      "commandName": "Project",
+      "workingDirectory": "E:\\Git Repos\\CodeReviews.Console.HabitTracker\\HabitTracker.BrozDa"
+    }
+  }
+}

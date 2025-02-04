@@ -4,7 +4,9 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            HabitTracker tracker = new HabitTracker();
+            tracker.Start();
+            Console.ReadLine();
         }
     }
 }
