@@ -1,5 +1,7 @@
 - [x] Read KISS article (https://www.bytehide.com/blog/kiss-principle-csharp)
-- [] Read ADO.NET (https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/)
-- [] Watch SQLite tutorial (https://www.youtube.com/watch?v=HQKwgk6XkIA)
+- [x] Read ADO.NET (https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/)
+- [x] Watch SQLite tutorial (https://www.youtube.com/watch?v=HQKwgk6XkIA)
+- [x] Add SQLite dependency
+- [x] Create SQLite DB
+- [] Check if DB exists on program startup
 - [] Write Read me (follow https://github.com/thags/ConsoleTimeLogger)
-- [] Begin!
