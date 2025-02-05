@@ -15,7 +15,11 @@ namespace HabitTracker.BrozDa
         {
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) { 
                 connection.Open();
-                string createTable = $"CREATE TABLE {tableName} (Data varchar(255), Glasses varchar(255));";
+                string createTable = $"CREATE TABLE {tableName} (" +
+                                     $"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                     $"Date varchar(255), " +
+                                     $"Glasses varchar(255)" +
+                                     $");";
                 SQLiteCommand cmd = new SQLiteCommand(createTable, connection);
                 cmd.ExecuteNonQuery();
                 connection.Close();
@@ -82,6 +86,7 @@ namespace HabitTracker.BrozDa
                     columns.Add(output.GetString(0));
                 }
             }
+            Console.WriteLine(string.Join(" | ", columns));
             return columns;
         }
         public List<DatabaseRecord> GetTableRecords(string tableName)
@@ -97,12 +102,7 @@ namespace HabitTracker.BrozDa
 
                 while (output.Read())
                 {
-                    records.Add(new DatabaseRecord(output.GetString(0), output.GetString(1)));
-                    /*for (int i = 0; i < columnList.Count; i++) {
-                        Console.Write(string.Format(_format, output[columnList[i]].ToString()));
-                        Console.Write("\t");
-                    }
-                    Console.WriteLine();*/
+                    records.Add(new DatabaseRecord(output.GetInt32(0), output.GetString(1), output.GetString(2)));
                 }
 
                 connection.Close();
@@ -110,11 +110,19 @@ namespace HabitTracker.BrozDa
             }
             return records;
         }
-        public void InsertRecord(string tableName)
+        public void InsertRecord(DatabaseRecord record, string table)
         {
 
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
+                connection.Open();
+                string sql = $"INSERT INTO WaterIntake (Date, Glasses) VALUES ('{record.Date}', '{record.Volume}');";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
+                cmd.ExecuteNonQuery();
+            
+                connection.Close();
+            }
         }
 
-        
+
     }
 }
