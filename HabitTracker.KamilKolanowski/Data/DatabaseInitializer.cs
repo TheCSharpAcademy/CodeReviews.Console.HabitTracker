@@ -11,11 +11,7 @@ public static class DatabaseInitializer
 
     public static void InitializeDb()
     {
-        if (!File.Exists(DatabaseFileName))
-        {
-            Console.WriteLine("Database does not exist. Creating new one...");
-            SQLiteConnection.CreateFile(DatabaseFileName);
-        }
+        CreateDatabaseIfNotExists();
 
         using var connection = new SQLiteConnection(ConnectionString);
         connection.Open();
@@ -37,6 +33,15 @@ public static class DatabaseInitializer
         catch (Exception ex)
         {
             Console.WriteLine("Error creating table: " + ex.Message);
+        }
+    }
+
+    public static void CreateDatabaseIfNotExists()
+    {
+        if (!File.Exists(DatabaseFileName))
+        {
+            Console.WriteLine("Database does not exist. Creating new one...");
+            SQLiteConnection.CreateFile(DatabaseFileName);
         }
     }
 }
