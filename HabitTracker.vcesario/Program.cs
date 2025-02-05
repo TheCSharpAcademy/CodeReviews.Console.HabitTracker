@@ -16,6 +16,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
             case 5: // Add new habit definition
                 AddHabitDefinitionScreen(connection);
                 break;
+            case 9:
+                FillDbWithRandomEntries(connection);
+                break;
             default:
                 break;
         }
@@ -90,13 +93,16 @@ void InitializeDBs(SqliteConnection connection)
                                     measure FLOAT NOT NULL,
                                     FOREIGN KEY (habit) REFERENCES habitdefs(habit_name)
                                         ON DELETE CASCADE
-                                        ON UPDATE CASCADE
+                                        ON UPDATE CASCADE,
+                                    UNIQUE (habit, date)
                                 )";
 
         command.ExecuteReader();
 
         Console.WriteLine("Table 'habitlogs' created.");
     }
+
+    Console.ReadLine();
 }
 
 int AskMenuOption()
@@ -161,7 +167,7 @@ void AddHabitDefinitionScreen(SqliteConnection connection)
         {
             var command = connection.CreateCommand();
 
-            command.CommandText = $@"INSERT INTO habitdefs
+            command.CommandText = $@"INSERT INTO habitdefs (habit_name, unit)
                                     VALUES ('{habitName}', '{habitUnit}')";
             command.ExecuteReader();
 
@@ -181,5 +187,124 @@ void AddHabitDefinitionScreen(SqliteConnection connection)
         Console.WriteLine();
         Console.Write("Habit definition canceled.");
         Console.ReadLine();
+    }
+}
+
+void FillDbWithRandomEntries(SqliteConnection connection)
+{
+    Console.Clear();
+
+    // define 3 habits
+    //  cycling in kilometers
+    //  walking in steps
+    //  water in glasses
+    //
+    // loop 1 to a 100, date d in reversed order starting from today
+    // for each of the above habits
+    //  50% chance of adding an entry with date d and random measure value
+
+    try
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = @"INSERT INTO habitdefs (habit_name, unit)
+                                    VALUES ('cycling', 'kilometers')";
+        command.ExecuteReader();
+
+        Console.WriteLine("'Cycling (kilometers)' habit created.");
+    }
+    catch (SqliteException)
+    {
+        // habit already defined
+        Console.WriteLine("'Cycling (kilometers)' habit already defined.");
+    }
+
+    try
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = @"INSERT INTO habitdefs (habit_name, unit)
+                                    VALUES ('walking', 'steps')";
+        command.ExecuteReader();
+        Console.WriteLine("'Walking (steps)' habit created.");
+    }
+    catch (SqliteException)
+    {
+        // habit already defined
+        Console.WriteLine("'Walking (steps)' habit already defined.");
+    }
+
+    try
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = @"INSERT INTO habitdefs (habit_name, unit)
+                                    VALUES ('water', 'glasses')";
+        command.ExecuteReader();
+        Console.WriteLine("'Water (glasses)' habit created.");
+    }
+    catch (SqliteException)
+    {
+        // habit already defined
+        Console.WriteLine("'Water (glasses)' habit already defined.");
+    }
+
+    Dictionary<string, int[]> measureRangesPerHabit = new()
+    {
+        { "cycling", new int[2] { 5, 50 } },
+        { "walking", new int[2] { 500, 3000 } },
+        { "water",   new int[2] { 1, 10 } },
+    };
+
+    DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+    Random random = new Random();
+
+    for (int i = 0; i < 100; i++)
+    {
+        DateOnly date = today.AddDays(-i);
+
+        if (random.NextSingle() >= 0.5f) // cycling
+        {
+            int randomMin = measureRangesPerHabit["cycling"][0];
+            int randomMax = measureRangesPerHabit["cycling"][1];
+            int randomMeasure = random.Next(randomMin, randomMax + 1);
+
+            AddEntry("cycling", date, randomMeasure);
+        }
+
+        if (random.NextSingle() >= 0.5f) // walking
+        {
+            int randomMin = measureRangesPerHabit["walking"][0];
+            int randomMax = measureRangesPerHabit["walking"][1];
+            int randomMeasure = random.Next(randomMin, randomMax + 1);
+
+            AddEntry("walking", date, randomMeasure);
+        }
+
+        if (random.NextSingle() >= 0.5f) // water
+        {
+            int randomMin = measureRangesPerHabit["water"][0];
+            int randomMax = measureRangesPerHabit["water"][1];
+            int randomMeasure = random.Next(randomMin, randomMax + 1);
+
+            AddEntry("water", date, randomMeasure);
+        }
+    }
+
+    Console.ReadLine();
+
+    void AddEntry(string habit, DateOnly date, int randomMeasure)
+    {
+        try
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = $@"INSERT INTO habitlogs (habit, date, measure)
+                                            VALUES ('{habit}', '{date}', '{randomMeasure}')";
+            command.ExecuteReader();
+
+            Console.WriteLine($"Added entry ['{habit}', '{date}', '{randomMeasure}']");
+        }
+        catch (SqliteException)
+        {
+            // entry already defined for this habit and date
+            Console.WriteLine($"Entry ['{habit}', '{date}'] already defined.");
+        }
     }
 }
