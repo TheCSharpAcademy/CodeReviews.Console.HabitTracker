@@ -15,12 +15,12 @@ namespace HabitTracker.BrozDa
         {
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) { 
                 connection.Open();
-                string createTable = $"CREATE TABLE {tableName} (" +
-                                     $"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                                     $"Date varchar(255), " +
-                                     $"Glasses varchar(255)" +
-                                     $");";
-                SQLiteCommand cmd = new SQLiteCommand(createTable, connection);
+                string sql = $"CREATE TABLE {tableName} (" +
+                             $"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                             $"Date varchar(255), " +
+                             $"Glasses varchar(255)" +
+                             $");";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
                 cmd.ExecuteNonQuery();
                 connection.Close();
             }
@@ -29,8 +29,10 @@ namespace HabitTracker.BrozDa
         {
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
                 connection.Open();
-                string tableExist = $"SELECT name FROM sqlite_schema WHERE type ='table' AND name ='{tableName}';";
-                SQLiteCommand cmd = new SQLiteCommand(tableExist, connection); 
+                string sql = $"SELECT name " +
+                             $"FROM sqlite_schema " +
+                             $"WHERE type ='table' AND name ='{tableName}';";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection); 
                 
                 try
                 {
@@ -54,8 +56,10 @@ namespace HabitTracker.BrozDa
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string allTables = $"SELECT name FROM sqlite_schema WHERE type ='table';";
-                SQLiteCommand cmd = new SQLiteCommand(allTables, connection);
+                string sql = $"SELECT name " +
+                                   $"FROM sqlite_schema " +
+                                   $"WHERE type ='table';";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
                 try
                 {
                     SQLiteDataReader output = cmd.ExecuteReader();
@@ -115,7 +119,8 @@ namespace HabitTracker.BrozDa
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
                 connection.Open();
-                string sql = $"INSERT INTO WaterIntake (Date, Glasses) VALUES ('{record.Date}', '{record.Volume}');";
+                string sql = $"INSERT INTO WaterIntake (Date, Glasses) " +
+                             $"VALUES ('{record.Date}', '{record.Volume}');";
                 SQLiteCommand cmd = new SQLiteCommand(sql, connection);
                 cmd.ExecuteNonQuery();
             
