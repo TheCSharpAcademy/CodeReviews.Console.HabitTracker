@@ -13,10 +13,8 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
 
         switch (menuOption)
         {
-            case 1:
-                Console.Clear();
-                Console.WriteLine("Menu option 1 chosen!");
-                Console.ReadLine();
+            case 5: // Add new habit definition
+                AddHabitDefinitionScreen(connection);
                 break;
             default:
                 break;
@@ -103,24 +101,6 @@ void InitializeDBs(SqliteConnection connection)
 
 int AskMenuOption()
 {
-    // menu draft
-
-    // 1. View all entries
-
-    // 2. Log new entry
-    // 3. Edit existing entry
-    // 4. Remove entry
-
-    // 5. Add new habit definition
-    // 6. Edit existing definition
-    // 7. Remove definition
-
-    // 8. See statistics
-
-    // 9. [DEBUG] Fill with random entries
-
-    // 0. Exit
-
     Console.Clear();
     Console.WriteLine();
     Console.WriteLine("1. View all entries");
@@ -145,4 +125,61 @@ int AskMenuOption()
     }
 
     return intInput;
+}
+
+void AddHabitDefinitionScreen(SqliteConnection connection)
+{
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> ADD NEW HABIT DEFINITION");
+    Console.WriteLine();
+
+    string? habitName;
+    do
+    {
+        Console.Write("Name the new habit you want to track in this application (max. 20 characters): ");
+        habitName = Console.ReadLine();
+    } while (habitName == null);
+
+    string? habitUnit;
+    do
+    {
+        Console.Write("What should this habit be measured in (max. 10 characters)? ");
+        habitUnit = Console.ReadLine();
+    } while (habitUnit == null);
+
+    string? confirm = null;
+    do
+    {
+        Console.Write($"Are you sure you want to add \"{habitName} (in {habitUnit})\" as a habit? (y/n) ");
+        confirm = Console.ReadLine();
+    } while (confirm == null || (!confirm.ToLower().Equals("y") && !confirm.ToLower().Equals("n")));
+
+    if (confirm.ToLower().Equals("y"))
+    {
+        try
+        {
+            var command = connection.CreateCommand();
+
+            command.CommandText = $@"INSERT INTO habitdefs
+                                    VALUES ('{habitName}', '{habitUnit}')";
+            command.ExecuteReader();
+
+            Console.WriteLine();
+            Console.Write("New habit definition created!");
+            Console.ReadLine();
+        }
+        catch (SqliteException)
+        {
+            Console.WriteLine();
+            Console.Write($"Couldn't create habit '{habitName}' (was already registered).");
+            Console.ReadLine();
+        }
+    }
+    else
+    {
+        Console.WriteLine();
+        Console.Write("Habit definition canceled.");
+        Console.ReadLine();
+    }
 }

@@ -12,8 +12,8 @@
 - [x] Outline menu
 
 - [x] Implement AskMenuOption()
-- [] Implement "Add new habit definition"
-- [] Implement "[DEBUG] Fill with random entries"
+- [x] Implement "Add new habit definition"
+- [] Implement "[DEBUG] Fill habitlogs with random entries"
 - [] Implement "View all entries"
 - [] Implement "Log new entry"
 - [] Implement "Edit existing entry"
