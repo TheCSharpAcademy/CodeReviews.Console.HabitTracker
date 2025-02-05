@@ -3,11 +3,11 @@
     internal class HabitTracker
     {
         private DatabaseManager _databaseManager;
-        private InputOutputManager _displayManager;
+        private InputOutputManager _IOmanager;
         public HabitTracker()
         {
             _databaseManager = new DatabaseManager();
-            _displayManager = new InputOutputManager();
+            _IOmanager = new InputOutputManager();
         }
 
 
@@ -54,26 +54,42 @@
         private void ProcessUserInput() {
             
             int input = GetUserInput();
+            string table = "WaterIntake";
+            List<string> columns;
+            List<DatabaseRecord> records;
+            DatabaseRecord record;
 
             switch (input)
             {
                 case 1:
-                    _displayManager.ShowRecords(_databaseManager.GetTableColumnNames("WaterIntake"), _databaseManager.GetTableRecords("WaterIntake")); // THAT IS ONE OF MOST DISGUSTING LINES I SEEN
+                    columns = _databaseManager.GetTableColumnNames("WaterIntake");
+                    records = _databaseManager.GetTableRecords("WaterIntake");
+                    _IOmanager.PrintRecords(columns, records);
                     Console.ReadKey();
                     break;
-                case 2: 
-                    DatabaseRecord newRecord = _displayManager.GetNewRecord("WaterIntake");
-                    _databaseManager.InsertRecord(newRecord, "WaterIntake");
+                case 2:
+                    record = _IOmanager.GetNewRecord("WaterIntake");
+                    _databaseManager.InsertRecord(record, "WaterIntake");
                     Console.WriteLine("\nPress any key to continue");
                     Console.ReadKey();
                     break;
-                case 3: break;
+                case 3:
+                    columns = _databaseManager.GetTableColumnNames("WaterIntake");
+                    records = _databaseManager.GetTableRecords("WaterIntake");
+                    _IOmanager.PrintRecords(columns, records);
+                    int recordID= _IOmanager.GetRecordIdForUpdate(records);
+                    DatabaseRecord oldRecord = _databaseManager.GetRecord(recordID);
+                    int columnPosition = _IOmanager.GetRecordColumnForUpdate(columns);
+                    DatabaseRecord updatedRecord = _IOmanager.GetNewValuesForRecord(oldRecord, columnPosition);
+                    _databaseManager.UpdateRecord(updatedRecord, "WaterIntake");
+                    break;
                 case 4: break;
                 case 5: break;
 
                 default:
                     break;
             }
+            Console.ReadKey(true);
             
         }
     }

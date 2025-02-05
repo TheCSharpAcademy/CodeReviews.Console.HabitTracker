@@ -89,8 +89,8 @@ namespace HabitTracker.BrozDa
                 {
                     columns.Add(output.GetString(0));
                 }
+                connection.Close();
             }
-            Console.WriteLine(string.Join(" | ", columns));
             return columns;
         }
         public List<DatabaseRecord> GetTableRecords(string tableName)
@@ -114,10 +114,31 @@ namespace HabitTracker.BrozDa
             }
             return records;
         }
+        public DatabaseRecord GetRecord(int ID)
+        {
+            DatabaseRecord record = new DatabaseRecord();
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                string sql = $"SELECT * FROM WaterIntake " +
+                             $"WHERE ID='{ID}';";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
+                SQLiteDataReader output = cmd.ExecuteReader();
+                while (output.Read())
+                {
+                    record = new DatabaseRecord(output.GetInt32(0), output.GetString(1), output.GetString(2));
+
+                }
+
+                connection.Close();
+            }
+            return record;
+        }
         public void InsertRecord(DatabaseRecord record, string table)
         {
-
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
+            {
                 connection.Open();
                 string sql = $"INSERT INTO WaterIntake (Date, Glasses) " +
                              $"VALUES ('{record.Date}', '{record.Volume}');";
@@ -126,6 +147,20 @@ namespace HabitTracker.BrozDa
             
                 connection.Close();
             }
+        }
+        public void UpdateRecord(DatabaseRecord UpdatedRecord, string table) {
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                string sql = $"UPDATE {table} " +
+                             $"SET Date='{UpdatedRecord.Date}', Glasses='{UpdatedRecord.Volume}' " +
+                             $"WHERE ID={UpdatedRecord.ID};";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
+                cmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
         }
 
 
