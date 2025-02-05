@@ -2,11 +2,17 @@
 {
     internal class DatabaseRecord
     {
+        public int ID { get; set; } 
         public string Date { get; set; }
         public string Volume { get; set; }
 
-        public DatabaseRecord(string date, string volume)
+        public DatabaseRecord()
         {
+            
+        }
+        public DatabaseRecord(int id, string date, string volume)
+        {
+            ID = id;
             Date = date;
             Volume = volume;
         }

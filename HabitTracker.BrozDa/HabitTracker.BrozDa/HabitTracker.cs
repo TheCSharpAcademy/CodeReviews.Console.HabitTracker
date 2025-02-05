@@ -3,18 +3,25 @@
     internal class HabitTracker
     {
         private DatabaseManager _databaseManager;
-        private DisplayManager _displayManager;
+        private InputOutputManager _displayManager;
         public HabitTracker()
         {
             _databaseManager = new DatabaseManager();
-            _displayManager = new DisplayManager();
+            _displayManager = new InputOutputManager();
         }
 
 
         public void Start()
         {
-            PrintMainMenu();
-            ProcessUserInput();
+            //_databaseManager.CreateNewTable("WaterIntake");
+            //_databaseManager.GetTableColumnNames("WaterIntake");
+            
+            while (true) 
+            {
+                PrintMainMenu();
+                ProcessUserInput();
+            }
+            
         }
         public void PrintMainMenu()
         {
@@ -45,15 +52,21 @@
             return numericInput;
         }
         private void ProcessUserInput() {
+            
             int input = GetUserInput();
 
             switch (input)
             {
                 case 1:
-                    _displayManager.ShowRecords(_databaseManager.GetTableColumnNames("WaterIntake"), _databaseManager.GetTableRecords("WaterIntake"));
-                    //_databaseManager.GetTableRecords("WaterIntake"); //ONLY SINGLE TABLE IMPLEMENTATION ATM
+                    _displayManager.ShowRecords(_databaseManager.GetTableColumnNames("WaterIntake"), _databaseManager.GetTableRecords("WaterIntake")); // THAT IS ONE OF MOST DISGUSTING LINES I SEEN
+                    Console.ReadKey();
                     break;
-                case 2: break;
+                case 2: 
+                    DatabaseRecord newRecord = _displayManager.GetNewRecord("WaterIntake");
+                    _databaseManager.InsertRecord(newRecord, "WaterIntake");
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadKey();
+                    break;
                 case 3: break;
                 case 4: break;
                 case 5: break;
@@ -61,6 +74,7 @@
                 default:
                     break;
             }
+            
         }
     }
     
