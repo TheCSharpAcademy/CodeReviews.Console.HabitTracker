@@ -13,13 +13,18 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
 
         switch (menuOption)
         {
+            case 1:
+                Console.Clear();
+                Console.WriteLine("Menu option 1 chosen!");
+                Console.ReadLine();
+                break;
             default:
                 break;
         }
 
     } while (menuOption > 0);
 
-    
+
     /* Sqlite Snippet for reference
     
     // var command = connection.CreateCommand();
@@ -116,6 +121,28 @@ int AskMenuOption()
 
     // 0. Exit
 
-    Console.ReadLine();
-    return 0;
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("1. View all entries");
+    Console.WriteLine("2. Log new entry");
+    Console.WriteLine("3. Edit existing entry");
+    Console.WriteLine("4. Remove entry");
+    Console.WriteLine("5. Add new habit definition");
+    Console.WriteLine("6. Edit existing definition");
+    Console.WriteLine("7. Remove definition");
+    Console.WriteLine("8. See statistics");
+    Console.WriteLine("9. [DEBUG] Fill with random entries");
+    Console.WriteLine("0. Exit");
+    Console.WriteLine();
+
+    Console.Write("Choose an option: ");
+    string? input = Console.ReadLine();
+    int intInput = -1;
+    while (input == null || int.TryParse(input, out intInput) == false || intInput < 0 || intInput > 9)
+    {
+        Console.Write("Invalid option. Try a digit between 0 and 9: ");
+        input = Console.ReadLine();
+    }
+
+    return intInput;
 }
