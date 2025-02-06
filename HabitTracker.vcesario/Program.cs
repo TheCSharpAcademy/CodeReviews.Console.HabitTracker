@@ -13,7 +13,10 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
 
         switch (menuOption)
         {
-            case 5: // Add new habit definition
+            case 1:
+                ViewAllEntries(connection);
+                break;
+            case 5:
                 AddHabitDefinitionScreen(connection);
                 break;
             case 9:
@@ -90,7 +93,7 @@ void InitializeDBs(SqliteConnection connection)
                                     id INT PRIMARY KEY,
                                     habit VARCHAR(20) NOT NULL,
                                     date DATE NOT NULL,
-                                    measure FLOAT NOT NULL,
+                                    measure INT NOT NULL,
                                     FOREIGN KEY (habit) REFERENCES habitdefs(habit_name)
                                         ON DELETE CASCADE
                                         ON UPDATE CASCADE,
@@ -131,6 +134,54 @@ int AskMenuOption()
     }
 
     return intInput;
+}
+
+void ViewAllEntries(SqliteConnection connection)
+{
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> VIEW ALL ENTRIES");
+    Console.WriteLine();
+
+    Console.WriteLine("> Habit definitions");
+    Console.WriteLine();
+
+    var command = connection.CreateCommand();
+    command.CommandText = "SELECT * FROM habitdefs";
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var habitName = reader.GetString(0);
+            var unit = reader.GetString(1);
+
+            Console.WriteLine($"{habitName} (in {unit})");
+        }
+    }
+
+    Console.WriteLine();
+
+    Console.WriteLine("> Habit entries");
+    Console.WriteLine();
+
+    command.CommandText = @"SELECT habitlogs.habit, habitlogs.date, habitlogs.measure, habitdefs.unit
+                            FROM habitlogs
+                            INNER JOIN habitdefs ON habitlogs.habit=habitdefs.habit_name";
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var habitName = reader.GetString(0);
+            var date = DateOnly.FromDateTime(reader.GetDateTime(1));
+            var measure = reader.GetFloat(2);
+            var unit = reader.GetString(3);
+
+            Console.WriteLine($"{date} {habitName.PadRight(10 + 3)} {measure} {unit}");
+        }
+    }
+
+    Console.WriteLine();
+    Console.ReadLine();
 }
 
 void AddHabitDefinitionScreen(SqliteConnection connection)
@@ -203,48 +254,9 @@ void FillDbWithRandomEntries(SqliteConnection connection)
     // for each of the above habits
     //  50% chance of adding an entry with date d and random measure value
 
-    try
-    {
-        var command = connection.CreateCommand();
-        command.CommandText = @"INSERT INTO habitdefs (habit_name, unit)
-                                    VALUES ('cycling', 'kilometers')";
-        command.ExecuteReader();
-
-        Console.WriteLine("'Cycling (kilometers)' habit created.");
-    }
-    catch (SqliteException)
-    {
-        // habit already defined
-        Console.WriteLine("'Cycling (kilometers)' habit already defined.");
-    }
-
-    try
-    {
-        var command = connection.CreateCommand();
-        command.CommandText = @"INSERT INTO habitdefs (habit_name, unit)
-                                    VALUES ('walking', 'steps')";
-        command.ExecuteReader();
-        Console.WriteLine("'Walking (steps)' habit created.");
-    }
-    catch (SqliteException)
-    {
-        // habit already defined
-        Console.WriteLine("'Walking (steps)' habit already defined.");
-    }
-
-    try
-    {
-        var command = connection.CreateCommand();
-        command.CommandText = @"INSERT INTO habitdefs (habit_name, unit)
-                                    VALUES ('water', 'glasses')";
-        command.ExecuteReader();
-        Console.WriteLine("'Water (glasses)' habit created.");
-    }
-    catch (SqliteException)
-    {
-        // habit already defined
-        Console.WriteLine("'Water (glasses)' habit already defined.");
-    }
+    InsertHabitDefinition("cycling", "kilometers");
+    InsertHabitDefinition("walking", "steps");
+    InsertHabitDefinition("water", "glasses");
 
     Dictionary<string, int[]> measureRangesPerHabit = new()
     {
@@ -266,7 +278,7 @@ void FillDbWithRandomEntries(SqliteConnection connection)
             int randomMax = measureRangesPerHabit["cycling"][1];
             int randomMeasure = random.Next(randomMin, randomMax + 1);
 
-            AddEntry("cycling", date, randomMeasure);
+            InsertHabitEntry("cycling", date, randomMeasure);
         }
 
         if (random.NextSingle() >= 0.5f) // walking
@@ -275,7 +287,7 @@ void FillDbWithRandomEntries(SqliteConnection connection)
             int randomMax = measureRangesPerHabit["walking"][1];
             int randomMeasure = random.Next(randomMin, randomMax + 1);
 
-            AddEntry("walking", date, randomMeasure);
+            InsertHabitEntry("walking", date, randomMeasure);
         }
 
         if (random.NextSingle() >= 0.5f) // water
@@ -284,22 +296,40 @@ void FillDbWithRandomEntries(SqliteConnection connection)
             int randomMax = measureRangesPerHabit["water"][1];
             int randomMeasure = random.Next(randomMin, randomMax + 1);
 
-            AddEntry("water", date, randomMeasure);
+            InsertHabitEntry("water", date, randomMeasure);
         }
     }
 
     Console.ReadLine();
 
-    void AddEntry(string habit, DateOnly date, int randomMeasure)
+    void InsertHabitDefinition(string habitName, string unit)
+    {
+        try
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = $@"INSERT INTO habitdefs (habit_name, unit)
+                                    VALUES ('{habitName}', '{unit}')";
+            command.ExecuteReader();
+
+            Console.WriteLine($"'{habitName} ({unit})' habit created.");
+        }
+        catch (SqliteException)
+        {
+            // habit already defined
+            Console.WriteLine($"'{habitName} ({unit})' habit already defined.");
+        }
+    }
+
+    void InsertHabitEntry(string habit, DateOnly date, int measure)
     {
         try
         {
             var command = connection.CreateCommand();
             command.CommandText = $@"INSERT INTO habitlogs (habit, date, measure)
-                                            VALUES ('{habit}', '{date}', '{randomMeasure}')";
+                                            VALUES ('{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}')";
             command.ExecuteReader();
 
-            Console.WriteLine($"Added entry ['{habit}', '{date}', '{randomMeasure}']");
+            Console.WriteLine($"Added entry ['{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}']");
         }
         catch (SqliteException)
         {
