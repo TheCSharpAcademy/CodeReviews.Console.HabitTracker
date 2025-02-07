@@ -58,49 +58,10 @@
             
             int input = GetUserInput();
             string table = "WaterIntake";
-<<<<<<< HEAD
-            List<string> columns;
-            List<DatabaseRecord> records;
-            DatabaseRecord record;
-=======
-            //DatabaseRecord record;
->>>>>>> update-record
 
             int recordID;
             switch (input)
             {
-<<<<<<< HEAD
-                case 1:
-                    columns = _databaseManager.GetTableColumnNames("WaterIntake");
-                    records = _databaseManager.GetTableRecords("WaterIntake");
-                    _IOmanager.PrintRecords(columns, records);
-                    Console.ReadKey();
-                    break;
-                case 2:
-                    record = _IOmanager.GetNewRecord("WaterIntake");
-                    _databaseManager.InsertRecord(record, "WaterIntake");
-                    Console.WriteLine("\nPress any key to continue");
-                    Console.ReadKey();
-                    break;
-                case 3:
-                    columns = _databaseManager.GetTableColumnNames("WaterIntake");
-                    records = _databaseManager.GetTableRecords("WaterIntake");
-                    _IOmanager.PrintRecords(columns, records);
-                    int recordID= _IOmanager.GetRecordIdForUpdate(records);
-                    DatabaseRecord oldRecord = _databaseManager.GetRecord(recordID);
-                    int columnPosition = _IOmanager.GetRecordColumnForUpdate(columns);
-                    DatabaseRecord updatedRecord = _IOmanager.GetNewValuesForRecord(oldRecord, columnPosition);
-                    _databaseManager.UpdateRecord(updatedRecord, "WaterIntake");
-                    break;
-                case 4: break;
-                case 5: break;
-
-                default:
-                    break;
-            }
-            Console.ReadKey(true);
-            
-=======
                 case 1: //print records
                     _databaseManager.PrintRecordsFromATable(table);
                     break;
@@ -112,7 +73,7 @@
                     _databaseManager.PrintRecordsFromATable(table);
                     recordID = GetValidRecordID(table, "update");
                     DatabaseRecord oldRecord = _databaseManager.GetRecord(recordID);
-                    DatabaseRecord updatedRecord = _IOmanager.UpdateRecord(oldRecord);
+                    DatabaseRecord updatedRecord = _IOmanager.GetNewValuesForRecord(oldRecord);
                     _databaseManager.UpdateRecord(updatedRecord, table);
                     break;
                 case 4: //delete record
@@ -130,7 +91,7 @@
         }
        public int GetValidRecordID(string table, string operation)
         {
-            int recordID = _IOmanager.GetRecordIdFromUser("operation");
+            int recordID = _IOmanager.GetRecordIdFromUser(operation);
             while (!_databaseManager.IsIdPresentInDatabase(recordID, table))
             {
                 Console.WriteLine("Entered ID is not present in the database");
@@ -138,7 +99,6 @@
             }
             return recordID;
 
->>>>>>> update-record
         }
     }
     

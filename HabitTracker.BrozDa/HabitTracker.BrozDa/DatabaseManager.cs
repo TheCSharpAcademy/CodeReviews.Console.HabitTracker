@@ -179,6 +179,22 @@ namespace HabitTracker.BrozDa
             Console.WriteLine("Record deleted");
 
         }
+        /*public int GetNumberOfRows(string table)
+        {
+            int numberOfRows = -1;
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                string sql = $"SELECT COUNT(*) FROM {table};";
+                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
+                SQLiteDataReader output = cmd.ExecuteReader();
+                while (output.Read()) {
+                    numberOfRows = output.GetInt32(0);
+                }
+                connection.Close();
+            }
+            return numberOfRows;
+        }*/
         public bool IsIdPresentInDatabase(int id, string table) {
             
             bool isIdPresentInDatabase = false;

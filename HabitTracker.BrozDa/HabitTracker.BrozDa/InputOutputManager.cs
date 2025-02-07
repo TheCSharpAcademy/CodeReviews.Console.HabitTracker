@@ -65,21 +65,7 @@ namespace HabitTracker.BrozDa
 
             return newRecord;
         }
-<<<<<<< HEAD
-        public int GetRecordIdForUpdate(List<DatabaseRecord> records)
-        {
 
-            Console.Write("Please enter ID of the record you wish to update:");
-            string? input = Console.ReadLine();
-            // MISSING INPUT VERIFICATION CODE
-            while (!ValidateInput(input, 1, records.Count))
-            {
-                Console.WriteLine();
-                Console.Write("Please enter ID of the record you wish to update:");
-                input = Console.ReadLine();
-            }
-            return Convert.ToInt32(input);
-=======
         public int GetRecordIdFromUser(string operation)
         {
             Console.Write($"Please valid ID of the record you wish to {operation}:");
@@ -91,7 +77,6 @@ namespace HabitTracker.BrozDa
                 input = Console.ReadLine();
             }
             return numericInput;
->>>>>>> update-record
         }
         // returns number representing position of columns;
         public int GetRecordColumnForUpdate(List<string> columns)
@@ -110,12 +95,9 @@ namespace HabitTracker.BrozDa
 
             return Convert.ToInt32(input);
         }
-<<<<<<< HEAD
-=======
-        public DatabaseRecord UpdateRecord(DatabaseRecord oldRecord)
+        public DatabaseRecord GetNewValuesForRecord(DatabaseRecord oldRecord)
         {
             DatabaseRecord newRecord = new DatabaseRecord(oldRecord.ID, oldRecord.Date, oldRecord.Volume);
-
             Console.Write("Enter new value for column Date: ");
             newRecord.Date = Console.ReadLine();
             Console.Write("Enter new value for column Glasses: ");
@@ -123,31 +105,7 @@ namespace HabitTracker.BrozDa
 
             return newRecord;
         }
->>>>>>> update-record
-        public DatabaseRecord GetNewValuesForRecord(DatabaseRecord oldRecord, int columnNumber)
-        {
-            DatabaseRecord newRecord = new DatabaseRecord(oldRecord.ID, oldRecord.Date, oldRecord.Volume);
-
-            if (columnNumber == 0)
-            {
-                Console.Write("Enter new value for column Date: ");
-                newRecord.Date = Console.ReadLine();
-                Console.Write("Enter new value for column Glasses: ");
-                newRecord.Volume = Console.ReadLine();
-            }
-            if (columnNumber == 1)
-            {
-                Console.Write("Enter new value for column Date: ");
-                newRecord.Date = Console.ReadLine();
-            }
-            if (columnNumber == 2) 
-            {
-                Console.Write("Enter new value for column Glasses: ");
-                newRecord.Volume = Console.ReadLine();
-            }
-
-            return newRecord;
-        }
+       
         public bool ValidateInput(string? input, int minVal, int maxVal) 
         {
             int numInput;
@@ -167,8 +125,6 @@ namespace HabitTracker.BrozDa
 
             return true;
         }
-<<<<<<< HEAD
-=======
         public void PrintTableColumns(List<string> columns, string table)
         {
             Console.Clear();
@@ -214,7 +170,6 @@ namespace HabitTracker.BrozDa
             Console.WriteLine("|" + new string(' ', leftpadding) + text + new string(' ', rightPadding) + "|");
         }
         
->>>>>>> update-record
         
     }
 }
