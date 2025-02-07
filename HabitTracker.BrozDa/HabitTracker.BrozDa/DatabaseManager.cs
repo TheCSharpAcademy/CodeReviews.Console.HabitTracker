@@ -133,33 +133,9 @@ namespace HabitTracker.BrozDa
             }
             return record;
         }
-        public DatabaseRecord GetRecord(int ID)
-        {
-            DatabaseRecord record = new DatabaseRecord();
-
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                string sql = $"SELECT * FROM WaterIntake " +
-                             $"WHERE ID='{ID}';";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                SQLiteDataReader output = cmd.ExecuteReader();
-                while (output.Read())
-                {
-                    record = new DatabaseRecord(output.GetInt32(0), output.GetString(1), output.GetString(2));
-
-                }
-
-                connection.Close();
-            }
-            return record;
-        }
         public void InsertRecord(DatabaseRecord record, string table)
         {
-<<<<<<< HEAD
-=======
             Console.WriteLine($"Adding record: Date: {record.Date}, Volume: {record.Volume}");
->>>>>>> update-record
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
             {
                 connection.Open();
@@ -203,22 +179,6 @@ namespace HabitTracker.BrozDa
             Console.WriteLine("Record deleted");
 
         }
-        /*public int GetNumberOfRows(string table)
-        {
-            int numberOfRows = -1;
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                string sql = $"SELECT COUNT(*) FROM {table};";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                SQLiteDataReader output = cmd.ExecuteReader();
-                while (output.Read()) {
-                    numberOfRows = output.GetInt32(0);
-                }
-                connection.Close();
-            }
-            return numberOfRows;
-        }*/
         public bool IsIdPresentInDatabase(int id, string table) {
             
             bool isIdPresentInDatabase = false;
@@ -236,20 +196,6 @@ namespace HabitTracker.BrozDa
                 connection.Close();
             }
             return isIdPresentInDatabase;
-        }
-        public void UpdateRecord(DatabaseRecord UpdatedRecord, string table) {
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                string sql = $"UPDATE {table} " +
-                             $"SET Date='{UpdatedRecord.Date}', Glasses='{UpdatedRecord.Volume}' " +
-                             $"WHERE ID={UpdatedRecord.ID};";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                cmd.ExecuteNonQuery();
-
-                connection.Close();
-            }
-
         }
 
 
