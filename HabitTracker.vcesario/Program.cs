@@ -16,6 +16,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
             case 1:
                 ViewAllEntries(connection);
                 break;
+            case 2:
+                LogNewEntry(connection);
+                break;
             case 5:
                 AddHabitDefinitionScreen(connection);
                 break;
@@ -182,6 +185,125 @@ void ViewAllEntries(SqliteConnection connection)
 
     Console.WriteLine();
     Console.ReadLine();
+}
+
+void LogNewEntry(SqliteConnection connection)
+{
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> LOG NEW HABIT ENTRY");
+    Console.WriteLine();
+    Console.WriteLine("Answer all prompts to log a new entry. Leave blank to cancel and return to main menu.");
+
+    // get all habit definitions
+    Dictionary<string, string> habitToUnit = new();
+
+    var command = connection.CreateCommand();
+    command.CommandText = "SELECT * FROM habitdefs";
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var habitName = reader.GetString(0);
+            var unit = reader.GetString(1);
+
+            habitToUnit.Add(habitName, unit);
+        }
+    }
+
+    if (habitToUnit.Count == 0)
+    {
+        Console.WriteLine();
+        Console.WriteLine("You need to have at least 1 habit defined.");
+        Console.ReadLine();
+        return;
+    }
+
+    Console.WriteLine();
+    string? habitInput;
+    bool successfulInput = false;
+    do
+    {
+        Console.Write("Enter habit: ");
+        habitInput = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(habitInput))
+        {
+            return;
+        }
+
+        if (habitToUnit.ContainsKey(habitInput))
+        {
+            successfulInput = true;
+        }
+        else
+        {
+            Console.Write("Habit not defined. ");
+        }
+    }
+    while (!successfulInput);
+
+    Console.WriteLine();
+    string? unitInput;
+    int unitInInt = -1;
+    successfulInput = false;
+    do
+    {
+        Console.Write($"How many (in {habitToUnit[habitInput]}): ");
+        unitInput = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(unitInput))
+        {
+            return;
+        }
+
+        if (int.TryParse(unitInput, out unitInInt) && unitInInt > 0)
+        {
+            successfulInput = true;
+        }
+        else
+        {
+            Console.Write($"Couldn't parse value. ");
+        }
+    }
+    while (!successfulInput);
+
+    Console.WriteLine();
+    string? dateInput;
+    DateOnly date;
+    DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+    successfulInput = false;
+    do
+    {
+        Console.Write("When (yyyy-MM-dd or \"today\"): ");
+        dateInput = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(dateInput))
+        {
+            return;
+        }
+
+        if (dateInput.Equals("today"))
+        {
+            date = today;
+            successfulInput = true;
+        }
+        else if (DateOnly.TryParseExact(dateInput, "yyyy-MM-dd", out date) && date <= today)
+        {
+            successfulInput = true;
+        }
+        else
+        {
+            Console.Write($"Couldn't parse date. ");
+        }
+    }
+    while (!successfulInput);
+
+    // To be continued...
+    // Check if habit with day already logged
+    // "Habit already logged for that day!"
+
+    // Confirm "{amount} {unitName} of {habit} in {date}" ? (y/n)
 }
 
 void AddHabitDefinitionScreen(SqliteConnection connection)
