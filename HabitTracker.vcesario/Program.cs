@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Runtime.Intrinsics.Arm;
+using Microsoft.Data.Sqlite;
 
 using (var connection = new SqliteConnection("Data Source=habittracker.db"))
 {
@@ -220,90 +221,111 @@ void LogNewEntry(SqliteConnection connection)
     }
 
     Console.WriteLine();
-    string? habitInput;
-    bool successfulInput = false;
+    string? habit;
+    bool isSuccessfulInput = false;
     do
     {
         Console.Write("Enter habit: ");
-        habitInput = Console.ReadLine();
+        habit = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(habitInput))
+        if (string.IsNullOrEmpty(habit))
         {
             return;
         }
 
-        if (habitToUnit.ContainsKey(habitInput))
+        if (habitToUnit.ContainsKey(habit))
         {
-            successfulInput = true;
+            isSuccessfulInput = true;
         }
         else
         {
             Console.Write("Habit not defined. ");
         }
     }
-    while (!successfulInput);
+    while (!isSuccessfulInput);
 
     Console.WriteLine();
-    string? unitInput;
-    int unitInInt = -1;
-    successfulInput = false;
+    string? inputMeasure;
+    int measure = -1;
+    isSuccessfulInput = false;
     do
     {
-        Console.Write($"How many (in {habitToUnit[habitInput]}): ");
-        unitInput = Console.ReadLine();
+        Console.Write($"How many (in {habitToUnit[habit]}): ");
+        inputMeasure = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(unitInput))
+        if (string.IsNullOrEmpty(inputMeasure))
         {
             return;
         }
 
-        if (int.TryParse(unitInput, out unitInInt) && unitInInt > 0)
+        if (int.TryParse(inputMeasure, out measure) && measure > 0)
         {
-            successfulInput = true;
+            isSuccessfulInput = true;
         }
         else
         {
             Console.Write($"Couldn't parse value. ");
         }
     }
-    while (!successfulInput);
+    while (!isSuccessfulInput);
 
     Console.WriteLine();
-    string? dateInput;
+    string? inputDate;
     DateOnly date;
     DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-    successfulInput = false;
+    isSuccessfulInput = false;
     do
     {
         Console.Write("When (yyyy-MM-dd or \"today\"): ");
-        dateInput = Console.ReadLine();
+        inputDate = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(dateInput))
+        if (string.IsNullOrEmpty(inputDate))
         {
             return;
         }
 
-        if (dateInput.Equals("today"))
+        if (inputDate.Equals("today"))
         {
             date = today;
-            successfulInput = true;
+            isSuccessfulInput = true;
         }
-        else if (DateOnly.TryParseExact(dateInput, "yyyy-MM-dd", out date) && date <= today)
+        else if (DateOnly.TryParseExact(inputDate, "yyyy-MM-dd", out date) && date <= today)
         {
-            successfulInput = true;
+            isSuccessfulInput = true;
         }
         else
         {
             Console.Write($"Couldn't parse date. ");
         }
     }
-    while (!successfulInput);
+    while (!isSuccessfulInput);
 
-    // To be continued...
-    // Check if habit with day already logged
-    // "Habit already logged for that day!"
+    Console.WriteLine();
+    string? inputConfirm;
+    isSuccessfulInput = false;
+    do
+    {
+        Console.Write($"Confirm \"{measure} {habitToUnit[habit]} of {habit} in {date}\" (y/n): ");
+        inputConfirm = Console.ReadLine();
 
-    // Confirm "{amount} {unitName} of {habit} in {date}" ? (y/n)
+        if (string.IsNullOrEmpty(inputConfirm) || inputConfirm.ToLower().Equals("n"))
+        {
+            return;
+        }
+
+        if (inputConfirm.ToLower().Equals("y"))
+        {
+            isSuccessfulInput = true;
+        }
+        else
+        {
+            Console.Write("Couldn't parse input. ");
+        }
+    }
+    while (!isSuccessfulInput);
+
+    InsertHabitEntry(habit, date, measure, connection);
+    Console.ReadLine();
 }
 
 void AddHabitDefinitionScreen(SqliteConnection connection)
@@ -376,9 +398,9 @@ void FillDbWithRandomEntries(SqliteConnection connection)
     // for each of the above habits
     //  50% chance of adding an entry with date d and random measure value
 
-    InsertHabitDefinition("cycling", "kilometers");
-    InsertHabitDefinition("walking", "steps");
-    InsertHabitDefinition("water", "glasses");
+    InsertHabitDefinition("cycling", "kilometers", connection);
+    InsertHabitDefinition("walking", "steps", connection);
+    InsertHabitDefinition("water", "glasses", connection);
 
     Dictionary<string, int[]> measureRangesPerHabit = new()
     {
@@ -400,7 +422,7 @@ void FillDbWithRandomEntries(SqliteConnection connection)
             int randomMax = measureRangesPerHabit["cycling"][1];
             int randomMeasure = random.Next(randomMin, randomMax + 1);
 
-            InsertHabitEntry("cycling", date, randomMeasure);
+            InsertHabitEntry("cycling", date, randomMeasure, connection);
         }
 
         if (random.NextSingle() >= 0.5f) // walking
@@ -409,7 +431,7 @@ void FillDbWithRandomEntries(SqliteConnection connection)
             int randomMax = measureRangesPerHabit["walking"][1];
             int randomMeasure = random.Next(randomMin, randomMax + 1);
 
-            InsertHabitEntry("walking", date, randomMeasure);
+            InsertHabitEntry("walking", date, randomMeasure, connection);
         }
 
         if (random.NextSingle() >= 0.5f) // water
@@ -418,45 +440,45 @@ void FillDbWithRandomEntries(SqliteConnection connection)
             int randomMax = measureRangesPerHabit["water"][1];
             int randomMeasure = random.Next(randomMin, randomMax + 1);
 
-            InsertHabitEntry("water", date, randomMeasure);
+            InsertHabitEntry("water", date, randomMeasure, connection);
         }
     }
 
     Console.ReadLine();
+}
 
-    void InsertHabitDefinition(string habitName, string unit)
+void InsertHabitDefinition(string habitName, string unit, SqliteConnection connection)
+{
+    try
     {
-        try
-        {
-            var command = connection.CreateCommand();
-            command.CommandText = $@"INSERT INTO habitdefs (habit_name, unit)
+        var command = connection.CreateCommand();
+        command.CommandText = $@"INSERT INTO habitdefs (habit_name, unit)
                                     VALUES ('{habitName}', '{unit}')";
-            command.ExecuteReader();
+        command.ExecuteReader();
 
-            Console.WriteLine($"'{habitName} ({unit})' habit created.");
-        }
-        catch (SqliteException)
-        {
-            // habit already defined
-            Console.WriteLine($"'{habitName} ({unit})' habit already defined.");
-        }
+        Console.WriteLine($"'{habitName} ({unit})' habit created.");
     }
-
-    void InsertHabitEntry(string habit, DateOnly date, int measure)
+    catch (SqliteException)
     {
-        try
-        {
-            var command = connection.CreateCommand();
-            command.CommandText = $@"INSERT INTO habitlogs (habit, date, measure)
-                                            VALUES ('{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}')";
-            command.ExecuteReader();
+        // habit already defined
+        Console.WriteLine($"'{habitName} ({unit})' habit already defined.");
+    }
+}
 
-            Console.WriteLine($"Added entry ['{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}']");
-        }
-        catch (SqliteException)
-        {
-            // entry already defined for this habit and date
-            Console.WriteLine($"Entry ['{habit}', '{date}'] already defined.");
-        }
+void InsertHabitEntry(string habit, DateOnly date, int measure, SqliteConnection connection)
+{
+    try
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = $@"INSERT INTO habitlogs (habit, date, measure)
+                                            VALUES ('{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}')";
+        command.ExecuteReader();
+
+        Console.WriteLine($"Added entry ['{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}']");
+    }
+    catch (SqliteException)
+    {
+        // entry already defined for this habit and date
+        Console.WriteLine($"Entry ['{habit}', '{date}'] already defined.");
     }
 }
