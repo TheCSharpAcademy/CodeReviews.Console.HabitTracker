@@ -2,19 +2,22 @@
 {
     internal class HabitTracker
     {
+        private readonly string _dateFormat = "dd-MM-yyyy";
         private DatabaseManager _databaseManager;
         private InputOutputManager _IOmanager;
         public HabitTracker()
         {
-            _databaseManager = new DatabaseManager();
-            _IOmanager = new InputOutputManager();
+            _databaseManager = new DatabaseManager(_dateFormat);
+            _IOmanager = new InputOutputManager(_dateFormat);
         }
 
 
         public void Start()
         {
+            /*bool exists = _databaseManager.CheckIfTableExists("WaterIntake");
+            Console.WriteLine(exists);
+            Console.ReadLine();*/
             //_databaseManager.CreateNewTable("WaterIntake");
-            //_databaseManager.GetTableColumnNames("WaterIntake");
             
             while (true) 
             {
@@ -67,19 +70,19 @@
                     break;
                 case 2: //new record
                     DatabaseRecord newRecord = _IOmanager.GetNewRecord(table);
-                    _databaseManager.InsertRecord(newRecord, table);
+                    _databaseManager.InsertRecord(table, newRecord);
                     break;
                 case 3: //update record
                     _databaseManager.PrintRecordsFromATable(table);
                     recordID = GetValidRecordID(table, "update");
-                    DatabaseRecord oldRecord = _databaseManager.GetRecord(recordID);
+                    DatabaseRecord oldRecord = _databaseManager.GetRecordUsingID(table, recordID);
                     DatabaseRecord updatedRecord = _IOmanager.GetNewValuesForRecord(oldRecord);
-                    _databaseManager.UpdateRecord(updatedRecord, table);
+                    _databaseManager.UpdateRecord(table, updatedRecord);
                     break;
                 case 4: //delete record
                     _databaseManager.PrintRecordsFromATable(table);
                     recordID = GetValidRecordID(table, "delete");
-                    _databaseManager.DeleteRecord(recordID, "WaterIntake");
+                    _databaseManager.DeleteRecord(table, recordID);
                     break;
                 case 5: //exit
                     break;
@@ -92,7 +95,7 @@
        public int GetValidRecordID(string table, string operation)
         {
             int recordID = _IOmanager.GetRecordIdFromUser(operation);
-            while (!_databaseManager.IsIdPresentInDatabase(recordID, table))
+            while (!_databaseManager.IsIdPresentInDatabase(table,recordID))
             {
                 Console.WriteLine("Entered ID is not present in the database");
                 recordID = _IOmanager.GetRecordIdFromUser("update");

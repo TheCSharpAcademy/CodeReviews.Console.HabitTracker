@@ -1,17 +1,21 @@
-﻿using System.Data.Common;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-
+﻿
+using System.Globalization;
 namespace HabitTracker.BrozDa
 {
     
     internal class InputOutputManager
     {
+        private readonly string _dateFormat = "dd-MM-yyyy";
+        public string DateTimeFormat { get; init; }
+        
         private readonly string _format = "{0,-15:N}";
         private readonly int _IDcolumnWidth = 5;
         private readonly int _OtherColumnsWidth = 15;
         private readonly int _horizonalLineLength = 5 + 15 + 15 + 4; //5 for ID, 2x15 for Date and Volume, +4 horizontalLines
-        public InputOutputManager() { }
+        public InputOutputManager(string dateTimeFormat) 
+        {
+            DateTimeFormat = dateTimeFormat;
+        }
 
         public void PrintRecords(List<string> columns, List<DatabaseRecord> records)
         {
@@ -58,12 +62,43 @@ namespace HabitTracker.BrozDa
         {
             DatabaseRecord newRecord = new DatabaseRecord();
             Console.WriteLine();
-            Console.Write($"Please enter value for Date: ");
-            newRecord.Date = Console.ReadLine();
+            //Console.Write($"Please enter date value in DD-MM-YYYY format, or enter \"today\" for today's date: ");
+            newRecord.Date = GetDateForRecord();
+
             Console.Write($"Please enter value for Volume: ");
             newRecord.Volume = Console.ReadLine();
 
             return newRecord;
+        }
+        public DateTime GetDateForRecord()
+        {
+            DateTime date = DateTime.Now;
+
+            while (true)
+            {
+                Console.Write($"Please enter date value in DD-MM-YYYY format, or enter \"today\" for today's date: ");
+                string? userInput = Console.ReadLine()?.Trim().ToLower();
+
+                if (userInput == null || userInput == string.Empty)
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid date.");
+                }
+                else if (userInput == "today")
+                {
+                    date = DateTime.Now;
+                    break;
+                }
+                else if (DateTime.TryParseExact(userInput, _dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid date format. Please try again.");
+                }
+            }
+
+            return date;
         }
 
         public int GetRecordIdFromUser(string operation)
@@ -78,28 +113,10 @@ namespace HabitTracker.BrozDa
             }
             return numericInput;
         }
-        // returns number representing position of columns;
-        public int GetRecordColumnForUpdate(List<string> columns)
-        {
-            Console.WriteLine("Please select column you with to update");
-            Console.WriteLine("0.\tAll columns");
-            for (int i = 1; i < columns.Count; i++) {
-                Console.WriteLine($"{i}.\t{columns[i]}");
-            }
-            Console.Write("Please enter your choice: ");
-            string? input = Console.ReadLine();
-            while (!ValidateInput(input, 0, columns.Count-1)) { 
-                Console.Write("Please enter VALID choice: ");
-                input = Console.ReadLine();
-            }
-
-            return Convert.ToInt32(input);
-        }
         public DatabaseRecord GetNewValuesForRecord(DatabaseRecord oldRecord)
         {
             DatabaseRecord newRecord = new DatabaseRecord(oldRecord.ID, oldRecord.Date, oldRecord.Volume);
-            Console.Write("Enter new value for column Date: ");
-            newRecord.Date = Console.ReadLine();
+            newRecord.Date = GetDateForRecord();
             Console.Write("Enter new value for column Glasses: ");
             newRecord.Volume = Console.ReadLine();
 
@@ -149,7 +166,7 @@ namespace HabitTracker.BrozDa
             Console.Write('|');
             Console.Write(string.Format("{0,-5}", record.ID));
             Console.Write('|');
-            Console.Write(string.Format(_format, record.Date));
+            Console.Write(string.Format(_format, record.Date.ToString(_dateFormat)));
             Console.Write('|');
             Console.Write(string.Format(_format, record.Volume));
             Console.WriteLine('|');
