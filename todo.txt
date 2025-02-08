@@ -37,3 +37,9 @@
 
 - [] Learn SQL (codecademy.com)
 - [] Write Read me (follow https://github.com/thags/ConsoleTimeLogger)
+
+Ideas for future projects:
+- Edit/Remove functionality could be accessed within a "Modify" option.
+- Every item inside the db could have an unique 'guid'
+- Items could be selected simply via guid number.
+- For removal, accept bulk (x, y, z...)

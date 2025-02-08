@@ -22,6 +22,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
             case 3:
                 EditEntry(connection);
                 break;
+            case 4:
+                RemoveEntries(connection);
+                break;
             case 5:
                 AddHabitDefinition(connection);
                 break;
@@ -414,6 +417,20 @@ void EditEntry(SqliteConnection connection)
     Console.WriteLine();
     Console.WriteLine("Habit updated.");
     Console.ReadLine();
+}
+
+void RemoveEntries(SqliteConnection connection)
+{
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> REMOVE ENTRIES");
+    Console.WriteLine();
+    
+    // To be continued...
+    // Print every definition and entry.
+    // User inputs number associated with item, or returns
+    // Confirm (y/n)
+    // Resets screen, now updated, with numbers also updated
 }
 
 void AddHabitDefinition(SqliteConnection connection)
