@@ -16,7 +16,21 @@ namespace HabitTracker.BrozDa
         {
             DateTimeFormat = dateTimeFormat;
         }
+        public void PrintHabitMenu()
+        {
+            Console.WriteLine("Welcome to habit tracker application");
+            Console.WriteLine("Habit tracker tracks number of glasses of water drank during the day");
+            Console.WriteLine();
+            Console.WriteLine("Please select the operation:");
+            Console.WriteLine("\t1. View all records");
+            Console.WriteLine("\t2. Insert record");
+            Console.WriteLine("\t3. Update record");
+            Console.WriteLine("\t4. Delete record");
+            Console.WriteLine("\t5. Close the application");
 
+            Console.Write("Your selection: ");
+
+        }
         public void PrintRecords(List<string> columns, List<DatabaseRecord> records)
         {
             int verticalLineLength = _IDcolumnWidth + (columns.Count - 1) * _OtherColumnsWidth + columns.Count + 1;
