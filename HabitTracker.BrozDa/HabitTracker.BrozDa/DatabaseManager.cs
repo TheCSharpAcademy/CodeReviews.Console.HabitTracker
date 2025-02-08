@@ -11,15 +11,9 @@ namespace HabitTracker.BrozDa
         {
             DateTimeFormat = dateTimeFormat;
         }
-        public void CreateNewTable(string table)
+        private void ExecuteNonQuerry(string sql)
         {
-            string sql = $"CREATE TABLE {table} (" +
-                             $"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                             $"Date varchar(255), " +
-                             $"Glasses varchar(255)" +
-                             $");";
-
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
 
@@ -28,6 +22,16 @@ namespace HabitTracker.BrozDa
                     command.ExecuteNonQuery();
                 }
             }
+        }
+        public void CreateNewTable(string table)
+        {
+            string sql = $"CREATE TABLE {table} (" +
+                             $"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                             $"Date varchar(255), " +
+                             $"Glasses varchar(255)" +
+                             $");";
+
+            ExecuteNonQuerry(sql);
         }
         public bool CheckIfTableExists(string table)
         {
@@ -151,46 +155,28 @@ namespace HabitTracker.BrozDa
             string sql = $"INSERT INTO WaterIntake (Date, Glasses) " +
                              $"VALUES ('{record.Date}', '{record.Volume}');";
 
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
+            ExecuteNonQuerry(sql);
 
             Console.WriteLine("Record added to the database");
 
         }
-        public void UpdateRecord(string table, DatabaseRecord updatedRecord ) {
+        public void UpdateRecord(string table, DatabaseRecord updatedRecord ) 
+        {
             Console.WriteLine("Updating record...");
             string sql = $"UPDATE {table} " +
                              $"SET Date='{updatedRecord.Date}', Glasses='{updatedRecord.Volume}' " +
                              $"WHERE ID={updatedRecord.ID};";
 
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
+            ExecuteNonQuerry(sql);
+
+            Console.WriteLine("Record Updated");
         }
         public void DeleteRecord(string table, int recordID) 
         {
             Console.WriteLine("Deleting record...");
             string sql = $"DELETE FROM {table} WHERE ID={recordID};";
 
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
+            ExecuteNonQuerry(sql);
 
             Console.WriteLine("Record deleted");
         }
