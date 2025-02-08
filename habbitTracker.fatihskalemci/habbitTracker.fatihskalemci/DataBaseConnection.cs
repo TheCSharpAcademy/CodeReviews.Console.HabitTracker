@@ -9,7 +9,7 @@ internal class DataBaseConnection
 {
     private string connectionString = "Data Source=habbit-Tracker.db";
 
-    public void CreateTable()
+    public void CreateTable(string tableName)
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -18,7 +18,7 @@ internal class DataBaseConnection
             var commandTable = connection.CreateCommand();
 
             commandTable.CommandText =
-                @"CREATE TABLE IF NOT EXISTS water_tracker (
+                @$"CREATE TABLE IF NOT EXISTS {tableName} (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Date TEXT,
             Quantity INTEGER
@@ -30,23 +30,47 @@ internal class DataBaseConnection
 
     }
 
-    internal List<Habbit> GetEntries()
+    internal List<string> getTables()
     {
-        List<Habbit> tableData = new();
+        List<string> entries = new();
 
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
 
-            string commandString = @"SELECT * FROM water_tracker";
+            string commandString = @"SELECT * FROM sqlite_sequence";
 
-            using (var insertCommand = new SqliteCommand(commandString, connection))
+            using (var selectCommand = new SqliteCommand(commandString, connection))
             {
-                using (SqliteDataReader reader = insertCommand.ExecuteReader())
+                using (SqliteDataReader reader = selectCommand.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        tableData.Add(
+                        entries.Add(reader.GetString(0));
+                    }
+                }
+            }
+        }
+        return entries;
+    }
+
+    internal List<Habbit> GetEntries(string tableName)
+    {
+        List<Habbit> entries = new();
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            string commandString = @$"SELECT * FROM {tableName}";
+
+            using (var selectCommand = new SqliteCommand(commandString, connection))
+            {
+                using (SqliteDataReader reader = selectCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        entries.Add(
                         new Habbit
                         {
                             Id = reader.GetInt32(0),
@@ -57,10 +81,10 @@ internal class DataBaseConnection
                 }
             }
         }
-        return tableData;
+        return entries;
     }
 
-    internal void AddEntry()
+    internal void AddEntry(string tableName)
     {
         string dateInput = UserInterface.getDateInput();
         if (dateInput == "0")
@@ -73,7 +97,7 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @"INSERT INTO water_tracker (Date, Quantity)
+            string commandString = @$"INSERT INTO {tableName} (Date, Quantity)
                 VALUES (@entryDate, @entryQuantity)";
 
             using (var insertCommand = new SqliteCommand(commandString, connection))
@@ -88,9 +112,9 @@ internal class DataBaseConnection
         }
     }
 
-    internal void UpdateEntry()
+    internal void UpdateEntry(string tableName)
     {
-        List<Habbit> tableData = GetEntries();
+        List<Habbit> tableData = GetEntries(tableName);
 
         if (!tableData.Any())
         {
@@ -116,7 +140,7 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @"UPDATE water_tracker
+            string commandString = @$"UPDATE {tableName}
                                 SET Date = @entryDate, Quantity = @entryQuantity
                                 WHERE Id = @entryID";
 
@@ -132,9 +156,9 @@ internal class DataBaseConnection
         }
     }
 
-    internal void DeleteEntry()
+    internal void DeleteEntry(string tableName)
     {
-        List<Habbit> tableData = GetEntries();
+        List<Habbit> tableData = GetEntries(tableName);
 
         if (!tableData.Any())
         {
@@ -153,7 +177,7 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @"DELETE FROM water_tracker WHERE Id = @entryID";
+            string commandString = @$"DELETE FROM {tableName} WHERE Id = @entryID";
 
             using (var deleteCommand = new SqliteCommand(commandString, connection))
             {
@@ -165,9 +189,9 @@ internal class DataBaseConnection
         }
     }
 
-    internal void ShowEtries()
+    internal void ShowEtries(string tableName)
     {
-        List<Habbit> tableData = GetEntries();
+        List<Habbit> tableData = GetEntries(tableName);
 
         var table = new Table();
         table.Border(TableBorder.Rounded);

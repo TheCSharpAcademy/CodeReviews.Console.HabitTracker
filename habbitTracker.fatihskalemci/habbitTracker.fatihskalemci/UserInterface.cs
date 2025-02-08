@@ -8,10 +8,38 @@ internal class UserInterface
 {
     private readonly DataBaseConnection dataBase = new();
 
+    internal string TableSelection()
+    {
+        List<string> tableNames = dataBase.getTables();
+        tableNames.Add("New Habbit");
+
+        string selectedTable = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("Please select the habbit you want to perform on")
+                .AddChoices(tableNames));
+
+        if (selectedTable == "New Habbit")
+        {
+            Console.WriteLine("Please enter the name of new habit");
+            Console.WriteLine("It should be tracked by quantity");
+            /* Validation for special chars */
+            string? userInput = Console.ReadLine();
+            if (userInput != null && ( (userInput[0] >= 'A' && userInput[0] <= 'Z') || (userInput[0] >= 'a' && userInput[0] <= 'z')))
+            {
+                selectedTable = userInput.Replace(' ', '_').Replace('-', '_');
+            }
+
+        }
+
+        return selectedTable;
+
+    }
+
     internal void MainMenu()
     {
         bool exit = false;
-        dataBase.CreateTable();
+        string tableToUse = TableSelection();
+        dataBase.CreateTable(tableToUse);
+
         while (!exit)
         {
             Console.Clear();
@@ -23,16 +51,16 @@ internal class UserInterface
             switch (menuSelection)
             {
                 case MenuOptions.Add:
-                    dataBase.AddEntry();
+                    dataBase.AddEntry(tableToUse);
                     break;
                 case MenuOptions.Update:
-                    dataBase.UpdateEntry();
+                    dataBase.UpdateEntry(tableToUse);
                     break;
                 case MenuOptions.Delete:
-                    dataBase.DeleteEntry();
+                    dataBase.DeleteEntry(tableToUse);
                     break;
                 case MenuOptions.ShowEntries:
-                    dataBase.ShowEtries();
+                    dataBase.ShowEtries(tableToUse);
                     break;
                 case MenuOptions.Exit:
                     exit = true;
