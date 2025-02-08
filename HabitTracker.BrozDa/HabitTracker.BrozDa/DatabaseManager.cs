@@ -6,48 +6,46 @@ namespace HabitTracker.BrozDa
     {
         private string _connectionString = @"Data Source=habit-tracker.sqlite;Version=3;";
         private InputOutputManager _inputOutputManager;
-        public DatabaseManager()
+        public string DateTimeFormat { get; init; }
+        public DatabaseManager(string dateTimeFormat)
         {
-            _inputOutputManager = new InputOutputManager();
+            DateTimeFormat = dateTimeFormat;
         }
-        public void CreateNewTable(string tableName)
+        public void CreateNewTable(string table)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) { 
-                connection.Open();
-                string sql = $"CREATE TABLE {tableName} (" +
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
+            { 
+                string sql = $"CREATE TABLE {table} (" +
                              $"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                              $"Date varchar(255), " +
                              $"Glasses varchar(255)" +
                              $");";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                cmd.ExecuteNonQuery();
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                connection.Open();
+                command.ExecuteNonQuery();
                 connection.Close();
             }
         }
-        public bool CheckIfTableExists(string tableName)
+        public bool CheckIfTableExists(string table)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
-                connection.Open();
+            bool doesTableExist;
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
+            {
                 string sql = $"SELECT name " +
                              $"FROM sqlite_schema " +
-                             $"WHERE type ='table' AND name ='{tableName}';";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection); 
-                
-                try
-                {
-                    SQLiteDataReader output = cmd.ExecuteReader();
-                    return output.HasRows;
-                }
-                catch (Exception ex) {
-                    Console.WriteLine("Exception occured in DatabaseManager.DoesTableExist()");
-                    Console.WriteLine(ex.ToString());
-                }
+                             $"WHERE type ='table' AND name ='{table}';";
 
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                connection.Open();
+                doesTableExist = command.ExecuteReader().HasRows;
                 connection.Close();
-                
             }
-            return true;
+            return doesTableExist;
         }
+        // NOT CLEANED YET
         public List<string> GetListOfTables()
         {
             List<string> tables = new List<string>();
@@ -75,136 +73,134 @@ namespace HabitTracker.BrozDa
             }
             return tables;
         }
-        public List<string> GetTableColumnNames(string tableName)
+        public List<string> GetTableColumnNames(string table)
         {
             List<string> columns = new List<string>();
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
-                connection.Open();
-                string sql = $"SELECT name FROM pragma_table_info('{tableName}');";
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
+            {
+                string sql = $"SELECT name FROM pragma_table_info('{table}');";
                 SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                connection.Open();
                 SQLiteDataReader output = command.ExecuteReader();
 
                 while (output.Read())
                 {
                     columns.Add(output.GetString(0));
                 }
+
                 connection.Close();
             }
             return columns;
         }
         // conflicting thought - one one hand dont want handle printing in DBmanager class, but could not find other solution than saving whole DB to list and then sending it to IO manager - not very scalable
-        public void PrintRecordsFromATable(string tableName)
+        public void PrintRecordsFromATable(string table)
         {
-            _inputOutputManager.PrintTableColumns(GetTableColumnNames(tableName), tableName);
+            _inputOutputManager = new InputOutputManager(DateTimeFormat);
+            _inputOutputManager.PrintTableColumns(GetTableColumnNames(table), table);
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
+                string sql = $"SELECT * FROM {table};";
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
                 connection.Open();
-                string tableExist = $"SELECT * FROM {tableName};";
-                SQLiteCommand cmd = new SQLiteCommand(tableExist, connection);
-                SQLiteDataReader output = cmd.ExecuteReader();
+                SQLiteDataReader output = command.ExecuteReader();
 
                 while (output.Read())
                 {
-                    _inputOutputManager.PrintRecord(new DatabaseRecord(output.GetInt32(0), output.GetString(1), output.GetString(2)));
+                    _inputOutputManager.PrintRecord(new DatabaseRecord(output.GetInt32(0), DateTime.Parse(output.GetString(1)), output.GetString(2)));
                 }
                 connection.Close();
             }
+            //bottom line on the table
             _inputOutputManager.PrintHorizonalLine();
         }
-        public DatabaseRecord GetRecord(int ID)
+        public DatabaseRecord GetRecordUsingID(string table, int ID)
         {
             DatabaseRecord record = new DatabaseRecord();
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
-                connection.Open();
-                string sql = $"SELECT * FROM WaterIntake " +
+                string sql = $"SELECT * FROM {table} " +
                              $"WHERE ID='{ID}';";
                 SQLiteCommand cmd = new SQLiteCommand(sql, connection);
+
+                connection.Open();
                 SQLiteDataReader output = cmd.ExecuteReader();
+
                 while (output.Read())
                 {
-                    record = new DatabaseRecord(output.GetInt32(0), output.GetString(1), output.GetString(2));
-
+                    record.ID = output.GetInt32(0);
+                    record.Date = DateTime.Parse(output.GetString(1));
+                    record.Volume = output.GetString(2);
                 }
 
                 connection.Close();
             }
             return record;
         }
-        public void InsertRecord(DatabaseRecord record, string table)
+        public void InsertRecord(string table, DatabaseRecord record)
         {
-            Console.WriteLine($"Adding record: Date: {record.Date}, Volume: {record.Volume}");
+            Console.WriteLine($"Adding record: Date: {record.Date.ToString(DateTimeFormat)}, Volume: {record.Volume}");
+
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
             {
-                connection.Open();
+
                 string sql = $"INSERT INTO WaterIntake (Date, Glasses) " +
                              $"VALUES ('{record.Date}', '{record.Volume}');";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                cmd.ExecuteNonQuery();
-            
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                connection.Open();
+                command.ExecuteNonQuery();
                 connection.Close();
             }
+
             Console.WriteLine("Record added to the database");
         }
-        public void UpdateRecord(DatabaseRecord UpdatedRecord, string table) {
+        public void UpdateRecord(string table, DatabaseRecord updatedRecord ) {
             Console.WriteLine("Updating record...");
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
-                connection.Open();
                 string sql = $"UPDATE {table} " +
-                             $"SET Date='{UpdatedRecord.Date}', Glasses='{UpdatedRecord.Volume}' " +
-                             $"WHERE ID={UpdatedRecord.ID};";
+                             $"SET Date='{updatedRecord.Date}', Glasses='{updatedRecord.Volume}' " +
+                             $"WHERE ID={updatedRecord.ID};";
                 SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                cmd.ExecuteNonQuery();
 
+                connection.Open();
+                cmd.ExecuteNonQuery();
                 connection.Close();
             }
             Console.WriteLine("Record updated");
-
         }
-        public void DeleteRecord(int recordID, string table) 
+        public void DeleteRecord(string table, int recordID) 
         {
             Console.WriteLine("Deleting record...");
 
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) {
-                connection.Open();
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString)) 
+            {
                 string sql = $"DELETE FROM {table} WHERE ID={recordID};";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                cmd.ExecuteNonQuery();
-                
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                connection.Open();
+                command.ExecuteNonQuery();
                 connection.Close();
             }
             Console.WriteLine("Record deleted");
-
         }
-        /*public int GetNumberOfRows(string table)
-        {
-            int numberOfRows = -1;
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                string sql = $"SELECT COUNT(*) FROM {table};";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                SQLiteDataReader output = cmd.ExecuteReader();
-                while (output.Read()) {
-                    numberOfRows = output.GetInt32(0);
-                }
-                connection.Close();
-            }
-            return numberOfRows;
-        }*/
-        public bool IsIdPresentInDatabase(int id, string table) {
+        public bool IsIdPresentInDatabase(string table, int id) {
             
             bool isIdPresentInDatabase = false;
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
-                connection.Open();
                 string sql = $"SELECT ID FROM {table} WHERE ID={id};";
-                SQLiteCommand cmd = new SQLiteCommand(sql, connection);
-                SQLiteDataReader output = cmd.ExecuteReader();
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                connection.Open();
+                SQLiteDataReader output = command.ExecuteReader();
+
                 while (output.Read())
                 {
                     isIdPresentInDatabase = output.HasRows;
@@ -213,7 +209,5 @@ namespace HabitTracker.BrozDa
             }
             return isIdPresentInDatabase;
         }
-
-
     }
 }
