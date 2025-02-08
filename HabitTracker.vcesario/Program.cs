@@ -1,5 +1,4 @@
-﻿using System.Runtime.Intrinsics.Arm;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 
 using (var connection = new SqliteConnection("Data Source=habittracker.db"))
 {
@@ -19,6 +18,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
                 break;
             case 2:
                 LogNewEntry(connection);
+                break;
+            case 3:
+                EditEntry(connection);
                 break;
             case 5:
                 AddHabitDefinitionScreen(connection);
@@ -194,7 +196,9 @@ void LogNewEntry(SqliteConnection connection)
     Console.WriteLine();
     Console.WriteLine("> LOG NEW HABIT ENTRY");
     Console.WriteLine();
-    Console.WriteLine("Answer all prompts to log a new entry. Leave blank to cancel and return to main menu.");
+    Console.WriteLine("Type in the new entry in the following format:\n"
+                        + "\t<yyyy-MM-dd or \"today\"> <habit name> <measure>");
+    Console.WriteLine("Type \"return\" to cancel and return to main menu.");
 
     // get all habit definitions
     Dictionary<string, string> habitToUnit = new();
@@ -221,94 +225,89 @@ void LogNewEntry(SqliteConnection connection)
     }
 
     Console.WriteLine();
-    string? habit;
+    string? input;
+    int successfulInputs = 0;
+    DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+    DateOnly date = today;
+    int measure = 0;
+    string habit = string.Empty;
+
+    do
+    {
+        Console.Write("> ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        string[] inputParts = input.Split();
+        if (inputParts.Length != 3)
+        {
+            Console.WriteLine("Couldn't parse input. Try again.");
+            continue;
+        }
+
+        successfulInputs = 0;
+
+        if (inputParts[0].Equals("today"))
+        {
+            date = today;
+            successfulInputs++;
+        }
+        else if (DateOnly.TryParseExact(inputParts[0], "yyyy-MM-dd", out date) && date <= today)
+        {
+            successfulInputs++;
+        }
+        else
+        {
+            Console.WriteLine("Couldn't parse date. Try again.");
+        }
+
+        if (habitToUnit.ContainsKey(inputParts[1]))
+        {
+            habit = inputParts[1];
+            successfulInputs++;
+        }
+        else
+        {
+            Console.WriteLine("Habit not defined. Try again.");
+        }
+
+        if (int.TryParse(inputParts[2], out measure) && measure > 0)
+        {
+            successfulInputs++;
+        }
+        else
+        {
+            Console.WriteLine($"Couldn't parse measure. Try again.");
+        }
+    }
+    while (successfulInputs < 3);
+
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> LOG NEW HABIT ENTRY");
+    Console.WriteLine();
+    string? inputConfirm;
     bool isSuccessfulInput = false;
     do
     {
-        Console.Write("Enter habit: ");
-        habit = Console.ReadLine();
-
-        if (string.IsNullOrEmpty(habit))
-        {
-            return;
-        }
-
-        if (habitToUnit.ContainsKey(habit))
-        {
-            isSuccessfulInput = true;
-        }
-        else
-        {
-            Console.Write("Habit not defined. ");
-        }
-    }
-    while (!isSuccessfulInput);
-
-    Console.WriteLine();
-    string? inputMeasure;
-    int measure = -1;
-    isSuccessfulInput = false;
-    do
-    {
-        Console.Write($"How many (in {habitToUnit[habit]}): ");
-        inputMeasure = Console.ReadLine();
-
-        if (string.IsNullOrEmpty(inputMeasure))
-        {
-            return;
-        }
-
-        if (int.TryParse(inputMeasure, out measure) && measure > 0)
-        {
-            isSuccessfulInput = true;
-        }
-        else
-        {
-            Console.Write($"Couldn't parse value. ");
-        }
-    }
-    while (!isSuccessfulInput);
-
-    Console.WriteLine();
-    string? inputDate;
-    DateOnly date;
-    DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-    isSuccessfulInput = false;
-    do
-    {
-        Console.Write("When (yyyy-MM-dd or \"today\"): ");
-        inputDate = Console.ReadLine();
-
-        if (string.IsNullOrEmpty(inputDate))
-        {
-            return;
-        }
-
-        if (inputDate.Equals("today"))
-        {
-            date = today;
-            isSuccessfulInput = true;
-        }
-        else if (DateOnly.TryParseExact(inputDate, "yyyy-MM-dd", out date) && date <= today)
-        {
-            isSuccessfulInput = true;
-        }
-        else
-        {
-            Console.Write($"Couldn't parse date. ");
-        }
-    }
-    while (!isSuccessfulInput);
-
-    Console.WriteLine();
-    string? inputConfirm;
-    isSuccessfulInput = false;
-    do
-    {
-        Console.Write($"Confirm \"{measure} {habitToUnit[habit]} of {habit} in {date}\" (y/n): ");
+        Console.Write($"Confirm \"{measure} {habitToUnit[habit]} of {habit} on {date}\" (y/n): ");
         inputConfirm = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(inputConfirm) || inputConfirm.ToLower().Equals("n"))
+        if (string.IsNullOrEmpty(inputConfirm))
+        {
+            continue;
+        }
+
+        if (inputConfirm.ToLower().Equals("n"))
         {
             return;
         }
@@ -324,8 +323,14 @@ void LogNewEntry(SqliteConnection connection)
     }
     while (!isSuccessfulInput);
 
+    Console.WriteLine();
     InsertHabitEntry(habit, date, measure, connection);
     Console.ReadLine();
+}
+
+void EditEntry(SqliteConnection connection)
+{
+
 }
 
 void AddHabitDefinitionScreen(SqliteConnection connection)
