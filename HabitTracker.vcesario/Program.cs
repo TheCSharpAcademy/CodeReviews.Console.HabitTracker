@@ -33,29 +33,6 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
         }
 
     } while (menuOption > 0);
-
-
-    /* Sqlite Snippet for reference
-    
-    // var command = connection.CreateCommand();
-    // command.CommandText =
-    // @"
-    //     SELECT *
-    //     FROM user
-    //     WHERE id = $id
-    // ";
-    // command.Parameters.AddWithValue("$id", 1);
-
-    // using (var reader = command.ExecuteReader())
-    // {
-    //     while (reader.Read())
-    //     {
-    //         var name = reader.GetString(0);
-
-    //         Console.WriteLine($"Hello, {name}!");
-    //     }
-    // }
-    */
 }
 
 void InitializeDBs(SqliteConnection connection)
@@ -132,14 +109,14 @@ int AskMenuOption()
 
     Console.Write("Choose an option: ");
     string? input = Console.ReadLine();
-    int intInput = -1;
-    while (input == null || int.TryParse(input, out intInput) == false || intInput < 0 || intInput > 9)
+    int option = -1;
+    while (input == null || int.TryParse(input, out option) == false || option < 0 || option > 9)
     {
         Console.Write("Invalid option. Try a digit between 0 and 9: ");
         input = Console.ReadLine();
     }
 
-    return intInput;
+    return option;
 }
 
 void ViewAllEntries(SqliteConnection connection)
@@ -330,7 +307,113 @@ void LogNewEntry(SqliteConnection connection)
 
 void EditEntry(SqliteConnection connection)
 {
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> EDIT EXISTING ENTRY");
+    Console.WriteLine();
+    Console.WriteLine("Type in the existing entry in the following format:\n"
+                        + "\t<yyyy-MM-dd> <habit name>");
+    Console.WriteLine("Type \"return\" to cancel and return to main menu.");
 
+    Console.WriteLine();
+    string? input;
+    bool isSuccessfulInput = false;
+    DateOnly date = DateOnly.FromDateTime(DateTime.Now);
+    int measure = 0;
+    string habit = string.Empty;
+    string unit = string.Empty;
+
+    do
+    {
+        Console.Write("> ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        string[] inputParts = input.Split();
+        if (inputParts.Length != 2)
+        {
+            Console.WriteLine("Couldn't parse input. Try again.");
+            continue;
+        }
+
+        if (!DateOnly.TryParseExact(inputParts[0], "yyyy-MM-dd", out date))
+        {
+            Console.WriteLine("Couldn't parse date. Try again.");
+            continue;
+        }
+
+        habit = inputParts[1];
+
+        var commandSelect = connection.CreateCommand();
+        commandSelect.CommandText = $@"SELECT habitlogs.habit, habitlogs.date, habitlogs.measure, habitdefs.unit FROM habitlogs
+                                INNER JOIN habitdefs ON habitlogs.habit=habitdefs.habit_name
+                                WHERE habitlogs.habit='{habit}' AND habitlogs.date='{date.ToString("yyyy-MM-dd")}'";
+
+        using (var reader = commandSelect.ExecuteReader())
+        {
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("Couldn't find entry. Try again.");
+                continue;
+            }
+
+            // i know for a fact that there'd be only one row, because of UNIQUE() in table definition
+            reader.Read();
+
+            measure = reader.GetInt32(2);
+            unit = reader.GetString(3);
+        }
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    Console.WriteLine($"Found entry: {measure} {unit} of {habit} on {date}.");
+    int newMeasure = 0;
+    isSuccessfulInput = false;
+    do
+    {
+        Console.Write($"New amount of {unit}: ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        if (!int.TryParse(input, out newMeasure) || newMeasure <= 0)
+        {
+            Console.Write("Couldn't parse measure. ");
+            continue;
+        }
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    var commandUpdate = connection.CreateCommand();
+    commandUpdate.CommandText = $@"UPDATE habitlogs
+                                    SET measure={newMeasure}
+                                    WHERE habit='{habit}' AND date='{date.ToString("yyyy-MM-dd")}'";
+    commandUpdate.ExecuteReader();
+
+    Console.WriteLine();
+    Console.WriteLine("Habit updated.");
+    Console.ReadLine();
 }
 
 void AddHabitDefinitionScreen(SqliteConnection connection)

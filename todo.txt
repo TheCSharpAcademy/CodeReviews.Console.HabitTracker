@@ -16,7 +16,7 @@
 - [x] Implement "[DEBUG] Fill habitlogs with random entries"
 - [x] Implement "View all entries"
 - [x] Implement "Log new entry"
-- [] Implement "Edit existing entry"
+- [x] Implement "Edit existing entry"
 - [] Implement "Remove entry/all entries"
 - [] Implement "Edit existing definition"
 - [] Implement "Remove definition"
