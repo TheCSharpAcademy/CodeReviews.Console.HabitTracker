@@ -23,7 +23,7 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
                 EditEntry(connection);
                 break;
             case 5:
-                AddHabitDefinitionScreen(connection);
+                AddHabitDefinition(connection);
                 break;
             case 9:
                 FillDbWithRandomEntries(connection);
@@ -416,7 +416,7 @@ void EditEntry(SqliteConnection connection)
     Console.ReadLine();
 }
 
-void AddHabitDefinitionScreen(SqliteConnection connection)
+void AddHabitDefinition(SqliteConnection connection)
 {
     Console.Clear();
     Console.WriteLine();
@@ -440,30 +440,14 @@ void AddHabitDefinitionScreen(SqliteConnection connection)
     string? confirm = null;
     do
     {
-        Console.Write($"Are you sure you want to add \"{habitName} (in {habitUnit})\" as a habit? (y/n) ");
+        Console.Write($"Confirm \"{habitName} (in {habitUnit})\" as a habit (y/n): ");
         confirm = Console.ReadLine();
     } while (confirm == null || (!confirm.ToLower().Equals("y") && !confirm.ToLower().Equals("n")));
 
     if (confirm.ToLower().Equals("y"))
     {
-        try
-        {
-            var command = connection.CreateCommand();
-
-            command.CommandText = $@"INSERT INTO habitdefs (habit_name, unit)
-                                    VALUES ('{habitName}', '{habitUnit}')";
-            command.ExecuteReader();
-
-            Console.WriteLine();
-            Console.Write("New habit definition created!");
-            Console.ReadLine();
-        }
-        catch (SqliteException)
-        {
-            Console.WriteLine();
-            Console.Write($"Couldn't create habit '{habitName}' (was already registered).");
-            Console.ReadLine();
-        }
+        InsertHabitDefinition(habitName, habitUnit, connection);
+        Console.ReadLine();
     }
     else
     {
