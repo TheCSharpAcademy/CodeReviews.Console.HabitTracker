@@ -219,13 +219,7 @@ class Program
         int habitId = habit.Id;
         var recordsToDelete = habitRecordRepository.GetRecordsForHabit(habitId);
 
-        bool hasRecords = false;
-        foreach (var rec in recordsToDelete)
-        {
-            hasRecords = true;
-            break;
-        }
-        if (!hasRecords)
+        if (!recordsToDelete.Any())
         {
             Console.WriteLine("No records found for this habit.");
             return;
@@ -234,11 +228,22 @@ class Program
         Console.WriteLine($"\nRecords for habit: {habit.Name}");
         foreach (var record in recordsToDelete)
         {
-            Console.WriteLine($"ID: {record.Id}, Date: {record.Date.ToString("dd-MM-yy")}, Quantity: {record.Quantity}");
+            Console.WriteLine($"ID: {record.Id}, Date: {record.Date:dd-MM-yy}, Quantity: {record.Quantity}");
         }
 
-        Console.WriteLine("\nEnter the ID of the record you want to delete:");
-        int recordId = InputService.GetNumberInput("Record ID:");
+        int recordId;
+        while (true)
+        {
+            recordId = InputService.GetNumberInput("Enter the ID of the record you want to delete:");
+            if (recordsToDelete.Any(record => record.Id == recordId))
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Record not found for the selected habit. Please enter a valid record ID.");
+            }
+        }
 
         try
         {
@@ -250,4 +255,5 @@ class Program
             Console.WriteLine("Error deleting habit record: " + ex.Message);
         }
     }
+
 }
