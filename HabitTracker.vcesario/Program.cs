@@ -28,6 +28,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
             case 5:
                 AddHabitDefinition(connection);
                 break;
+            case 6:
+                EditDefinition(connection);
+                break;
             case 9:
                 FillDbWithRandomEntries(connection);
                 break;
@@ -526,7 +529,7 @@ void RemoveEntries(SqliteConnection connection)
         command.CommandText = $@"DELETE FROM habitlogs
                                 WHERE id={id}";
         command.ExecuteReader();
-        
+
         Console.WriteLine();
         Console.WriteLine("Entry deleted.");
         Console.ReadLine();
@@ -576,9 +579,132 @@ void AddHabitDefinition(SqliteConnection connection)
     }
 }
 
-void EditDefinition()
+void EditDefinition(SqliteConnection connection)
 {
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> EDIT HABIT DEFINITION");
+    Console.WriteLine();
+    Console.WriteLine("Type in the current name of the existing habit you wish to edit.");
+    Console.WriteLine("Type \"return\" anytime to cancel and return to main menu.");
 
+    Console.WriteLine();
+    string? input;
+    bool isSuccessfulInput = false;
+    DateOnly date = default;
+    int measure = 0;
+    string currentHabit = string.Empty;
+    string currentUnit = string.Empty;
+
+    do
+    {
+        Console.Write("Habit name: ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        var commandSelect = connection.CreateCommand();
+        commandSelect.CommandText = $@"SELECT * FROM habitdefs
+                                        WHERE habit_name='{input}'";
+
+        using (var reader = commandSelect.ExecuteReader())
+        {
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("Couldn't find habit. ");
+                continue;
+            }
+
+            reader.Read();
+
+            currentHabit = reader.GetString(0);
+            currentUnit = reader.GetString(1);
+        }
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    Console.WriteLine();
+    Console.WriteLine($"> {currentHabit} {currentUnit}");
+    Console.WriteLine();
+    string newHabit = string.Empty;
+    string newUnit = string.Empty;
+    isSuccessfulInput = false;
+    do
+    {
+        Console.Write($"Updated <habit unit>: ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        string[] inputParts = input.Split();
+        if (inputParts.Length != 2)
+        {
+            Console.WriteLine("Couldn't parse input. Try again.");
+            continue;
+        }
+
+        newHabit = inputParts[0];
+        newUnit = inputParts[1];
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    Console.WriteLine();
+    isSuccessfulInput = false;
+    do
+    {
+        Console.Write($"Confirm {currentHabit} ({currentUnit}) -> {newHabit} ({newUnit}) (y/n): ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("n"))
+        {
+            return;
+        }
+
+        if (input.ToLower().Equals("y"))
+        {
+            isSuccessfulInput = true;
+        }
+        else
+        {
+            Console.Write("Couldn't parse input. ");
+        }
+    }
+    while (!isSuccessfulInput);
+
+    var commandUpdate = connection.CreateCommand();
+    commandUpdate.CommandText = $@"UPDATE habitdefs
+                                    SET habit_name='{newHabit}', unit='{newUnit}'
+                                    WHERE habit_name='{currentHabit}'";
+    commandUpdate.ExecuteReader();
+
+    Console.WriteLine();
+    Console.WriteLine("Habit definition updated.");
+    Console.ReadLine();
 }
 
 void RemoveDefinition()

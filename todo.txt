@@ -18,7 +18,7 @@
 - [x] Implement "Log new entry"
 - [x] Implement "Edit existing entry"
 - [x] Implement "Remove entry"
-- [] Implement "Edit existing definition"
+- [x] Implement "Edit existing definition"
 - [] Implement "Remove definition"
 - [] Implement "See statistics"
 
