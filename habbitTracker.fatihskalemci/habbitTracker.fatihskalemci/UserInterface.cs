@@ -45,6 +45,8 @@ internal class UserInterface
         {
             Console.Clear();
 
+            Habbit habbit;
+
             var menuSelection = AnsiConsole.Prompt(new SelectionPrompt<MenuOptions>()
                 .Title("Please select the action you want to perform")
                 .AddChoices(Enum.GetValues<MenuOptions>()));
@@ -52,10 +54,12 @@ internal class UserInterface
             switch (menuSelection)
             {
                 case MenuOptions.Add:
-                    dataBase.AddEntry();
+                    habbit = getHabbitFromUser();
+                    dataBase.AddEntry(habbit);
                     break;
                 case MenuOptions.Update:
-                    dataBase.UpdateEntry();
+                    habbit = getHabbitFromUser();
+                    dataBase.UpdateEntry(habbit);
                     break;
                 case MenuOptions.Delete:
                     dataBase.DeleteEntry();
@@ -72,7 +76,11 @@ internal class UserInterface
 
     static internal Habbit getHabbitFromUser()
     {
+        string dateInput = UserInterface.getDateInput();
 
+        int integerInput = UserInterface.getIntegerInput("Please enter the quantity");
+
+        
     }
 
     static internal int getIntegerInput(string message)
@@ -97,10 +105,7 @@ internal class UserInterface
         {
             userInput = DateTime.Now.ToString("dd-MM-yy");
         }
-        else if (userInput == "0")
-        {
-            return userInput;
-        }
+
         else
         {
             while (!DateTime.TryParseExact(userInput, "dd-MM-yy", new CultureInfo("tr-TR"), DateTimeStyles.None, out _))
