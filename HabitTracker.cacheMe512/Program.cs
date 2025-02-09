@@ -82,25 +82,20 @@ class Program
     {
         Console.Clear();
 
-        Console.WriteLine("Enter the name of the habit:");
-        string habitName = InputService.GetStringInput("Habit Name:");
-        Console.WriteLine();
-        int? habitId = habitRepository.GetHabitIdByName(habitName);
-
-        if (habitId == null)
+        Habit habit = InputService.SelectHabit(habitRepository);
+        if (habit == null)
         {
-            Console.WriteLine($"Habit '{habitName}' does not exist. Would you like to create it? (y/n)");
+            Console.WriteLine("No habit selected. Would you like to add a new habit? (y/n)");
             string response = Console.ReadLine()?.ToLower();
-
             if (response == "y")
             {
-                var habit = new Habit
+                AddNewHabit(habitRepository);
+                habit = InputService.SelectHabit(habitRepository);
+                if (habit == null)
                 {
-                    Name = habitName,
-                    Unit = InputService.GetStringInput("Enter unit of measurement for the habit:")
-                };
-                habitRepository.InsertHabit(habit);
-                habitId = habitRepository.GetHabitIdByName(habitName);
+                    Console.WriteLine("No habit available.");
+                    return;
+                }
             }
             else
             {
@@ -111,7 +106,7 @@ class Program
 
         var newRecord = new HabitRecord
         {
-            HabitId = habitId.Value,
+            HabitId = habit.Id,
             Date = InputService.GetDateInput(),
             Quantity = InputService.GetNumberInput("Enter quantity:")
         };
@@ -123,20 +118,24 @@ class Program
     {
         Console.Clear();
 
-        Console.WriteLine("Enter the name of the habit to view records:");
-        string viewHabitName = InputService.GetStringInput("Habit Name:");
-        Console.WriteLine();
-        int? viewHabitId = habitRepository.GetHabitIdByName(viewHabitName);
-        if (viewHabitId != null)
+        Habit habit = InputService.SelectHabit(habitRepository);
+        if (habit == null)
         {
-            foreach (var record in habitRecordRepository.GetRecordsForHabit(viewHabitId.Value))
-            {
-                Console.WriteLine($"Date: {record.Date.ToString("dd-MM-yy")}  Quantity: {record.Quantity}");
-            }
+            Console.WriteLine("No habit selected.");
+            return;
         }
-        else
+        int habitId = habit.Id;
+        var records = habitRecordRepository.GetRecordsForHabit(habitId);
+        Console.WriteLine($"\nRecords for habit: {habit.Name}");
+        bool hasRecords = false;
+        foreach (var record in records)
         {
-            Console.WriteLine($"Habit '{viewHabitName}' does not exist.");
+            hasRecords = true;
+            Console.WriteLine($"ID: {record.Id}, Date: {record.Date.ToString("dd-MM-yy")}, Quantity: {record.Quantity}");
+        }
+        if (!hasRecords)
+        {
+            Console.WriteLine("No records found for this habit.");
         }
     }
 
@@ -144,25 +143,28 @@ class Program
     {
         Console.Clear();
 
-        Console.WriteLine("Enter the name of the habit to update a record:");
-        string habitName = InputService.GetStringInput("Habit Name:");
-
-        int? habitId = habitRepository.GetHabitIdByName(habitName);
-        if (habitId == null)
+        Habit habit = InputService.SelectHabit(habitRepository);
+        if (habit == null)
         {
-            Console.WriteLine($"Habit '{habitName}' does not exist.");
+            Console.WriteLine("No habit selected.");
+            return;
+        }
+        int habitId = habit.Id;
+        var records = habitRecordRepository.GetRecordsForHabit(habitId);
+
+        bool hasRecords = false;
+        foreach (var rec in records)
+        {
+            hasRecords = true;
+            break;
+        }
+        if (!hasRecords)
+        {
+            Console.WriteLine("No records found for this habit.");
             return;
         }
 
-        var records = habitRecordRepository.GetRecordsForHabit(habitId.Value);
-
-        if (!records.Any())
-        {
-            Console.WriteLine("\nNo records found for this habit.");
-            return;
-        }
-
-        Console.WriteLine("\nRecords for the habit:");
+        Console.WriteLine($"\nRecords for habit: {habit.Name}");
         foreach (var record in records)
         {
             Console.WriteLine($"ID: {record.Id}, Date: {record.Date.ToString("dd-MM-yy")}, Quantity: {record.Quantity}");
@@ -201,32 +203,35 @@ class Program
         catch (Exception ex)
         {
             Console.WriteLine("Error updating record: " + ex.Message);
-        }        
-
+        }
     }
 
     private static void DeleteHabitRecord(HabitRepository habitRepository, HabitRecordRepository habitRecordRepository)
     {
         Console.Clear();
 
-        Console.WriteLine("Enter the name of the habit to delete a record from:");
-        string deleteHabitName = InputService.GetStringInput("Habit Name:");
-        Console.WriteLine();
-        int? deleteHabitId = habitRepository.GetHabitIdByName(deleteHabitName);
-        if (deleteHabitId == null)
+        Habit habit = InputService.SelectHabit(habitRepository);
+        if (habit == null)
         {
-            Console.WriteLine($"Habit '{deleteHabitName}' does not exist.");
+            Console.WriteLine("No habit selected.");
+            return;
+        }
+        int habitId = habit.Id;
+        var recordsToDelete = habitRecordRepository.GetRecordsForHabit(habitId);
+
+        bool hasRecords = false;
+        foreach (var rec in recordsToDelete)
+        {
+            hasRecords = true;
+            break;
+        }
+        if (!hasRecords)
+        {
+            Console.WriteLine("No records found for this habit.");
             return;
         }
 
-        var recordsToDelete = habitRecordRepository.GetRecordsForHabit(deleteHabitId.Value);
-        if (!recordsToDelete.Any())
-        {
-            Console.WriteLine("\nNo records found for this habit.");
-            return;
-        }
-
-        Console.WriteLine("\nRecords for the habit:");
+        Console.WriteLine($"\nRecords for habit: {habit.Name}");
         foreach (var record in recordsToDelete)
         {
             Console.WriteLine($"ID: {record.Id}, Date: {record.Date.ToString("dd-MM-yy")}, Quantity: {record.Quantity}");
@@ -238,11 +243,11 @@ class Program
         try
         {
             habitRecordRepository.DeleteHabitRecord(recordId);
-            Console.WriteLine("\nHabit record deleted successfully.");
+            Console.WriteLine("Habit record deleted successfully.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"\nError deleting habit record: {ex.Message}");
+            Console.WriteLine("Error deleting habit record: " + ex.Message);
         }
     }
 }
