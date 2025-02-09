@@ -1,6 +1,7 @@
 ﻿using Spectre.Console;
 using static habbitTracker.fatihskalemci.Enums;
 using System.Globalization;
+using habbitTracker.fatihskalemci.Models;
 
 namespace habbitTracker.fatihskalemci;
 
@@ -21,7 +22,7 @@ internal class UserInterface
         {
             Console.WriteLine("Please enter the name of new habit");
             Console.WriteLine("It should be tracked by quantity");
-            /* Validation for special chars */
+            /* Validation for sql inputs in general ValidateInput? */
             string? userInput = Console.ReadLine();
             if (userInput != null && ( (userInput[0] >= 'A' && userInput[0] <= 'Z') || (userInput[0] >= 'a' && userInput[0] <= 'z')))
             {
@@ -38,7 +39,7 @@ internal class UserInterface
     {
         bool exit = false;
         string tableToUse = TableSelection();
-        dataBase.CreateTable(tableToUse);
+        dataBase.CreateTable();
 
         while (!exit)
         {
@@ -51,22 +52,27 @@ internal class UserInterface
             switch (menuSelection)
             {
                 case MenuOptions.Add:
-                    dataBase.AddEntry(tableToUse);
+                    dataBase.AddEntry();
                     break;
                 case MenuOptions.Update:
-                    dataBase.UpdateEntry(tableToUse);
+                    dataBase.UpdateEntry();
                     break;
                 case MenuOptions.Delete:
-                    dataBase.DeleteEntry(tableToUse);
+                    dataBase.DeleteEntry();
                     break;
                 case MenuOptions.ShowEntries:
-                    dataBase.ShowEtries(tableToUse);
+                    dataBase.ShowEtries();
                     break;
                 case MenuOptions.Exit:
                     exit = true;
                     break;
             }
         }
+    }
+
+    static internal Habbit getHabbitFromUser()
+    {
+
     }
 
     static internal int getIntegerInput(string message)

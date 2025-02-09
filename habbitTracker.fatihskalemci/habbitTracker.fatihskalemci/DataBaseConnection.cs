@@ -9,7 +9,7 @@ internal class DataBaseConnection
 {
     private string connectionString = "Data Source=habbit-Tracker.db";
 
-    public void CreateTable(string tableName)
+    public void CreateTable()
     {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -18,10 +18,12 @@ internal class DataBaseConnection
             var commandTable = connection.CreateCommand();
 
             commandTable.CommandText =
-                @$"CREATE TABLE IF NOT EXISTS {tableName} (
+                @"CREATE TABLE IF NOT EXISTS habbit_tracker (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Habbit TEXT,
             Date TEXT,
-            Quantity INTEGER
+            Quantity INTEGER,
+            Unit TEXT
             )";
             commandTable.ExecuteNonQuery();
 
@@ -54,7 +56,7 @@ internal class DataBaseConnection
         return entries;
     }
 
-    internal List<Habbit> GetEntries(string tableName)
+    internal List<Habbit> GetEntries()
     {
         List<Habbit> entries = new();
 
@@ -62,7 +64,7 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @$"SELECT * FROM {tableName}";
+            string commandString = @$"SELECT * FROM habbit_tracker";
 
             using (var selectCommand = new SqliteCommand(commandString, connection))
             {
@@ -74,8 +76,10 @@ internal class DataBaseConnection
                         new Habbit
                         {
                             Id = reader.GetInt32(0),
-                            Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("tr-TR")),
-                            Quantity = reader.GetInt32(2)
+                            HabbitName = reader.GetString(1),
+                            Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("tr-TR")),
+                            Quantity = reader.GetInt32(3),
+                            Unit = reader.GetString(4)
                         });
                     }
                 }
@@ -84,7 +88,7 @@ internal class DataBaseConnection
         return entries;
     }
 
-    internal void AddEntry(string tableName)
+    internal void AddEntry(Habbit habbit)
     {
         string dateInput = UserInterface.getDateInput();
         if (dateInput == "0")
@@ -97,13 +101,15 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @$"INSERT INTO {tableName} (Date, Quantity)
-                VALUES (@entryDate, @entryQuantity)";
+            string commandString = @$"INSERT INTO habbit_tracker (Habbit, Date, Quantity, Unit)
+                VALUES (@habbitName, @entryDate, @entryQuantity, @unit)";
 
             using (var insertCommand = new SqliteCommand(commandString, connection))
             {
-                insertCommand.Parameters.Add("@entryDate", SqliteType.Text).Value = dateInput;
-                insertCommand.Parameters.Add("@entryQuantity", SqliteType.Integer).Value = integerInput;
+                insertCommand.Parameters.Add("@entryDate", SqliteType.Text).Value = habbit.Date.ToString("dd-MM-yy");
+                insertCommand.Parameters.Add("@entryQuantity", SqliteType.Integer).Value = habbit.Quantity;
+                insertCommand.Parameters.Add("@habbitName", SqliteType.Text).Value = habbit.HabbitName;
+                insertCommand.Parameters.Add("@unit", SqliteType.Text).Value = habbit.Unit;
 
                 insertCommand.ExecuteNonQuery();
             }
@@ -112,9 +118,9 @@ internal class DataBaseConnection
         }
     }
 
-    internal void UpdateEntry(string tableName)
+    internal void UpdateEntry()
     {
-        List<Habbit> tableData = GetEntries(tableName);
+        List<Habbit> tableData = GetEntries();
 
         if (!tableData.Any())
         {
@@ -140,7 +146,7 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @$"UPDATE {tableName}
+            string commandString = @$"UPDATE habbit_tracker
                                 SET Date = @entryDate, Quantity = @entryQuantity
                                 WHERE Id = @entryID";
 
@@ -156,9 +162,9 @@ internal class DataBaseConnection
         }
     }
 
-    internal void DeleteEntry(string tableName)
+    internal void DeleteEntry()
     {
-        List<Habbit> tableData = GetEntries(tableName);
+        List<Habbit> tableData = GetEntries();
 
         if (!tableData.Any())
         {
@@ -177,7 +183,7 @@ internal class DataBaseConnection
         {
             connection.Open();
 
-            string commandString = @$"DELETE FROM {tableName} WHERE Id = @entryID";
+            string commandString = @$"DELETE FROM habbit_tracker WHERE Id = @entryID";
 
             using (var deleteCommand = new SqliteCommand(commandString, connection))
             {
@@ -189,9 +195,9 @@ internal class DataBaseConnection
         }
     }
 
-    internal void ShowEtries(string tableName)
+    internal void ShowEtries()
     {
-        List<Habbit> tableData = GetEntries(tableName);
+        List<Habbit> tableData = GetEntries();
 
         var table = new Table();
         table.Border(TableBorder.Rounded);
