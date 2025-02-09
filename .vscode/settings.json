@@ -1,3 +1,4 @@
 {
-    "dotnet.defaultSolution": "HabitTracker.sln"
+    "dotnet.defaultSolution": "HabitTracker.sln",
+    "csharp.debug.console": "externalTerminal"
 }

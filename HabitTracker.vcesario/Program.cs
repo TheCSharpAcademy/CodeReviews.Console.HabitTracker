@@ -76,7 +76,7 @@ void InitializeDBs(SqliteConnection connection)
     {
         var command = connection.CreateCommand();
         command.CommandText = @"CREATE TABLE habitlogs(
-                                    id INT PRIMARY KEY,
+                                    id INTEGER PRIMARY KEY,
                                     habit VARCHAR(20) NOT NULL,
                                     date DATE NOT NULL,
                                     measure INT NOT NULL,
@@ -129,7 +129,7 @@ void ViewAllEntries(SqliteConnection connection)
     Console.WriteLine("> VIEW ALL ENTRIES");
     Console.WriteLine();
 
-    Console.WriteLine("> Habit definitions");
+    Console.WriteLine("* Habit definitions");
     Console.WriteLine();
 
     var command = connection.CreateCommand();
@@ -147,7 +147,7 @@ void ViewAllEntries(SqliteConnection connection)
 
     Console.WriteLine();
 
-    Console.WriteLine("> Habit entries");
+    Console.WriteLine("* Habit entries");
     Console.WriteLine();
 
     command.CommandText = @"SELECT habitlogs.habit, habitlogs.date, habitlogs.measure, habitdefs.unit
@@ -159,7 +159,7 @@ void ViewAllEntries(SqliteConnection connection)
         {
             var habitName = reader.GetString(0);
             var date = DateOnly.FromDateTime(reader.GetDateTime(1));
-            var measure = reader.GetFloat(2);
+            var measure = reader.GetInt32(2);
             var unit = reader.GetString(3);
 
             Console.WriteLine($"{date} {habitName.PadRight(10 + 3)} {measure} {unit}");
@@ -208,7 +208,7 @@ void LogNewEntry(SqliteConnection connection)
     string? input;
     int successfulInputs = 0;
     DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-    DateOnly date = today;
+    DateOnly date = default;
     int measure = 0;
     string habit = string.Empty;
 
@@ -321,7 +321,7 @@ void EditEntry(SqliteConnection connection)
     Console.WriteLine();
     string? input;
     bool isSuccessfulInput = false;
-    DateOnly date = DateOnly.FromDateTime(DateTime.Now);
+    DateOnly date = default;
     int measure = 0;
     string habit = string.Empty;
     string unit = string.Empty;
@@ -425,12 +425,114 @@ void RemoveEntries(SqliteConnection connection)
     Console.WriteLine();
     Console.WriteLine("> REMOVE ENTRIES");
     Console.WriteLine();
-    
-    // To be continued...
-    // Print every definition and entry.
-    // User inputs number associated with item, or returns
-    // Confirm (y/n)
-    // Resets screen, now updated, with numbers also updated
+
+    var command = connection.CreateCommand();
+    command.CommandText = "SELECT * FROM habitlogs";
+
+    int id = 0;
+    string habitName = string.Empty;
+    DateOnly date = default;
+    int measure = 0;
+
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            id = reader.GetInt32(0);
+            habitName = reader.GetString(1);
+            date = DateOnly.FromDateTime(reader.GetDateTime(2));
+            measure = reader.GetInt32(3);
+
+            Console.WriteLine($"[#{id}] {date} {habitName.PadRight(10 + 3)} {measure}");
+        }
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Type in the id (#) of the entry you want to remove.");
+    Console.WriteLine("Type \"return\" anytime to cancel and return to main menu.");
+    Console.WriteLine();
+
+    string? input;
+    bool isSuccessfulInput = false;
+    do
+    {
+        Console.Write("Delete: ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        if (!int.TryParse(input, out id))
+        {
+            Console.Write("Couldn't parse number. ");
+            continue;
+        }
+
+        command.CommandText = $@"SELECT * FROM habitlogs
+                                WHERE id={id}";
+        using (var reader = command.ExecuteReader())
+        {
+            if (!reader.HasRows)
+            {
+                Console.Write("Entry # not found. ");
+                continue;
+            }
+
+            reader.Read();
+
+            habitName = reader.GetString(1);
+            date = DateOnly.FromDateTime(reader.GetDateTime(2));
+            measure = reader.GetInt32(3);
+        }
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    isSuccessfulInput = false;
+    do
+    {
+        Console.Write($"Confirm removal of '[#{id}] {date} {habitName} {measure}' (y/n): ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+        else if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+        else if (input.ToLower().Equals("n") || input.ToLower().Equals("y"))
+        {
+            isSuccessfulInput = true;
+        }
+        else
+        {
+            Console.Write("Couldn't parse input. ");
+        }
+    }
+    while (!isSuccessfulInput);
+
+    if (!string.IsNullOrEmpty(input) && input.ToLower().Equals("y"))
+    {
+        command.CommandText = $@"DELETE FROM habitlogs
+                                WHERE id={id}";
+        command.ExecuteReader();
+        
+        Console.WriteLine();
+        Console.WriteLine("Entry deleted.");
+        Console.ReadLine();
+    }
+
+    RemoveEntries(connection); // ending recursively to print screen again
 }
 
 void AddHabitDefinition(SqliteConnection connection)
@@ -474,6 +576,15 @@ void AddHabitDefinition(SqliteConnection connection)
     }
 }
 
+void EditDefinition()
+{
+
+}
+
+void RemoveDefinition()
+{
+    // Remove by typing the name of the definition, instead of a number
+}
 void FillDbWithRandomEntries(SqliteConnection connection)
 {
     Console.Clear();
