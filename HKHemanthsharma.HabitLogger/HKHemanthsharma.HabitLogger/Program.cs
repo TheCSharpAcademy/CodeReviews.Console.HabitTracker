@@ -3,7 +3,6 @@
     using System.Data.SqlClient;
     using System.Data;
     using System.Data.Common;
-    using System.Diagnostics.CodeAnalysis;
     using System.ComponentModel.Design;
 
 
@@ -35,13 +34,13 @@
                     case "0":
                         close = true; break;
                     case "1":
-                        hr.fetchAllRecords(); break;
+                        hr.FetchAllRecords(); break;
                     case "2":
-                        hr.insertRecord(); break;
+                        hr.InsertRecord(); break;
                     case "3":
                         hr.DeleteRecord(); break;
                     case "4":
-                        hr.updateRecord(); break;
+                        hr.UpdateRecord(); break;
                     default:
                         Console.WriteLine("Please enter a valid input! try again");
                         Console.WriteLine("Enter any key to try again");

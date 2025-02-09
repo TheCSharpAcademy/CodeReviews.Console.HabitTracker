@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 
 namespace HKHemanthsharma.HabitLogger
@@ -18,7 +16,7 @@ namespace HKHemanthsharma.HabitLogger
             Dbtable = DbTable;
         }
 
-        public void fetchAllRecords()
+        public void FetchAllRecords()
         {
             try
             {
@@ -65,7 +63,7 @@ namespace HKHemanthsharma.HabitLogger
 
 
         }
-        public void insertRecord()
+        public void InsertRecord()
         {
             Console.Clear();
             Console.WriteLine("Enter the Habit: ");
@@ -214,7 +212,7 @@ namespace HKHemanthsharma.HabitLogger
             Console.WriteLine("Press any key to go to main menu!");
             Console.ReadLine();
         }
-        public void updateRecord()
+        public void UpdateRecord()
         {
             try
             {
