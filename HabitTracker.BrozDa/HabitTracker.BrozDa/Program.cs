@@ -1,4 +1,6 @@
-﻿namespace HabitTracker.BrozDa
+﻿using System.Text.RegularExpressions;
+
+namespace HabitTracker.BrozDa
 {
     internal class Program
     {
@@ -7,6 +9,7 @@
             HabitTracker tracker = new HabitTracker();
             tracker.Start();
             Console.ReadLine();
+
         }
     }
 }

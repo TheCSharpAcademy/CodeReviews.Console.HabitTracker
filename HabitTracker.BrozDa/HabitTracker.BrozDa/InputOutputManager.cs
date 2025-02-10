@@ -1,6 +1,7 @@
 ﻿
 using System.Dynamic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 namespace HabitTracker.BrozDa
 {
 
@@ -262,16 +263,21 @@ namespace HabitTracker.BrozDa
             string? name;
             Console.Write("Please enter habit name (this name cannot contain whiteSpaces): ");
             name = Console.ReadLine();
-
-            while (name == null || name.Any(Char.IsWhiteSpace) || name.Length == 0)
+            while (!IsTableNameValid(name))
             {
-                
                 Console.Write("Please enter valid name: ");
                 name = Console.ReadLine();
+                    
             }
-
             return name;
 
+        }
+        private bool IsTableNameValid(string name)
+        {
+            if(name == null || name.Length == 0)
+                return false;
+
+            return Regex.IsMatch(name, @"^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$");
         }
         public string GetNewTableUnit()
         {

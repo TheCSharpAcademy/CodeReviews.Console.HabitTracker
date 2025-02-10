@@ -68,7 +68,9 @@
                     string newTableUnit = _inputOutputManager.GetNewTableUnit();
                     _databaseManager.CreateNewTable(newTableName, newTableUnit);
                     break;
-                case 4: break;
+                case 4: 
+                    Environment.Exit(0);
+                    break;
 
             }
             Console.WriteLine("\nPress any key to continue");
