@@ -34,6 +34,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
             case 7:
                 RemoveDefinition(connection);
                 break;
+            case 8:
+                ViewStatistics(connection);
+                break;
             case 9:
                 FillDbWithRandomEntries(connection);
                 break;
@@ -104,6 +107,8 @@ int AskMenuOption()
 {
     Console.Clear();
     Console.WriteLine();
+    Console.WriteLine("> MAIN MENU");
+    Console.WriteLine();
     Console.WriteLine("1. View all entries");
     Console.WriteLine("2. Log new entry");
     Console.WriteLine("3. Edit existing entry");
@@ -111,7 +116,7 @@ int AskMenuOption()
     Console.WriteLine("5. Add new habit definition");
     Console.WriteLine("6. Edit existing definition");
     Console.WriteLine("7. Remove definition");
-    Console.WriteLine("8. See statistics");
+    Console.WriteLine("8. View statistics");
     Console.WriteLine("9. [DEBUG] Fill with random entries");
     Console.WriteLine("0. Exit");
     Console.WriteLine();
@@ -824,6 +829,140 @@ void RemoveDefinition(SqliteConnection connection)
     RemoveDefinition(connection); // ending recursively to print screen again
 }
 
+void ViewStatistics(SqliteConnection connection)
+{
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> STATISTICS");
+    Console.WriteLine();
+
+    Console.WriteLine("Type in the habit you want to see the report of.");
+    Console.WriteLine("Type \"return\" anytime to cancel and return to main menu.");
+    Console.WriteLine();
+
+    string? input;
+    bool isSuccessfulInput = false;
+    string habitName = string.Empty;
+    string unitName = string.Empty;
+    SqliteCommand command;
+    do
+    {
+        Console.Write("Habit name: ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        command = connection.CreateCommand();
+        command.CommandText = $@"SELECT * FROM habitdefs
+                                    WHERE habit_name='{input}'";
+
+        using (var reader = command.ExecuteReader())
+        {
+            if (!reader.HasRows)
+            {
+                Console.Write("Couldn't find habit. ");
+                continue;
+            }
+
+            reader.Read();
+
+            habitName = reader.GetString(0);
+            unitName = reader.GetString(1);
+        }
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> STATISTICS");
+    Console.WriteLine();
+
+    Console.WriteLine($"* Your top 3 days of {habitName} were:");
+
+    command = connection.CreateCommand();
+    command.CommandText = $@"SELECT * FROM habitlogs
+                                WHERE habit='{habitName}'
+                                ORDER BY measure DESC
+                                LIMIT 3";
+
+    using (var reader = command.ExecuteReader())
+    {
+        if (!reader.HasRows)
+        {
+            Console.WriteLine("Couldn't find habit. ");
+        }
+        else
+        {
+            while (reader.Read())
+            {
+                var date = DateOnly.FromDateTime(reader.GetDateTime(2));
+                var measure = reader.GetInt32(3);
+                Console.WriteLine($"\t[{date}] {measure} {unitName}");
+            }
+        }
+    }
+
+    Console.ReadLine();
+
+    Console.WriteLine($"* Your top 3 weeks of {habitName} were:");
+
+    command = connection.CreateCommand();
+    command.CommandText = $@"SELECT * FROM habitlogs
+                                WHERE habit='{habitName}'
+                                ORDER BY date DESC";
+
+    using (var reader = command.ExecuteReader())
+    {
+        if (!reader.HasRows)
+        {
+            Console.WriteLine("Couldn't find habit. ");
+        }
+        else
+        {
+            // instantiate structure that contains earliest date of this week, and furthest date of this week
+            var weekSum = new WeekSum(DateOnly.FromDateTime(DateTime.Today));
+
+            while (reader.Read())
+            {
+                // while date of row is within structs' range, add to count
+                // if date of row exits structs' range, create new struct
+                // add to sorted list?
+            }
+        }
+    }
+
+    Console.ReadLine();
+    return;
+
+
+
+    // Options:
+    // View count/total/average table (month)
+    // View top 3 days, weeks and months
+    // View streak
+    Console.WriteLine("1. View monthly C.T.A. (count, total, average)");
+    Console.WriteLine("2. View TOP3");
+    Console.WriteLine("3. View streaks");
+    Console.WriteLine("4. Remove entry");
+    Console.WriteLine("5. Add new habit definition");
+    Console.WriteLine("6. Edit existing definition");
+    Console.WriteLine("7. Remove definition");
+    Console.WriteLine("8. View statistics");
+    Console.WriteLine("9. [DEBUG] Fill with random entries");
+    Console.WriteLine("0. Exit");
+
+}
+
 void FillDbWithRandomEntries(SqliteConnection connection)
 {
     Console.Clear();
@@ -919,5 +1058,26 @@ void InsertHabitEntry(string habit, DateOnly date, int measure, SqliteConnection
     {
         // entry already defined for this habit and date
         Console.WriteLine($"Entry ['{habit}', '{date}'] already defined.");
+    }
+}
+
+struct WeekSum
+{
+    public DateOnly Start;
+    public DateOnly End;
+    public int Sum;
+
+    public WeekSum(DateOnly _start, DateOnly _end, int _sum)
+    {
+        Start = _start;
+        End = _end;
+        Sum = _sum;
+    }
+
+    public WeekSum(DateOnly reference)
+    {
+        Start = reference.AddDays(-(int)reference.DayOfWeek);   // earliest sunday
+        End = Start.AddDays(6);                                 // following saturday
+        Sum = 0;
     }
 }
