@@ -31,6 +31,9 @@ using (var connection = new SqliteConnection("Data Source=habittracker.db"))
             case 6:
                 EditDefinition(connection);
                 break;
+            case 7:
+                RemoveDefinition(connection);
+                break;
             case 9:
                 FillDbWithRandomEntries(connection);
                 break;
@@ -707,10 +710,120 @@ void EditDefinition(SqliteConnection connection)
     Console.ReadLine();
 }
 
-void RemoveDefinition()
+void RemoveDefinition(SqliteConnection connection)
 {
-    // Remove by typing the name of the definition, instead of a number
+    Console.Clear();
+    Console.WriteLine();
+    Console.WriteLine("> REMOVE HABIT DEFINITION");
+    Console.WriteLine();
+
+    var command = connection.CreateCommand();
+    command.CommandText = "SELECT rowid, habit_name, unit FROM habitdefs";
+
+    int id = 0;
+    string habitName = string.Empty;
+    string unit = string.Empty;
+
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            id = reader.GetInt32(0);
+            habitName = reader.GetString(1);
+            unit = reader.GetString(2);
+
+            Console.WriteLine($"[#{id}] {habitName} ({unit})");
+        }
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Type in the id (#) of the habit you want to remove.");
+    Console.WriteLine("\t[!] Keep in mind that all of the entries associated with this habit will also be removed."); ;
+    Console.WriteLine("Type \"return\" anytime to cancel and return to main menu.");
+    Console.WriteLine();
+
+    string? input;
+    bool isSuccessfulInput = false;
+    do
+    {
+        Console.Write("Delete: ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+
+        if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+
+        if (!int.TryParse(input, out id))
+        {
+            Console.Write("Couldn't parse number. ");
+            continue;
+        }
+
+        command.CommandText = $@"SELECT rowid, habit_name, unit FROM habitdefs
+                                WHERE rowid={id}";
+        using (var reader = command.ExecuteReader())
+        {
+            if (!reader.HasRows)
+            {
+                Console.Write("Entry # not found. ");
+                continue;
+            }
+
+            reader.Read();
+
+            habitName = reader.GetString(1);
+            unit = reader.GetString(2);
+        }
+
+        isSuccessfulInput = true;
+    }
+    while (!isSuccessfulInput);
+
+    isSuccessfulInput = false;
+    do
+    {
+        Console.Write($"Confirm removal of '[#{id}] {habitName} ({unit})' (y/n): ");
+        input = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(input))
+        {
+            continue;
+        }
+        else if (input.ToLower().Equals("return"))
+        {
+            return;
+        }
+        else if (input.ToLower().Equals("n") || input.ToLower().Equals("y"))
+        {
+            isSuccessfulInput = true;
+        }
+        else
+        {
+            Console.Write("Couldn't parse input. ");
+        }
+    }
+    while (!isSuccessfulInput);
+
+    if (!string.IsNullOrEmpty(input) && input.ToLower().Equals("y"))
+    {
+        command.CommandText = $@"DELETE FROM habitdefs
+                                WHERE rowid={id}";
+        command.ExecuteReader();
+
+        Console.WriteLine();
+        Console.WriteLine("Habit definition deleted.");
+        Console.ReadLine();
+    }
+
+    RemoveDefinition(connection); // ending recursively to print screen again
 }
+
 void FillDbWithRandomEntries(SqliteConnection connection)
 {
     Console.Clear();

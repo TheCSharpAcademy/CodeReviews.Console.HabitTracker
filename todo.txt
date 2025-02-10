@@ -19,7 +19,7 @@
 - [x] Implement "Edit existing entry"
 - [x] Implement "Remove entry"
 - [x] Implement "Edit existing definition"
-- [] Implement "Remove definition"
+- [x] Implement "Remove definition"
 - [] Implement "See statistics"
 
     Ideas for habits:
