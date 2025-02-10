@@ -14,7 +14,7 @@ namespace HabitTracker.BrozDa
         private readonly int _IDcolumnWidth = 5;
         private readonly int _OtherColumnsWidth = 15;
         private readonly int _horizonalLineLength = 5 + 15 + 15 + 4; //5 for ID, 2x15 for Date and Volume, +4 horizontalLines
-        public readonly int MainMenuLength = 4;
+        public readonly int MainMenuLength = 5;
         public readonly int HabitMenuLength = 6;
         public InputOutputManager(string dateTimeFormat)
         {
@@ -31,7 +31,8 @@ namespace HabitTracker.BrozDa
             Console.WriteLine("\t1. Check tracked habits");
             Console.WriteLine("\t2. Manage existing habit");
             Console.WriteLine("\t3. Create new habit");
-            Console.WriteLine("\t4. Exit the application");
+            Console.WriteLine("\t4. Delete table");
+            Console.WriteLine("\t5. Exit the application");
             Console.Write("Your selection: ");
         }
         public void PrintHabitMenu()
@@ -49,52 +50,10 @@ namespace HabitTracker.BrozDa
             Console.Write("Your selection: ");
 
         }
-        public void PrintRecords(List<string> columns, List<DatabaseRecord> records)
-        {
-            int verticalLineLength = _IDcolumnWidth + (columns.Count - 1) * _OtherColumnsWidth + columns.Count + 1;
-
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
-
-
-            //horizonal line
-            Console.WriteLine(new string('-', verticalLineLength));
-
-
-            //column names
-            Console.Write('|');
-            Console.Write(string.Format("{0,-5:N}", columns[0]));
-            Console.Write('|');
-            Console.Write(string.Format(_format, columns[1]));
-            Console.Write('|');
-            Console.Write(string.Format(_format, columns[2]));
-            Console.Write('|');
-            Console.WriteLine();
-
-            //horizonal line
-            Console.WriteLine(new string('-', verticalLineLength));
-
-            // records
-            foreach (var record in records)
-            {
-                Console.Write('|');
-                Console.Write(string.Format("{0,-5}", record.ID));
-                Console.Write('|');
-                Console.Write(string.Format(_format, record.Date));
-                Console.Write('|');
-                Console.Write(string.Format(_format, record.Volume));
-                Console.WriteLine('|');
-            }
-
-            //horizonal line
-            Console.WriteLine(new string('-', verticalLineLength));
-
-        }
-        public DatabaseRecord GetNewRecord(string table)
+        public DatabaseRecord GetValuesForNewRecord()
         {
             DatabaseRecord newRecord = new DatabaseRecord();
-            Console.WriteLine();
-            //Console.Write($"Please enter date value in DD-MM-YYYY format, or enter \"today\" for today's date: ");
+
             newRecord.Date = GetDateForRecord();
 
 
@@ -102,15 +61,25 @@ namespace HabitTracker.BrozDa
 
             return newRecord;
         }
+        public DatabaseRecord GetValuesForNewRecord(int ID)
+        {
+            DatabaseRecord newRecord = new DatabaseRecord();
+
+            newRecord.ID = ID;
+            newRecord.Date = GetDateForRecord();
+            newRecord.Volume = GetVolumeForRecord();
+
+            return newRecord;
+        }
         public int GetVolumeForRecord()
         {
-            Console.Write($"Please enter positive numeric value for Volume: ");
-            
+            Console.Write($"Please enter positive numeric value for volume: ");
+
             int numericInput;
             string? input = Console.ReadLine();
 
-            
-            while (!int.TryParse(input, out numericInput))
+
+            while (!int.TryParse(input, out numericInput) || numericInput < 0)
             {
                 Console.Write("Enter valid, positive numeric  value: ");
                 input = Console.ReadLine();
@@ -121,86 +90,107 @@ namespace HabitTracker.BrozDa
         public DateTime GetDateForRecord()
         {
             DateTime date = DateTime.Now;
-
-            while (true)
+            bool isInputValid = false;
+            while (!isInputValid)
             {
-                Console.Write($"Please enter date value in DD-MM-YYYY format, or enter \"today\" for today's date: ");
+                Console.Write($"Please enter date value in {_dateFormat.ToUpper()} format, or enter \"today\" for today's date: ");
                 string? userInput = Console.ReadLine()?.Trim().ToLower();
 
-                if (userInput == null || userInput == string.Empty)
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid date.");
-                }
-                else if (userInput == "today")
+                if (userInput == "today")
                 {
                     date = DateTime.Now;
-                    break;
+                    isInputValid = true;
                 }
                 else if (DateTime.TryParseExact(userInput, _dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
                 {
-                    break;
+                    isInputValid = true;
                 }
                 else
                 {
                     Console.WriteLine("Invalid date format. Please try again.");
                 }
             }
-
             return date;
         }
         public string GetTableNameFromUser(List<string> tables)
         {
             string? input;
             int numericInput;
-            Console.Write("Please enter ID of the table for new record: ");
+
+            Console.Write("Please enter ID of the table for new record (or press 0 to return): ");
             input = Console.ReadLine();
-            while (!int.TryParse(input, out numericInput) || numericInput < 1 || numericInput > tables.Count) {
+
+            while (!int.TryParse(input, out numericInput) || numericInput < 0 || numericInput > tables.Count)
+            {
                 Console.Write("Please enter valid ID: ");
                 input = Console.ReadLine();
             }
-            return tables[numericInput - 1];
+
+            return numericInput == 0 ? string.Empty : tables[numericInput - 1];
         }
-        public int GetRecordIdFromUser(string operation)
+        public int GetRecordIdFromUser(List<DatabaseRecord> records, string operation)
         {
-            Console.Write($"Please valid ID of the record you wish to {operation}:");
-            string? input = Console.ReadLine();
+            string? input;
             int numericInput;
-            while (!int.TryParse(input, out numericInput))
+
+            Console.Write($"Please valid ID of the record you wish to {operation}:");
+            input = Console.ReadLine();
+
+            while (!int.TryParse(input, out numericInput) || !IsRecordIdPresent(numericInput, records))
             {
                 Console.Write($"Please valid ID of the record you wish to {operation}:");
                 input = Console.ReadLine();
             }
             return numericInput;
         }
-        public DatabaseRecord GetNewValuesForRecord(DatabaseRecord oldRecord)
+        private bool IsRecordIdPresent(int id, List<DatabaseRecord> records)
+        {
+            foreach (DatabaseRecord record in records)
+            {
+                if (record.ID == id)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public DatabaseRecord GetNewValuesForExistingRecord(DatabaseRecord oldRecord)
         {
             DatabaseRecord newRecord = new DatabaseRecord(oldRecord.ID, oldRecord.Date, oldRecord.Volume);
+
             newRecord.Date = GetDateForRecord();
-            Console.Write("Enter new value representing Volume: ");
             newRecord.Volume = GetVolumeForRecord();
 
             return newRecord;
         }
-
-        public bool ValidateInput(string? input, int minVal, int maxVal)
+        public void PrintTable(string table, List<DatabaseRecord> records, string unit)
         {
-            int numInput;
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+            PrintHorizonalLine();
+            PrintTableHeader(table);
+            PrintHorizonalLine();
+            PrintTableColumns();
+            PrintHorizonalLine();
+            foreach (DatabaseRecord record in records) 
+            { 
+                PrintRecord(record, unit);
+            }
+            PrintHorizonalLine();
 
-            if (!int.TryParse(input, out numInput))
-            {
-                return false;
-            }
-            if (numInput < minVal)
-            {
-                return false;
-            }
-            if (numInput > maxVal)
-            {
-                return false;
-            }
-
-            return true;
         }
+        public void PrintTableColumns()
+        {
+            Console.Write('|');
+            Console.Write(string.Format("{0,-5:N}", "ID"));
+            Console.Write('|');
+            Console.Write(string.Format(_format, "Date"));
+            Console.Write('|');
+            Console.Write(string.Format(_format, "Volume"));
+            Console.Write('|');
+            Console.WriteLine();
+        }
+        
         public void PrintTableColumns(List<string> columns, string table)
         {
             Console.Clear();
@@ -242,7 +232,7 @@ namespace HabitTracker.BrozDa
             int leftpadding = totalSpaces / 2;
             int rightPadding = totalSpaces - leftpadding;
 
-            PrintHorizonalLine();
+            
             Console.WriteLine("|" + new string(' ', leftpadding) + text + new string(' ', rightPadding) + "|");
         }
         public int GetInputInMenu(int maxValue)
@@ -258,16 +248,32 @@ namespace HabitTracker.BrozDa
 
             return numericInput;
         }
-        public string GetNewTableName()
+        public string GetNewTableName(List<string> existingTables)
         {
             string? name;
-            Console.Write("Please enter habit name (this name cannot contain whiteSpaces): ");
+            Console.WriteLine("Name of the habit can contain only alpha-numeric characters or space between words, leading or trailing spaces are not permitted");
+            Console.Write("Please enter habit name: ");
             name = Console.ReadLine();
-            while (!IsTableNameValid(name))
+            while (!IsTableNameValid(name) || existingTables.Contains(name))
             {
+                Console.WriteLine("Name invalid or already exists");
                 Console.Write("Please enter valid name: ");
                 name = Console.ReadLine();
                     
+            }
+            return name;
+
+        }
+        public string GetExistingTableName(List<string> existingTables)
+        {
+            string? name;
+            Console.Write("Please enter name of the table to be deleted (or enter 0 to return to main menu): ");
+            name = Console.ReadLine();
+            while (!existingTables.Contains(name) && name != "0")
+            {
+                Console.Write("Please enter valid name (or enter 0 to return to main menu): ");
+                name = Console.ReadLine();
+
             }
             return name;
 
@@ -313,6 +319,7 @@ namespace HabitTracker.BrozDa
             }
             Console.WriteLine();
         }
+
         
     }
 }

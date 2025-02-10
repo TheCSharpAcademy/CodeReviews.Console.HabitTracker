@@ -78,7 +78,7 @@ namespace HabitTracker.BrozDa
                 }
             }
         }
-        private string GetFromUnitTable(string table)
+        public string GetFromUnitTable(string table)
         {
             string sql = $"SELECT Unit FROM Units WHERE Habit='{table}';";
             string unit = string.Empty;
@@ -98,9 +98,21 @@ namespace HabitTracker.BrozDa
             return unit;
         }
 
+        public void DeleteTable(string table)
+        {
+            string sql = $"DROP TABLE '{table}';";
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
 
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
 
-        public bool CheckIfTableExists(string table)
+        public bool DoesTableExist(string table)
         {
             bool doesTableExist;
 
@@ -170,7 +182,30 @@ namespace HabitTracker.BrozDa
             }
             return tables;
         }
+        public List<DatabaseRecord> GetRecordsFromTable(string table)
+        {
+            List<DatabaseRecord> records = new List<DatabaseRecord>();
+            string unit = GetFromUnitTable(table);
 
+            string sql = $"SELECT * FROM {table};";
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            records.Add(new DatabaseRecord(reader.GetInt32(0), DateTime.Parse(reader.GetString(1)), reader.GetInt32(2)));
+                        }
+                    }
+                }
+            }
+            return records;
+        }
         // conflicting thought - one one hand dont want handle printing in DBmanager class, but could not find other solution than saving whole DB to list and then sending it to IO manager - not very scalable
         public void PrintRecordsFromATable(string table)
         {
@@ -227,7 +262,7 @@ namespace HabitTracker.BrozDa
         }
         public void InsertRecord(string table, DatabaseRecord record)
         {
-            Console.WriteLine($"Adding record ....");
+            //Console.WriteLine($"Adding record ....");
             string sql = $"INSERT INTO {table} (Date, Volume) " +
                              $"VALUES (@recordDate, @recordVolume);";
 
@@ -244,7 +279,7 @@ namespace HabitTracker.BrozDa
                 }
             }
 
-            Console.WriteLine("Record added to the database");
+            //Console.WriteLine("Record added to the database");
 
         }
         public void UpdateRecord(string table, DatabaseRecord updatedRecord ) 
@@ -271,7 +306,6 @@ namespace HabitTracker.BrozDa
         }
         public void DeleteRecord(string table, int recordID) 
         {
-            Console.WriteLine("Deleting record...");
             string sql = $"DELETE FROM {table} WHERE ID=@recordID;";
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
@@ -285,7 +319,6 @@ namespace HabitTracker.BrozDa
                 }
             }
 
-            Console.WriteLine("Record deleted");
         }
         public bool IsIdPresentInDatabase(string table, int id) {
             
@@ -307,6 +340,48 @@ namespace HabitTracker.BrozDa
                 }
             }
             return isIdPresentInDatabase;
+        }
+        public int GetNumberOfEntries(string table)
+        {
+            string sql = $"SELECT COUNT (ID) from '{table}';";
+            int count = -1;
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        
+                        while (reader.Read())
+                        {
+                            count = reader.GetInt32(0);
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+        public int GetTotalVolume(string table)
+        {
+            string sql = $"SELECT SUM (Volume) from '{table}';";
+            int sum = -1;
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+
+                        while (reader.Read())
+                        {
+                            sum = reader.GetInt32(0);
+                        }
+                    }
+                }
+            }
+            return sum;
         }
     }
 }
