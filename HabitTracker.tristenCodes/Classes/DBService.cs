@@ -14,9 +14,12 @@ class DBService
             _connectionString = connectonString;
             _connection = new SqliteConnection(connectonString);
             OpenSqliteConnection();
-            var result = CheckIfTableExists();
-            CreateTable();
-            Console.WriteLine("Success");
+
+            var tableExists = CheckIfTableExists();
+            if (!tableExists)
+            {
+                CreateTable();
+            }
         }
         catch (Exception ex)
         {
@@ -28,7 +31,7 @@ class DBService
 
     public void CreateTable()
     {
-        var command = _connection!.CreateCommand();
+        var command = _connection.CreateCommand();
 
         command.CommandText =
         @"
@@ -85,8 +88,8 @@ class DBService
 
         using (var reader = command.ExecuteReader())
         {
-            if (reader.HasRows) Console.WriteLine("Has rows");
+            Console.WriteLine($"Has rows: {reader.HasRows}");
+            return reader.HasRows;
         }
-        return false;
     }
 }
