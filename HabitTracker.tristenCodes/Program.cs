@@ -1,4 +1,5 @@
-﻿using Classes;
+﻿using Services;
+using Helpers;
 
 // Establish DB Connection
 DBService dBService = new DBService("Data source=local.db");
@@ -20,6 +21,10 @@ switch (menuSelection)
 {
     case "1":
         // Add a habit 
+        // Get user entry
+        // Delimiter on it
+        // Use the info to search database
+        // return a success or failure message
         break;
     case "2":
         // Show all habits

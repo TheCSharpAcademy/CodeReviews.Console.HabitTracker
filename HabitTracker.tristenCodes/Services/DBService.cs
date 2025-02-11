@@ -1,6 +1,7 @@
-namespace Classes;
+namespace Services;
 
 using Microsoft.Data.Sqlite;
+using DTO;
 
 
 class DBService
@@ -46,19 +47,12 @@ class DBService
         command.ExecuteNonQuery();
     }
 
-    public void AddEntry(string userEntry)
-    {
-        // TODO: Add split on delimiters for entry 
-
-        // went jogging, , 02/06/2025
-    }
-
-    public void UpdateEntry(int habitId)
+    public void AddEntry(HabitEntry entry)
     {
 
     }
 
-    public void UpdateEntry(int habitId, string newUserEntry)
+    public void UpdateEntry(HabitEntry oldEntry, HabitEntry newEntry)
     {
 
     }
