@@ -2,16 +2,37 @@
 
 // Establish DB Connection
 DBService dBService = new DBService("Data source=local.db");
-string userInput = Console.ReadLine() ?? "";
-testDelimiter(userInput);
+string menuSelection;
 
-// habit name, occurrences, date
-void testDelimiter(string userEntry)
+// TODO: Update an entry - HAVE THIS DISPLAY ALL OCCURENCES FIRST
+Console.WriteLine
+(@"
+ Press one of the following
+ 1. Add a habit
+ 2. Update a habit
+ 3. Remove a habit
+ 4. Show habits
+ ");
+
+menuSelection = Console.ReadLine() ?? "";
+
+switch (menuSelection)
 {
-    var splitEntry = userEntry.Split(";");
-    var habitName = splitEntry[0];
-    var occurrences = splitEntry[1];
-    var date = splitEntry[2];
-    Console.WriteLine($"habitName: {habitName}, occurrences: {occurrences}, date: {date}");
+    case "1":
+        // Add a habit 
+        break;
+    case "2":
+        // Show all habits
+        // Update a habit 
+        break;
+    case "3":
+        // Remove a habit 
+        break;
+    case "4":
+        // Show a habits
+        break;
+    default:
+        Console.WriteLine("Invalid Entry");
+        break;
 }
 

@@ -49,9 +49,8 @@ class DBService
     public void AddEntry(string userEntry)
     {
         // TODO: Add split on delimiters for entry 
-        // habit name, occurrences, date
 
-        // went jogging, 2, 02/06/2025
+        // went jogging, , 02/06/2025
     }
 
     public void UpdateEntry(int habitId)
