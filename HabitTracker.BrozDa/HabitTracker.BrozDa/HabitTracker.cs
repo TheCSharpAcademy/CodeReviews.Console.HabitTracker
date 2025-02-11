@@ -1,30 +1,52 @@
 ﻿namespace HabitTracker.BrozDa
 {
+    enum MainMenuOptions
+    {
+        CheckTrackedHabits = 1,
+        ManageHabits = 2,
+        CreateHabit = 3,
+        DeleteHabit = 4,
+        ExitApplication = 5,
+    }
+    enum HabitMenuOptions
+    {
+        ViewRecords = 1,
+        InsertRecord = 2,
+        UpdateRecord = 3,
+        DeleteRecord = 4,
+        CreateReport = 5,
+        ExitToMainMenu = 6,
+        ExitApplication = 7,
+    }
+    
     internal class HabitTracker
     {
-        private readonly string _dateFormat = "dd-MM-yyyy";
-        private DatabaseManager _databaseManager;
-        private InputOutputManager _inputOutputManager;
+        private DatabaseReader _databaseReader;
+        private DatabaseWriter _databaseWriter;
+        private OutputManager _outputManager;
+        private InputManager _inputManager;
        
-        public HabitTracker()
+        public HabitTracker(DatabaseReader reader, DatabaseWriter writer, InputManager inputManager, OutputManager outputManager)
         {
-            _databaseManager = new DatabaseManager(_dateFormat);
-            _inputOutputManager = new InputOutputManager(_dateFormat); 
+            _databaseReader = reader;
+            _databaseWriter = writer;
+            _outputManager = outputManager;
+            _inputManager = inputManager;
         }
         public void Start()
         {
-            if (!_databaseManager.DoesDatabaseExist()) 
+            if (!_databaseReader.DoesDatabaseExist()) 
             {
-                _databaseManager.CreateNewDatabase();
+                _databaseWriter.CreateNewDatabase();
             }
             //Used to autopopulate records for debugging and testing
-            AutoSeed();
+            //AutoSeed();
 
             while (true)
             {
                 Console.Clear();
                 Console.SetCursorPosition(0, 0);
-                _inputOutputManager.PrintMainMenu();
+                _outputManager.PrintMainMenu();
                 ProcessMainMenu();
             }
         }
@@ -32,95 +54,98 @@
         
         private void ProcessMainMenu()
         {
-            int input = _inputOutputManager.GetInputInMenu(_inputOutputManager.MainMenuLength);
-            List<string> listOfTables = _databaseManager.GetListOfTablesFromDatabase();
+            int input = _inputManager.GetInputInMenu(_outputManager.MainMenuLength);
+            List<string> listOfTables = _databaseReader.GetListOfTablesFromDatabase();
 
-            _inputOutputManager.PrintTables(listOfTables);
-            switch (input) 
+            switch ((MainMenuOptions)input) 
             {
-                case 1: //Check tracked habits
-                    //_inputOutputManager.PrintTables(listOfTables);
-                    
+                case MainMenuOptions.CheckTrackedHabits:
+                    HandleCheckTrackedHabits(listOfTables);
                     break;
-                case 2: //Manage existing habit
-                    
-                    string table = _inputOutputManager.GetTableNameFromUser(listOfTables);
-                    if(table != string.Empty)
-                    {
-                        ProcessHabitMenu(table);
-                    }
+                case MainMenuOptions.ManageHabits:
+                    HandleManageHabits(listOfTables);
                     break;
-                case 3: //Create new habit
-                    string newTableName = _inputOutputManager.GetNewTableName(listOfTables);
-                    string newTableUnit = _inputOutputManager.GetNewTableUnit();
-                    _databaseManager.CreateNewTable(newTableName, newTableUnit);
+                case MainMenuOptions.CreateHabit:
+                    HandleCreateHabit(listOfTables);
                     break;
-                case 4:
-                    string tableToBeDeleted = _inputOutputManager.GetExistingTableName(listOfTables);
-                    if(tableToBeDeleted != "0")
-                        _databaseManager.DeleteTable(tableToBeDeleted);
+                case MainMenuOptions.DeleteHabit:
+                    HandleDeleteHabit(listOfTables);
                     break;
-                case 5: //Exit the app
+                case MainMenuOptions.ExitApplication: 
                     Environment.Exit(0);
                     break;
 
             }
             Console.WriteLine("Press any key to continue");
             Console.ReadKey(true);
-
+        }
+        private void HandleCheckTrackedHabits(List<string> listOfTables)
+        {
+            _outputManager.PrintTablesInDatabase(listOfTables);
+        }
+        private void HandleManageHabits(List<string> listOfTables)
+        {
+            _outputManager.PrintTablesInDatabase(listOfTables);
+            string table = _inputManager.GetTableNameById(listOfTables);
+            if (table != string.Empty)
+            {
+                ProcessHabitMenu(table);
+            }
+        } 
+        private void HandleCreateHabit(List<string> listOfTables)
+        {
+            _outputManager.PrintTablesInDatabase(listOfTables);
+            string newTableName = _inputManager.GetNewTableName(listOfTables);
+            string newTableUnit = _inputManager.GetNewTableUnit();
+            _databaseWriter.CreateNewTable(newTableName, newTableUnit);
+        }
+        private void HandleDeleteHabit(List<string> listOfTables)
+        {
+            _outputManager.PrintTablesInDatabase(listOfTables);
+            string tableToBeDeleted = _inputManager.GetExistingTableName(listOfTables);
+            if (tableToBeDeleted != "0")
+            {
+                _databaseWriter.DeleteTable(tableToBeDeleted);
+            }
         }
 
         private void ProcessHabitMenu(string table) 
         {
-            
             bool exitToMainMenu = false;
-            List<DatabaseRecord> records;
-            string unit;
+            string unit = _databaseReader.GetFromUnitTable(table);
 
+               
+            int input;
 
             while (!exitToMainMenu) 
             {
-                _inputOutputManager.PrintHabitMenu();
-                int input = _inputOutputManager.GetInputInMenu(_inputOutputManager.HabitMenuLength);
-                records = _databaseManager.GetRecordsFromTable(table);
-                unit = _databaseManager.GetFromUnitTable(table);
-                int recordID;
-                switch (input)
+                _outputManager.PrintHabitMenu();
+                input = _inputManager.GetInputInMenu(_outputManager.HabitMenuLength);
+                
+                
+
+                switch ((HabitMenuOptions)input)
                 {
-                    case 1: //print records
-                        _inputOutputManager.PrintTable(table, records, unit);
-                        //_databaseManager.PrintRecordsFromATable(table);
+                    case HabitMenuOptions.ViewRecords:
+                        HandleViewRecords(table, unit);
                         break;
-                    case 2: //new record
-                        DatabaseRecord newRecord = _inputOutputManager.GetValuesForNewRecord();
-                        _databaseManager.InsertRecord(table,newRecord);
+                    case HabitMenuOptions.InsertRecord:
+                        HandleInsertRecord(table);
                         break;
-                    case 3: //update record
-                        _databaseManager.PrintRecordsFromATable(table);
-                        recordID = _inputOutputManager.GetRecordIdFromUser(records, "update");
-                        DatabaseRecord updatedRecord = _inputOutputManager.GetValuesForNewRecord(recordID);
-                        _databaseManager.UpdateRecord(table, updatedRecord);
-                        Console.WriteLine("Updating record ...");
-                        Console.WriteLine("Record updated");
+                    case HabitMenuOptions.UpdateRecord:
+                        HandleRecordAction(table, unit, "update");
                         break;
-                    case 4: //delete record
-                        _databaseManager.PrintRecordsFromATable(table);
-                        recordID = _inputOutputManager.GetRecordIdFromUser(records, "delete");
-                        _databaseManager.DeleteRecord(table, recordID);
-                        Console.WriteLine("Deleting record ...");
-                        Console.WriteLine("Record deleted ...");
+                    case HabitMenuOptions.DeleteRecord:
+                        HandleRecordAction(table,unit, "delete");
                         break;
-                    case 5:
-                        ReportUnit report = CreateReport(table,unit, records);
-                        Console.WriteLine(report.ToString());
+                    case HabitMenuOptions.CreateReport:
+                        HandleCreateReport(table, unit);
                         break;
-                    case 6:
+                    case HabitMenuOptions.ExitToMainMenu:
                         exitToMainMenu = true;
                         break;
-                    case 7:
+                    case HabitMenuOptions.ExitApplication:
                         Environment.Exit(0);
-                        break;
-                    default:
                         break;
                 }
                 if (!exitToMainMenu)
@@ -130,6 +155,58 @@
                 }  
             }
             
+        }
+        private void HandleViewRecords(string table, string unit)
+        {
+            List<DatabaseRecord> records = _databaseReader.GetRecordsFromTable(table);
+            _outputManager.PrintRecordsFromTable(table, records, unit);
+        }
+        private void HandleInsertRecord(string table)
+        {
+            DatabaseRecord newRecord = _inputManager.GetValuesForRecord();
+            Console.WriteLine("Adding new record...");
+            _databaseWriter.InsertRecord(table, newRecord);
+            Console.WriteLine("Record added sucessfully");
+        }
+
+        private void HandleRecordAction(string table, string unit, string action)
+        {
+            List<DatabaseRecord> records = _databaseReader.GetRecordsFromTable(table);
+
+            if (records == null || records.Count == 0)
+            {
+                Console.WriteLine("No records available to update.");
+                return;
+            }
+            _outputManager.PrintRecordsFromTable(table, records, unit);
+
+            int recordID = _inputManager.GetRecordIdFromUser(records, action);
+
+            if (recordID == 0) 
+            { 
+                return;
+            }
+
+            if (action == "update")
+            {
+                DatabaseRecord updatedRecord = _inputManager.GetValuesForRecord(recordID);
+                Console.WriteLine("Updating record ...");
+                _databaseWriter.UpdateRecord(table, updatedRecord);     
+                Console.WriteLine("Record updated");
+            }
+            if (action == "delete")
+            {
+                Console.WriteLine("Deleting record ...");
+                _databaseWriter.DeleteRecord(table, recordID);
+                Console.WriteLine("Record deleted ...");
+            }
+        }
+        private void HandleCreateReport(string table, string unit)
+        {
+            List<DatabaseRecord> records = _databaseReader.GetRecordsFromTable(table);
+
+            ReportUnit report = CreateReport(table, unit, records);
+            Console.WriteLine(report.GenerateReport());
         }
 
         public ReportUnit CreateReport(string table,string unit, List<DatabaseRecord> records)
@@ -173,13 +250,13 @@
             DatabaseRecord record;
 
             for (int i = 0; i < tables.Length; i++) {
-                _databaseManager.CreateNewTable(tables[i], units[i]);
+                _databaseWriter.CreateNewTable(tables[i], units[i]);
 
                 for (int j = 0; j < 100; j++) {
                     record = new DatabaseRecord();
                     record.Date = start.AddDays(random.Next(range));
                     record.Volume = random.Next(200);
-                    _databaseManager.InsertRecord(tables[i], record);
+                    _databaseWriter.InsertRecord(tables[i], record);
                     
                 }
             }

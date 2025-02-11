@@ -29,19 +29,16 @@ namespace HabitTracker.BrozDa
             MaxVolumeDate = maxVolumeDate;
         }
 
-        public override string ToString()
+        public string GenerateReport()
         {
-            StringBuilder report = new StringBuilder();
-            report.Append($"Here is your report for {Table}\n");
-            report.Append("\n");
-            report.Append($"You have {Count} records\n");
-            report.Append($"Your total volume was: {TotalVolume} {Unit}\n");
-            report.Append($"Your Average volume was {AverageVolume} {Unit}\n");
-            report.Append($"Your minimum volume was {MinVolume} {Unit} which was done on {MinVolumeDate.ToString("dd-MM-yyyy")}\n");
-            report.Append($"Your maximum volume was {MaxVolume} {Unit} which was done on {MaxVolumeDate.ToString("dd-MM-yyyy")}\n");
-
-            return report.ToString();
+            return $"Here is your report for {Table}\n" +
+                   $"\n" +
+                   $"You have {Count} records\n" +
+                   $"Your total volume was: {TotalVolume} {Unit}\n" +
+                   "Your Average volume was {AverageVolume} {Unit}\n" +
+                   $"Your minimum volume was {MinVolume} {Unit} which was done on {FormatDate(MinVolumeDate)}\n" +
+                   $"Your maximum volume was {MaxVolume} {Unit} which was done on {FormatDate(MaxVolumeDate)}\n";
         }
-
+        private string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy");
     }
 }
