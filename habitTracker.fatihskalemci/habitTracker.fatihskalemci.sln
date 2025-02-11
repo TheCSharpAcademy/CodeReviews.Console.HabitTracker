@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "habbitTracker.fatihskalemci", "habbitTracker.fatihskalemci\habbitTracker.fatihskalemci.csproj", "{A51325E7-8019-4E16-A915-76979D14F794}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "habitTracker.fatihskalemci", "habitTracker.fatihskalemci\habitTracker.fatihskalemci.csproj", "{A3ED41C5-FDE7-4555-81B9-7DE6B5694D70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A51325E7-8019-4E16-A915-76979D14F794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A51325E7-8019-4E16-A915-76979D14F794}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A51325E7-8019-4E16-A915-76979D14F794}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A51325E7-8019-4E16-A915-76979D14F794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3ED41C5-FDE7-4555-81B9-7DE6B5694D70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3ED41C5-FDE7-4555-81B9-7DE6B5694D70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3ED41C5-FDE7-4555-81B9-7DE6B5694D70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3ED41C5-FDE7-4555-81B9-7DE6B5694D70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {47F6CD4D-15CF-4D39-AF8B-B1D027611B02}
+		SolutionGuid = {F02039EF-CFFE-42B1-83E5-2E62C1C63D2D}
 	EndGlobalSection
 EndGlobal

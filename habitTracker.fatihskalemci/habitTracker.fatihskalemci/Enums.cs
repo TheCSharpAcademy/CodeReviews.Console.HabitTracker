@@ -1,4 +1,4 @@
-﻿namespace habbitTracker.fatihskalemci;
+﻿namespace habitTracker.fatihskalemci;
 
 internal class Enums
 {
@@ -8,6 +8,8 @@ internal class Enums
         Update,
         Delete,
         ShowEntries,
+        ShowReport,
+        ChangeHabit,
         Exit
     }
 }

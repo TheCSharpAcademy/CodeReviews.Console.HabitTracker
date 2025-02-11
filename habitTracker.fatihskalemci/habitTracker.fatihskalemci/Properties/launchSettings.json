@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "habitTracker.fatihskalemci": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\fesek\\Desktop\\dotnet\\theCSharpAcademy\\CodeReviews.Console.HabitTracker\\habitTracker.fatihskalemci\\habitTracker.fatihskalemci\\"
+    }
+  }
+}

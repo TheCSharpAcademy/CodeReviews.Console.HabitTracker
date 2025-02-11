@@ -1,4 +1,4 @@
-﻿using habbitTracker.fatihskalemci;
+﻿using habitTracker.fatihskalemci;
 
 UserInterface userInterface = new();
 userInterface.MainMenu();
