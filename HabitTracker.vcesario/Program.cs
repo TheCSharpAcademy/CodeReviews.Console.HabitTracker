@@ -887,8 +887,7 @@ void ViewStatistics(SqliteConnection connection)
     Console.WriteLine("> STATISTICS");
     Console.WriteLine();
 
-    Console.WriteLine($"* Your top 3 days of {habitName} were:");
-
+    // top 3 days
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT * FROM habitlogs
                                 WHERE habit='{habitName}'
@@ -899,10 +898,14 @@ void ViewStatistics(SqliteConnection connection)
     {
         if (!reader.HasRows)
         {
-            Console.WriteLine("Couldn't find habit. ");
+            Console.WriteLine("No entries for this habit.");
+            Console.ReadLine();
+            return;
         }
         else
         {
+            Console.WriteLine($"* Your top 3 days of {habitName} were:");
+
             while (reader.Read())
             {
                 var date = DateOnly.FromDateTime(reader.GetDateTime(2));
@@ -914,8 +917,7 @@ void ViewStatistics(SqliteConnection connection)
 
     Console.ReadLine();
 
-    Console.WriteLine($"* Your top 3 weeks of {habitName} were:");
-
+    // Top 3 week and month
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT * FROM habitlogs
                                 WHERE habit='{habitName}'
@@ -923,44 +925,100 @@ void ViewStatistics(SqliteConnection connection)
 
     using (var reader = command.ExecuteReader())
     {
-        if (!reader.HasRows)
-        {
-            Console.WriteLine("Couldn't find habit. ");
-        }
-        else
-        {
-            // instantiate structure that contains earliest date of this week, and furthest date of this week
-            var weekSum = new WeekSum(DateOnly.FromDateTime(DateTime.Today));
+        // instantiate struct that contains earliest date of this week, and sum
+        List<WeekSum> weekSums = new();
+        WeekSum weekSum = new(DateOnly.FromDateTime(DateTime.Today));
+        List<MonthSum> monthSums = new();
+        MonthSum monthSum = new(DateOnly.FromDateTime(DateTime.Today));
 
-            while (reader.Read())
+        while (reader.Read())
+        {
+            // if date of current row exits structs' range, decrease struct's range until it fits
+            // add current row's measure to sum
+
+            DateOnly rowDate = DateOnly.FromDateTime(reader.GetDateTime(2));
+
+            if (rowDate < weekSum.Start)
             {
-                // while date of row is within structs' range, add to count
-                // if date of row exits structs' range, create new struct
-                // add to sorted list?
+                weekSums.Add(weekSum);
+                while (rowDate < weekSum.Start)
+                {
+                    weekSum.Start = weekSum.Start.AddDays(-7);
+                }
+                weekSum.Sum = 0;
             }
+
+            if (rowDate < monthSum.Start)
+            {
+                monthSums.Add(monthSum);
+                monthSum = new(rowDate);
+            }
+
+            int rowMeasure = reader.GetInt32(3);
+            weekSum.Sum += rowMeasure;
+            monthSum.Sum += rowMeasure;
         }
+
+        weekSums.Add(weekSum);
+        monthSums.Add(monthSum);
+
+        weekSums.Sort((_sum1, _sum2) => _sum2.Sum.CompareTo(_sum1.Sum));
+        monthSums.Sort((_sum1, _sum2) => _sum2.Sum.CompareTo(_sum1.Sum));
+
+        Console.WriteLine($"* Your top 3 weeks of {habitName} were:");
+        int i = 0;
+        while (i < 3 && i < weekSums.Count)
+        {
+            Console.WriteLine($"\t[{weekSums[i].Start} - {weekSums[i].End}] {weekSums[i].Sum} {unitName}");
+            i++;
+        }
+        Console.ReadLine();
+
+        Console.WriteLine($"* Your top 3 months of {habitName} were:");
+        i = 0;
+        while (i < 3 && i < monthSums.Count)
+        {
+            Console.WriteLine($"\t[{monthSums[i].Start.ToString("MMM")} {monthSums[i].Start.Year}] {monthSums[i].Sum} {unitName}");
+            i++;
+        }
+        Console.ReadLine();
     }
 
+    // C.T.A. (count, total, avg)
+    command = connection.CreateCommand();
+    command.CommandText = $@"SELECT COUNT(*) FROM habitlogs
+                                WHERE habit='{habitName}'";
+    using (var reader = command.ExecuteReader())
+    {
+        reader.Read();
+
+        Console.Write($@"  You performed {reader.GetInt32(0)} days of {habitName},");
+        Console.ReadLine();
+    }
+
+    command = connection.CreateCommand();
+    command.CommandText = $@"SELECT SUM(measure) FROM habitlogs
+                                WHERE habit='{habitName}'";
+    using (var reader = command.ExecuteReader())
+    {
+        reader.Read();
+
+        Console.Write($@"  totalizing {reader.GetInt32(0)} {unitName}...");
+        Console.ReadLine();
+    }
+
+    command = connection.CreateCommand();
+    command.CommandText = $@"SELECT AVG(measure) FROM habitlogs
+                                WHERE habit='{habitName}'";
+    using (var reader = command.ExecuteReader())
+    {
+        reader.Read();
+
+        Console.WriteLine($@"  ...with an average of {reader.GetFloat(0)} {unitName} per day.");
+    }
+    Console.WriteLine();
+    Console.WriteLine("\t-- END OF REPORT --");
     Console.ReadLine();
-    return;
-
-
-
-    // Options:
-    // View count/total/average table (month)
-    // View top 3 days, weeks and months
-    // View streak
-    Console.WriteLine("1. View monthly C.T.A. (count, total, average)");
-    Console.WriteLine("2. View TOP3");
-    Console.WriteLine("3. View streaks");
-    Console.WriteLine("4. Remove entry");
-    Console.WriteLine("5. Add new habit definition");
-    Console.WriteLine("6. Edit existing definition");
-    Console.WriteLine("7. Remove definition");
-    Console.WriteLine("8. View statistics");
-    Console.WriteLine("9. [DEBUG] Fill with random entries");
-    Console.WriteLine("0. Exit");
-
 }
 
 void FillDbWithRandomEntries(SqliteConnection connection)
@@ -1063,21 +1121,25 @@ void InsertHabitEntry(string habit, DateOnly date, int measure, SqliteConnection
 
 struct WeekSum
 {
-    public DateOnly Start;
-    public DateOnly End;
+    public DateOnly Start;                      // earliest sunday
+    public DateOnly End => Start.AddDays(6);    // latest saturday
     public int Sum;
-
-    public WeekSum(DateOnly _start, DateOnly _end, int _sum)
-    {
-        Start = _start;
-        End = _end;
-        Sum = _sum;
-    }
 
     public WeekSum(DateOnly reference)
     {
-        Start = reference.AddDays(-(int)reference.DayOfWeek);   // earliest sunday
-        End = Start.AddDays(6);                                 // following saturday
+        Start = reference.AddDays(-(int)reference.DayOfWeek);
+        Sum = 0;
+    }
+}
+
+struct MonthSum
+{
+    public DateOnly Start;
+    public int Sum;
+
+    public MonthSum(DateOnly reference)
+    {
+        Start = new DateOnly(reference.Year, reference.Month, 1);
         Sum = 0;
     }
 }
