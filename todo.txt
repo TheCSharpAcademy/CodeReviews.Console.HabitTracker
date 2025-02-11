@@ -20,7 +20,7 @@
 - [x] Implement "Remove entry"
 - [x] Implement "Edit existing definition"
 - [x] Implement "Remove definition"
-- [] Implement "See statistics"
+- [x] Implement "See statistics"
 
     Ideas for habits:
         - Glasses of water (times)
@@ -35,7 +35,7 @@
         - Largest day gap
         - Current daily streak + Longest daily streak
 
-- [] Learn SQL (codecademy.com)
+- [x] Learn SQL (codecademy.com)
 - [] Write Read me (follow https://github.com/thags/ConsoleTimeLogger)
 
 Ideas for future projects:

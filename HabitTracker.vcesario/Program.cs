@@ -163,7 +163,8 @@ void ViewAllEntries(SqliteConnection connection)
 
     command.CommandText = @"SELECT habitlogs.habit, habitlogs.date, habitlogs.measure, habitdefs.unit
                             FROM habitlogs
-                            INNER JOIN habitdefs ON habitlogs.habit=habitdefs.habit_name";
+                            INNER JOIN habitdefs ON habitlogs.habit=habitdefs.habit_name
+                            ORDER BY habitlogs.date DESC";
     using (var reader = command.ExecuteReader())
     {
         while (reader.Read())
@@ -438,7 +439,8 @@ void RemoveEntries(SqliteConnection connection)
     Console.WriteLine();
 
     var command = connection.CreateCommand();
-    command.CommandText = "SELECT * FROM habitlogs";
+    command.CommandText = @"SELECT * FROM habitlogs
+                            ORDER BY date DESC";
 
     int id = 0;
     string habitName = string.Empty;
@@ -930,6 +932,12 @@ void ViewStatistics(SqliteConnection connection)
         WeekSum weekSum = new(DateOnly.FromDateTime(DateTime.Today));
         List<MonthSum> monthSums = new();
         MonthSum monthSum = new(DateOnly.FromDateTime(DateTime.Today));
+        
+        DateOnly previousRowDate = DateOnly.FromDateTime(DateTime.Today);
+        int ongoingStreak = 0;
+        int maxStreak = 0;
+        int streak = 0;
+        bool isOngoingStreak = true;
 
         while (reader.Read())
         {
@@ -937,6 +945,22 @@ void ViewStatistics(SqliteConnection connection)
             // add current row's measure to sum
 
             DateOnly rowDate = DateOnly.FromDateTime(reader.GetDateTime(2));
+
+            if ((previousRowDate.DayNumber - rowDate.DayNumber) <= 1)
+            {
+                streak++;
+            }
+            else
+            {
+                if (isOngoingStreak)
+                {
+                    isOngoingStreak = false;
+                    ongoingStreak = streak;
+                }
+
+                maxStreak = streak > maxStreak ? streak : maxStreak;
+                streak = 1;
+            }
 
             if (rowDate < weekSum.Start)
             {
@@ -957,6 +981,8 @@ void ViewStatistics(SqliteConnection connection)
             int rowMeasure = reader.GetInt32(3);
             weekSum.Sum += rowMeasure;
             monthSum.Sum += rowMeasure;
+
+            previousRowDate = rowDate;
         }
 
         weekSums.Add(weekSum);
@@ -981,6 +1007,11 @@ void ViewStatistics(SqliteConnection connection)
             Console.WriteLine($"\t[{monthSums[i].Start.ToString("MMM")} {monthSums[i].Start.Year}] {monthSums[i].Sum} {unitName}");
             i++;
         }
+        Console.ReadLine();
+
+        Console.WriteLine($@"  You currently hold a streak of {ongoingStreak} days,");
+        Console.ReadLine();
+        Console.WriteLine($@"  and your best streak totalized {maxStreak} days. Keep going!");
         Console.ReadLine();
     }
 
