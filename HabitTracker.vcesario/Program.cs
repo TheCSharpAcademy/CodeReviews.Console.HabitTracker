@@ -371,7 +371,10 @@ void EditEntry(SqliteConnection connection)
         var commandSelect = connection.CreateCommand();
         commandSelect.CommandText = $@"SELECT habitlogs.habit, habitlogs.date, habitlogs.measure, habitdefs.unit FROM habitlogs
                                 INNER JOIN habitdefs ON habitlogs.habit=habitdefs.habit_name
-                                WHERE habitlogs.habit='{habit}' AND habitlogs.date='{date.ToString("yyyy-MM-dd")}'";
+                                WHERE habitlogs.habit=@Habit AND habitlogs.date=@Date";
+
+        commandSelect.Parameters.AddWithValue("@Habit", habit);
+        commandSelect.Parameters.AddWithValue("@Date", date.ToString("yyyy-MM-dd"));
 
         using (var reader = commandSelect.ExecuteReader())
         {
@@ -422,8 +425,11 @@ void EditEntry(SqliteConnection connection)
 
     var commandUpdate = connection.CreateCommand();
     commandUpdate.CommandText = $@"UPDATE habitlogs
-                                    SET measure={newMeasure}
-                                    WHERE habit='{habit}' AND date='{date.ToString("yyyy-MM-dd")}'";
+                                    SET measure=@Measure
+                                    WHERE habit=@Habit AND date=@Date";
+    commandUpdate.Parameters.AddWithValue("@Measure", newMeasure);
+    commandUpdate.Parameters.AddWithValue("@Habit", habit);
+    commandUpdate.Parameters.AddWithValue("@Date", date.ToString("yyyy-MM-dd"));
     commandUpdate.ExecuteReader();
 
     Console.WriteLine();
@@ -489,7 +495,9 @@ void RemoveEntries(SqliteConnection connection)
         }
 
         command.CommandText = $@"SELECT * FROM habitlogs
-                                WHERE id={id}";
+                                WHERE id=@Id";
+        command.Parameters.AddWithValue("@Id", id);
+
         using (var reader = command.ExecuteReader())
         {
             if (!reader.HasRows)
@@ -537,7 +545,9 @@ void RemoveEntries(SqliteConnection connection)
     if (!string.IsNullOrEmpty(input) && input.ToLower().Equals("y"))
     {
         command.CommandText = $@"DELETE FROM habitlogs
-                                WHERE id={id}";
+                                WHERE id=@Id";
+        command.Parameters.AddWithValue("@Id", id);
+
         command.ExecuteReader();
 
         Console.WriteLine();
@@ -601,8 +611,6 @@ void EditDefinition(SqliteConnection connection)
     Console.WriteLine();
     string? input;
     bool isSuccessfulInput = false;
-    DateOnly date = default;
-    int measure = 0;
     string currentHabit = string.Empty;
     string currentUnit = string.Empty;
 
@@ -623,7 +631,8 @@ void EditDefinition(SqliteConnection connection)
 
         var commandSelect = connection.CreateCommand();
         commandSelect.CommandText = $@"SELECT * FROM habitdefs
-                                        WHERE habit_name='{input}'";
+                                        WHERE habit_name=@Input";
+        commandSelect.Parameters.AddWithValue("@Input", input);
 
         using (var reader = commandSelect.ExecuteReader())
         {
@@ -708,8 +717,12 @@ void EditDefinition(SqliteConnection connection)
 
     var commandUpdate = connection.CreateCommand();
     commandUpdate.CommandText = $@"UPDATE habitdefs
-                                    SET habit_name='{newHabit}', unit='{newUnit}'
-                                    WHERE habit_name='{currentHabit}'";
+                                    SET habit_name=@NewHabit, unit=@Unit
+                                    WHERE habit_name=@CurrentHabit";
+    commandUpdate.Parameters.AddWithValue("@NewHabit", newHabit);
+    commandUpdate.Parameters.AddWithValue("@Unit", newUnit);
+    commandUpdate.Parameters.AddWithValue("@CurrentHabit", currentHabit);
+
     commandUpdate.ExecuteReader();
 
     Console.WriteLine();
@@ -773,7 +786,9 @@ void RemoveDefinition(SqliteConnection connection)
         }
 
         command.CommandText = $@"SELECT rowid, habit_name, unit FROM habitdefs
-                                WHERE rowid={id}";
+                                WHERE rowid=@Id";
+        command.Parameters.AddWithValue("@Id", id);
+
         using (var reader = command.ExecuteReader())
         {
             if (!reader.HasRows)
@@ -820,7 +835,9 @@ void RemoveDefinition(SqliteConnection connection)
     if (!string.IsNullOrEmpty(input) && input.ToLower().Equals("y"))
     {
         command.CommandText = $@"DELETE FROM habitdefs
-                                WHERE rowid={id}";
+                                WHERE rowid=@Id";
+        command.Parameters.AddWithValue("@Id", id);
+
         command.ExecuteReader();
 
         Console.WriteLine();
@@ -864,7 +881,8 @@ void ViewStatistics(SqliteConnection connection)
 
         command = connection.CreateCommand();
         command.CommandText = $@"SELECT * FROM habitdefs
-                                    WHERE habit_name='{input}'";
+                                    WHERE habit_name=@Input";
+        command.Parameters.AddWithValue("@Input", input);
 
         using (var reader = command.ExecuteReader())
         {
@@ -892,9 +910,10 @@ void ViewStatistics(SqliteConnection connection)
     // top 3 days
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT * FROM habitlogs
-                                WHERE habit='{habitName}'
+                                WHERE habit=@HabitName
                                 ORDER BY measure DESC
                                 LIMIT 3";
+    command.Parameters.AddWithValue("@HabitName", habitName);
 
     using (var reader = command.ExecuteReader())
     {
@@ -922,8 +941,9 @@ void ViewStatistics(SqliteConnection connection)
     // Top 3 week and month
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT * FROM habitlogs
-                                WHERE habit='{habitName}'
+                                WHERE habit=@HabitName
                                 ORDER BY date DESC";
+    command.Parameters.AddWithValue("@HabitName", habitName);
 
     using (var reader = command.ExecuteReader())
     {
@@ -932,7 +952,7 @@ void ViewStatistics(SqliteConnection connection)
         WeekSum weekSum = new(DateOnly.FromDateTime(DateTime.Today));
         List<MonthSum> monthSums = new();
         MonthSum monthSum = new(DateOnly.FromDateTime(DateTime.Today));
-        
+
         DateOnly previousRowDate = DateOnly.FromDateTime(DateTime.Today);
         int ongoingStreak = 0;
         int maxStreak = 0;
@@ -1009,7 +1029,7 @@ void ViewStatistics(SqliteConnection connection)
         }
         Console.ReadLine();
 
-        Console.WriteLine($@"  You currently hold a streak of {ongoingStreak} days,");
+        Console.Write($@"  You currently hold a streak of {ongoingStreak} days,");
         Console.ReadLine();
         Console.WriteLine($@"  and your best streak totalized {maxStreak} days. Keep going!");
         Console.ReadLine();
@@ -1018,7 +1038,8 @@ void ViewStatistics(SqliteConnection connection)
     // C.T.A. (count, total, avg)
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT COUNT(*) FROM habitlogs
-                                WHERE habit='{habitName}'";
+                                WHERE habit=@HabitName";
+    command.Parameters.AddWithValue("@HabitName", habitName);
     using (var reader = command.ExecuteReader())
     {
         reader.Read();
@@ -1029,7 +1050,8 @@ void ViewStatistics(SqliteConnection connection)
 
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT SUM(measure) FROM habitlogs
-                                WHERE habit='{habitName}'";
+                                WHERE habit=@HabitName";
+    command.Parameters.AddWithValue("@HabitName", habitName);
     using (var reader = command.ExecuteReader())
     {
         reader.Read();
@@ -1040,7 +1062,8 @@ void ViewStatistics(SqliteConnection connection)
 
     command = connection.CreateCommand();
     command.CommandText = $@"SELECT AVG(measure) FROM habitlogs
-                                WHERE habit='{habitName}'";
+                                WHERE habit=@HabitName";
+    command.Parameters.AddWithValue("@HabitName", habitName);
     using (var reader = command.ExecuteReader())
     {
         reader.Read();
@@ -1120,7 +1143,10 @@ void InsertHabitDefinition(string habitName, string unit, SqliteConnection conne
     {
         var command = connection.CreateCommand();
         command.CommandText = $@"INSERT INTO habitdefs (habit_name, unit)
-                                    VALUES ('{habitName}', '{unit}')";
+                                    VALUES (@HabitName, @Unit)";
+        command.Parameters.AddWithValue("@HabitName", habitName);
+        command.Parameters.AddWithValue("@Unit", unit);
+
         command.ExecuteReader();
 
         Console.WriteLine($"'{habitName} ({unit})' habit created.");
@@ -1138,7 +1164,10 @@ void InsertHabitEntry(string habit, DateOnly date, int measure, SqliteConnection
     {
         var command = connection.CreateCommand();
         command.CommandText = $@"INSERT INTO habitlogs (habit, date, measure)
-                                            VALUES ('{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}')";
+                                            VALUES (@HabitName, @Date, @Measure)";
+        command.Parameters.AddWithValue("@HabitName", habit);
+        command.Parameters.AddWithValue("@Date", date.ToString("yyyy-MM-dd"));
+        command.Parameters.AddWithValue("@Measure", measure);
         command.ExecuteReader();
 
         Console.WriteLine($"Added entry ['{habit}', '{date.ToString("yyyy-MM-dd")}', '{measure}']");
