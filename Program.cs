@@ -7,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Reflection.PortableExecutable;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-class Habit_Logger
+class HabitLogger
 {
     static string connectionString = @"Data Source=habit-Tracker.db";
     public static bool isMain;
