@@ -546,7 +546,6 @@ void RemoveEntries(SqliteConnection connection)
     {
         command.CommandText = $@"DELETE FROM habitlogs
                                 WHERE id=@Id";
-        command.Parameters.AddWithValue("@Id", id);
 
         command.ExecuteReader();
 
@@ -836,7 +835,6 @@ void RemoveDefinition(SqliteConnection connection)
     {
         command.CommandText = $@"DELETE FROM habitdefs
                                 WHERE rowid=@Id";
-        command.Parameters.AddWithValue("@Id", id);
 
         command.ExecuteReader();
 

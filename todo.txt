@@ -36,7 +36,7 @@
         - Current daily streak + Longest daily streak
 
 - [x] Learn SQL (codecademy.com)
-- [] Write Read me (follow https://github.com/thags/ConsoleTimeLogger)
+- [x] Write Read me (follow https://github.com/thags/ConsoleTimeLogger)
 
 Ideas for future projects:
 - Edit/Remove functionality could be accessed within a "Modify" option.

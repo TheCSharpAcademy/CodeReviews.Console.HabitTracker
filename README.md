@@ -34,6 +34,7 @@ Console-based CRUD application to track habits. Developed using C#, SQLite and A
 
 - How to launch external terminal window within VSCode
 - You can have a "UNIQUE" key that is actually the combination of multiple columns
+- DateOnly facilitates a lot of the operations I would have to do with DateTime
 - Done trumps perfect. I identified a few opportunities for improvement, but opted to focus on delivering quickly and making it better next time/next project
 
-> Project duration: ~15h
+> Project duration: ~16h
