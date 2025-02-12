@@ -757,7 +757,7 @@ void RemoveDefinition(SqliteConnection connection)
 
     Console.WriteLine();
     Console.WriteLine("Type in the id (#) of the habit you want to remove.");
-    Console.WriteLine("\t[!] Keep in mind that all of the entries associated with this habit will also be removed."); ;
+    Console.WriteLine("\t[!] Keep in mind that all of the entries associated with this habit will also be removed.");
     Console.WriteLine("Type \"return\" anytime to cancel and return to main menu.");
     Console.WriteLine();
 
