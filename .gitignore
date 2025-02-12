@@ -403,18 +403,5 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
-/.vs/Console.HabitTracker/v17/.wsuo
-/HabitTracker.barakisbrown/HabitTracker.barakisbrown/old_readings.db
 *.cache
-HabitTracker.MartinL-no/.vs/HabitTracker.MartinL-no/xs/project-cache/HabitTracker.MartinL-no-Debug.json
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/bin/Debug/net7.0/HabitTracker.MartinL-no.dll
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/bin/Debug/net7.0/HabitTracker.MartinL-no.pdb
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/HabitTracker.MartinL-no.dll
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/HabitTracker.MartinL-no.pdb
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/ref/HabitTracker.MartinL-no.dll
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/refint/HabitTracker.MartinL-no.dll
-HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/HabitTracker.MartinL-no.assets.cache
-HabitTracker.MartinL-no/.DS_Store
-HabitTracker.MartinL-no/habitTracker.MartinL-no/.DS_Store
-/HabitTracker.Johay90/HabitTracker/habit_tracker.db
 habbit-Tracker.db

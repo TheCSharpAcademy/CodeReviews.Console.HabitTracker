@@ -11,13 +11,16 @@ internal class UserInterface
 
     internal void MainMenu()
     {
-        dataBase.CreateHabitEntriesTable();
         int randomEntryNumber = 100;
 
-        for (int i = 0; i < randomEntryNumber; i++)
-        {
-            HabitEntry randomEntry = Helpers.GenerateRandomEntry();
-            dataBase.AddEntry(randomEntry);
+        if (!File.Exists("habit-Tracker.db"))
+        {    
+            for (int i = 0; i < randomEntryNumber; i++)
+            {
+                dataBase.CreateHabitEntriesTable();
+                HabitEntry randomEntry = Helpers.GenerateRandomEntry();
+                dataBase.AddEntry(randomEntry);
+            }
         }
         
         bool exit = false;
@@ -74,7 +77,7 @@ internal class UserInterface
         Habit selectedHabit = AnsiConsole.Prompt(
                 new SelectionPrompt<Habit>()
                 .Title("Please select the habit you want to perform on")
-                .UseConverter(h => $"Habit: {h.HabitName}")
+                .UseConverter(h => $"{h.HabitName}")
                 .AddChoices(habitNames));
 
         if (selectedHabit.HabitName == "New Habit")
