@@ -97,7 +97,9 @@
             _outputManager.PrintTablesInDatabase(listOfTables);
             string newTableName = _inputManager.GetNewTableName(listOfTables);
             string newTableUnit = _inputManager.GetNewTableUnit();
+            Console.WriteLine("Creating new habit...");
             _databaseWriter.CreateNewTable(newTableName, newTableUnit);
+            Console.WriteLine("Creating habit created...");
         }
         private void HandleDeleteHabit(List<string> listOfTables)
         {
