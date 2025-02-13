@@ -1,5 +1,6 @@
 ﻿using Services;
 using DTO;
+using Helpers;
 
 // Establish DB Connection
 DBService dBService = new DBService("Data source=local.db");
@@ -23,43 +24,42 @@ switch (menuSelection)
     case "1":
         // Add a habit
         HabitEntry habitEntry = new();
-        bool validMenuSelection;
-        do
+        bool validMenuSelection = false;
+        while (!validMenuSelection)
         {
-            try
-            {
                 validMenuSelection = true;
                 Console.WriteLine("Enter the name of the habit");
                 string habitName = Console.ReadLine();
-                if (habitName == null)
+
+                if (string.IsNullOrEmpty(habitName))
                 {
-                    throw new Exception("Habit name cannot be null null.");
+                    validMenuSelection = false;
+                    Console.WriteLine("Habit name cannot be empty.");
                 }
+
                 habitEntry.Habit = habitName;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Enter the name of a habit.");
-                validMenuSelection = false;
-            }
 
-        } while (!validMenuSelection);
+        } 
 
-        do
+        while (!validMenuSelection)
         {
             try
             {
                 validMenuSelection = true;
                 Console.WriteLine("Enter the date the habit occurred in MM\\DD\\YYYY format.");
                 string habitDate = Console.ReadLine();
+                if (habitDate == null)
+                {
+                    throw new ArgumentNullException("Habit date cannot be null");
+                }
+                DateHelper.ConvertStringToDateTime(habitDate);
             }
             catch
             {
                 Console.WriteLine("Invalid entry. Enter the date the habit occurred in MM\\DD\\YYYY format.");
                 validMenuSelection = false;
             }
-        } while (!validMenuSelection);
+        } 
 
 
         do
