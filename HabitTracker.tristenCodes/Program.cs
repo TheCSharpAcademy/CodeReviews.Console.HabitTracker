@@ -1,5 +1,5 @@
 ﻿using Services;
-using Helpers;
+using DTO;
 
 // Establish DB Connection
 DBService dBService = new DBService("Data source=local.db");
@@ -17,13 +17,67 @@ Console.WriteLine
 
 menuSelection = Console.ReadLine() ?? "";
 
+
 switch (menuSelection)
 {
     case "1":
-        // Add a habit 
-        // Get user entry
-        // Delimiter on it
-        // Use the info to search database
+        // Add a habit
+        HabitEntry habitEntry = new();
+        bool validMenuSelection;
+        do
+        {
+            try
+            {
+                validMenuSelection = true;
+                Console.WriteLine("Enter the name of the habit");
+                string habitName = Console.ReadLine();
+                if (habitName == null)
+                {
+                    throw new Exception("Habit name cannot be null null.");
+                }
+                habitEntry.Habit = habitName;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Enter the name of a habit.");
+                validMenuSelection = false;
+            }
+
+        } while (!validMenuSelection);
+
+        do
+        {
+            try
+            {
+                validMenuSelection = true;
+                Console.WriteLine("Enter the date the habit occurred in MM\\DD\\YYYY format.");
+                string habitDate = Console.ReadLine();
+            }
+            catch
+            {
+                Console.WriteLine("Invalid entry. Enter the date the habit occurred in MM\\DD\\YYYY format.");
+                validMenuSelection = false;
+            }
+        } while (!validMenuSelection);
+
+
+        do
+        {
+            try
+            {
+                Console.WriteLine("How many times did this habit occur?");
+                string habitOccurences = Console.ReadLine();
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("Invalid entry. Enter the number of times the habit occurred.");
+                validMenuSelection = false;
+            }
+        } while (!validMenuSelection);
+
+
+
         // return a success or failure message
         break;
     case "2":
