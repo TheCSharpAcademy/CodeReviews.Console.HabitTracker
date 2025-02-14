@@ -14,7 +14,7 @@ class DBService
         {
             _connectionString = connectonString;
             _connection = new SqliteConnection(connectonString);
-            OpenSqliteConnection();
+            _connection.Open();
 
             var tableExists = CheckIfTableExists();
             if (!tableExists)
@@ -36,7 +36,7 @@ class DBService
 
         command.CommandText =
         @"
-        CREATE TABLE occurrences (
+        CREATE TABLE habits (
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             habit_name TEXT NOT NULL,
             occurrences INTEGER NOT NULL,
@@ -49,7 +49,19 @@ class DBService
 
     public void AddEntry(HabitEntry entry)
     {
+        var command = _connection.CreateCommand();
 
+        command.CommandText =
+        @"INSERT INTO habits (habit_name, occurrences, date)
+        VALUES 
+        (@habit, @occurrences, @date)";
+
+        // Add parameters safely
+        command.Parameters.AddWithValue("@habit", entry.Habit);
+        command.Parameters.AddWithValue("@occurrences", entry.Occurences);
+        command.Parameters.AddWithValue("@date", entry.Date);
+
+        command.ExecuteNonQuery();
     }
 
     public void UpdateEntry(HabitEntry oldEntry, HabitEntry newEntry)
@@ -62,11 +74,6 @@ class DBService
 
     }
 
-    private void OpenSqliteConnection()
-    {
-        if (_connection == null) throw new NullReferenceException("Sqlite connection is null.");
-        _connection.Open();
-    }
 
     private bool CheckIfTableExists()
     {
@@ -76,7 +83,7 @@ class DBService
         @"
         SELECT name
         FROM sqlite_master
-        WHERE type = 'table' AND name = 'occurrences'
+        WHERE type = 'table' AND name = 'habits'
         ";
 
         using (var reader = command.ExecuteReader())

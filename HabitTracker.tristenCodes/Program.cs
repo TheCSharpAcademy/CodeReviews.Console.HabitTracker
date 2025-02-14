@@ -24,42 +24,49 @@ switch (menuSelection)
     case "1":
         // Add a habit
         HabitEntry habitEntry = new();
-        bool validMenuSelection = false;
-        while (!validMenuSelection)
+        bool validMenuSelection = true;
+        do
         {
-                validMenuSelection = true;
-                Console.WriteLine("Enter the name of the habit");
-                string habitName = Console.ReadLine();
+            Console.WriteLine("Enter the name of the habit");
 
-                if (string.IsNullOrEmpty(habitName))
-                {
-                    validMenuSelection = false;
-                    Console.WriteLine("Habit name cannot be empty.");
-                }
+            string habitName = Console.ReadLine();
+            if (string.IsNullOrEmpty(habitName))
+            {
+                Console.WriteLine("Habit name cannot be empty.");
+                validMenuSelection = false;
+                continue;
+            }
 
-                habitEntry.Habit = habitName;
+            validMenuSelection = true;
+            habitEntry.Habit = habitName!;
 
-        } 
+        } while (!validMenuSelection);
 
-        while (!validMenuSelection)
+        do
         {
             try
             {
-                validMenuSelection = true;
                 Console.WriteLine("Enter the date the habit occurred in MM\\DD\\YYYY format.");
                 string habitDate = Console.ReadLine();
-                if (habitDate == null)
+                if (string.IsNullOrEmpty(habitDate))
                 {
-                    throw new ArgumentNullException("Habit date cannot be null");
+                    Console.WriteLine("Date cannot be empty.");
+                    validMenuSelection = false;
+                    continue;
                 }
-                DateHelper.ConvertStringToDateTime(habitDate);
+                DateTime dateTime = DateHelper.ConvertStringToDateTime(habitDate);
+                habitEntry.Date = dateTime;
             }
             catch
             {
                 Console.WriteLine("Invalid entry. Enter the date the habit occurred in MM\\DD\\YYYY format.");
                 validMenuSelection = false;
+                continue;
             }
-        } 
+
+            validMenuSelection = true;
+
+        } while (!validMenuSelection);
 
 
         do
@@ -68,17 +75,33 @@ switch (menuSelection)
             {
                 Console.WriteLine("How many times did this habit occur?");
                 string habitOccurences = Console.ReadLine();
+                if (string.IsNullOrEmpty(habitOccurences))
+                {
+                    Console.WriteLine("Occurences cannot be empty.");
+                    validMenuSelection = false;
+                    continue;
+                }
+
+                bool attemptParse = int.TryParse(habitOccurences, out int parsedOccurrences);
+                if (!attemptParse)
+                {
+                    Console.WriteLine("Failed to parse occurrences to integer format.");
+                    validMenuSelection = false;
+                    continue;
+                }
             }
-            catch (System.Exception)
+            catch
             {
                 Console.WriteLine("Invalid entry. Enter the number of times the habit occurred.");
                 validMenuSelection = false;
+                continue;
             }
+
+            validMenuSelection = true;
+
         } while (!validMenuSelection);
 
-
-
-        // return a success or failure message
+        dBService.AddEntry(habitEntry);
         break;
     case "2":
         // Show all habits
