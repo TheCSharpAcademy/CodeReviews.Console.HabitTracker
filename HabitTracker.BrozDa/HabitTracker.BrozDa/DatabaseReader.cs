@@ -96,8 +96,6 @@ namespace HabitTracker.BrozDa
         {
             List<DatabaseRecord> records = new List<DatabaseRecord>();
 
-            string unit = GetFromUnitTable(table);
-
             string sql = $"SELECT * FROM {table};";
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
