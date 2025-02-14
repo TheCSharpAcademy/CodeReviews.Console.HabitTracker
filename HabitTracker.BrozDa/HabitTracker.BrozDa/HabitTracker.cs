@@ -57,8 +57,6 @@
             {
                 _databaseWriter.CreateNewDatabase();
             }
-            //Used to autopopulate records for debugging and testing
-            //AutoSeed();
 
             while (true)
             {
