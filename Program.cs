@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Reflection.Metadata;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 
@@ -48,22 +49,22 @@ void CreateDatabase()
 {
     using (var connection = new SqliteConnection(connectionString))
     {
-        {
-            connection.Open();
+        connection.Open();
 
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText =
-                    @"CREATE TABLE IF NOT EXISTS habitTracker(
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Date TEXT,
-                    Habit TEXT,
-                    Quantity INTEGER
-                )";
-                command.ExecuteNonQuery();
-            }
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText =
+                @"CREATE TABLE IF NOT EXISTS habitTracker(
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Date TEXT,
+                Habit TEXT,
+                Quantity INTEGER,
+                Units   TEXT
+            )";
+            command.ExecuteNonQuery();
         }
     }
+    SeedData();
 }
 
 void AddRecord()
@@ -75,8 +76,10 @@ void AddRecord()
     string habit = GetHabit("\nPlease enter the habit, or enter 0 to go back to Main Menu.");
 
     int quantity = GetNumber(
-        "\nPlease enter the quanity (no decimals or negatives allowed) or enter 0 to go back to Main Menu."
+        "\nPlease enter the quantity (no decimals or negatives allowed) or enter 0 to go back to Main Menu."
     );
+
+    string unit = GetUnit("Please enter the measurement unit for the quantity");
 
     using (var connection = new SqliteConnection(connectionString))
     {
@@ -84,7 +87,7 @@ void AddRecord()
         using (var command = connection.CreateCommand())
         {
             command.CommandText =
-                $"INSERT INTO habitTracker(date, habit, quantity) VALUES('{date}','{habit}', {quantity})";
+                $"INSERT INTO habitTracker(date, habit, quantity, units) VALUES('{date}','{habit}', {quantity}, '{unit}')";
 
             command.ExecuteNonQuery();
         }
@@ -144,6 +147,16 @@ string GetHabit(string message)
     return habitInput;
 }
 
+string GetUnit(string message)
+{
+    Console.WriteLine(message);
+    string unitInput = Console.ReadLine();
+
+    if (unitInput == "0")
+        MainMenu();
+    return unitInput;
+}
+
 void GetRecords()
 {
     List<HabitRecord> records = new();
@@ -163,18 +176,21 @@ void GetRecords()
                     while (reader.Read())
                         try
                         {
-                            records.Add(
-                                new HabitRecord(
-                                    reader.GetInt32(0),
-                                    DateTime.ParseExact(
-                                        reader.GetString(1),
-                                        "dd-MM-yy",
-                                        CultureInfo.InvariantCulture
-                                    ),
-                                    reader.GetString(2),
-                                    reader.GetInt32(3)
-                                )
-                            );
+                            int id = reader.GetInt32(0);
+                            DateTime date = reader.IsDBNull(1)
+                                ? DateTime.MinValue
+                                : DateTime.ParseExact(
+                                    reader.GetString(1),
+                                    "dd-MM-yy",
+                                    CultureInfo.InvariantCulture
+                                );
+                            string description = reader.IsDBNull(2)
+                                ? string.Empty
+                                : reader.GetString(2);
+                            int value = reader.GetInt32(3);
+                            string unit = reader.GetString(4);
+
+                            records.Add(new HabitRecord(id, date, description, value, unit)); // null values to find and fix
                         }
                         catch (FormatException ex)
                         {
@@ -197,19 +213,21 @@ void GetRecords()
 void ViewRecords(List<HabitRecord> records)
 {
     var table = new Table();
-    table.AddColumn("ID");
+    table.AddColumn("Id");
     table.AddColumn("Date");
     table.AddColumn("Habit");
     table.AddColumn("Amount");
+    table.AddColumn("Units");
 
     foreach (var record in records)
     {
         table.AddRow(
             record.Id.ToString(),
-            record.Date.ToString(),
+            record.Date.ToString("D"),
             record.Habit.ToString(),
-            record.Quantity.ToString()
-        ); //Changed to Quantity from meters
+            record.Quantity.ToString(),
+            record.Unit.ToString()
+        );
     }
 
     AnsiConsole.Write(table);
@@ -299,4 +317,96 @@ void UpdateRecord()
     }
 }
 
-record HabitRecord(int Id, DateTime Date, string Habit, int Quantity);
+bool IsTableEmpty(string tableName)
+{
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = $"SELECT COUNT(*) FROM {tableName}";
+            long count = (long)command.ExecuteScalar();
+
+            return count == 0;
+        }
+    }
+}
+
+void SeedData()
+{
+    bool recordsTableEmpty = IsTableEmpty("habitTracker");
+
+    if (!recordsTableEmpty)
+        return;
+
+    string[] habitNames =
+    {
+        "Reading",
+        "Running",
+        "Chocolate",
+        "Drinking Water",
+        "Glasses of Wine",
+        "Pooping",
+    };
+
+    string[] habitUnits = { "Pages", "Meters", "Grams", "Milliliters", "Milliliters", "Poops" };
+
+    string[] dates = GenerateRandomDates(100);
+    int[] quantities = GenerateRandomQuantities(100, 0, 2000);
+
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+
+        for (int i = 0; i < 100; i++)
+        {
+            int habitSelector = GetRandomHabitId();
+            var insertSql =
+                $"INSERT INTO habitTracker (Date, Habit, Quantity, Units) VALUES ('{dates[i]}', '{habitNames[habitSelector]}', {quantities[i]}, '{habitUnits[habitSelector]}' )";
+            var command = new SqliteCommand(insertSql, connection);
+
+            command.ExecuteNonQuery();
+        }
+    }
+}
+
+int[] GenerateRandomQuantities(int count, int min, int max)
+{
+    Random random = new Random();
+    int[] quantities = new int[count];
+
+    for (int i = 0; i < count; i++)
+    {
+        // max + 1 because the top range is excluded
+        quantities[i] = random.Next(min, max + 1);
+    }
+
+    return quantities;
+}
+string[] GenerateRandomDates(int count)
+{
+    DateTime startDate = new DateTime(1984, 12, 12);
+    DateTime endDate = new DateTime(2025, 12, 31);
+    TimeSpan range = endDate - startDate;
+
+    string[] randomDateStrings = new string[count];
+    Random random = new Random();
+
+    for (int i = 0; i < count; i++)
+    {
+        int daysToAdd = random.Next(0, (int)range.TotalDays);
+        DateTime randomDate = startDate.AddDays(daysToAdd);
+        randomDateStrings[i] = randomDate.ToString("dd-MM-yy");
+    }
+
+    return randomDateStrings;
+}
+
+int GetRandomHabitId()
+{
+    Random random = new Random();
+    return random.Next(0, 6);
+}
+
+record HabitRecord(int Id, DateTime Date, string Habit, int Quantity, string Unit);
