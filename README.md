@@ -12,6 +12,8 @@ I have used Spectre Menu for the first time and really like how easy it is to us
 
 
 1) How to add an entry:
-   I) Choose Add Record ![{45ABBFFA-24B4-44CE-B395-1664978A9A4A}](https://github.com/user-attachments/assets/85515b2d-2fe5-43d4-831e-9a68000d809e)
+I) Choose Add Record
+![{45ABBFFA-24B4-44CE-B395-1664978A9A4A}](https://github.com/user-attachments/assets/85515b2d-2fe5-43d4-831e-9a68000d809e)
    
-   II) Enter The date: ![{BFFA082C-CC75-435A-AFDE-0EBEC139AC5B}](https://github.com/user-attachments/assets/4bffb27a-3570-4507-8dd9-b9a68e51b4f0)
+II) Enter The date: 
+![{BFFA082C-CC75-435A-AFDE-0EBEC139AC5B}](https://github.com/user-attachments/assets/4bffb27a-3570-4507-8dd9-b9a68e51b4f0)
