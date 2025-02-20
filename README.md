@@ -46,13 +46,13 @@ C) View the records
 
 
 5) Technologies Used:
-   C#
-   Spectre Console
-   ADO.Net
-   Sqlite
-   DB Browser
+   *C#
+   *Spectre Console
+   *ADO.Net
+   *Sqlite
+   *DB Browser
 
 6) Acknowledgements:
-   The C# Academy
-   The C# School
+   *The C# Academy
+   *The C# School
       
