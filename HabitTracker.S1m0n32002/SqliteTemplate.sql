@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS "Habits" (
+	"Name"	TEXT NOT NULL COLLATE NOCASE,
+	"LastOccurrance"	REAL
+);

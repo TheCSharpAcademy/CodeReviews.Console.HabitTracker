@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTracker.S1m0n32002", "HabitTracker.S1m0n32002.csproj", "{3F83F2EF-C725-6AD4-CB3F-0638081484D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTracker.Tests", "..\HabitTracker.Tests\HabitTracker.Tests.csproj", "{271B0A9B-2B5D-4C54-9357-EE40115BAE56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F83F2EF-C725-6AD4-CB3F-0638081484D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F83F2EF-C725-6AD4-CB3F-0638081484D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F83F2EF-C725-6AD4-CB3F-0638081484D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F83F2EF-C725-6AD4-CB3F-0638081484D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{271B0A9B-2B5D-4C54-9357-EE40115BAE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{271B0A9B-2B5D-4C54-9357-EE40115BAE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{271B0A9B-2B5D-4C54-9357-EE40115BAE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{271B0A9B-2B5D-4C54-9357-EE40115BAE56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {469CFF44-687F-47AF-833F-A21B853E9630}
+	EndGlobalSection
+EndGlobal
