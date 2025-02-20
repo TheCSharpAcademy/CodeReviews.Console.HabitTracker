@@ -1,17 +1,17 @@
-This is a Habit Tracker, an app that can help the user log their habits.
-
-In this particular implementation, the habits are logged by quantity and not time.
-
-Things I have learned:
-1) How to connect to a database
-2) Perform queries using Sqlite
-3) Review the DB and entries using DBrowser
-4) Spectre Menu
-
-I have used Spectre Menu for the first time and really like how easy it is to use, and how good it looks.
 
 
-1) How to add an entry:
+1) Introduction:
+This is a Habit Tracker, an app that can help the user log their habits using date, and quantity performed. E.g 12th February 2025 Running - 1500 metres.
+
+2) Features:
+In this particular implementation, the habits are logged by quantity and not time spent doing the activity
+
+3) Installation:
+No specialist installation instructions requires, this is a standard Microsoft Visual Studio solution with a built exe. The code may need to be adjusted as to where you put the database file.
+
+4) Usage:
+
+A) How to add an entry:
 (I) Choose Add Record
 
 
@@ -28,7 +28,7 @@ I have used Spectre Menu for the first time and really like how easy it is to us
 
 
 
-2) Delete an entry
+B) Delete an entry
 (I) Choose Delete Record, it will display all the records and then enter the ID of the entry you wish to delete
 
 
@@ -37,7 +37,22 @@ I have used Spectre Menu for the first time and really like how easy it is to us
 
 
 
-3) View the records
+C) View the records
 (I) Choose View Records, it will display all the records.
 
 ![{B6DAA155-EC09-4D38-B88F-27743861CF71}](https://github.com/user-attachments/assets/ced5bc29-307a-4a94-8abf-fd5ced5a745a)
+
+
+
+
+5) Technologies Used:
+   C#
+   Spectre Console
+   ADO.Net
+   Sqlite
+   DB Browser
+
+6) Acknowledgements:
+   The C# Academy
+   The C# School
+      
