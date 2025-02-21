@@ -69,9 +69,16 @@ class DBService
 
     }
 
-    public void ViewAllEntries()
+    public SqliteDataReader ViewAllEntries()
     {
+        var command = _connection.CreateCommand();
 
+        command.CommandText = @"
+        SELECT * FROM habits
+        ORDER BY date DESC
+        ";
+
+        return command.ExecuteReader();
     }
 
 

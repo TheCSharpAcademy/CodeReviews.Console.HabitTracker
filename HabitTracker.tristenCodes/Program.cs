@@ -24,7 +24,7 @@ switch (menuSelection)
     case "1":
         // Add a habit
         HabitEntry habitEntry = new();
-        bool validMenuSelection = true;
+        bool validMenuSelection;
         do
         {
             Console.WriteLine("Enter the name of the habit");
@@ -105,6 +105,18 @@ switch (menuSelection)
         break;
     case "2":
         // Show all habits
+        var reader = dBService.ViewAllEntries();
+        if (reader.HasRows)
+        {
+            while (reader.Read())
+            {
+                var id = reader.GetInt32(0);
+                var habitName = reader.GetString(1);
+                var occurences = reader.GetInt32(2);
+                var date = reader.GetDateTime(3);
+                Console.WriteLine($"Id: {id}, Habit Name: {habitName}, Date: {DateHelper.ConvertDateToString(date)}, Occurences: {occurences}");
+            }
+        }
         // Update a habit 
         break;
     case "3":
