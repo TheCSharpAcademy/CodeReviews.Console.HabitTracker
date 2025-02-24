@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 namespace HKHemanthsharma.HabitLogger
 {
@@ -27,12 +26,7 @@ namespace HKHemanthsharma.HabitLogger
                         DataSet records = new DataSet();
                         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                         adapter.Fill(records, "habitstable");
-                        Console.WriteLine("The fetched Records: ");
-                       /* foreach (DataColumn col in records.Tables["habitDetails"].Columns)
-                        {
-                            Console.Write(col.ColumnName + "  ");
-                        }*/
-                       // Console.WriteLine(); New line after column headers
+                        Console.WriteLine("The fetched Records: ");                    
                        if(records.Tables[0].Rows.Count ==0)
                         {
                             Console.WriteLine("currently the habits record is empty!");

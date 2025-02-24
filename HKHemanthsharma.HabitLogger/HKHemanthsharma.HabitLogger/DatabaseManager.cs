@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Linq;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
 namespace HKHemanthsharma.HabitLogger
 {
