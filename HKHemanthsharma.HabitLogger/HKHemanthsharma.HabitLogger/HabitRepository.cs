@@ -68,7 +68,7 @@ namespace HKHemanthsharma.HabitLogger
                 using (SqlConnection conn = new SqlConnection(dbconnection))
                 {
                     conn.Open();
-                    string query = "select * from habitDetails where HabitName=@name";
+                    string query = "SELECT * from habitDetails WHERE HabitName=@name";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -81,7 +81,7 @@ namespace HKHemanthsharma.HabitLogger
                             int existingquantity = reader.GetInt32("quantity") + quantity;
                             cmd.Dispose();
                             reader.Close();
-                            query = "update habitDetails set quantity=@existingquant where HabitName=@habitname";
+                            query = "UPDATE habitDetails SET quantity=@existingquant WHERE HabitName=@habitname";
                             using (SqlCommand cmd1 = new SqlCommand(query, conn))
                             {
                                 cmd1.Parameters.AddWithValue("@existingquant", existingquantity);
@@ -100,7 +100,7 @@ namespace HKHemanthsharma.HabitLogger
                             string status = UserInputValidation.EnterStatus();
                             int quant = UserInputValidation.EnterQuantity();
                             DateTime habitdate= UserInputValidation.EnterDateofCreation();                  
-                            query = $"insert into habitDetails(HabitName,Description,Status,quantity,DateofCreation) values(@habitName,@Description,@Status,@quantity,@date);";
+                            query = $"INSERT INTO habitDetails(HabitName,Description,Status,quantity,DateofCreation) VALUES(@habitName,@Description,@Status,@quantity,@date);";
                             cmd.Dispose();
                             using (SqlCommand cmd1 = new SqlCommand(query, conn))
                             {
@@ -149,7 +149,7 @@ namespace HKHemanthsharma.HabitLogger
             using (SqlConnection conn = new SqlConnection(dbconnection))
             {
                 conn.Open();
-                string query = "delete from habitDetails where HabitName =@habitname";
+                string query = "DELETE FROM habitDetails WHERE HabitName =@habitname";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.Add(new SqlParameter("@habitname", SqlDbType.NVarChar)).Value = name;
@@ -182,7 +182,7 @@ namespace HKHemanthsharma.HabitLogger
                 using (SqlConnection conn = new SqlConnection(dbconnection))
                 {
                     conn.Open();
-                    string query = $"select count(*) from {DbTable} where HabitName=@habitname ";
+                    string query = $"SELECT count(*) FROM {DbTable} WHERE HabitName=@habitname ";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -210,28 +210,28 @@ namespace HKHemanthsharma.HabitLogger
                                 switch (userinp)
                                 {
                                     case "1":
-                                        query = "update habitDetails set HabitName=@parameter where HabitName=@olderhabitname";
+                                        query = "UPDATE habitDetails SET HabitName=@parameter WHERE HabitName=@olderhabitname";
                                         Console.WriteLine("Enter the HabitName value to be updated: ");
                                         parameter = Console.ReadLine();
                                         inp = false;
                                         break;
                                     case "2":
-                                        query = "update habitDetails set Description=@parameter where HabitName=@olderhabitname";
+                                        query = "UPDATE habitDetails SET Description=@parameter WHERE HabitName=@olderhabitname";
                                         parameter = UserInputValidation.EnterDescription();
 
                                         inp = false;
                                         break;
                                     case "3":
-                                        query = "update habitDetails set Status=@parameter where HabitName=@olderhabitname";                                      
+                                        query = "UPDATE habitDetails SET Status=@parameter WHERE HabitName=@olderhabitname";                                      
                                         parameter = UserInputValidation.EnterStatus(); 
                                         inp = false;
                                         break;
                                     case "4":
-                                        query = "update habitDetails set quantity=@parameter where HabitName=@olderhabitname";
+                                        query = "UPDATE habitDetails SET quantity=@parameter WHERE HabitName=@olderhabitname";
                                         parameter = UserInputValidation.EnterQuantity();  
                                         break;
                                     case "5":
-                                        query = "update habitDetails set DateofCreation=@parameter where HabitName=@olderhabitname";
+                                        query = "UPDATE habitDetails SET DateofCreation=@parameter WHERE HabitName=@olderhabitname";
                                         parameter = UserInputValidation.EnterDateofCreation();
                                         break;
                                     default:
