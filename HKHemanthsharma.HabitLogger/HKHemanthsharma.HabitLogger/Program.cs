@@ -1,24 +1,16 @@
 ﻿namespace HKHemanthsharma.HabitLogger
 {
-    using System.Data.SqlClient;
-    using System.Data;
-    using System.Data.Common;
-    using System.ComponentModel.Design;
-
-
-
+    using System;
     public class Program
-    {
+    {   
+        
 
-        public static DatabaseManager dbmanager = new DatabaseManager();
-        public static HabitRepository hr = new HabitRepository(dbmanager, "habitDetails");
 
         public static void Main(string[] args)
         {
-
-
+            DatabaseManager dbmanager = new DatabaseManager();
             dbmanager.DBExists("habits");
-
+            HabitRepository hr = new HabitRepository(dbmanager, "habitDetails");
             bool close = false;
             while (!close)
             {
@@ -45,15 +37,9 @@
                         Console.WriteLine("Please enter a valid input! try again");
                         Console.WriteLine("Enter any key to try again");
                         Console.ReadLine();
-
-                        break;
+                        break;  
                 }
-
             }
-
-
         }
-
-
     }
 }

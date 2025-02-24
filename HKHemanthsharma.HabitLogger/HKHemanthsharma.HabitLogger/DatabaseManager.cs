@@ -26,30 +26,11 @@ namespace HKHemanthsharma.HabitLogger
                 using (SqlConnection conn = new SqlConnection(DbConnection))
                 {
                     conn.Open();
-                    string query = "select count(*) from sys.databases where name=@database";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.Add(new SqlParameter("@database", SqlDbType.NVarChar)).Value = DBName;
-                        int returnvalue = (int)cmd.ExecuteScalar();
-                        if (returnvalue > 0)
-                        {
-                            Console.WriteLine("The Database is already exists");
-
-                        }
-                        else
-                        {
-                            query = $"Create database {DBName}";
-                            using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                            {
-                                cmd1.ExecuteNonQuery();
-                            }
-
-                            Console.WriteLine("The Database is created for you!");
-
-
-                        }
-                    }
-
+                    string query = $"if DB_ID('{DBName}') is null BEGIN Create DataBase {DBName}; END";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("The DataBase existance check complete!");
+                    _connectionstring = _connectionstring + ";Initial Catalog=" + DBName;
 
                 }
             }
@@ -61,40 +42,27 @@ namespace HKHemanthsharma.HabitLogger
             {
                 Console.WriteLine(ex.Message);
             }
-
-
         }
-        public string DbTableexists(string database)
+        public string DbTableexists()
         {
-            this.DBExists(database);
-            string dbconnectionstring = _connectionstring + ";Initial Catalog=" + database;
-
+            string dbconnectionstring = _connectionstring;
             using (SqlConnection conn = new SqlConnection(dbconnectionstring))
             {
+
+                string query = @"if object_Id('habitDetails') is null
+BEGIN
+create table habitDetails(
+HabitID int Not null Identity(1,1) primary key,
+HabitName varchar(10),
+Description varchar(100),
+Status varchar(20) check(status in ('completed','inprogress','onhold')),
+quantity int,
+DateofCreation Date);
+END";
+                SqlCommand tablecreationcmd = new SqlCommand(query, conn);
                 conn.Open();
-                string query = "select count(*) from INFORMATION_SCHEMA.TABLES where TABLE_NAME='habitDetails'";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                int result = (int)cmd.ExecuteScalar();
-                if (result == 0)
-                {
-                    Console.WriteLine("Habit Details Table doesn't exist and we are creating one for you");
-                    query = @"create table habitDetails(
-                    HabitID int Not null Identity(1,1) primary key,
-                    HabitName varchar(10), 
-                    Description varchar(100), 
-                    Status varchar(20) check(status in ('completed','inprogress','onhold')),
-                    quantity int,
-                    DateofCreation Date);";
-                    SqlCommand tablecreationcmd = new SqlCommand(query, conn);
-                    tablecreationcmd.ExecuteNonQuery();
-                    Console.WriteLine("habitDetails Table created!");
-
-
-                }
-                else
-                {
-                    Console.WriteLine("HabitDetails table already existed!");
-                }
+                tablecreationcmd.ExecuteNonQuery();
+                Console.WriteLine("habitDetails Table created!");
             }
             return dbconnectionstring;
         }
