@@ -1,24 +1,11 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using HabitTracker.StressedBread;
+
+DatabaseInput databaseInput = new();
 
 ConsoleKeyInfo keyPressed;
 bool endApp = false;
 
-string connectionString = @"Data Source=HabitTracker.db";
-
-using (SqliteConnection connection = new SqliteConnection(connectionString))
-{
-    connection.Open();
-
-    SqliteCommand tableCommand = connection.CreateCommand();
-
-    tableCommand.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water ( 
-                                ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                Date TEXT,
-                                Quantity INTEGER
-                                )";
-
-    tableCommand.ExecuteNonQuery();
-}
+databaseInput.CreateTable();
 
 while (!endApp)
 
@@ -44,131 +31,22 @@ Press 4 to delete record.");
 
         case ConsoleKey.D1:
         case ConsoleKey.NumPad1:
-            View();
+            databaseInput.View();
             break;
 
         case ConsoleKey.D2:
         case ConsoleKey.NumPad2:
-            Insert();
+            databaseInput.Insert();
             break;
 
         case ConsoleKey.D3:
         case ConsoleKey.NumPad3:
-            Update();
+            databaseInput.Update();
             break;
 
         case ConsoleKey.D4:
         case ConsoleKey.NumPad4:
-            Delete();
+            databaseInput.Delete();
             break;
     }
-}
-void Insert()
-{
-    string date = "";
-    int quantity = 0;
-
-    Console.Clear();
-    Console.WriteLine("Insert date in dd/mm/yyyy format.");
-    date = Console.ReadLine();
-    Console.WriteLine("Insert quantity.");
-    quantity = int.Parse(Console.ReadLine());
-
-
-    using (SqliteConnection connection = new SqliteConnection(connectionString))
-    {
-        connection.Open();
-
-        SqliteCommand insertCommand = connection.CreateCommand();
-
-        insertCommand.CommandText = $@"INSERT INTO drinking_water (Date, Quantity)
-                                       VALUES ('{date}', {quantity}
-                                       )";
-
-        insertCommand.ExecuteNonQuery();
-    }
-}
-void Update()
-{
-    string date = "";
-    int quantity = 0;
-    int index = 0;
-
-    Console.Clear();
-    Console.WriteLine("Choose which row you want to update.");
-    index = int.Parse(Console.ReadLine());
-    Console.WriteLine("Insert date in dd/mm/yyyy format.");
-    date = Console.ReadLine();
-    Console.WriteLine("Insert quantity.");
-    quantity = int.Parse(Console.ReadLine());
-
-
-    using (SqliteConnection connection = new SqliteConnection(connectionString))
-    {
-        connection.Open();
-
-        SqliteCommand updateCommand = connection.CreateCommand();
-
-        updateCommand.CommandText = $@"UPDATE drinking_water
-                                       SET Date = '{date}', Quantity = {quantity}
-                                       WHERE ID = {index}
-                                       ";
-
-        updateCommand.ExecuteNonQuery();
-    }
-}
-void Delete()
-{
-    int index = 0;
-
-    Console.Clear();
-
-    Console.WriteLine("------------------------------------");
-    Console.WriteLine("Choose which row you want to delete.");
-    index = int.Parse(Console.ReadLine());
-
-
-    using (SqliteConnection connection = new SqliteConnection(connectionString))
-    {
-        connection.Open();
-
-        SqliteCommand deleteCommand = connection.CreateCommand();
-
-        deleteCommand.CommandText = $@"DELETE FROM drinking_water
-                                       WHERE ID = {index}
-                                       ";
-
-        deleteCommand.ExecuteNonQuery();
-    }
-}
-void View()
-{
-    Console.Clear();
-
-    using (SqliteConnection connection = new SqliteConnection(connectionString))
-    {
-        connection.Open();
-
-        SqliteCommand selectCommand = connection.CreateCommand();
-
-        selectCommand.CommandText = $@"SELECT * FROM drinking_water
-                                       ";
-
-        using (SqliteDataReader reader = selectCommand.ExecuteReader())
-        {
-            
-            while (reader.Read())
-            {
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    string columnName = reader.GetName(i);
-                    var columnValue = reader.GetValue(i);
-
-                    Console.Write($@"{columnName}: {columnValue} ");
-                }
-                Console.WriteLine();
-            }
-        }
-    }
-    Console.ReadKey();
 }

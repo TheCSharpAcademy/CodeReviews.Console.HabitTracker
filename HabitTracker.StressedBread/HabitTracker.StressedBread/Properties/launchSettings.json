@@ -1,8 +1,7 @@
 {
   "profiles": {
     "HabitTracker.StressedBread": {
-      "commandName": "Project",
-      "workingDirectory": "C:\\Users\\marti\\Documents\\Visual Studio Projects\\StressedBread.HabitTracker\\HabitTracker.StressedBread\\HabitTracker.StressedBread"
+      "commandName": "Project"
     }
   }
 }
