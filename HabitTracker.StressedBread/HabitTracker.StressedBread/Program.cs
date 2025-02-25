@@ -8,7 +8,6 @@ bool endApp = false;
 databaseInput.CreateTable();
 
 while (!endApp)
-
 {
     Console.Clear();
     Console.WriteLine("Habit Tracker");
@@ -47,6 +46,10 @@ Press 4 to delete record.");
         case ConsoleKey.D4:
         case ConsoleKey.NumPad4:
             databaseInput.Delete();
+            break;
+        default:
+            Console.WriteLine("\nInvalid Input! Press any key to reset.");
+            Console.ReadKey();
             break;
     }
 }
