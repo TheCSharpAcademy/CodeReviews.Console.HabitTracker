@@ -1,5 +1,6 @@
 ﻿using HabitTracker;
 
 DatabaseManager db = new();
+CliHandler app = new(db);
 
-db.EnsureDatabaseExists();
+app.RunApplication();

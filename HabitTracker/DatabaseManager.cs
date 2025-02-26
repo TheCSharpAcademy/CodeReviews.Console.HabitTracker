@@ -17,9 +17,9 @@ namespace HabitTracker
         {
             try
             {
-                bool dbExists = File.Exists(dbPath);
+                bool dbExists = File.Exists(_dbPath);
 
-                using SqliteConnection connection = new(connectionString);
+                using SqliteConnection connection = new(_connectionString);
                 connection.Open();
 
                 if (!dbExists)
