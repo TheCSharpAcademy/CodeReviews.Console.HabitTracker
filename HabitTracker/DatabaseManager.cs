@@ -4,16 +4,16 @@ namespace HabitTracker
 {
     internal class DatabaseManager
     {
-        private readonly string dbPath = "habits.db";
-        private readonly string connectionString;
+        private readonly string _dbPath = "habits.db";
+        private readonly string _connectionString;
 
-        public DatabaseManager()
+        internal DatabaseManager()
         {
-            connectionString = $"Data Source={dbPath}";
+            _connectionString = $"Data Source={_dbPath}";
         }
 
         // Checks for existence of database/table in local file system and creates it if it isn't present
-        public void EnsureDatabaseExists()
+        internal void EnsureDatabaseExists()
         {
             try
             {
@@ -55,11 +55,11 @@ namespace HabitTracker
         }
 
         // Adds a habit to the table
-        public void AddHabit(string title)
+        internal void AddHabit(string title)
         {
             try
             {
-                using SqliteConnection connection = new(connectionString);
+                using SqliteConnection connection = new(_connectionString);
                 connection.Open();
 
                 using SqliteCommand command = new("INSERT INTO habits (title) VALUES (@title);", connection);
