@@ -65,9 +65,14 @@
 
             do
             {
-                Console.WriteLine("Please enter the name of your new habit:");
+                Console.WriteLine("Please enter the name of your new habit (max length: 50 char):");
                 title = Console.ReadLine()?.Trim() ?? "";
-            } while (string.IsNullOrEmpty(title));
+                
+                if (title.Length > 50)
+                {
+                    Console.WriteLine("Habit length is too long.");
+                }
+            } while (string.IsNullOrEmpty(title) || title.Length > 50);
 
             _db.AddHabit(title);
         }

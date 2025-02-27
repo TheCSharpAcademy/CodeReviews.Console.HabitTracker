@@ -31,7 +31,7 @@ namespace HabitTracker
                     var createTable = @"
                     CREATE TABLE IF NOT EXISTS habits (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        title TEXT NOT NULL,
+                        title TEXT NOT NULL CHECK(length(title) <= 50),
                         completed INTEGER DEFAULT 0,
                         created_at TEXT DEFAULT CURRENT_TIMESTAMP
                     );";
@@ -80,18 +80,15 @@ namespace HabitTracker
                     habits.Add(habit);
                 }
 
-                Console.WriteLine("ID\t\t\tHabit\t\t\tIs Completed\t\t\tDate Created");
+                Console.WriteLine("{0,-5} {1,-50} {2,-15} {3,-20}\n", "ID", "Habit", "Is Completed", "Date Created");
 
-                foreach(Habit habit in habits)
+                foreach (Habit habit in habits)
                 {
-                    Console.Write(habit.Id);
-                    Console.Write("\t\t\t");
-                    Console.Write(habit.Title);
-                    Console.Write("\t\t\t");
-                    Console.Write(habit.IsCompleted);
-                    Console.Write("\t\t\t");
-                    Console.Write(habit.DateCreated);
-                    Console.Write("\n");
+                    Console.WriteLine(
+                        "{0,-5} {1,-5" +
+                        "0} {2,-15} {3,-20}", 
+                        habit.Id, habit.Title, habit.IsCompleted, habit.DateCreated
+                    );
                 }
             }
             catch (Exception ex )
