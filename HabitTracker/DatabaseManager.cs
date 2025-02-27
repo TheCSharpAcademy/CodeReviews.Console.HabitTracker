@@ -116,5 +116,25 @@ namespace HabitTracker
                 Console.WriteLine($"Error writing to database: {ex.Message}");
             }
         }
+
+        // Deletes a habit from the table
+        internal void DeleteHabit(string id)
+        {
+            try
+            {
+                using SqliteConnection connection = new(_connectionString);
+                connection.Open();
+
+                using SqliteCommand command = new("DELETE FROM habits WHERE id = @id", connection);
+                command.Parameters.AddWithValue("@id", id);
+                command.ExecuteNonQuery();
+
+                Console.WriteLine("Habit deleted successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting habit: {ex.Message}");
+            }
+        }
     }
 }

@@ -37,7 +37,6 @@
             {
                 case 1:
                     _db.OutputTable();
-                    Console.WriteLine("Printed values will go here...");
                     break;
                 case 2:
                     AddRow();
