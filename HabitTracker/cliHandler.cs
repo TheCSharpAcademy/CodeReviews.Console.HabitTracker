@@ -30,6 +30,43 @@
 
                 Console.WriteLine("Invalid input. Please enter an integer from the above menu.");
             } while (true);
+
+            switch (menuOption)
+            {
+                case 1:
+                    // TODO: Write method for getting input from user for a READ statement
+                    Console.WriteLine("Printed values will go here...");
+                    break;
+                case 2:
+                    // TODO: Write method for INPUT statement
+                    AddRow();
+                    break;
+                case 3:
+                    // TODO: Write method for UPDATE statement
+                    Console.WriteLine("Update a value...");
+                    break;
+                case 4:
+                    // TODO: Write method for DELETE statement
+                    Console.WriteLine("Delete a value...");
+                    break;
+                default:
+                    // This shouldn't be reachable
+                    throw new Exception("Error fetching menu selection.");
+            }
+        }
+
+        // Handles inserting new rows into table
+        private void AddRow()
+        {
+            string title;
+
+            do
+            {
+                Console.WriteLine("Please enter the name of your new habit:");
+                title = Console.ReadLine()?.Trim() ?? "";
+            } while (string.IsNullOrEmpty(title));
+
+            _db.AddHabit(title);
         }
 
         private static void DisplayMenu()
