@@ -54,6 +54,30 @@ namespace HabitTracker
             }
         }
 
+        // Reads from the table and outputs each row to the console
+        internal void OutputTable()
+        {
+            try
+            {
+                using SqliteConnection connection = new(_connectionString);
+                connection.Open();
+
+                using SqliteCommand command = new("SELECT * FROM habits", connection);
+                using SqliteDataReader reader = command.ExecuteReader();
+
+                List<IHabit> habits = [];
+
+                while (reader.Read())
+                {
+                    IHabit habit = new();
+                }
+            }
+            catch (Exception ex )
+            {
+                Console.WriteLine($"Error reading database: {ex.Message}");
+            }
+        }
+
         // Adds a habit to the table
         internal void AddHabit(string title)
         {

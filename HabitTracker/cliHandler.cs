@@ -35,18 +35,20 @@
             {
                 case 1:
                     // TODO: Write method for getting input from user for a READ statement
+                    // TODO: Display ID for each row
                     Console.WriteLine("Printed values will go here...");
                     break;
                 case 2:
-                    // TODO: Write method for INPUT statement
                     AddRow();
                     break;
                 case 3:
                     // TODO: Write method for UPDATE statement
+                    // TODO: User will need to provide habit ID
                     Console.WriteLine("Update a value...");
                     break;
                 case 4:
                     // TODO: Write method for DELETE statement
+                    // TODO: User will need to provide habit ID
                     Console.WriteLine("Delete a value...");
                     break;
                 default:
