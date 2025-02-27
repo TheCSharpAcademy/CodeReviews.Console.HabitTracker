@@ -31,11 +31,12 @@
                 Console.WriteLine("Invalid input. Please enter an integer from the above menu.");
             } while (true);
 
+            Console.WriteLine("");
+
             switch (menuOption)
             {
                 case 1:
-                    // TODO: Write method for getting input from user for a READ statement
-                    // TODO: Display ID for each row
+                    _db.OutputTable();
                     Console.WriteLine("Printed values will go here...");
                     break;
                 case 2:

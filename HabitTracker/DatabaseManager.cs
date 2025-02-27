@@ -65,11 +65,33 @@ namespace HabitTracker
                 using SqliteCommand command = new("SELECT * FROM habits", connection);
                 using SqliteDataReader reader = command.ExecuteReader();
 
-                List<IHabit> habits = [];
+                List<Habit> habits = [];
 
                 while (reader.Read())
                 {
-                    IHabit habit = new();
+                    Habit habit = new()
+                    {
+                        Id = reader.GetInt32(0),
+                        Title = reader.GetString(1),
+                        IsCompleted = reader.GetInt32(2) == 1,
+                        DateCreated = reader.GetString(3)
+                    };
+
+                    habits.Add(habit);
+                }
+
+                Console.WriteLine("ID\t\t\tHabit\t\t\tIs Completed\t\t\tDate Created");
+
+                foreach(Habit habit in habits)
+                {
+                    Console.Write(habit.Id);
+                    Console.Write("\t\t\t");
+                    Console.Write(habit.Title);
+                    Console.Write("\t\t\t");
+                    Console.Write(habit.IsCompleted);
+                    Console.Write("\t\t\t");
+                    Console.Write(habit.DateCreated);
+                    Console.Write("\n");
                 }
             }
             catch (Exception ex )
