@@ -5,150 +5,131 @@ namespace HabitTracker.StressedBread
     internal class DatabaseInput
     {
         Helpers helpers = new();
-        string connectionString = @"Data Source=HabitTracker.db";
+        DatabaseService databaseService = new();
         internal void CreateTable()
         {
-            using (SqliteConnection connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-
-                SqliteCommand tableCommand = connection.CreateCommand();
-
-                tableCommand.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water ( 
+            string commandText = @"CREATE TABLE IF NOT EXISTS drinking_water ( 
                                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                                 Date TEXT,
                                 Quantity INTEGER
                                 )";
-
-                tableCommand.ExecuteNonQuery();
-            }
+            databaseService.ExecuteCommand(commandText);
         }
         internal void Insert()
         {
-            string lineRead;
-            string date = "";
-            int quantity = 0;
-
             Console.Clear();
 
-            Console.WriteLine("Insert date in dd/mm/yyyy format.");
-            lineRead = Console.ReadLine();
-            date = helpers.ValidateString(lineRead);
+            string? date = helpers.ValidateDate("Insert date in dd/mm/yyyy format.");
+            int quantity = helpers.ValidateInt("Insert quantity.");
 
-            Console.WriteLine("Insert quantity.");
-            lineRead = Console.ReadLine();
-            quantity = helpers.ValidateInt(lineRead);
-
-            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            string commandText = @"INSERT INTO drinking_water (Date, Quantity)
+                       VALUES (@date, @quantity)
+                       ";
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
             {
-                connection.Open();
+                new SqliteParameter(@"date", date),
+                new SqliteParameter(@"quantity", quantity)
+            };
 
-                SqliteCommand insertCommand = connection.CreateCommand();
-
-                insertCommand.CommandText = @"INSERT INTO drinking_water (Date, Quantity)
-                                               VALUES (@date, @quantity)
-                                               ";
-                insertCommand.Parameters.Add("@date", SqliteType.Text).Value = date;
-                insertCommand.Parameters.Add("@quantity", SqliteType.Integer).Value = quantity;
-
-                insertCommand.ExecuteNonQuery();
-            }
+            databaseService.ExecuteCommand(commandText, parameters);
         }
         internal void Update()
         {
-            string lineRead;
-            string date = "";
-            int quantity = 0;
-            int index = 0;
-
             Console.Clear();
 
-            Console.WriteLine("Choose which row you want to update.");
-            lineRead = Console.ReadLine();
-            index = helpers.ValidateInt(lineRead);
+            int index = helpers.ValidateInt("Choose which row you want to update.");
 
-            Console.WriteLine("Insert date in dd/mm/yyyy format.");
-            lineRead = Console.ReadLine();
-            date = helpers.ValidateString(lineRead);
 
-            Console.WriteLine("Insert quantity.");
-            lineRead = Console.ReadLine();
-            quantity = helpers.ValidateInt(lineRead);
-
-            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            string selectText = @"SELECT ID FROM drinking_water
+                                  WHERE ID = @index";
+            string updateText = @"UPDATE drinking_water
+                                  SET Date = @date, Quantity = @quantity
+                                  WHERE ID = @index
+                                  ";
+            List<SqliteParameter> selectParameters = new List<SqliteParameter>()
             {
-                connection.Open();
+                new SqliteParameter(@"index", index)
+            };
 
-                SqliteCommand updateCommand = connection.CreateCommand();
+            using (SqliteDataReader reader = databaseService.ExecuteRead(selectText, selectParameters))
+            {
+                if (reader.Read())
+                {
+                    string? date = helpers.ValidateDate("Insert date in dd/mm/yyyy format.");
+                    int quantity = helpers.ValidateInt("Insert quantity.");
 
-                updateCommand.CommandText = @"UPDATE drinking_water
-                                       SET Date = @date, Quantity = @quantity
-                                       WHERE ID = @index
-                                       ";
+                    List<SqliteParameter> updateParameters = new List<SqliteParameter>()
+                    {
+                        new SqliteParameter(@"index", index),
+                        new SqliteParameter(@"date", date),
+                        new SqliteParameter(@"quantity", quantity)
+                    };
 
-                updateCommand.Parameters.Add("@index", SqliteType.Integer).Value = index;
-                updateCommand.Parameters.Add("@date", SqliteType.Text).Value = date;
-                updateCommand.Parameters.Add("@quantity", SqliteType.Integer).Value = quantity;
-
-                updateCommand.ExecuteNonQuery();
+                    reader.Close();
+                    databaseService.ExecuteCommand(updateText, updateParameters);
+                    Console.WriteLine("Succefully updated! Press any key to return to menu.");
+                }
+                else
+                {
+                    reader.Close();
+                    Console.WriteLine("Specified row doesn't exist! Press any key to return to menu.");
+                }
+                Console.ReadKey();
             }
         }
         internal void Delete()
         {
-            int index;
-
             Console.Clear();
 
-            Console.WriteLine("------------------------------------");
-            Console.WriteLine("Choose the index of a row you want to delete.");
-            string lineRead = Console.ReadLine();
-            index = helpers.ValidateInt(lineRead);
+            int index = helpers.ValidateInt("Choose which row you want to update.");
 
-            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            string selectText = @"SELECT ID FROM drinking_water
+                                  WHERE ID = @index";
+            string deleteText = @"DELETE FROM drinking_water
+                                  WHERE ID = @index";
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
             {
-                connection.Open();
+                new SqliteParameter(@"index", index),
+            };
 
-                SqliteCommand deleteCommand = connection.CreateCommand();
-                
-
-                deleteCommand.CommandText = @"DELETE FROM drinking_water
-                                              WHERE ID = @index
-                                              ";
-
-                deleteCommand.Parameters.Add("@index", SqliteType.Integer).Value = index;
-
-                deleteCommand.ExecuteNonQuery();
+            using (SqliteDataReader reader = databaseService.ExecuteRead(selectText, parameters))
+            {
+                if (reader.Read())
+                {
+                    reader.Close();
+                    databaseService.ExecuteCommand(deleteText, parameters);
+                    Console.WriteLine("Succefully deleted! Press any key to return to menu.");
+                }
+                else
+                {
+                    reader.Close();
+                    Console.WriteLine("Specified row doesn't exist! Press any key to return to menu.");
+                }
+                Console.ReadKey();
             }
         }
         internal void View()
         {
             Console.Clear();
 
-            using (SqliteConnection connection = new SqliteConnection(connectionString))
+            string commandText = @"SELECT * FROM drinking_water
+                                   ";
+
+            using (SqliteDataReader reader = databaseService.ExecuteRead(commandText))
             {
-                connection.Open();
-
-                SqliteCommand selectCommand = connection.CreateCommand();
-
-                selectCommand.CommandText = @"SELECT * FROM drinking_water
-                                       ";
-
-                using (SqliteDataReader reader = selectCommand.ExecuteReader())
+                while (reader.Read())
                 {
-
-                    while (reader.Read())
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        for (int i = 0; i < reader.FieldCount; i++)
-                        {
-                            string columnName = reader.GetName(i);
-                            var columnValue = reader.GetValue(i);
+                        string columnName = reader.GetName(i);
+                        var columnValue = reader.GetValue(i);
 
-                            Console.Write($@"{columnName}: {columnValue} ");
-                        }
-                        Console.WriteLine();
+                        Console.Write($@"{columnName}: {columnValue} ");
                     }
+                    Console.WriteLine();
                 }
             }
+
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }
