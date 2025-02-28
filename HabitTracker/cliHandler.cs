@@ -38,21 +38,17 @@ namespace HabitTracker
             switch (menuOption)
             {
                 case 1:
-                    _db.OutputTable();
+                    PrintHabits();
                     break;
                 case 2:
                     AddRow();
                     break;
                 case 3:
-                    Console.WriteLine("Current habits:\n");
-                    _db.OutputTable();
-                    Console.WriteLine();
+                    PrintHabits();
                     UpdateRow();
                     break;
                 case 4:
-                    Console.WriteLine("Current habits:\n");
-                    _db.OutputTable();
-                    Console.WriteLine();
+                    PrintHabits();
                     DeleteRow();
                     break;
                 default:
@@ -173,6 +169,15 @@ namespace HabitTracker
             return result;
         }
 
+        // Displays the currently logged habits for the user
+        private void PrintHabits()
+        {
+            Console.WriteLine("Current habits:\n");
+            _db.OutputTable();
+            Console.WriteLine();
+        }
+
+        // Prints the main menu options to the user
         private static void DisplayMenu()
         {
             Console.WriteLine("\n1. View logged habits");
