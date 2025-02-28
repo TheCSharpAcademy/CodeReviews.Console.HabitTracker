@@ -117,6 +117,68 @@ namespace HabitTracker
             }
         }
 
+        // Updates a habit within the table
+        internal void UpdateHabit(string id, string column, string value)
+        {
+            try
+            {
+                HashSet<string> allowedColumns = ["title", "completed"];
+
+                if (!allowedColumns.Contains(column))
+                {
+                    Console.WriteLine("You either cannot modify this column or it does not exist.");
+                    return;
+                }
+
+                // Handles converting user input to match table syntax if updating 'completed' column
+                if (column == "completed")
+                {
+                    if (value == "true")
+                    {
+                        value = "1";
+                    }
+                    else if (value == "false")
+                    {
+                        value = "0";
+                    }
+                    else
+                    {
+                        Console.WriteLine("Value must be either 'true' or 'false'");
+                        return;
+                    }
+                }
+
+                using SqliteConnection connection = new(_connectionString);
+                connection.Open();
+
+                using SqliteCommand command = new(
+                    $@"
+                    UPDATE habits
+                    SET {column} = @value
+                    WHERE id = @id
+                    ", connection
+                );
+
+                command.Parameters.AddWithValue("@value", value);
+                command.Parameters.AddWithValue("@id", id);
+
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected > 0)
+                {
+                    Console.WriteLine("Habit updated successfully!");
+                }
+                else
+                {
+                    Console.WriteLine("Something went wrong; please check for typos.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating table: {ex.Message}");
+            }
+        }
+
         // Deletes a habit from the table
         internal void DeleteHabit(string id)
         {
@@ -130,7 +192,7 @@ namespace HabitTracker
 
                 int rowsAffected = command.ExecuteNonQuery();
 
-                if (rowsAffected != 0)
+                if (rowsAffected > 0)
                 {
                     Console.WriteLine("Habit deleted successfully!");
                 } 
