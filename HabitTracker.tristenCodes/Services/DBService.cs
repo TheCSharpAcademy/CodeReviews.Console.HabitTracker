@@ -66,10 +66,44 @@ class DBService
 
     public void UpdateEntry(HabitEntry oldEntry, HabitEntry newEntry)
     {
+        var command = _connection.CreateCommand();
 
+        command.CommandText =
+        @"SELECT * habits
+        FROM habits
+        WHERE habit_name = @habit";
+
+        command.Parameters.AddWithValue("@habit", oldEntry.Habit);
+
+        var reader = command.ExecuteReader();
+        if (!reader.HasRows)
+        {
+            Console.WriteLine("Row Not Found");
+        }
+
+        else
+        {
+            command = _connection.CreateCommand();
+            command.CommandText = 
+            @"
+            UPDATE habits
+            SET habit_name = @newHabitName, occurrences = @newOccurrences, date = @newDate
+            WHERE habit_name = @oldHabitName, occurences = @oldOccurrences, date = @oldDate
+            ";
+            command.Parameters.AddWithValue("@newHabitName", newEntry.Habit);
+            command.Parameters.AddWithValue("@newOccurrences", newEntry.Occurences);
+            command.Parameters.AddWithValue("@newDate", newEntry.Date);
+
+            command.Parameters.AddWithValue("@oldHabitName", oldEntry.Habit);
+            command.Parameters.AddWithValue("@oldOccurrences", oldEntry.Occurences);
+            command.Parameters.AddWithValue("@oldDate", oldEntry.Date);
+
+            command.ExecuteNonQuery();
+            Console.WriteLine("Success");
+        }
     }
 
-    public SqliteDataReader ViewAllEntries()
+    public SqliteDataReader GetAllEntries()
     {
         var command = _connection.CreateCommand();
 

@@ -105,7 +105,7 @@ switch (menuSelection)
         break;
     case "2":
         // Show all habits
-        var reader = dBService.ViewAllEntries();
+        var reader = dBService.GetAllEntries();
         if (reader.HasRows)
         {
             while (reader.Read())
@@ -117,7 +117,10 @@ switch (menuSelection)
                 Console.WriteLine($"Id: {id}, Habit Name: {habitName}, Date: {DateHelper.ConvertDateToString(date)}, Occurences: {occurences}");
             }
         }
+
         // Update a habit 
+
+
         break;
     case "3":
         // Remove a habit 
