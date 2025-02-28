@@ -1,4 +1,6 @@
-﻿namespace HabitTracker
+﻿using System.Diagnostics.Tracing;
+
+namespace HabitTracker
 {
     internal class CliHandler
     {
@@ -77,8 +79,34 @@
             _db.AddHabit(title);
         }
 
+        // Handles updating a row in the table
+        //private void UpdateRow(string column)
+        //{
+
+
+        //    if (column == "title")
+        //    {
+               
+        //    }
+        //    else if (column == "completed")
+        //    {
+
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Invalid selection. Returning to menu.");
+        //    }
+        //}
+
         // Handles deleting rows from table
         private void DeleteRow()
+        {
+            int taskId = GetId();
+
+            _db.DeleteHabit(taskId.ToString());
+        }
+
+        private int GetId()
         {
             int taskId;
 
@@ -93,7 +121,7 @@
                 Console.WriteLine("Invalid input. Please enter an integer.");
             } while (true);
 
-            _db.DeleteHabit(taskId.ToString());
+            return taskId;
         }
 
         private static void DisplayMenu()
