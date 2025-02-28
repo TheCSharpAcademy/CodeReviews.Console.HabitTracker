@@ -127,9 +127,17 @@ namespace HabitTracker
 
                 using SqliteCommand command = new("DELETE FROM habits WHERE id = @id", connection);
                 command.Parameters.AddWithValue("@id", id);
-                command.ExecuteNonQuery();
 
-                Console.WriteLine("Habit deleted successfully!");
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected != 0)
+                {
+                    Console.WriteLine("Habit deleted successfully!");
+                } 
+                else
+                {
+                    Console.WriteLine("Specified ID does not exist within table.");
+                }
             }
             catch (Exception ex)
             {

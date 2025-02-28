@@ -47,9 +47,10 @@
                     Console.WriteLine("Update a value...");
                     break;
                 case 4:
-                    // TODO: Write method for DELETE statement
-                    // TODO: User will need to provide habit ID
-                    Console.WriteLine("Delete a value...");
+                    Console.WriteLine("Available habits:\n");
+                    _db.OutputTable();
+                    Console.WriteLine("");
+                    DeleteRow();
                     break;
                 default:
                     // This shouldn't be reachable
@@ -74,6 +75,25 @@
             } while (string.IsNullOrEmpty(title) || title.Length > 50);
 
             _db.AddHabit(title);
+        }
+
+        // Handles deleting rows from table
+        private void DeleteRow()
+        {
+            int taskId;
+
+            do
+            {
+                if (int.TryParse(Console.ReadLine(), out int choice))
+                {
+                    taskId = choice;
+                    break;
+                }
+
+                Console.WriteLine("Invalid input. Please enter an integer.");
+            } while (true);
+
+            _db.DeleteHabit(taskId.ToString());
         }
 
         private static void DisplayMenu()
