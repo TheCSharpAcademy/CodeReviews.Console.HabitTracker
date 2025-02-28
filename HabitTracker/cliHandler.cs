@@ -44,14 +44,15 @@ namespace HabitTracker
                     AddRow();
                     break;
                 case 3:
-                    // TODO: Write method for UPDATE statement
-                    // TODO: User will need to provide habit ID
-                    Console.WriteLine("Update a value...");
+                    Console.WriteLine("Current habits:\n");
+                    _db.OutputTable();
+                    Console.WriteLine();
+                    UpdateRow();
                     break;
                 case 4:
-                    Console.WriteLine("Available habits:\n");
+                    Console.WriteLine("Current habits:\n");
                     _db.OutputTable();
-                    Console.WriteLine("");
+                    Console.WriteLine();
                     DeleteRow();
                     break;
                 default:
@@ -69,17 +70,39 @@ namespace HabitTracker
         }
 
         // Handles updating a row in the table
-        private void UpdateRow(string column)
+        private void UpdateRow()
         {
             int taskId = GetId();
 
-            if (column == "title")
-            {
-                string title = GetTitle();   
-            }
-            else if (column == "completed")
-            {
+            Console.WriteLine("Please select the number for the column you'd like to modify:\n");
+            Console.WriteLine("1. Title");
+            Console.WriteLine("2. Completed\n");
 
+            int column;
+
+            do
+            {
+                if (int.TryParse(Console.ReadLine(), out int choice))
+                {
+                    if (choice == 1 || choice == 2)
+                    {
+                        column = choice;
+                        break;
+                    }
+                }
+
+                Console.WriteLine("Invalid input. Please enter either '1' or '2'.");
+            } while (true);
+
+            if (column == 1)
+            {
+                string title = GetTitle();
+                _db.UpdateHabit(taskId.ToString(), "title", title);
+            }
+            else if (column == 2)
+            {
+                string completionStatus = GetBool();
+                _db.UpdateHabit(taskId.ToString(), "completed", completionStatus);
             }
             else
             {
@@ -131,6 +154,23 @@ namespace HabitTracker
             } while (string.IsNullOrEmpty(title) || title.Length > 50);
 
             return title;
+        }
+
+        // Helper method for getting a boolean value from user and converting to a string
+        private static string GetBool()
+        {
+            string result;
+
+            do
+            {
+                Console.WriteLine("Please enter either 'true' or 'false':");
+                result = Console.ReadLine()?.Trim() ?? "";
+
+                if (result == "true" || result == "false")
+                    break;
+            } while (true);
+
+            return result;
         }
 
         private static void DisplayMenu()
