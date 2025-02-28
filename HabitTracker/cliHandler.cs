@@ -63,40 +63,29 @@ namespace HabitTracker
         // Handles inserting new rows into table
         private void AddRow()
         {
-            string title;
-
-            do
-            {
-                Console.WriteLine("Please enter the name of your new habit (max length: 50 char):");
-                title = Console.ReadLine()?.Trim() ?? "";
-                
-                if (title.Length > 50)
-                {
-                    Console.WriteLine("Habit length is too long.");
-                }
-            } while (string.IsNullOrEmpty(title) || title.Length > 50);
+            string title = GetTitle();
 
             _db.AddHabit(title);
         }
 
         // Handles updating a row in the table
-        //private void UpdateRow(string column)
-        //{
+        private void UpdateRow(string column)
+        {
+            int taskId = GetId();
 
+            if (column == "title")
+            {
+                string title = GetTitle();   
+            }
+            else if (column == "completed")
+            {
 
-        //    if (column == "title")
-        //    {
-               
-        //    }
-        //    else if (column == "completed")
-        //    {
-
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Invalid selection. Returning to menu.");
-        //    }
-        //}
+            }
+            else
+            {
+                Console.WriteLine("Invalid selection. Returning to menu.");
+            }
+        }
 
         // Handles deleting rows from table
         private void DeleteRow()
@@ -106,7 +95,8 @@ namespace HabitTracker
             _db.DeleteHabit(taskId.ToString());
         }
 
-        private int GetId()
+        // Helper method for grabbing task ID
+        private static int GetId()
         {
             int taskId;
 
@@ -122,6 +112,25 @@ namespace HabitTracker
             } while (true);
 
             return taskId;
+        }
+
+        // Helper method for providing a title for a field
+        private static string GetTitle()
+        {
+            string title;
+
+            do
+            {
+                Console.WriteLine("Please enter the name of your new habit (max length: 50 char):");
+                title = Console.ReadLine()?.Trim() ?? "";
+
+                if (title.Length > 50)
+                {
+                    Console.WriteLine("Habit length is too long.");
+                }
+            } while (string.IsNullOrEmpty(title) || title.Length > 50);
+
+            return title;
         }
 
         private static void DisplayMenu()
