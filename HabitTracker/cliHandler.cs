@@ -68,6 +68,8 @@ namespace HabitTracker
         // Handles updating a row in the table
         private void UpdateRow()
         {
+            Console.WriteLine("Please enter the ID of the habit you'd like to modify.\n");
+
             int taskId = GetId();
 
             Console.WriteLine("Please select the number for the column you'd like to modify:\n");
@@ -78,13 +80,10 @@ namespace HabitTracker
 
             do
             {
-                if (int.TryParse(Console.ReadLine(), out int choice))
+                if (int.TryParse(Console.ReadLine(), out int choice) && (choice is 1 or 2))
                 {
-                    if (choice == 1 || choice == 2)
-                    {
-                        column = choice;
-                        break;
-                    }
+                    column = choice;
+                    break;
                 }
 
                 Console.WriteLine("Invalid input. Please enter either '1' or '2'.");
@@ -109,6 +108,8 @@ namespace HabitTracker
         // Handles deleting rows from table
         private void DeleteRow()
         {
+            Console.WriteLine("Please enter the ID of the habit you'd like to delete.\n");
+
             int taskId = GetId();
 
             _db.DeleteHabit(taskId.ToString());
