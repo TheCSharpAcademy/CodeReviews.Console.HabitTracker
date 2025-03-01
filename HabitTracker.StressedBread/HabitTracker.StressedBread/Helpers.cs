@@ -29,5 +29,9 @@ namespace HabitTracker.StressedBread
             }
             return int.Parse(result);
         }
+        internal string? InputCurrentDate()
+        {
+            return DateTime.Now.ToString("dd/MM/yyyy");
+        }
     }
 }

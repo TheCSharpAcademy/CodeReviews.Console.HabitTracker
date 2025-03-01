@@ -17,9 +17,26 @@ namespace HabitTracker.StressedBread
         }
         internal void Insert()
         {
+            string? date;
+
             Console.Clear();
 
-            string? date = helpers.ValidateDate("Insert date in dd/mm/yyyy format.");
+            Console.WriteLine("Do you wish to input current date? Press Y for yes or N for no");
+            ConsoleKeyInfo input = Console.ReadKey();
+            switch (input.Key)
+            {
+                case ConsoleKey.Y:
+                    date = helpers.InputCurrentDate();
+                    Console.WriteLine();
+                    break;
+                case ConsoleKey.N:
+                    date = helpers.ValidateDate("\nInsert date in dd/mm/yyyy format.");
+                    break;
+                default:
+                    date = helpers.ValidateDate("\nInvalid input! Insert date manually in dd/mm/yyyy format.");
+                    break;
+            }
+
             int quantity = helpers.ValidateInt("Insert quantity.");
 
             string commandText = @"INSERT INTO drinking_water (Date, Quantity)
@@ -55,7 +72,24 @@ namespace HabitTracker.StressedBread
             {
                 if (reader.Read())
                 {
-                    string? date = helpers.ValidateDate("Insert date in dd/mm/yyyy format.");
+                    string? date;
+
+                    Console.WriteLine("Do you wish to input current date? Press Y for yes or N for no");
+                    ConsoleKeyInfo input = Console.ReadKey();
+                    switch (input.Key)
+                    {
+                        case ConsoleKey.Y:
+                            date = helpers.InputCurrentDate();
+                            Console.WriteLine();
+                            break;
+                        case ConsoleKey.N:
+                            date = helpers.ValidateDate("\nInsert date in dd/mm/yyyy format.");
+                            break;
+                        default:
+                            date = helpers.ValidateDate("\nInvalid input! Insert date manually in dd/mm/yyyy format.");
+                            break;
+                    }
+
                     int quantity = helpers.ValidateInt("Insert quantity.");
 
                     List<SqliteParameter> updateParameters = new List<SqliteParameter>()
@@ -130,7 +164,7 @@ namespace HabitTracker.StressedBread
                 }
             }
 
-            Console.WriteLine("Press any key to continue.");
+            Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
         }
     }
