@@ -2,12 +2,16 @@
 
 // Initialize the database input handler
 DatabaseInput databaseInput = new();
+AutomaticSeeding automaticSeeding = new();
 
 ConsoleKeyInfo keyPressed;
 bool endApp = false;
 
 // Create the necessary table in the database
 databaseInput.CreateTable();
+
+// Automatically seed the database if the table is empty
+automaticSeeding.IsTableEmpty();
 
 while (!endApp)
 {
