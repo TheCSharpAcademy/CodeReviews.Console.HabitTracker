@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using System;
 
 namespace HabitTracker.StressedBread
 {
@@ -8,117 +9,101 @@ namespace HabitTracker.StressedBread
         DatabaseService databaseService = new();
         internal void CreateTable()
         {
-            string commandText = @"CREATE TABLE IF NOT EXISTS drinking_water ( 
+            string createHabit = @"CREATE TABLE IF NOT EXISTS habits ( 
                                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                Date TEXT,
-                                Quantity INTEGER
+                                HabitName TEXT,
+                                Unit TEXT
                                 )";
-            databaseService.ExecuteCommand(commandText);
-        }
-        internal void Insert()
-        {
-            string? date;
 
+            string createHabitData = @"CREATE TABLE IF NOT EXISTS habit_data ( 
+                                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                                HabitID INTEGER,
+                                Date TEXT,
+                                Quantity INTEGER,
+                                FOREIGN KEY (HabitID) REFERENCES habits(ID) ON DELETE CASCADE
+                                )";
+
+            databaseService.ExecuteCommand(createHabit);
+            databaseService.ExecuteCommand(createHabitData);
+        }
+        internal void InsertHabit()
+        {
             Console.Clear();
 
-            Console.WriteLine("Do you wish to input current date? Press Y for yes or N for no");
-            ConsoleKeyInfo input = Console.ReadKey();
-            switch (input.Key)
-            {
-                case ConsoleKey.Y:
-                    date = helpers.InputCurrentDate();
-                    Console.WriteLine();
-                    break;
-                case ConsoleKey.N:
-                    date = helpers.ValidateDate("\nInsert date in dd/mm/yyyy format.");
-                    break;
-                default:
-                    date = helpers.ValidateDate("\nInvalid input! Insert date manually in dd/mm/yyyy format.");
-                    break;
-            }
+            string? name = helpers.ValidateString("Input the name of the habit.");
+            string? unit = helpers.ValidateString("Input the unit of measurement.");
 
-            int quantity = helpers.ValidateInt("Insert quantity.");
-
-            string commandText = @"INSERT INTO drinking_water (Date, Quantity)
-                       VALUES (@date, @quantity)
+            string commandText = @"INSERT INTO habits (HabitName, Unit)
+                       VALUES (@name, @unit)
                        ";
             List<SqliteParameter> parameters = new List<SqliteParameter>()
             {
+                new SqliteParameter(@"name", name),
+                new SqliteParameter(@"unit", unit)
+            };
+
+            databaseService.ExecuteCommand(commandText, parameters);
+            Console.WriteLine("Succefully inserted! Press any key to return to menu.");
+            Console.ReadKey();
+        }
+        internal void InsertHabitData()
+        {
+            Console.Clear();
+
+            int index = helpers.ValidateInt("Choose which habit you want to insert data into by ID.");
+            if (!HabitExists(index, "habits")) return;
+
+            string? date = helpers.GetDateInput();
+            int quantity = helpers.ValidateInt("Insert the quantity.");
+
+            string commandText = @"INSERT INTO habit_data (HabitID, Date, Quantity)
+                       VALUES (@index, @date, @quantity)
+                       ";
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
+            {
+                new SqliteParameter(@"index", index),
                 new SqliteParameter(@"date", date),
                 new SqliteParameter(@"quantity", quantity)
             };
 
             databaseService.ExecuteCommand(commandText, parameters);
+            Console.WriteLine("Succefully inserted! Press any key to return to menu.");
+            Console.ReadKey();
         }
         internal void Update()
         {
             Console.Clear();
 
-            int index = helpers.ValidateInt("Choose which row you want to update.");
+            Console.WriteLine("Press 1 to update habits or press 2 to edit habit data.");
+            ConsoleKeyInfo input = Console.ReadKey();
 
+            int index = helpers.ValidateInt("\nChoose which row you want to update."); 
 
-            string selectText = @"SELECT ID FROM drinking_water
-                                  WHERE ID = @index";
-            string updateText = @"UPDATE drinking_water
-                                  SET Date = @date, Quantity = @quantity
-                                  WHERE ID = @index
-                                  ";
-            List<SqliteParameter> selectParameters = new List<SqliteParameter>()
+            switch (input.Key)
             {
-                new SqliteParameter(@"index", index)
-            };
+                case ConsoleKey.NumPad1:
+                case ConsoleKey.D1:
+                    UpdateHabit(index);
+                    break;
 
-            using (SqliteDataReader reader = databaseService.ExecuteRead(selectText, selectParameters))
-            {
-                if (reader.Read())
-                {
-                    string? date;
+                case ConsoleKey.NumPad2:
+                case ConsoleKey.D2:
+                    UpdateHabitData(index);
+                    break;
 
-                    Console.WriteLine("Do you wish to input current date? Press Y for yes or N for no");
-                    ConsoleKeyInfo input = Console.ReadKey();
-                    switch (input.Key)
-                    {
-                        case ConsoleKey.Y:
-                            date = helpers.InputCurrentDate();
-                            Console.WriteLine();
-                            break;
-                        case ConsoleKey.N:
-                            date = helpers.ValidateDate("\nInsert date in dd/mm/yyyy format.");
-                            break;
-                        default:
-                            date = helpers.ValidateDate("\nInvalid input! Insert date manually in dd/mm/yyyy format.");
-                            break;
-                    }
-
-                    int quantity = helpers.ValidateInt("Insert quantity.");
-
-                    List<SqliteParameter> updateParameters = new List<SqliteParameter>()
-                    {
-                        new SqliteParameter(@"index", index),
-                        new SqliteParameter(@"date", date),
-                        new SqliteParameter(@"quantity", quantity)
-                    };
-
-                    reader.Close();
-                    databaseService.ExecuteCommand(updateText, updateParameters);
-                    Console.WriteLine("Succefully updated! Press any key to return to menu.");
-                }
-                else
-                {
-                    reader.Close();
-                    Console.WriteLine("Specified row doesn't exist! Press any key to return to menu.");
-                }
-                Console.ReadKey();
-            }
+                default:
+                    Console.WriteLine("Invalid input! Press any key to return to menu.");
+                    Console.ReadKey();
+                    break;
+            }                   
         }
         internal void Delete()
         {
             Console.Clear();
 
             int index = helpers.ValidateInt("Choose which row you want to update.");
+            if (!HabitExists(index, "habits")) return;
 
-            string selectText = @"SELECT ID FROM drinking_water
-                                  WHERE ID = @index";
             string deleteText = @"DELETE FROM drinking_water
                                   WHERE ID = @index";
             List<SqliteParameter> parameters = new List<SqliteParameter>()
@@ -126,22 +111,11 @@ namespace HabitTracker.StressedBread
                 new SqliteParameter(@"index", index),
             };
 
-            using (SqliteDataReader reader = databaseService.ExecuteRead(selectText, parameters))
-            {
-                if (reader.Read())
-                {
-                    reader.Close();
-                    databaseService.ExecuteCommand(deleteText, parameters);
-                    Console.WriteLine("Succefully deleted! Press any key to return to menu.");
-                }
-                else
-                {
-                    reader.Close();
-                    Console.WriteLine("Specified row doesn't exist! Press any key to return to menu.");
-                }
-                Console.ReadKey();
-            }
+            databaseService.ExecuteCommand(deleteText, parameters);
+            Console.WriteLine("Succefully deleted! Press any key to return to menu.");
+            Console.ReadKey();
         }
+        //Implement view and select filters
         internal void View()
         {
             Console.Clear();
@@ -166,6 +140,78 @@ namespace HabitTracker.StressedBread
 
             Console.WriteLine("\nPress any key to continue.");
             Console.ReadKey();
+        }
+        internal void UpdateHabit(int index)
+        {
+            if (!HabitExists(index, "habits")) return;
+
+            string? name = helpers.ValidateString("Update the name of the habit.");
+            string? unit = helpers.ValidateString("Update the unit of measurement.");
+
+            string commandText = @"UPDATE habits
+                                  SET HabitName = @name, Unit = @unit
+                                  WHERE ID = @index
+                                  ";
+
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
+            {
+                new SqliteParameter(@"index", index),
+                new SqliteParameter(@"name", name),
+                new SqliteParameter(@"unit", unit)
+            };
+
+            databaseService.ExecuteCommand(commandText, parameters);
+            Console.WriteLine("Succefully updated! Press any key to return to menu.");
+            Console.ReadKey();
+        }
+        internal void UpdateHabitData(int index)
+        {
+            if (!HabitExists(index, "habit_data")) return;
+
+            string? date = helpers.GetDateInput();
+            string? quantity = helpers.ValidateString("Update the quantity of measurement.");
+
+            string commandText = @"UPDATE habit_data
+                                  SET Date = @date, Quantity = @quantity
+                                  WHERE ID = @index
+                                  ";
+
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
+            {
+                new SqliteParameter(@"index", index),
+                new SqliteParameter(@"date", date),
+                new SqliteParameter(@"quantity", quantity)
+            };
+
+            databaseService.ExecuteCommand(commandText, parameters);
+            Console.WriteLine("Succefully updated! Press any key to return to menu.");
+            Console.ReadKey();
+        }
+        private bool HabitExists(int index, string tableName)
+        {
+            string selectText = $@"SELECT ID FROM {tableName}
+                                  WHERE ID = @index";
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
+            {
+                new SqliteParameter(@"index", index),
+            };
+
+            using (SqliteDataReader reader = databaseService.ExecuteRead(selectText, parameters))
+            {
+                if (reader.Read())
+                {
+                    reader.Close();
+                    return true;
+                }
+                else
+                {
+                    reader.Close();
+                    Console.WriteLine("Specified ID doesn't exist! Press any key to return to menu.");
+                    Console.ReadKey();
+                    return false;
+                }
+
+            }
         }
     }
 }
