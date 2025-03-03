@@ -5,7 +5,14 @@ namespace HabitTracker.StressedBread
     class DatabaseService
     {
         // Connection string to the SQLite database
-        string connectionString = @"Data Source=HabitTracker.db";
+        string? databasePath;
+        string connectionString;
+
+        internal DatabaseService()
+        {
+            databasePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Database\\HabitTracker.db";
+            connectionString = $@"Data Source={databasePath}";
+        }
 
         // Method to execute a non-query command (e.g., INSERT, UPDATE, DELETE)
         internal void ExecuteCommand(string commandText, List<SqliteParameter>? parameters = null)
@@ -45,7 +52,7 @@ namespace HabitTracker.StressedBread
 
         // Method to execute a query command and return a data reader (e.g., SELECT)
         internal SqliteDataReader? ExecuteRead(string commandText, List<SqliteParameter>? parameters = null)
-        {            
+        {
             try
             {
                 SqliteConnection connection = new SqliteConnection(connectionString);
@@ -72,7 +79,7 @@ namespace HabitTracker.StressedBread
                 Console.WriteLine("Press any key to close the applicaiton");
                 Console.ReadKey();
                 Environment.Exit(0);
-            }            
+            }
             return null;
         }
     }
