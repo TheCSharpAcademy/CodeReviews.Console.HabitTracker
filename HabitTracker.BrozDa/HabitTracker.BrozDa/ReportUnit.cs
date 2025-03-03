@@ -1,11 +1,11 @@
 ﻿namespace HabitTracker.BrozDa
 {
     /// <summary>
-    /// Represent report unit, object containing current report data for the table
+    /// Represent report unit, object containing current report data for the habit
     /// </summary>
     internal class ReportUnit
     {
-        public string Table { get; init; }
+        public string HabitName { get; init; }
         public string Unit { get; init; }
         public int Count { get; init; }
         public int TotalVolume { get; init; }
@@ -18,26 +18,19 @@
         /// <summary>
         /// Initializes new object of <see cref="ReportUnit"/> class
         /// </summary>
-        /// <param name="table"><see cref="string"/> value representing name of the table</param>
-        /// <param name="unit"><see cref="string"/> value representing unit of the table</param>
-        /// <param name="count"><see cref="int"/> value representing number of records in the table</param>
-        /// <param name="totalVolume"><see cref="int"/> value representing total volume of all records</param></param>
-        /// <param name="averageVolume"><see cref="int"/> value representing average volume for the records</param></param>
-        /// <param name="minVolume"><see cref="int"/> value representing minimum volume </param>
-        /// <param name="minVolumeDate"><see cref="DateTime"/> value representing Date when minimum value was inserted to the database</param>
-        /// <param name="maxVolume"><see cref="int"/> value representing maximum volume </param>
-        /// <param name="maxVolumeDate"><see cref="DateTime"/> value representing Date when maximu value was inserted to the database</param>
-        public ReportUnit(string table, string unit, int count, int totalVolume, int averageVolume, int minVolume, DateTime minVolumeDate, int maxVolume, DateTime maxVolumeDate)
+        /// <param name="habit"><see cref="Habit"/> for which report should be generated</param>
+        /// <param name="records"><see cref="List{T}"/> of records for which report should be generated</param>
+        public ReportUnit(Habit habit, List<HabitRecord> records)
         {
-            Table = table;
-            Unit = unit;
-            Count = count;
-            TotalVolume = totalVolume;
-            AverageVolume = averageVolume;
-            MinVolume = minVolume;
-            MinVolumeDate = minVolumeDate;
-            MaxVolume = maxVolume;
-            MaxVolumeDate = maxVolumeDate;
+            HabitName = habit.Name;
+            Unit = habit.Unit;
+            Count = records.Count;
+            TotalVolume = records.Sum(x => x.Volume);
+            AverageVolume = TotalVolume/Count;
+            MinVolume = records.Min(x => x.Volume);
+            MinVolumeDate = records.Find(x => x.Volume == MinVolume)!.Date;
+            MaxVolume = records.Max(x => x.Volume);
+            MaxVolumeDate = records.Find(x => x.Volume == MaxVolume)!.Date;
         }
         /// <summary>
         /// Created <see cref="string"/> value contaning report text
@@ -45,14 +38,19 @@
         /// <returns><see cref="string"/> value contaning report text</returns>
         public string GenerateReport()
         {
-            return $"Here is your report for {Table}\n" +
+            return $"Here is your report for {HabitName}\n" +
                    $"\n" +
                    $"You have {Count} records\n" +
                    $"Your total volume was: {TotalVolume} {Unit}\n" +
-                   "Your Average volume was {AverageVolume} {Unit}\n" +
+                   $"Your Average volume was {AverageVolume} {Unit}\n" +
                    $"Your minimum volume was {MinVolume} {Unit} which was done on {FormatDate(MinVolumeDate)}\n" +
                    $"Your maximum volume was {MaxVolume} {Unit} which was done on {FormatDate(MaxVolumeDate)}\n";
         }
+        /// <summary>
+        /// Formats the Date of the record to desired form
+        /// </summary>
+        /// <param name="date"><see cref="DateTime"/> from the record</param>
+        /// <returns>Formated input</returns>
         private string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy");
     }
 }

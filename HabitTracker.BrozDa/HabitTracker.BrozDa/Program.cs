@@ -5,17 +5,17 @@
         static void Main(string[] args)
         {
             string dateFormat = "dd-MM-yyyy";
-            string databaseName = "habit-tracker.sqlite";
+            string databasePath = "habit-tracker.sqlite";
+            string connectionString = @$"Data Source={databasePath};Version=3;";
 
-            DatabaseReader reader = new DatabaseReader(databaseName, dateFormat);
-            DatabaseWriter writer = new DatabaseWriter(databaseName, dateFormat);
-            InputManager inputManager = new InputManager(dateFormat);  
+            HabitRepository habitRepository = new HabitRepository(connectionString);
+            HabitRecordRepository habitRecordRepository = new HabitRecordRepository(connectionString);
+            InputManager inputManager = new InputManager(dateFormat);
             OutputManager outputManager = new OutputManager(dateFormat);
 
-            HabitTracker tracker = new HabitTracker(reader,writer,inputManager, outputManager);
+            HabitTrackerApp habitTrackerApp = new HabitTrackerApp(databasePath, habitRepository, habitRecordRepository, inputManager, outputManager);
 
-            tracker.Start();
-            Console.ReadLine();
+            habitTrackerApp.Run();
 
         }
     }

@@ -1,31 +1,52 @@
-﻿namespace HabitTracker.BrozDa
+﻿using System.Data.Common;
+using System.Runtime.InteropServices;
+
+namespace HabitTracker.BrozDa
 {
     /// <summary>
-    /// Class handling ouput to the console
+    /// Manages input for <see cref="HabitTrackerApp"/> application
     /// </summary>
     internal class OutputManager
     {
         public string DateFormat { get; init; }
 
+        public const int MainMenuLength = 5;
+        public const int HabitMenuLength = 7;
+
+        private const int IdColumnWidth = 5;
+        private const int NameColumnWidth = 15;
+        private const int UnitColumnWidth = 15;
+        private const int BorderPadding = 4;
+        private const int HorizontalLineLength = IdColumnWidth + NameColumnWidth + UnitColumnWidth + BorderPadding;
+
+        private const string IdFormatSpecifier = "{0,-5:N}";
         private const string FormatSpecifier = "{0,-15:N}";
-        private const int HorizonalLineLength = 5 + 15 + 15 + 4; //5 for ID, 2x15 for Date and Volume, +4 horizontalLines
-        public readonly int MainMenuLength = 5;
-        public readonly int HabitMenuLength = 7;
+
+        
 
         /// <summary>
         /// Initializes new object of <see cref="OutputManager"/> class
         /// </summary>
-        /// <param name="dateFormat"></param>
+        /// <param name="dateTimeFormat"><see cref="string"/> represeting DateTime format</param>
         public OutputManager(string dateFormat)
         {
             DateFormat = dateFormat;
         }
+        
         /// <summary>
-        /// Prints a main menu to the user
+        /// Resets console - clear screen and sets cursor to position (0,0)
+        /// </summary>
+        public void ResetConsole()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+        }
+        /// <summary>
+        /// Prints a main menu of <see cref="HabitTrackerApp"/> to the user
         /// </summary>
         public void PrintMainMenu()
         {
-            ClearAndSetCursor();
+            ResetConsole();
             Console.WriteLine("Welcome to habit tracker application");
             Console.WriteLine("Habit tracker can be used to track custom habits");
             Console.WriteLine();
@@ -38,13 +59,13 @@
             Console.Write("Your selection: ");
         }
         /// <summary>
-        /// Prints menu for habit actions to the user
+        /// Prints a habit menu of <see cref="HabitTrackerApp"/> to the user
         /// </summary>
         public void PrintHabitMenu()
         {
-            ClearAndSetCursor();
+            ResetConsole();
             Console.WriteLine("Please select the operation:");
-            Console.WriteLine("\t1. View all records");
+            Console.WriteLine("\t1. View records");
             Console.WriteLine("\t2. Insert record");
             Console.WriteLine("\t3. Update record");
             Console.WriteLine("\t4. Delete record");
@@ -55,106 +76,152 @@
             Console.Write("Your selection: ");
         }
         /// <summary>
-        /// Helper method used to clear console and reset the cursor
+        /// Prints out table header containing title aligned to the middle
         /// </summary>
-        private void ClearAndSetCursor()
+        /// <param name="title"><see cref="string"/> value representing title - Habit name</param>
+        private void PrintTableHeader(string title)
         {
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
+            ResetConsole();
+            PrintHorizontalLine();
+           
+            int totalSpaces = (HorizontalLineLength - 2 - title.Length);
+            int leftpadding = totalSpaces / 2;
+            int rightPadding = totalSpaces - leftpadding;
+            Console.WriteLine("|" + new string(' ', leftpadding) + title + new string(' ', rightPadding) + "|");
+
+            PrintHorizontalLine();
         }
         /// <summary>
-        /// Prints records from table to the user
+        /// Prints out <see cref="Habit"/> entities to the output in form of table
         /// </summary>
-        /// <param name="table"><see cref="string"/> value represeting name of the table</param>
-        /// <param name="records"><see cref="List{T}"/> of <see cref="DatabaseRecord"/> values from the table</param>
-        /// <param name="unit"><see cref="string"/> value representing the record unit</param>
-        public void PrintRecordsFromTable(string table, List<DatabaseRecord> records, string unit)
+        /// <param name="habits"><see cref="List{Habit}"/> collection of <see cref="Habit"/> entities</param>
+        public void PrintHabits(List<Habit> habits)
         {
-            ClearAndSetCursor();
-            PrintHorizonalLine();
-            PrintTableHeader(table);
-            PrintHorizonalLine();
-            PrintTableColumns();
-            PrintHorizonalLine();
-            foreach (DatabaseRecord record in records) 
-            { 
-                PrintRecord(record, unit);
+            PrintTableHeader("Habits");
+
+            PrintHabitColumns();
+            PrintHorizontalLine();
+            if (habits == null || habits.Count == 0)
+            {
+                Console.WriteLine("You have no tracked habits yet");
+                PrintHorizontalLine();
+                return;
             }
-            PrintHorizonalLine();
+
+            foreach (Habit habit in habits)
+            {
+                PrintHabit(habit);
+            }
+            PrintHorizontalLine();
+
         }
         /// <summary>
-        /// Prints out columns of the table
+        /// Prints out <see cref="HabitRecord"/> entities to the output in form of table
         /// </summary>
-        public void PrintTableColumns()
+        /// <param name="habits"><see cref="List{T}"/> collection of <see cref="HabitRecord"/> entities</param>
+        public void PrintHabitRecords(List<HabitRecord> records, string unit)
+        {
+            PrintTableHeader("Habit Records");
+
+            PrintHabitRecordColumns();
+            PrintHorizontalLine();
+
+            if (records == null || records.Count == 0)
+            {
+                Console.WriteLine("You have no records of this habit yet");
+                PrintHorizontalLine();
+                return;
+            }
+
+            foreach (HabitRecord record in records) 
+            { 
+                PrintHabitRecord(record, unit);
+            }
+
+            PrintHorizontalLine();
+        }
+        /// <summary>
+        /// Prints out contents of single <see cref="HabitRecord"/> entity to the output as line in the table
+        /// </summary>
+        /// <param name="record"><see cref="HabitRecord"/> entity to be printed</param>
+        /// <param name="unit"><see cref="string"/> representing unit for the record</param>
+        private void PrintHabitRecord(HabitRecord record, string unit)
         {
             Console.Write('|');
+            Console.Write(string.Format("{0,-5}", record.Id));
+            Console.Write('|');
+            Console.Write(string.Format(FormatSpecifier, record.Date.ToString(DateFormat)));
+            Console.Write('|');
+            Console.Write(string.Format(FormatSpecifier, record.Volume + " " + unit));
+            Console.WriteLine('|');
+        }
+        /// <summary>
+        /// Prints out contents of single <see cref="Habit"/> entity to the output as line in the table
+        /// </summary>
+        /// <param name="record"><see cref="Habit"/> entity to be printed</param>
+        private void PrintHabit(Habit habit)
+        {
+            Console.Write('|');
+            Console.Write(string.Format("{0,-5}", habit.Id));
+            Console.Write('|');
+            Console.Write(string.Format(FormatSpecifier, habit.Name));
+            Console.Write('|');
+            Console.Write(string.Format(FormatSpecifier, habit.Unit));
+            Console.WriteLine('|');
+        }
+
+        private void PrintColumns(string[] columnNames)
+        {
+            Console.Write('|');
+            Console.Write(string.Format(IdFormatSpecifier, columnNames[0]));
+            Console.Write('|');
+
+            for (int i = 1; i < columnNames.Length; i++) 
+            {
+                Console.Write(string.Format(FormatSpecifier, columnNames[i]));
+                Console.Write('|');
+            }
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Prints out columns for <see cref="Habit"/> entity
+        /// </summary>
+        public void PrintHabitColumns()
+        {
+            PrintColumns(["ID", "Name", "Unit"]);
+
+            /*Console.Write('|');
+            Console.Write(string.Format("{0,-5}", "ID"));
+            Console.Write('|');
+            Console.Write(string.Format(FormatSpecifier, "Name"));
+            Console.Write('|');
+            Console.Write(string.Format(FormatSpecifier, "Unit"));
+            Console.Write('|');
+            Console.WriteLine();*/
+        }
+        /// <summary>
+        /// Prints out columns for <see cref="Habit"/> entity
+        /// </summary>
+        public void PrintHabitRecordColumns()
+        {
+            PrintColumns(["ID", "Date", "Volume"]);
+            /*Console.Write('|');
             Console.Write(string.Format("{0,-5:N}", "ID"));
             Console.Write('|');
             Console.Write(string.Format(FormatSpecifier, "Date"));
             Console.Write('|');
             Console.Write(string.Format(FormatSpecifier, "Volume"));
             Console.Write('|');
-            Console.WriteLine();
+            Console.WriteLine();*/
         }
         /// <summary>
-        /// Prints out single report, formated so its aligned to the table size
+        /// Prints out horizontal line to the output
         /// </summary>
-        /// <param name="record"><see cref="DatabaseRecord"/> object representing printer records</param>
-        /// <param name="unit"><see cref="string"/> value representing the record unit</param
-        public void PrintRecord(DatabaseRecord record, string unit) {
-
-            Console.Write('|');
-            Console.Write(string.Format("{0,-5}", record.ID));
-            Console.Write('|');
-            Console.Write(string.Format(FormatSpecifier, record.Date.ToString(DateFormat)));
-            Console.Write('|');
-            Console.Write(string.Format(FormatSpecifier, record.Volume + " " + unit));
-            Console.WriteLine('|');
-
-        }
-        /// <summary>
-        /// Prints single horizonal line, lenght is represented by HorizonalLineLength property of <see cref="OutputManager"/> object
-        /// </summary>
-        public void PrintHorizonalLine()
+        public void PrintHorizontalLine()
         {
-            Console.WriteLine(new string('-', HorizonalLineLength));
-        }
-        /// <summary>
-        /// Prints table header, name of the table aligned to the center
-        /// </summary>
-        /// <param name="table"><see cref="string"/> value represeting name of the table</param>
-        private void PrintTableHeader(string table)
-        {
-            string text = $"Table: {table}";
-            int totalSpaces = (HorizonalLineLength - 2 - text.Length);
-            int leftpadding = totalSpaces / 2;
-            int rightPadding = totalSpaces - leftpadding;
-
-            Console.WriteLine("|" + new string(' ', leftpadding) + text + new string(' ', rightPadding) + "|");
-        }
-        /// <summary>
-        /// Prints out curent tables in the database, printing is handled accordingly in case of no tables in the database
-        /// </summary>
-        /// <param name="listOfTables"><see cref="List{T}"/> of <see cref="string"/> values representing name of tables</param>
-        public void PrintTablesInDatabase(List<string> listOfTables)
-        {
-            ClearAndSetCursor();
-            Console.WriteLine("Currently tracked habits: ");
-
-            if (listOfTables == null || listOfTables.Count == 0)
-            {
-                Console.WriteLine("There are not tables in database yet");
-            }
-            else
-            {
-                for (int i = 0; i < listOfTables.Count; i++)
-                {
-                    Console.WriteLine($"\t{i + 1}: {listOfTables[i]}");
-                }
-            }
-            Console.WriteLine();
+            Console.WriteLine(new string('-', HorizontalLineLength));
         }
 
-        
     }
 }

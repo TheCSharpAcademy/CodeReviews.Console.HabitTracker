@@ -1,31 +1,39 @@
-﻿
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace HabitTracker.BrozDa
 {
     /// <summary>
-    /// Manages user input for <see cref="HabitTracker"/> database operations
+    /// Manages input for <see cref="HabitTrackerApp"/> application
     /// </summary>
     internal class InputManager
     {
         public string DateTimeFormat { get; init; }
 
         /// <summary>
-        /// Initializes new object of <see cref="InputManager"/> class
+        /// Initializes new object of InputManager class
         /// </summary>
-        /// <param name="dateTimeFormat"></param>
+        /// <param name="dateTimeFormat"><see cref="string"/> represeting DateTime format</param>
         public InputManager(string dateTimeFormat)
         {
             DateTimeFormat = dateTimeFormat;
         }
         /// <summary>
-        /// Gets new values for the record
+        /// Resets console - clear screen, set cursor to position (0,0) and set cursor visible
         /// </summary>
-        /// <returns><see cref="DatabaseRecord"/> object containing values entered by user</returns>
-        public DatabaseRecord GetValuesForRecord()
+        private void ResetConsole()
         {
-            DatabaseRecord newRecord = new DatabaseRecord();
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+            Console.CursorVisible = true;
+        }
+        /// <summary>
+        /// Retrieves a new <see cref="HabitRecord"/> based on user input
+        /// </summary>
+        /// <returns><see cref="HabitRecord"/> entity based on user input</returns>
+        public HabitRecord GetNewRecord()
+        {
+            HabitRecord newRecord = new HabitRecord();
 
             newRecord.Date = GetDateForRecord();
             newRecord.Volume = GetVolumeForRecord();
@@ -33,24 +41,41 @@ namespace HabitTracker.BrozDa
             return newRecord;
         }
         /// <summary>
-        /// Gets new values for existing record
+        /// Retrieved DateTime value from user input
         /// </summary>
-        /// <param name="ID"><see cref="int"/> value representing ID of modified record</param>
-        /// <returns><see cref="DatabaseRecord"/> object containing values entered by user</returns>
-        public DatabaseRecord GetValuesForRecord(int ID)
+        /// <returns><see cref="DateTime"/> value based on user input</returns>
+        private DateTime GetDateForRecord()
         {
-            DatabaseRecord newRecord = new DatabaseRecord();
+            DateTime date;
+            while (true)
+            {
+                Console.Write($"Please enter date value in {DateTimeFormat.ToUpper()} format, or enter [today] for today's date: ");
 
-            newRecord.ID = ID;
-            newRecord.Date = GetDateForRecord();
-            newRecord.Volume = GetVolumeForRecord();
+                string? userInput = Console.ReadLine()?.Trim().ToLower();
 
-            return newRecord;
+                if (string.IsNullOrEmpty(userInput))
+                {
+                    Console.WriteLine("Invalid date format. Please try again.");
+                    continue;
+                }
+
+                if (userInput == "today")
+                {
+                    return DateTime.Now;
+                }
+
+                if (DateTime.TryParseExact(userInput, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                {
+                    return date;
+                }
+
+                Console.WriteLine("Invalid date format. Please try again.");
+            }
         }
         /// <summary>
-        /// Helper method, which get a value for volume
+        /// Retrieves integer value representing volume of the record from user input
         /// </summary>
-        /// <returns>Valid <see cref="int"/> value representing volume</returns>
+        /// <returns><see cref="int"/> value representing volume of the record from user input</returns>
         private int GetVolumeForRecord()
         {
 
@@ -60,18 +85,160 @@ namespace HabitTracker.BrozDa
             return numericInput;
         }
         /// <summary>
-        /// Method to retreive valid <see cref="int"/> value
+        /// Retrieves a new <see cref="Habit"/> based on user input
         /// </summary>
-        /// <param name="prompt"><see cref="string"/> representing prompt for the user</param>
-        /// <param name="minValue"><see cref="int"/> representing minimum value for the record; value is inclusive</param>
-        /// <param name="maxValue"><see cref="int "/>representin maximum value for the record; value is inclusive</param>
-        /// <returns>Valid <see cref="int"/> value based on min and max value parameters</returns>
+        /// <returns><see cref="Habi"/> entity based on user input</returns>
+        public Habit GetNewHabit(List<Habit> existingHabits)
+        {
+            string name = GetNewHabitName(existingHabits);
+            string unit = GetNewHabitUnit();
+
+            return new Habit() { Name = name, Unit = unit };
+        }
+        /// <summary>
+        /// Retrieves string value representing name of <see cref="Habit"/> from user input
+        /// </summary>
+        /// <returns><see cref="string"/> value representing name of <see cref="Habit"/> from user input</returns>
+        private string GetNewHabitName(List<Habit> existingHabits)
+        {
+            HashSet<string> names = new HashSet<string>(existingHabits.Select(x => x.Name));
+            ResetConsole();
+
+            Console.WriteLine("Name of the habit can contain only letters or space between words, leading or trailing spaces are not permitted");
+            string name;
+
+            do
+            {
+                Console.Write("Please enter valid habit name: ");
+                name = Console.ReadLine() ?? string.Empty;
+
+                if (names.Contains(name))
+                {
+                    Console.WriteLine("This habit already exists");
+                }
+                else if (!IsInputAlphabetic(name))
+                {
+                    Console.WriteLine("This name is not valid");
+                }
+                else
+                {
+                    return name;
+                }
+            } while (true);
+        }
+        /// <summary>
+        /// Retrieves string value representing unit of <see cref="Habit"/> from user input
+        /// </summary>
+        /// <returns><see cref="string"/> value representing unit of <see cref="Habit"/> from user input</returns>
+        private string GetNewHabitUnit()
+        {
+            string unit;
+
+            do
+            {
+                Console.Write("Please enter valid measurement unit: ");
+                unit = Console.ReadLine() ?? string.Empty;
+
+                if (IsInputAlphabetic(unit))
+                {
+                    return unit;
+                }
+
+            } while (true);
+        }
+        /// <summary>
+        /// Checks whether input contains only letters
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns><see cref="bool"/> true if input contains only letters, false otherwise</returns>
+        private bool IsInputAlphabetic(string name)
+        {
+            return name == string.Empty || string.IsNullOrWhiteSpace(name)
+                ? false
+                : Regex.IsMatch(name, @"^[a-zA-Z]+( [a-zA-Z]+)*$");
+        }
+        /// <summary>
+        /// Gets a confirmation from user to confirm submitted operation performed on <see cref="Habit"/> entity
+        /// </summary>
+        /// <param name="habit"><see cref="Habit"/> entity being adjusted by the operation</param>
+        /// <param name="operation">Operation being performed eg.: delete, update, add</param>
+        /// <returns><see cref="bool"/> true if user confirms the operation, false otherwise</returns>
+        public bool ConfirmHabitOperation(Habit habit, string operation)
+        {
+            Console.CursorVisible = false;
+
+            Console.WriteLine();
+            Console.WriteLine($"Habit [{habit.Name}] with unit [{habit.Unit}] will be {operation}d.");
+            Console.WriteLine();
+            Console.WriteLine("Please press [ENTER] to confirm, anything else to cancel");
+
+            return Console.ReadKey(false).Key == ConsoleKey.Enter;
+
+        }
+        /// <summary>
+        /// Gets a confirmation from user to confirm submitted operation performed on <see cref="HabitRecord"/> entity
+        /// </summary>
+        /// <param name="habit"><see cref="Habit"/> to which provided record falls to</param>
+        /// <param name="record"><see cref="HabitRecord"/> entity being adjusted by the operation</param>
+        /// <param name="operation">Operation being performed eg.: delete, update, add</param>
+        /// <returns></returns>
+        public bool ConfirmHabitRecordOperation(Habit habit, HabitRecord record, string operation)
+        {
+            Console.CursorVisible = false;
+
+            Console.WriteLine();
+            Console.WriteLine($"Habit Record [{record.Date.ToString(DateTimeFormat)}] with volume [{record.Volume}] for habit [{habit.Name}] will be {operation}d.");
+            Console.WriteLine();
+            Console.WriteLine("Please press [ENTER] to confirm, anything else to cancel");
+
+            return Console.ReadKey(true).Key == ConsoleKey.Enter;
+
+        }
+        /// <summary>
+        /// Gets a valid <see cref="int"/> value representing ID of record
+        /// </summary>
+        /// <param name="ids"><see cref="HashSet{int}"/> containing values </param>
+        /// <param name="operation"></param>
+        /// <returns>value representing ID of record, or 0 in case user decided to exit</returns>
+        public int GetValidIdFromUser(HashSet<int> ids, string operation)
+        {
+            int numericInput;
+            string? input;
+            string prompt = $"Please enter a valid ID to {operation}, or enter [0] to return to the menu: ";
+
+            do
+            {
+                Console.Write(prompt);
+                input = Console.ReadLine();
+
+            } while (!int.TryParse(input, out numericInput) || (!ids.Contains(numericInput) && numericInput != 0));
+
+            return numericInput;
+        }
+        /// <summary>
+        /// Method facilitating getting user input in the menu
+        /// </summary>
+        /// <param name="maxValue"><see cref="int"/> value representing maximum valid input representing menu option</param>
+        /// <returns></returns>
+        public int GetInputInMenu(int maxValue)
+        {
+            int numericInput = GetValidIntegerInput("",1, maxValue);
+            return numericInput;
+        }
+        /// <summary>
+        /// Retrieves valid integer input from the user
+        /// </summary>
+        /// <param name="prompt">string value representing prompt for the input</param>
+        /// <param name="minValue">Minimum valid value - inclusive</param>
+        /// <param name="maxValue">Maximum valid value - inclusive</param>
+        /// <returns><see cref="int"/> value representing user input</returns>
         private int GetValidIntegerInput(string prompt, int minValue, int maxValue)
         {
             int numericInput;
             string? input;
 
             Console.Write(prompt);
+
             input = Console.ReadLine();
 
             while (!int.TryParse(input, out numericInput) || numericInput < minValue || numericInput > maxValue)
@@ -80,163 +247,18 @@ namespace HabitTracker.BrozDa
                 input = Console.ReadLine();
             }
 
-            return numericInput;
-        }
-        /// <summary>
-        /// Method to retreive valid <see cref="int"/> value
-        /// </summary>
-        /// <param name="prompt"><see cref="string"/> representing prompt for the user</param>
-        /// <param name="IDs"><see cref="HashSet{T}"/> of <see cref="int"/> values represeting data set of valid integers</param>
-        /// <returns>Valid <see cref="int"/> value based on presented HashsSet</returns>
-        private int GetValidIntegerInput(string prompt, HashSet<int> IDs)
-        {
-            int numericInput;
-            string? input;
-
-            Console.Write(prompt);
-            input = Console.ReadLine();
-
-            while (!int.TryParse(input, out numericInput) || (!IDs.Contains(numericInput) && numericInput != 0))
-            {
-                Console.Write("Please enter valid value: ");
-                input = Console.ReadLine();
-            }
 
             return numericInput;
         }
         /// <summary>
-        /// Retreives <see cref="DateTime"/> value from user based on DateTime format property of <see cref="InputManager"/> object
+        /// Prints out "press any key to continue" text and awaits user input before moving forward
         /// </summary>
-        /// <returns>Valid <see cref="DateTime"/> value on DateTime format property of <see cref="InputManager"/> object</returns>
-        public DateTime GetDateForRecord()
+        public void PrintPressAnyKeyToContinue()
         {
-            DateTime date;
-            while (true)
-            {
-                Console.Write($"Please enter date value in {DateTimeFormat.ToUpper()} format, or enter \"today\" for today's date: ");
-
-                string? userInput = Console.ReadLine()?.Trim().ToLower();
-
-                if (string.IsNullOrEmpty(userInput))
-                {
-                    Console.WriteLine("Invalid date format. Please try again.");
-                    continue;
-                }
-                else if (userInput == "today")
-                {
-                    return DateTime.Now;
-                }
-                else if (DateTime.TryParseExact(userInput, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
-                {
-                    return date;
-                }
-
-                Console.WriteLine("Invalid date format. Please try again.");
-            }
+            Console.WriteLine();
+            Console.WriteLine("Press any key to continue");
+            Console.ReadLine();
         }
-        /// <summary>
-        /// Gets table name based on user input <see cref="int"/>value representing table in the output
-        /// </summary>
-        /// <param name="tables"><see cref="List{T}"/> of <see cref="string"/> values representing tables in the database</param>
-        /// <returns><see cref="string"/> value representing name of the table or an empty string if user decided to abort the operation</returns>
-        public string GetTableNameById(List<string> tables)
-        {
-            string prompt = "Please enter ID of the table for new record (or press 0 to return): ";
-            int numericInput = GetValidIntegerInput(prompt,0,tables.Count);
 
-            return numericInput == 0 ? string.Empty : tables[numericInput - 1];
-        }
-        /// <summary>
-        /// Gets ID of <see cref="DatabaseRecord"/> representing record ID 
-        /// </summary>
-        /// <param name="records"><see cref="List{T}"/> of <see cref="DatabaseRecord"/> values represting records in the table</param>
-        /// <param name="operation"><see cref="string"/> value representing the operation user wish to perform</param>
-        /// <returns><see cref="int"/> value representing ID of the record in table, or 0 if user decided to abort the action</returns>
-        public int GetRecordIdFromUser(List<DatabaseRecord> records, string operation)
-        {
-            int numericInput;
-            HashSet<int> IDs = new HashSet<int>(records.Select(record => record.ID));
-
-            string prompt = $"Please valid ID of the record you wish to {operation}, or enter \"0\" to return to menu:";
-
-            numericInput = GetValidIntegerInput(prompt, IDs);
-            return numericInput;
-        }
-        /// <summary>
-        /// Retreives <see cref="int"/> value when user is in the menu, input is validated to make sure only valid option is processed further
-        /// </summary>
-        /// <param name="maxValue"><see cref="int"/> value representing maximum valid option in the menu</param>
-        /// <returns><see cref="int"/> value representing user choice</returns>
-        public int GetInputInMenu(int maxValue)
-        {   
-            int numericInput = GetValidIntegerInput("", 1, maxValue);
-            return numericInput;
-        }
-        /// <summary>
-        /// Gets a <see cref="string"/> value representing name of new table, contains validation to make sure same name isn't present twice
-        /// </summary>
-        /// <param name="existingTables"><see cref="List{T}"/> of <see cref="string"/> values representing current tables in the database</param>
-        /// <returns><see cref="string"/> value representing name of new table</returns>
-        public string GetNewTableName(List<string> existingTables)
-        {
-            string? name;
-            Console.WriteLine("Name of the habit can contain only alpha-numeric characters or space between words, leading or trailing spaces are not permitted");
-            Console.Write("Please enter habit name: ");
-            name = Console.ReadLine();
-            while (!IsTableNameValid(name) || existingTables.Contains(name))
-            {
-                Console.WriteLine("Name invalid or already exists");
-                Console.Write("Please enter valid name: ");
-                name = Console.ReadLine();
-            }
-            return name;
-        }
-        /// <summary>
-        /// Gets a <see cref="string"/> value representing of table currently present in the database
-        /// </summary>
-        /// <param name="existingTables"><see cref="List{T}"/> of <see cref="string"/> values representing current tables in the database</param>
-        /// <returns><see cref="string"/> value representing of table currently present in the database, or 0 if user decides to abort the operation</returns>
-        public string GetExistingTableName(List<string> existingTables)
-        {
-            string? name;
-            Console.Write("Please enter name of the table to be deleted (or enter \"0\" to return to main menu): ");
-            name = Console.ReadLine();
-            while (!existingTables.Contains(name) && name != "0")
-            {
-                Console.Write("Please enter valid name (or enter 0 to return to main menu): ");
-                name = Console.ReadLine();
-            }
-            return name;
-        }
-        /// <summary>
-        /// Checks whether provided <see cref="string"/> value is valid name for the table
-        /// Valid name can contain alphanumeric characters and single space between words. No leading or trailing spaces
-        /// </summary>
-        /// <param name="name"><see cref="string"/> value representing name of the table</param>
-        /// <returns><see cref="bool"/> true, if the name is valid; <see cref="bool"/> false otherwise</returns>
-        private bool IsTableNameValid(string name)
-        {
-            if (name == null || name.Length == 0)
-                return false;
-
-            return Regex.IsMatch(name, @"^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$");
-        }
-        /// <summary>
-        /// Gets a valid unit for the table
-        /// </summary>
-        /// <returns><see cref="string"/> value representing the unit</returns>
-        public string GetNewTableUnit()
-        {
-            string? name;
-            Console.Write("Please enter measurement unit: ");
-            name = Console.ReadLine();
-
-            while (name == null)
-            {
-                Console.Write("Please enter valid unit");
-            }
-
-            return name;
-        }
     }
 }
