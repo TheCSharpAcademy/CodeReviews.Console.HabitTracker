@@ -85,23 +85,26 @@ namespace HabitTracker.StressedBread
         // Method to display data from the database based on a SQL command
         internal void DisplayData(string commandText, List<SqliteParameter>? parameters = null)
         {
-            using (SqliteDataReader reader = databaseService.ExecuteRead(commandText, parameters))
+            using (SqliteDataReader? reader = databaseService.ExecuteRead(commandText, parameters))
             {
-                // Read and display each row of the result set
-                while (reader.Read())
+                if (reader != null)
                 {
-                    for (int i = 0; i < reader.FieldCount; i++)
+                    // Read and display each row of the result set
+                    while (reader.Read())
                     {
-                        string columnName = reader.GetName(i);
-                        var columnValue = reader.GetValue(i);
-                        // Format date columns to dd/MM/yyyy
-                        if (columnValue is string dateString && DateTime.TryParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+                        for (int i = 0; i < reader.FieldCount; i++)
                         {
-                            columnValue = date.ToString("dd/MM/yyyy");
+                            string columnName = reader.GetName(i);
+                            var columnValue = reader.GetValue(i);
+                            // Format date columns to dd/MM/yyyy
+                            if (columnValue is string dateString && DateTime.TryParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+                            {
+                                columnValue = date.ToString("dd/MM/yyyy");
+                            }
+                            Console.Write($@"| {columnName}: {columnValue} ");
                         }
-                        Console.Write($@"| {columnName}: {columnValue} ");
+                        Console.WriteLine();
                     }
-                    Console.WriteLine();
                 }
             }
         }

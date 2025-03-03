@@ -280,18 +280,25 @@ Press 4 to filter by habit, date and quantity.
                     new SqliteParameter(@"value", value),
                 };
 
-            using (SqliteDataReader reader = databaseService.ExecuteRead(selectText, parameters))
+            using (SqliteDataReader? reader = databaseService.ExecuteRead(selectText, parameters))
             {
-                if (reader.Read())
+                if (reader != null)
                 {
-                    reader.Close();
-                    return true;
+                    if (reader.Read())
+                    {
+                        reader.Close();
+                        return true;
+                    }
+                    else
+                    {
+                        reader.Close();
+                        Console.WriteLine("Habit doesn't exist! Press any key to return to menu.");
+                        Console.ReadKey();
+                        return false;
+                    }
                 }
                 else
                 {
-                    reader.Close();
-                    Console.WriteLine("Habit doesn't exist! Press any key to return to menu.");
-                    Console.ReadKey();
                     return false;
                 }
             }

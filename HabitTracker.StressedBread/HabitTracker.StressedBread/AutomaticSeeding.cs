@@ -11,11 +11,14 @@ namespace HabitTracker.StressedBread
             int count = -1;
             string commandText = @"SELECT COUNT(*) FROM habits";
 
-            using (SqliteDataReader reader = databaseService.ExecuteRead(commandText))
+            using (SqliteDataReader? reader = databaseService.ExecuteRead(commandText))
             {
-                if (reader.Read())
+                if (reader != null)
                 {
-                    count = reader.GetInt32(0);
+                    if (reader.Read())
+                    {
+                        count = reader.GetInt32(0);
+                    }
                 }
             }
 
