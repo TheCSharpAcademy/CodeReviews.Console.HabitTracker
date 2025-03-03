@@ -9,7 +9,6 @@ namespace HabitTracker.BrozDa
     internal class HabitRepository : IHabitRepository
     {
         private readonly string _connectionString;
-        private readonly string tableName = "Habits";
         /// <summary>
         /// Initializes repository object
         /// </summary>
@@ -21,11 +20,11 @@ namespace HabitTracker.BrozDa
         /// <inheritdoc/>
         public void CreateTable()
         {
-            string sql = $"CREATE TABLE [{tableName}] (" +
-                        $"ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        $"Habit TEXT," +
-                        $"Unit TEXT" +
-                        $");";
+            string sql = "CREATE TABLE Habits (" +
+                        "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "Habit TEXT," +
+                        "Unit TEXT" +
+                        ");";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
@@ -36,7 +35,7 @@ namespace HabitTracker.BrozDa
         /// <inheritdoc/>
         public void Insert(Habit entity)
         {
-            string sql = $"INSERT INTO [{tableName}] (Habit, Unit) " +
+            string sql = "INSERT INTO Habits (Habit, Unit) " +
                              $"VALUES (@habit ,@unit);";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
@@ -51,7 +50,7 @@ namespace HabitTracker.BrozDa
         /// <inheritdoc/>
         public void Update(Habit entity)
         {
-            string sql = $"UPDATE [{tableName}] SET Habit=@habit, Unit=@unit WHERE Id=@id;";
+            string sql = "UPDATE Habits SET Habit=@habit, Unit=@unit WHERE Id=@id;";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
@@ -66,7 +65,7 @@ namespace HabitTracker.BrozDa
         /// <inheritdoc/>
         public void Delete(Habit entity)
         {
-            string sql = $"DELETE From [{tableName}] Where Id=@id;";
+            string sql = "DELETE From Habits Where Id=@id;";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
@@ -80,7 +79,7 @@ namespace HabitTracker.BrozDa
         public IEnumerable<Habit> GetAll()
         {
             List<Habit> records = new List<Habit>();
-            string sql = $"SELECT * FROM [{tableName}]";
+            string sql = "SELECT * FROM Habits";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
@@ -103,7 +102,7 @@ namespace HabitTracker.BrozDa
         {
             List<int> ids = new List<int>();
 
-            string sql = $"SELECT ID FROM [{tableName}]";
+            string sql = "SELECT ID FROM Habits";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
@@ -123,7 +122,7 @@ namespace HabitTracker.BrozDa
         public void InsertBulk(IEnumerable<Habit> records) 
         {
 
-            string sql = $"INSERT INTO [{tableName}] (Habit, Unit) " +
+            string sql = "INSERT INTO Habits (Habit, Unit) " +
                              $"VALUES (@habit ,@unit);";
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
@@ -150,7 +149,7 @@ namespace HabitTracker.BrozDa
         /// <inheritdoc/>
         public Habit GetHabitById(int habitId)
         {
-            string sql = "Select * From [Habits] Where Id=@id;";
+            string sql = "Select * From Habits Where Id=@id;";
             Habit habit = new Habit();
 
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
