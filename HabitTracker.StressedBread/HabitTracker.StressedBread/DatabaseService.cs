@@ -37,14 +37,14 @@ namespace HabitTracker.StressedBread
             catch (SqliteException ex)
             {
                 Console.WriteLine($"Database Error: {ex.Message}");
-                Console.WriteLine("Press any key to close the applicaiton");
+                Console.WriteLine("Press any key to close the application");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unexpected Error: {ex.Message}");
-                Console.WriteLine("Press any key to close the applicaiton");
+                Console.WriteLine("Press any key to close the application");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
@@ -69,14 +69,14 @@ namespace HabitTracker.StressedBread
             catch (SqliteException ex)
             {
                 Console.WriteLine($"Database Error: {ex.Message}");
-                Console.WriteLine("Press any key to close the applicaiton");
+                Console.WriteLine("Press any key to close the application");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unexpected Error: {ex.Message}");
-                Console.WriteLine("Press any key to close the applicaiton");
+                Console.WriteLine("Press any key to close the application");
                 Console.ReadKey();
                 Environment.Exit(0);
             }

@@ -66,7 +66,7 @@ Press 5 to delete record.");
         case ConsoleKey.D5:
         case ConsoleKey.NumPad5:
             // Delete a record
-            databaseInput.Delete();
+            databaseInput.DeleteControl();
             break;
 
         default:

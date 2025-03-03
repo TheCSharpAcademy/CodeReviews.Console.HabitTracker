@@ -81,7 +81,7 @@ namespace HabitTracker.StressedBread
         {
             Console.Clear();
 
-            Console.WriteLine("Press 1 to update habits or press 2 to edit habit data.");
+            Console.WriteLine("Press 1 to update a habit or press 2 to edit habit data.");
             ConsoleKeyInfo input = Console.ReadKey();
 
             int index = helpers.ValidateInt("\nChoose which row you want to update.");
@@ -105,24 +105,33 @@ namespace HabitTracker.StressedBread
             }
         }
 
-        // Method to delete a habit
-        internal void Delete()
+        // Method to control delete operations
+        internal void DeleteControl()
         {
             Console.Clear();
 
-            int index = helpers.ValidateInt("Choose which row you want to update.");
-            if (!HabitExists(index.ToString(), "habits")) return;
+            Console.WriteLine("Press 1 to delete a habit or press 2 to delete habit data.");
+            ConsoleKeyInfo input = Console.ReadKey();
 
-            string deleteText = @"DELETE FROM drinking_water
-                                      WHERE ID = @index";
-            List<SqliteParameter> parameters = new List<SqliteParameter>()
-                {
-                    new SqliteParameter(@"index", index),
-                };
+            int index = helpers.ValidateInt("\nChoose which row you want to delete.");
 
-            databaseService.ExecuteCommand(deleteText, parameters);
-            Console.WriteLine("Successfully deleted! Press any key to return to menu.");
-            Console.ReadKey();
+            switch (input.Key)
+            {
+                case ConsoleKey.NumPad1:
+                case ConsoleKey.D1:
+                    DeleteHabit(index);
+                    break;
+
+                case ConsoleKey.NumPad2:
+                case ConsoleKey.D2:
+                    DeleteHabitData(index);
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid input! Press any key to return to menu.");
+                    Console.ReadKey();
+                    break;
+            }
         }
 
         // Method to control view operations
@@ -200,7 +209,7 @@ Press 4 to filter by habit, date and quantity.
                         break;
 
                     default:
-                        Console.WriteLine("\nInvalid Input! Press any key to reset.");
+                        Console.WriteLine("\nInvalid Input! Press any key to return to menu.");
                         Console.ReadKey();
                         break;
                 }
@@ -259,6 +268,45 @@ Press 4 to filter by habit, date and quantity.
 
             databaseService.ExecuteCommand(commandText, parameters);
             Console.WriteLine("Successfully updated! Press any key to return to menu.");
+            Console.ReadKey();
+        }
+
+        // Method to delete habit
+        internal void DeleteHabit(int index)
+        {
+            if (!HabitExists(index.ToString(), "habits")) return;
+            
+
+            string commandText = @"DELETE FROM habits
+                                      WHERE ID = @index
+                                      ";
+
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
+                {
+                    new SqliteParameter(@"index", index)
+                };
+
+            databaseService.ExecuteCommand(commandText, parameters);
+            Console.WriteLine("Successfully deleted! Press any key to return to menu.");
+            Console.ReadKey();
+        }
+
+        // Method to delete habit data
+        internal void DeleteHabitData(int index)
+        {
+            if (!HabitExists(index.ToString(), "habit_data")) return;
+
+            string commandText = @"DELETE FROM habit_data
+                                      WHERE ID = @index
+                                      ";
+
+            List<SqliteParameter> parameters = new List<SqliteParameter>()
+                {
+                    new SqliteParameter(@"index", index)
+                };
+
+            databaseService.ExecuteCommand(commandText, parameters);
+            Console.WriteLine("Successfully deleted! Press any key to return to menu.");
             Console.ReadKey();
         }
 
