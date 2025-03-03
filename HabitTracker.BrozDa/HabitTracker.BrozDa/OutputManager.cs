@@ -1,7 +1,4 @@
-﻿using System.Data.Common;
-using System.Runtime.InteropServices;
-
-namespace HabitTracker.BrozDa
+﻿namespace HabitTracker.BrozDa
 {
     /// <summary>
     /// Manages input for <see cref="HabitTrackerApp"/> application
@@ -169,7 +166,10 @@ namespace HabitTracker.BrozDa
             Console.Write(string.Format(FormatSpecifier, habit.Unit));
             Console.WriteLine('|');
         }
-
+        /// <summary>
+        /// Print columns provided as argument
+        /// </summary>
+        /// <param name="columnNames">string array containing names of columns</param>
         private void PrintColumns(string[] columnNames)
         {
             Console.Write('|');
@@ -183,22 +183,12 @@ namespace HabitTracker.BrozDa
             }
             Console.WriteLine();
         }
-
         /// <summary>
         /// Prints out columns for <see cref="Habit"/> entity
         /// </summary>
         public void PrintHabitColumns()
         {
             PrintColumns(["ID", "Name", "Unit"]);
-
-            /*Console.Write('|');
-            Console.Write(string.Format("{0,-5}", "ID"));
-            Console.Write('|');
-            Console.Write(string.Format(FormatSpecifier, "Name"));
-            Console.Write('|');
-            Console.Write(string.Format(FormatSpecifier, "Unit"));
-            Console.Write('|');
-            Console.WriteLine();*/
         }
         /// <summary>
         /// Prints out columns for <see cref="Habit"/> entity
@@ -206,14 +196,6 @@ namespace HabitTracker.BrozDa
         public void PrintHabitRecordColumns()
         {
             PrintColumns(["ID", "Date", "Volume"]);
-            /*Console.Write('|');
-            Console.Write(string.Format("{0,-5:N}", "ID"));
-            Console.Write('|');
-            Console.Write(string.Format(FormatSpecifier, "Date"));
-            Console.Write('|');
-            Console.Write(string.Format(FormatSpecifier, "Volume"));
-            Console.Write('|');
-            Console.WriteLine();*/
         }
         /// <summary>
         /// Prints out horizontal line to the output

@@ -134,7 +134,7 @@
         private void HandleInsertRecord(Habit habit)
         {
             HabitRecord newRecord = _inputManager.GetNewRecord();
-            newRecord.habitId = habit.Id;
+            newRecord.HabitId = habit.Id;
 
             if (_inputManager.ConfirmHabitRecordOperation(habit, newRecord, "create"))
             {
@@ -330,7 +330,7 @@
             
             for (int i = 0; i < 300; i++)
             {
-                records.Add(new HabitRecord { Date = start, Volume = random.Next(100), habitId=habit.Id});
+                records.Add(new HabitRecord { Date = start, Volume = random.Next(100), HabitId=habit.Id});
                 start = start.AddHours(random.Next(24));
             }
             return records;

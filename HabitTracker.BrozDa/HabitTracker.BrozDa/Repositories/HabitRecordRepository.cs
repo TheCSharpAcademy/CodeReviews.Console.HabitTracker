@@ -9,7 +9,7 @@ namespace HabitTracker.BrozDa
     internal class HabitRecordRepository : IHabitRecordRepository
     {
         private readonly string _connectionString;
-        private const string tableName = "Habit Records";
+        private const string tableName = "HabitRecords";
 
         /// <summary>
         /// Initializes repository object
@@ -47,7 +47,7 @@ namespace HabitTracker.BrozDa
             using SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@recordDate", entity.Date);
             command.Parameters.AddWithValue("@recordVolume", entity.Volume);
-            command.Parameters.AddWithValue("@habitId", entity.habitId);
+            command.Parameters.AddWithValue("@habitId", entity.HabitId);
 
             command.ExecuteNonQuery();
         }
@@ -70,7 +70,7 @@ namespace HabitTracker.BrozDa
                     Id = reader.GetInt32(0),
                     Date = DateTime.Parse(reader.GetString(1)),
                     Volume = reader.GetInt32(2),
-                    habitId = reader.GetInt32(3),
+                    HabitId = reader.GetInt32(3),
                 });
             }
             return records;
@@ -116,7 +116,7 @@ namespace HabitTracker.BrozDa
                     Id = reader.GetInt32(0),
                     Date = DateTime.Parse(reader.GetString(1)),
                     Volume = reader.GetInt32(2),
-                    habitId = reader.GetInt32(3),
+                    HabitId = reader.GetInt32(3),
                 });
             }
             return records;
@@ -182,7 +182,7 @@ namespace HabitTracker.BrozDa
             {
                 command.Parameters["@recordDate"].Value = record.Date;
                 command.Parameters["@recordVolume"].Value = record.Volume;
-                command.Parameters["@habitId"].Value = record.habitId;
+                command.Parameters["@habitId"].Value = record.HabitId;
                 command.ExecuteNonQuery();
             }
             transaction.Commit();
