@@ -5,45 +5,30 @@ namespace SQLite
 {
     public class SQLite
     {
-        SqliteConnection connection = new SqliteConnection("Data Source = calc.db; foreign keys = true");
+        SqliteConnection connection = new SqliteConnection("Data Source = habit.db; foreign keys = true");
 
         public SQLite()
         {
             connection.Open();
 
             //Retrieve DB tables
-            string commandText = @"
-                SELECT name
-                FROM sqlite_master
-                WHERE type = 'table'
-            ";
+            List<string> tables = GetHabits();
 
-            SqliteCommand command = connection.CreateCommand();
-            command.CommandText = commandText;
-            SqliteDataReader reader = command.ExecuteReader();
-            List<string> tables = new List<string>();
-
-            while (reader.Read())
-            {
-                tables.Add(reader.GetString(0));
-            }
-
-            //Check for Habit, or create
+            //Check for Habit table, or create
             if (!tables.Contains("Habit"))
             {
-                commandText = @"
+                runCommand(@"
                 CREATE TABLE Habit (
                     Habit       TEXT    PRIMARY KEY,
                     Description TEXT    NOT NULL,
                     UoM         TEXT    NOT NULL
-                )";
-                runCommand(commandText);
+                )");
             }
 
-            //Check for Log, or create
+            //Check for Log table, or create
             if (!tables.Contains("Log"))
             {
-                commandText = @"
+                runCommand(@"
                 CREATE TABLE Log (
                     ID          INTEGER     PRIMARY KEY,
                     Habit       TEXT        NOT NULL,
@@ -53,12 +38,11 @@ namespace SQLite
                     REFERENCES Habit (Habit)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE
-                )";
-                runCommand(commandText);
+                )");
             }
         }
 
-        public void runCommand(string commandText)
+        private void runCommand(string commandText)
         {
             SqliteCommand command = connection.CreateCommand();
             command.CommandText = commandText;
@@ -66,26 +50,48 @@ namespace SQLite
             command.ExecuteNonQuery();
         }
 
-        public List<string[]> runSelect(string commandText)
+        private SqliteDataReader runSelect(string commandText)
         {
             SqliteCommand command = connection.CreateCommand();
             command.CommandText = commandText;
 
             SqliteDataReader reader = command.ExecuteReader();
-            List<string[]> content = new List<string[]>();
+            return reader;
+            {
+                //List<string[]> content = new List<string[]>();
 
-            //Iterate through returned rows, building a string[], and adding to content
+                ////Iterate through returned rows, building a string[], and adding to content
+                //while (reader.Read())
+                //{
+                //    string[] row = new string[reader.FieldCount];
+                //    for (int i = 0; i < reader.FieldCount; i++)
+                //    {
+                //        row[i] = reader.GetString(i);
+                //    }
+                //    content.Add(row);
+                //}
+
+                //return content;
+            }
+        }
+
+        public List<string> GetHabits()
+        {
+            string commandText = @"
+                SELECT name
+                FROM sqlite_master
+                WHERE type = 'table'
+            ";
+
+            SqliteDataReader reader = runSelect(commandText);
+            List<string> tables = new List<string>();
+
             while (reader.Read())
             {
-                string[] row = new string[reader.FieldCount];
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    row[i] = reader.GetString(i);
-                }
-                content.Add(row);
+                tables.Add(reader.GetString(0));
             }
-            
-            return content;
+
+            return tables;
         }
 
         ~SQLite()

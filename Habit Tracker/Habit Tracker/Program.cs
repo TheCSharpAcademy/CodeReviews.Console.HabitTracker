@@ -29,30 +29,45 @@ namespace Habit_Tracker
                 switch (option)
                 {
                     case "1":
-                        continue;
+                        break;
 
                     case "2":
-                        continue;
+                        break;
 
                     case "3":
-                        continue;
+                        break;
 
                     case "4":
-                        continue;
+                        break;
 
                     case "5":
-                        continue;
+                        ManageHabits(ref db);
+                        break;
 
                     case "99":
-                        continue;
+                        break;
 
-                    case "0":
+                    case "0":   //Exit application
                         return;
 
-                    default:
+                    default:    //Repeat menu for valid input
                         continue;
                 }
             } while (true);
+        }
+
+        static void ManageHabits(ref SQLite.SQLite db)
+        {
+            Console.Clear();
+
+            command
+            List<string[]> habits = db.runSelect()
+            
+            Console.WriteLine("~~~ MANAGE HABITS ~~~\n");
+
+            Console.WriteLine("")
+            Console.Write("Type the option number desired:");
+
         }
     }
 }

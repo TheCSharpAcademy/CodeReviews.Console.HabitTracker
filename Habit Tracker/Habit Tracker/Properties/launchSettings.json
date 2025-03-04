@@ -2,7 +2,7 @@
   "profiles": {
     "Habit Tracker": {
       "commandName": "Project",
-      "workingDirectory": "E:\\Github\\C# Academy\\HabitTracker.Andrewki44\\Habit Tracker\\Habit Tracker\\"
+      "workingDirectory": "C:\\Users\\akilbourn\\GitHub\\HabitTracker.Andrewki44\\Habit Tracker\\Habit Tracker"
     }
   }
 }
