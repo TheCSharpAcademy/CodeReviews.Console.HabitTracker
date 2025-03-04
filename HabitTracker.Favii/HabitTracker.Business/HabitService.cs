@@ -10,7 +10,7 @@ namespace HabitTracker.Business
 
         string connectionString = @"Data Source=habit-Tracker.db";
 
-        public void initializeDatabase()
+        public void InitializeDatabase()
         {
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -39,8 +39,8 @@ namespace HabitTracker.Business
                     Habit temp = new Habit();
                     for (int i = 1; i <= 100; i++)
                     {
-                        temp.Date = habitReader.randomizeDate();
-                        habitReader.randomizeHabit(ref temp);
+                        temp.Date = habitReader.RandomizeDate();
+                        habitReader.RandomizeHabit(ref temp);
 
                         AddEntry(temp);
                     }

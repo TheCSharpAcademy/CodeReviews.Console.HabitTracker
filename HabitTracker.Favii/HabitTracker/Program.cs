@@ -4,7 +4,7 @@ string? input;
 bool shouldEndProgram = false;
 HabitService habitService = new HabitService();
 
-habitService.initializeDatabase();
+habitService.InitializeDatabase();
 
 while (shouldEndProgram != true)
 {

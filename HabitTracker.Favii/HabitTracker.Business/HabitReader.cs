@@ -66,7 +66,7 @@ namespace HabitTracker.Business
 
 
         //Methods used for the inital seeding
-        public DateTime randomizeDate()
+        public DateTime RandomizeDate()
         {
             Random random = new Random();
             int day;
@@ -95,7 +95,7 @@ namespace HabitTracker.Business
             return date;
         }
 
-        public void randomizeHabit(ref Habit habit)
+        public void RandomizeHabit(ref Habit habit)
         {
             Random random = new Random();
 
