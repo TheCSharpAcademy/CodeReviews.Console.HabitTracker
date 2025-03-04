@@ -274,7 +274,7 @@ internal static class Menu
     {
         int quantity;
 
-        while (!int.TryParse(SC.ReadLine(), out quantity))
+        while (!int.TryParse(SC.ReadLine(), out quantity) || quantity < 0)
         {
             SC.Clear();
             SC.WriteLine("\nInvalid input. Please try again or type 0 to return to the previous menu:.");
@@ -289,5 +289,4 @@ internal static class Menu
         SC.ReadLine();
         return quantity;
     }
-
 }
