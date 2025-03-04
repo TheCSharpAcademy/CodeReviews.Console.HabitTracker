@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Fabia\\source\\repos\\CodeReviewsRepos\\HabitTracker"
+    }
+  }
+}
