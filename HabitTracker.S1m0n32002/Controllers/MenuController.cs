@@ -73,16 +73,21 @@ static class MenuController
             ShowDefaultValue = true
         };
         namePrompt.DefaultValue("Habit");
-        var Name = AnsiConsole.Prompt(namePrompt);
+        var name = AnsiConsole.Prompt(namePrompt);
 
-        var datePrompt = new TextPrompt<DateTime>($"Enter the last time it happened ({CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern}): ")
+        var periodicityPrompt = new SelectionPrompt<Habit.Periodicities>()
         {
-            ShowDefaultValue = true,
+            Title = "Select periodicity",
+            HighlightStyle = new Style(Color.Blue),
+            MoreChoicesText = "[grey](Move up and down to reveal more choices)[/]",
         };
-        datePrompt.DefaultValue(DateTime.Today);
-        var LastOccurrance = AnsiConsole.Prompt(datePrompt);
 
-        dbController.SaveHabit(Name, LastOccurrance);
+        periodicityPrompt.AddChoices(Enum.GetValues<Habit.Periodicities>()
+                                                .Where(x => x != Habit.Periodicities.None));
+        
+        var periodicity = AnsiConsole.Prompt(periodicityPrompt);
+
+        dbController.AddHabit(name, periodicity);
     }
 
     /// <summary>
@@ -101,21 +106,9 @@ static class MenuController
 
         int c = 0;
 
-        // Could'prompt figure out the right query
-        foreach (var habit in habits.GroupBy((x) => x.Name))
+        foreach (Habit habit in habits)
         {
-            double dailyAvarage = 0;
-            int count = 0;
-
-            foreach (var  OccurrencesByDate in habit.GroupBy((x) => x.LastOccurrance.Date))
-            {
-                ++count;
-                dailyAvarage += OccurrencesByDate.Count();
-            }
-
-            dailyAvarage /= count;
-
-            chart.AddItem(habit.Key, dailyAvarage, Color.FromInt32(++c));
+            chart.AddItem(habit.Name, habit.TimesPerPeriod, Color.FromInt32(++c));
         }
 
         Panel panel = new(chart)
@@ -148,11 +141,11 @@ static class MenuController
             ShowHeaders = true
         };
 
-        table.AddColumns(["[bold blue]Name[/]", "[bold blue]Date[/]"]);
+        table.AddColumns(["[bold blue]Id[/]", "[bold blue]name[/]", "Times", "Periodicity"]);
 
-        foreach (Models.Habit habit in dbController.LoadAllHabits())
+        foreach (Habit habit in dbController.LoadAllHabits())
         {
-            table.AddRow($"{habit.Name}", $"{habit.LastOccurrance}");
+            table.AddRow($"{habit.Id}", $"{habit.Name}", $"{habit.TimesPerPeriod}", $"{habit.Periodicity}");
         }
 
         Panel panel = new(table)
