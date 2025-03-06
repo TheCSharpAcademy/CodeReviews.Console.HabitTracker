@@ -1,11 +1,12 @@
 namespace Helpers;
-using DTO;
+using Controllers;
+using Microsoft.Data.Sqlite;
 
 public static class EntryHelper
 {
-    public static HabitEntry GenerateHabitEntry(string userEntry)
+    public static Habit GenerateHabitEntry(string userEntry)
     {
-        HabitEntry entry = new();
+        Habit entry = new();
         var isValidEntry = false;
         while (!isValidEntry)
         {
@@ -14,7 +15,7 @@ public static class EntryHelper
                 var splitEntry = userEntry.Split(";");
                 var habitName = splitEntry[0];
                 var date = splitEntry[1];
-                entry.Habit = habitName;
+                entry.Name = habitName;
                 entry.Date = DateHelper.ConvertStringToDateTime(date);
             }
             catch (IndexOutOfRangeException ex)
@@ -31,5 +32,18 @@ public static class EntryHelper
             }
         }
         return entry;
+    }
+
+    public static Habit GetHabitFromRow(SqliteDataReader reader)
+    {
+        reader.Read();
+        Habit habit = new()
+        {
+            Id = reader.GetInt32(0),
+            Name = reader.GetString(1),
+            Occurences = reader.GetInt32(2),
+            Date = reader.GetDateTime(3),
+        };
+        return habit;
     }
 }

@@ -1,8 +1,8 @@
 namespace Services;
 
 using Microsoft.Data.Sqlite;
-using DTO;
-
+using Controllers;
+using Helpers;
 
 class DBService
 {
@@ -47,7 +47,7 @@ class DBService
         command.ExecuteNonQuery();
     }
 
-    public void AddEntry(HabitEntry entry)
+    public void AddEntry(Habit entry)
     {
         var command = _connection.CreateCommand();
 
@@ -57,14 +57,14 @@ class DBService
         (@habit, @occurrences, @date)";
 
         // Add parameters safely
-        command.Parameters.AddWithValue("@habit", entry.Habit);
+        command.Parameters.AddWithValue("@habit", entry.Name);
         command.Parameters.AddWithValue("@occurrences", entry.Occurences);
         command.Parameters.AddWithValue("@date", entry.Date);
 
         command.ExecuteNonQuery();
     }
 
-    public void UpdateEntry(HabitEntry oldEntry, HabitEntry newEntry)
+    public void UpdateEntry(Habit oldEntry, Habit newEntry)
     {
         var command = _connection.CreateCommand();
 
@@ -73,7 +73,7 @@ class DBService
         FROM habits
         WHERE habit_name = @habit";
 
-        command.Parameters.AddWithValue("@habit", oldEntry.Habit);
+        command.Parameters.AddWithValue("@habit", oldEntry.Name);
 
         var reader = command.ExecuteReader();
         if (!reader.HasRows)
@@ -90,11 +90,11 @@ class DBService
             SET habit_name = @newHabitName, occurrences = @newOccurrences, date = @newDate
             WHERE habit_name = @oldHabitName, occurences = @oldOccurrences, date = @oldDate
             ";
-            command.Parameters.AddWithValue("@newHabitName", newEntry.Habit);
+            command.Parameters.AddWithValue("@newHabitName", newEntry.Name);
             command.Parameters.AddWithValue("@newOccurrences", newEntry.Occurences);
             command.Parameters.AddWithValue("@newDate", newEntry.Date);
 
-            command.Parameters.AddWithValue("@oldHabitName", oldEntry.Habit);
+            command.Parameters.AddWithValue("@oldHabitName", oldEntry.Name);
             command.Parameters.AddWithValue("@oldOccurrences", oldEntry.Occurences);
             command.Parameters.AddWithValue("@oldDate", oldEntry.Date);
 
@@ -113,6 +113,21 @@ class DBService
         ";
 
         return command.ExecuteReader();
+    }
+
+    public Habit GetEntryById(int id) {
+        var command = _connection.CreateCommand();
+
+        command.CommandText = @"
+        SELECT * FROM habits WHERE id = @id";
+        command.Parameters.AddWithValue("id", id);
+
+        var reader = command.ExecuteReader();
+        if (!reader.HasRows) {
+            throw new Exception($"No habit with id {id} found.");
+        }
+
+        return EntryHelper.GetHabitFromRow(reader);
     }
 
 

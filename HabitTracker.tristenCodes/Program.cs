@@ -1,20 +1,12 @@
 ﻿using Services;
-using DTO;
 using Helpers;
 
-// Establish DB Connection
 DBService dBService = new DBService("Data source=local.db");
+
 string menuSelection;
 
 // TODO: Update an entry - HAVE THIS DISPLAY ALL OCCURENCES FIRST
-Console.WriteLine
-(@"
- Press one of the following
- 1. Add a habit
- 2. Update a habit
- 3. Remove a habit
- 4. Show habits
- ");
+MenuHelper.DisplayMainMenu();
 
 menuSelection = Console.ReadLine() ?? "";
 
@@ -22,105 +14,11 @@ menuSelection = Console.ReadLine() ?? "";
 switch (menuSelection)
 {
     case "1":
-        // Add a habit
-        HabitEntry habitEntry = new();
-        bool validMenuSelection;
-        do
-        {
-            Console.WriteLine("Enter the name of the habit");
-
-            string habitName = Console.ReadLine();
-            if (string.IsNullOrEmpty(habitName))
-            {
-                Console.WriteLine("Habit name cannot be empty.");
-                validMenuSelection = false;
-                continue;
-            }
-
-            validMenuSelection = true;
-            habitEntry.Habit = habitName!;
-
-        } while (!validMenuSelection);
-
-        do
-        {
-            try
-            {
-                Console.WriteLine("Enter the date the habit occurred in MM\\DD\\YYYY format.");
-                string habitDate = Console.ReadLine();
-                if (string.IsNullOrEmpty(habitDate))
-                {
-                    Console.WriteLine("Date cannot be empty.");
-                    validMenuSelection = false;
-                    continue;
-                }
-                DateTime dateTime = DateHelper.ConvertStringToDateTime(habitDate);
-                habitEntry.Date = dateTime;
-            }
-            catch
-            {
-                Console.WriteLine("Invalid entry. Enter the date the habit occurred in MM\\DD\\YYYY format.");
-                validMenuSelection = false;
-                continue;
-            }
-
-            validMenuSelection = true;
-
-        } while (!validMenuSelection);
-
-
-        do
-        {
-            try
-            {
-                Console.WriteLine("How many times did this habit occur?");
-                string habitOccurences = Console.ReadLine();
-                if (string.IsNullOrEmpty(habitOccurences))
-                {
-                    Console.WriteLine("Occurences cannot be empty.");
-                    validMenuSelection = false;
-                    continue;
-                }
-
-                bool attemptParse = int.TryParse(habitOccurences, out int parsedOccurrences);
-                if (!attemptParse)
-                {
-                    Console.WriteLine("Failed to parse occurrences to integer format.");
-                    validMenuSelection = false;
-                    continue;
-                }
-            }
-            catch
-            {
-                Console.WriteLine("Invalid entry. Enter the number of times the habit occurred.");
-                validMenuSelection = false;
-                continue;
-            }
-
-            validMenuSelection = true;
-
-        } while (!validMenuSelection);
-
-        dBService.AddEntry(habitEntry);
+        MenuHelper.AddHabit(dBService);
         break;
+
     case "2":
-        // Show all habits
-        var reader = dBService.GetAllEntries();
-        if (reader.HasRows)
-        {
-            while (reader.Read())
-            {
-                var id = reader.GetInt32(0);
-                var habitName = reader.GetString(1);
-                var occurences = reader.GetInt32(2);
-                var date = reader.GetDateTime(3);
-                Console.WriteLine($"Id: {id}, Habit Name: {habitName}, Date: {DateHelper.ConvertDateToString(date)}, Occurences: {occurences}");
-            }
-        }
-
-        // Update a habit 
-
-
+        MenuHelper.UpdateEntry(dBService);
         break;
     case "3":
         // Remove a habit 
