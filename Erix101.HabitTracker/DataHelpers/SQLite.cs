@@ -85,8 +85,8 @@ namespace HabitTracker.DataHelpers
                 {
                     exampleHabitTableCmd.CommandText =
                         $"INSERT INTO habits (habitName, habitUnit) VALUES (@habit,@habitUnit)";
-                    exampleHabitTableCmd.Parameters.AddWithValue("@habit", exampleHabit.habit);
-                    exampleHabitTableCmd.Parameters.AddWithValue("@habitUnit", exampleHabit.unit);
+                    exampleHabitTableCmd.Parameters.AddWithValue("@habit", exampleHabit.Habit);
+                    exampleHabitTableCmd.Parameters.AddWithValue("@habitUnit", exampleHabit.Unit);
                     exampleHabitTableCmd.ExecuteNonQuery();
                     lastHabitRowId = _connection.LastInsertRowId;
 
@@ -95,8 +95,8 @@ namespace HabitTracker.DataHelpers
                         exampleHabitLogTableCmd.CommandText =
                             $"INSERT INTO habit_log (habit_id, Date, Quantity) VALUES (@habit_id,@Date,@Quantity)";
                         exampleHabitLogTableCmd.Parameters.AddWithValue("@habit_id", lastHabitRowId);
-                        exampleHabitLogTableCmd.Parameters.AddWithValue("@Date", exampleHabitLog.date);
-                        exampleHabitLogTableCmd.Parameters.AddWithValue("@Quantity", exampleHabitLog.quantity);
+                        exampleHabitLogTableCmd.Parameters.AddWithValue("@Date", exampleHabitLog.Date);
+                        exampleHabitLogTableCmd.Parameters.AddWithValue("@Quantity", exampleHabitLog.Quantity);
                         exampleHabitLogTableCmd.ExecuteNonQuery();
                     }
                 }

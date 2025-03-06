@@ -4,12 +4,12 @@
     {
         internal class ExampleHabit
         {
-            public string habit { get; set; }
-            public string unit { get; set; }
+            public string Habit { get; set; }
+            public string Unit { get; set; }
             public ExampleHabit(string habit, string unit)
             {
-                this.habit = habit;
-                this.unit = unit;
+                this.Habit = habit;
+                this.Unit = unit;
             }
         }
         internal static List<ExampleHabit> ExampleHabits = new()
@@ -23,12 +23,12 @@
 
         internal class ExampleHabitLog
         {
-            public string date { get; set; }
-            public int quantity { get; set; }
+            public string Date { get; set; }
+            public int Quantity { get; set; }
             public ExampleHabitLog(string date, int quantity)
             {
-                this.date = date;
-                this.quantity = quantity;
+                this.Date = date;
+                this.Quantity = quantity;
             }
         }
 
