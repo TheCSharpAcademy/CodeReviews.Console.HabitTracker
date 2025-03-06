@@ -100,7 +100,7 @@ namespace Erix101.HabitTracker.Services
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title($"[bold {headingColour}]HABIT MENU[/]")
+                    .Title($"[bold {headingColour}]HABIT LOG MENU[/]")
                     .PageSize(6)
                     .AddChoices("View all Habit Logs", "Insert New Habit Log", "Delete Habit Log", "Update Habit Log", "Back To Main Menu")
                     .UseConverter(choice => $"[{menu}]{choice}[/]")
