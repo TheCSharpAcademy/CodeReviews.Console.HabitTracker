@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habit Tracker.Andrewki44", "Habit Tracker\Habit Tracker.Andrewki44.csproj", "{4BD3958E-C98F-442F-82AC-4BD4046924E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLite", "SQLite\SQLite.csproj", "{4FF9AD52-6BE1-4C96-9606-91FA9583860F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "SQLite\Database.csproj", "{4FF9AD52-6BE1-4C96-9606-91FA9583860F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

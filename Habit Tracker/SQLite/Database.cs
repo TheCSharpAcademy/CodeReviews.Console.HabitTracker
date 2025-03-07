@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 
-namespace SQLite
+namespace Database
 {
     public class SQLite
     {
@@ -35,23 +35,11 @@ namespace SQLite
                     Count       INTEGER     NOT NULL,
                     Date        INTEGER     NOT NULL,
                     FOREIGN KEY (Habit)
-                    REFERENCES Habit (Habit)
+                        REFERENCES Habit (Habit)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE;
                 )");
             }
-        }
-
-        public List<string> GetTables()
-        {
-            string commandText = @"
-                SELECT name
-                FROM sqlite_master
-                WHERE type = 'table';
-            ";
-
-            SqliteDataReader reader = RunSelect(commandText);
-            return ReturnColumn(reader);
         }
 
         public List<string[]> GetHabits()
@@ -62,7 +50,7 @@ namespace SQLite
             ";
 
             SqliteDataReader reader = RunSelect(commandText);
-            return ReturnRow(reader);
+            return ReturnRows(reader);
         }
 
         public void CreateHabit(string habitName, string habitDescription, string habitUoM)
@@ -80,6 +68,77 @@ namespace SQLite
             };
 
             RunCommand(commandText, parameters);
+        }
+
+        public void UpdateHabit(string habit, string? newName, string? newDescription, string? newUoM)
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+            List<string> habitArray = new List<string> { newName, newDescription, newUoM };
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            if (habitArray.Count > 0)
+            {
+                List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
+                string commandText = "UPDATE Habit SET";
+
+                //Add each parameter if not-null, catering for additional ',' required as necessary
+                if (habitArray[0] != "")
+                {
+                    commandText += $" Habit = $newName";
+                    if (habitArray[1] != "" || habitArray[2] != "") 
+                        commandText += ",";
+                    parameters.Add(new KeyValuePair<string, string>("$newName", newName));
+
+                }
+                if (habitArray[1] != "")
+                {
+                    commandText += $" Description = $newDescription";
+                    if (habitArray[2] != "")
+                        commandText += ",";
+                    parameters.Add(new KeyValuePair<string, string>("$newDescription", newDescription));
+                }
+                if (habitArray[2] != "")
+                {
+                    commandText += $" UoM = $newUoM";
+                    parameters.Add(new KeyValuePair<string, string>("$newUoM", newUoM));
+                }
+
+                commandText += $" WHERE habit = $habit;";
+                parameters.Add(new KeyValuePair<string, string>("$habit", habit));
+
+                RunCommand(commandText, parameters.ToArray());
+            }
+            else
+            {
+                throw new ArgumentException("No inputs provided...");
+            }
+        }
+
+        public void DeleteHabit(string habit)
+        {
+            string commandText = @"
+                DELETE FROM Habit
+                WHERE habit = $habit
+            ;";
+
+            KeyValuePair<string, string>[] parameters = new KeyValuePair<string, string>[1]
+            {
+                new KeyValuePair<string, string>("$habit", habit)
+            };
+
+            RunCommand(commandText, parameters);
+        }
+
+        private List<string> GetTables()
+        {
+            string commandText = @"
+                SELECT name
+                FROM sqlite_master
+                WHERE type = 'table';
+            ";
+
+            SqliteDataReader reader = RunSelect(commandText);
+            return ReturnColumn(reader);
         }
 
         private void RunCommand(string commandText, KeyValuePair<string, string>[]? parameters = null)
@@ -130,7 +189,7 @@ namespace SQLite
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        private List<string[]> ReturnRow(SqliteDataReader reader)
+        private List<string[]> ReturnRows(SqliteDataReader reader)
         {
             List<string[]> content = new List<string[]>();
 
