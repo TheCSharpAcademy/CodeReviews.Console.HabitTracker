@@ -257,6 +257,7 @@ namespace Habit_Tracker
                     {
                         return null;
                     }
+                    else
                     {
                         continue;
                     }
@@ -467,7 +468,6 @@ namespace Habit_Tracker
                 //No changes specified
                 Console.WriteLine("No changes made...\nPress Enter to return to the menu: ");
                 Console.ReadLine();
-                //return habit[0];
             }
         }
 
