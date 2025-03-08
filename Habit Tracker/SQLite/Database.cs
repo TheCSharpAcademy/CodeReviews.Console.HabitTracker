@@ -21,8 +21,8 @@ namespace Database
                 CREATE TABLE Habit (
                     Habit       TEXT    PRIMARY KEY,
                     Description TEXT    NOT NULL,
-                    UoM         TEXT    NOT NULL;
-                )");
+                    UoM         TEXT    NOT NULL
+                );");
             }
 
             //Check for Log table, or create
@@ -33,12 +33,12 @@ namespace Database
                     ID          INTEGER     PRIMARY KEY,
                     Habit       TEXT        NOT NULL,
                     Count       INTEGER     NOT NULL,
-                    Date        INTEGER     NOT NULL,
+                    Date        TEXT        NOT NULL,
                     FOREIGN KEY (Habit)
                         REFERENCES Habit (Habit)
                         ON DELETE CASCADE
-                        ON UPDATE CASCADE;
-                )");
+                        ON UPDATE CASCADE
+                );");
             }
         }
 
@@ -49,14 +49,13 @@ namespace Database
                 FROM Habit;
             ";
 
-            SqliteDataReader reader = RunSelect(commandText);
-            return ReturnRows(reader);
+            return ReturnRows(RunSelect(commandText));
         }
 
         public void CreateHabit(string habitName, string habitDescription, string habitUoM)
         {
             string commandText = @"
-                INSERT INTO Habit (habit, description, uom)
+                INSERT INTO Habit (Habit, Description, UoM)
                 VALUES ($habit, $description, $uom);
             ";
 
@@ -124,6 +123,50 @@ namespace Database
             KeyValuePair<string, string>[] parameters = new KeyValuePair<string, string>[1]
             {
                 new KeyValuePair<string, string>("$habit", habit)
+            };
+
+            RunCommand(commandText, parameters);
+        }
+
+        public List<string[]> GetLogs()
+        {
+            string commandText = @"
+                SELECT ID, Log.Habit, Count, UOM, Date
+                FROM Log
+                LEFT JOIN Habit ON Log.Habit = Habit.Habit;
+                ORDER BY ID DESC
+            ";
+
+            return ReturnRows(RunSelect(commandText));
+        }
+
+        public void CreateLog(string habit, int count, DateTime date)
+        {
+            string commandText = @"
+                INSERT INTO Log (Habit, Count, Date)
+                VALUES ($habit, $count, $date);
+            ";
+
+            KeyValuePair<string, string>[] parameters = new KeyValuePair<string, string>[3]
+            {
+                new KeyValuePair<string, string>("$habit", habit),
+                new KeyValuePair<string, string>("$count", count.ToString()),
+                new KeyValuePair<string, string>("$date", date.ToString("yyyy-MM-dd"))
+            };
+
+            RunCommand(commandText, parameters);
+        }
+
+        public void DeleteLog(string id)
+        {
+            string commandText = @"
+                DELETE FROM Log
+                WHERE ID = $id
+            ;";
+
+            KeyValuePair<string, string>[] parameters = new KeyValuePair<string, string>[1]
+            {
+                new KeyValuePair<string, string>("$id", id)
             };
 
             RunCommand(commandText, parameters);
