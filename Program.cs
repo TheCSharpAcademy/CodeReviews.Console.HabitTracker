@@ -118,7 +118,7 @@ namespace habit_tracker
         {
             string date = GetDateInput();
 
-            int quantity = GetNumberInput("\n\nPlease insert number of leetcode problems\n\n");
+            int quantity = GetNumberInput("\n\nPlease insert number of leetcode problems\n");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -138,7 +138,7 @@ namespace habit_tracker
             Console.Clear();
             GetAllRecords();
 
-            var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu\n\n");
+            var recordId = GetNumberInput("\n\nPlease type the Id of the record you want to delete or type 0 to return to Main Menu\n");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -151,12 +151,14 @@ namespace habit_tracker
 
                 if (rowCount == 0)
                 {
-                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. \n\n");
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist. \n");
                     Delete();
                 }
+                else
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n");
+                }
             }
-
-            Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
         }
 
         private static void Update()
@@ -175,21 +177,23 @@ namespace habit_tracker
 
                 if (checkQuery == 0)
                 {
-                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+                    Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n");
                     connection.Close();
                     Update();
                 }
+                else
+                {
+                    string date = GetDateInput();
 
-                string date = GetDateInput();
+                    int quantity = GetNumberInput("\n\nPlease insert number of leetcode problems (no decimals allowed)\n");
 
-                int quantity = GetNumberInput("\n\nPlease insert number of leetcode problems (no decimals allowed)\n\n");
+                    var tableCmd = connection.CreateCommand();
+                    tableCmd.CommandText = $"UPDATE leetcode_problems SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
 
-                var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"UPDATE leetcode_problems SET date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
+                    tableCmd.ExecuteNonQuery();
 
-                tableCmd.ExecuteNonQuery();
-
-                connection.Close();
+                    connection.Close();
+                }
             }
         }
 
@@ -206,9 +210,14 @@ namespace habit_tracker
                 GetUserInput();
             }
 
+            if (dateInput == "today")
+            {
+                return DateTime.Now.ToString("dd-MM-yy");
+            }
+
             while (!DateTime.TryParseExact(dateInput, "dd-MM-yy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
             {
-                Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main menu or try again.\n\n");
+                Console.WriteLine("\n\nInvalid date. (Format: dd-mm-yy). Type 0 to return to main menu or try again.\n");
                 dateInput = Console.ReadLine();
 
                 if (dateInput == "0")
@@ -233,7 +242,7 @@ namespace habit_tracker
 
             while (!Int32.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0)
             {
-                Console.WriteLine("\n\nInvalid number. Try again.\n\n");
+                Console.WriteLine("\n\nInvalid number. Try again.\n");
                 numberInput = Console.ReadLine();
             }
 
