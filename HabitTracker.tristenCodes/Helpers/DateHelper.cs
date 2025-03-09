@@ -1,4 +1,4 @@
-namespace Helpers;
+namespace HabitTracker.tristenCodes.Helpers;
 public static class DateHelper
 {
     public static string ConvertDateToString(DateTime date)

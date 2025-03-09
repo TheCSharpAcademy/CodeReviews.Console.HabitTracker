@@ -1,12 +1,13 @@
-using Controllers;
-using Helpers;
+using HabitTracker.tristenCodes.Models;
+using HabitTracker.tristenCodes.Helpers;
+using HabitTracker.tristenCodes.Services;
 
-namespace Services;
+namespace HabitTracker.tristenCodes.Services;
 static class MenuService
 {
     public static void DisplayMainMenu()
     {
-        Console.WriteLine("Press one of the following\n1. Add a habit\n2. Update a habit\n3. Remove a habit\n4. Show habits\n");
+        Console.WriteLine("Press one of the following\n1. Add a habit\n2. Update a habit\n3. Remove a habit\n4. Show habits\n5. Exit program");
     }
 
     public static void AddHabit(DBService dbService)
@@ -98,7 +99,7 @@ static class MenuService
         Habit newHabitEntry = new();
         Habit previousHabitEntry = new();
 
-        var reader = dbService.GetAllEntries(); // Corrected 'dBService' to 'dbService'
+        var reader = dbService.GetAllEntries();
 
         List<int> validHabitIds = [];
 
@@ -118,7 +119,7 @@ static class MenuService
         bool isHabitIdValid = false;
         do
         {
-            Console.WriteLine("Which habit would you like to update? Enter the id of the habit you would like to update.");
+            Console.WriteLine("\nWhich habit would you like to update? Enter the id of the habit you would like to update.");
             var habitIdSelection = Console.ReadLine();
 
             isHabitIdValid = int.TryParse(habitIdSelection, out int parsedHabitId);
@@ -136,7 +137,6 @@ static class MenuService
             }
         } while (!isHabitIdValid);
 
-        Console.Clear();
 
         Console.WriteLine($"Previous habit name: {previousHabitEntry?.Name}");
 
@@ -189,12 +189,17 @@ static class MenuService
 
     public static void RemoveHabit(DBService dbService)
     {
-        Console.WriteLine("Enter the ID of the habit you would like to remove: ");
-        string habitId = Console.ReadLine();
-        if (!string.IsNullOrEmpty(habitId) && EntryHelper.IsValidId(habitId, dbService))
+        bool validHabitId = false;
+        do
         {
-            dbService.DeleteEntry(int.Parse(habitId));
-        }
+            Console.WriteLine("Enter the ID of the habit you would like to remove: ");
+            string habitId = Console.ReadLine();
+            if (!string.IsNullOrEmpty(habitId) && EntryHelper.IsValidId(habitId, dbService))
+            {
+                dbService.DeleteEntry(int.Parse(habitId));
+                validHabitId = true;
+            }
 
+        } while (!validHabitId);
     }
 }

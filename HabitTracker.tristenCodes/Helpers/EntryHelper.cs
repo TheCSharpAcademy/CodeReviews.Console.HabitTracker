@@ -1,7 +1,7 @@
-namespace Helpers;
-using Controllers;
+namespace HabitTracker.tristenCodes.Helpers;
 using Microsoft.Data.Sqlite;
 using Services;
+using HabitTracker.tristenCodes.Models;
 
 public static class EntryHelper
 {

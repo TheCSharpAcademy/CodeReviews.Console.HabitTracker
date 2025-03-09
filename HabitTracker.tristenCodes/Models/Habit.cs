@@ -1,4 +1,4 @@
-namespace Controllers;
+namespace HabitTracker.tristenCodes.Models;
 
 public class Habit
 {

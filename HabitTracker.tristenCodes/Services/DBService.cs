@@ -1,8 +1,8 @@
-namespace Services;
+namespace HabitTracker.tristenCodes.Services;
 
 using Microsoft.Data.Sqlite;
-using Controllers;
-using Helpers;
+using HabitTracker.tristenCodes.Models;
+using HabitTracker.tristenCodes.Helpers;
 
 public class DBService
 {

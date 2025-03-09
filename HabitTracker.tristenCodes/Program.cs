@@ -1,34 +1,43 @@
-﻿using Services;
-using Helpers;
+﻿using HabitTracker.tristenCodes.Services;
+using HabitTracker.tristenCodes.Helpers;
+using Microsoft.Data.Sqlite;
 
-DBService dBService = new DBService("Data source=local.db");
+DBService dbService = new DBService("Data source=local.db");
 
 string menuSelection;
 
-// TODO: Update an entry - HAVE THIS DISPLAY ALL OCCURENCES FIRST
-MenuService.DisplayMainMenu();
-
-menuSelection = Console.ReadLine() ?? "";
-
-
-switch (menuSelection)
+while (true)
 {
-    case "1":
-        MenuService.AddHabit(dBService);
-        break;
+    Console.Clear();
+    MenuService.DisplayMainMenu();
 
-    case "2":
-        MenuService.UpdateHabit(dBService);
-        break;
-    case "3":
-        // Remove a habit 
-        MenuService.RemoveHabit(dBService);
-        break;
-    case "4":
-        // Show all habits
-        break;
-    default:
-        Console.WriteLine("Invalid Entry");
-        break;
+    menuSelection = Console.ReadLine() ?? "";
+
+    switch (menuSelection)
+    {
+        case "1":
+            Console.Clear();
+            MenuService.AddHabit(dbService);
+            break;
+        case "2":
+            Console.Clear();
+            MenuService.UpdateHabit(dbService);
+            break;
+        case "3":
+            Console.Clear();
+            MenuService.RemoveHabit(dbService);
+            break;
+        case "4":
+            Console.Clear();
+            ReaderUtils.DisplayRows(dbService);
+            break;
+        case "5":
+            Console.WriteLine("Exiting...");
+            return;
+        default:
+            Console.Clear();
+            Console.WriteLine("Invalid Entry.");
+            break;
+    }
 }
 
