@@ -1,8 +1,8 @@
 using Controllers;
-using Services;
+using Helpers;
 
-namespace Helpers;
-static class MenuHelper
+namespace Services;
+static class MenuService
 {
     public static void DisplayMainMenu()
     {
@@ -93,7 +93,7 @@ static class MenuHelper
         dbService.AddEntry(newHabitEntry);
     }
 
-    public static void UpdateEntry(DBService dbService)
+    public static void UpdateHabit(DBService dbService)
     {
         Habit newHabitEntry = new();
         Habit previousHabitEntry = new();
@@ -124,21 +124,77 @@ static class MenuHelper
             isHabitIdValid = int.TryParse(habitIdSelection, out int parsedHabitId);
             if (isHabitIdValid)
             {
-                previousHabitEntry = dbService.GetEntryById(parsedHabitId);
+                try
+                {
+                    previousHabitEntry = dbService.GetEntryById(parsedHabitId);
+                }
+                catch
+                {
+                    Console.WriteLine($"Habit with id {parsedHabitId} not found. Enter an existing habit id.");
+                    isHabitIdValid = false;
+                }
             }
         } while (!isHabitIdValid);
+
+        Console.Clear();
 
         Console.WriteLine($"Previous habit name: {previousHabitEntry?.Name}");
 
         Console.WriteLine("Enter the new title for the habit, or press enter to leave it the same as it previously was");
         var newHabitName = Console.ReadLine();
 
-        Console.WriteLine("Enter the new number of occurences, or press enter to leave it the same as it previously was");
-        var newOccurrences = Console.ReadLine();
+        if (string.IsNullOrEmpty(newHabitName)) newHabitEntry.Name = previousHabitEntry!.Name;
+        else newHabitEntry.Name = newHabitName;
 
-        Console.WriteLine("Enter the new date, or press enter to leave it the same as it previously was");
-        var newDate = Console.ReadLine();
+        bool validNewOccurrences;
+        do
+        {
+            Console.WriteLine("Enter the new number of occurences, or press enter to leave it the same as it previously was");
+            var newOccurrences = Console.ReadLine();
+            if (string.IsNullOrEmpty(newOccurrences)) newHabitEntry.Occurences = previousHabitEntry!.Occurences;
 
+            validNewOccurrences = int.TryParse(newOccurrences, out int parsedOccurrences);
+
+            if (validNewOccurrences) newHabitEntry.Occurences = parsedOccurrences;
+            else Console.WriteLine("Invalid entry. Try again.");
+        } while (!validNewOccurrences);
+
+        bool validNewDate = false;
+        do
+        {
+            Console.WriteLine("Enter the new date, or press enter to leave it the same as it previously was");
+            var newDate = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(newDate)) newHabitEntry.Date = previousHabitEntry!.Date;
+            else
+            {
+                try
+                {
+                    DateTime dateTime = DateHelper.ConvertStringToDateTime(newDate);
+                    newHabitEntry.Date = dateTime;
+                    validNewDate = true;
+                }
+                catch
+                {
+                    validNewDate = false;
+                    Console.WriteLine("Invalid date entered. MM/DD/YYYY format required.");
+                }
+            }
+        } while (!validNewDate);
+
+
+        dbService.UpdateEntry(previousHabitEntry!, newHabitEntry);
+
+    }
+
+    public static void RemoveHabit(DBService dbService)
+    {
+        Console.WriteLine("Enter the ID of the habit you would like to remove: ");
+        string habitId = Console.ReadLine();
+        if (!string.IsNullOrEmpty(habitId) && EntryHelper.IsValidId(habitId, dbService))
+        {
+            dbService.DeleteEntry(int.Parse(habitId));
+        }
 
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 using Controllers;
 using Helpers;
 
-class DBService
+public class DBService
 {
     private string _connectionString = "";
     private SqliteConnection? _connection;
@@ -69,7 +69,7 @@ class DBService
         var command = _connection.CreateCommand();
 
         command.CommandText =
-        @"SELECT * habits
+        @"SELECT *
         FROM habits
         WHERE habit_name = @habit";
 
@@ -84,11 +84,11 @@ class DBService
         else
         {
             command = _connection.CreateCommand();
-            command.CommandText = 
+            command.CommandText =
             @"
             UPDATE habits
             SET habit_name = @newHabitName, occurrences = @newOccurrences, date = @newDate
-            WHERE habit_name = @oldHabitName, occurences = @oldOccurrences, date = @oldDate
+            WHERE habit_name = @oldHabitName AND occurrences = @oldOccurrences AND date = @oldDate
             ";
             command.Parameters.AddWithValue("@newHabitName", newEntry.Name);
             command.Parameters.AddWithValue("@newOccurrences", newEntry.Occurences);
@@ -103,6 +103,14 @@ class DBService
         }
     }
 
+    public void DeleteEntry(int habitId)
+    {
+        var command = _connection.CreateCommand();
+        command.CommandText = @"DELETE FROM habits WHERE id = @habitId";
+        command.Parameters.AddWithValue("@habitId", habitId);
+        command.ExecuteNonQuery();
+    }
+
     public SqliteDataReader GetAllEntries()
     {
         var command = _connection.CreateCommand();
@@ -115,7 +123,8 @@ class DBService
         return command.ExecuteReader();
     }
 
-    public Habit GetEntryById(int id) {
+    public Habit GetEntryById(int id)
+    {
         var command = _connection.CreateCommand();
 
         command.CommandText = @"
@@ -123,7 +132,8 @@ class DBService
         command.Parameters.AddWithValue("id", id);
 
         var reader = command.ExecuteReader();
-        if (!reader.HasRows) {
+        if (!reader.HasRows)
+        {
             throw new Exception($"No habit with id {id} found.");
         }
 

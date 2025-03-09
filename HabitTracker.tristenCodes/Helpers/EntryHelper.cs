@@ -1,6 +1,7 @@
 namespace Helpers;
 using Controllers;
 using Microsoft.Data.Sqlite;
+using Services;
 
 public static class EntryHelper
 {
@@ -45,5 +46,22 @@ public static class EntryHelper
             Date = reader.GetDateTime(3),
         };
         return habit;
+    }
+
+    public static bool IsValidId(string id, DBService dbService)
+    {
+        bool validHabitIdEntry = int.TryParse(id, out int parsedId);
+        try
+        {
+            dbService.GetEntryById(parsedId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            validHabitIdEntry = false;
+        }
+
+        return validHabitIdEntry;
+
     }
 }

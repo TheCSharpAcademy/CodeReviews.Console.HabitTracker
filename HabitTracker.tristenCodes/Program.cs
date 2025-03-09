@@ -6,7 +6,7 @@ DBService dBService = new DBService("Data source=local.db");
 string menuSelection;
 
 // TODO: Update an entry - HAVE THIS DISPLAY ALL OCCURENCES FIRST
-MenuHelper.DisplayMainMenu();
+MenuService.DisplayMainMenu();
 
 menuSelection = Console.ReadLine() ?? "";
 
@@ -14,17 +14,18 @@ menuSelection = Console.ReadLine() ?? "";
 switch (menuSelection)
 {
     case "1":
-        MenuHelper.AddHabit(dBService);
+        MenuService.AddHabit(dBService);
         break;
 
     case "2":
-        MenuHelper.UpdateEntry(dBService);
+        MenuService.UpdateHabit(dBService);
         break;
     case "3":
         // Remove a habit 
+        MenuService.RemoveHabit(dBService);
         break;
     case "4":
-        // Show a habits
+        // Show all habits
         break;
     default:
         Console.WriteLine("Invalid Entry");
