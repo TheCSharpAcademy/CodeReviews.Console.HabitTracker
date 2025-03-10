@@ -12,7 +12,6 @@ namespace HabitTracker
             _connectionString = $"Data Source={_dbPath}";
         }
 
-        // Checks for existence of database/table in local file system and creates it if it isn't present
         internal void EnsureDatabaseExists()
         {
             try
@@ -54,7 +53,6 @@ namespace HabitTracker
             }
         }
 
-        // Reads from the table and outputs each row to the console
         internal void OutputTable()
         {
             try
@@ -97,7 +95,6 @@ namespace HabitTracker
             }
         }
 
-        // Adds a habit to the table
         internal void AddHabit(string title)
         {
             try
@@ -117,7 +114,6 @@ namespace HabitTracker
             }
         }
 
-        // Updates a habit within the table
         internal void UpdateHabit(string id, string column, string value)
         {
             try
@@ -179,7 +175,6 @@ namespace HabitTracker
             }
         }
 
-        // Deletes a habit from the table
         internal void DeleteHabit(string id)
         {
             try

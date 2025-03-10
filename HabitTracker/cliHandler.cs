@@ -5,59 +5,67 @@ namespace HabitTracker
     internal class CliHandler
     {
         private readonly DatabaseManager _db;
+        private bool _runApp = true;
 
         internal CliHandler(DatabaseManager db)
         {
             _db = db;
         }
 
-        // Checks for existence of database and handles CRUD operations
         internal void RunApplication()
         {
             _db.EnsureDatabaseExists();
 
-            Console.WriteLine("Welcome to your habit tracker! Please select an option from the following menu.");
+            Console.WriteLine("Welcome to your habit tracker!");
 
-            DisplayMenu();
-
-            int menuOption;
-
-            do
+            while (_runApp)
             {
-                if (int.TryParse(Console.ReadLine(), out int choice) && choice >= 1 && choice <= 4)
+                Console.WriteLine("Please select an option from the following menu.");
+
+                DisplayMenu();
+
+                int menuOption;
+
+                do
                 {
-                    menuOption = choice;
-                    break;
-                } 
+                    if (int.TryParse(Console.ReadLine(), out int choice) && choice >= 1 && choice <= 5)
+                    {
+                        menuOption = choice;
+                        break;
+                    }
 
-                Console.WriteLine("Invalid input. Please enter an integer from the above menu.");
-            } while (true);
+                    Console.WriteLine("Invalid input. Please enter an integer from the above menu.");
+                } while (true);
 
-            Console.WriteLine("");
+                Console.WriteLine("");
 
-            switch (menuOption)
-            {
-                case 1:
-                    PrintHabits();
-                    break;
-                case 2:
-                    AddRow();
-                    break;
-                case 3:
-                    PrintHabits();
-                    UpdateRow();
-                    break;
-                case 4:
-                    PrintHabits();
-                    DeleteRow();
-                    break;
-                default:
-                    // This shouldn't be reachable
-                    throw new Exception("Error fetching menu selection.");
+                switch (menuOption)
+                {
+                    case 1:
+                        PrintHabits();
+                        break;
+                    case 2:
+                        AddRow();
+                        break;
+                    case 3:
+                        PrintHabits();
+                        UpdateRow();
+                        break;
+                    case 4:
+                        PrintHabits();
+                        DeleteRow();
+                        break;
+                    case 5:
+                        _runApp = false;
+                        break;
+                    default:
+                        // This shouldn't be reachable
+                        throw new Exception("Error fetching menu selection.");
+                }
+
             }
         }
 
-        // Handles inserting new rows into table
         private void AddRow()
         {
             string title = GetTitle();
@@ -65,7 +73,6 @@ namespace HabitTracker
             _db.AddHabit(title);
         }
 
-        // Handles updating a row in the table
         private void UpdateRow()
         {
             Console.WriteLine("Please enter the ID of the habit you'd like to modify.\n");
@@ -105,7 +112,6 @@ namespace HabitTracker
             }
         }
 
-        // Handles deleting rows from table
         private void DeleteRow()
         {
             Console.WriteLine("Please enter the ID of the habit you'd like to delete.\n");
@@ -115,7 +121,6 @@ namespace HabitTracker
             _db.DeleteHabit(taskId.ToString());
         }
 
-        // Helper method for grabbing task ID
         private static int GetId()
         {
             int taskId;
@@ -134,7 +139,6 @@ namespace HabitTracker
             return taskId;
         }
 
-        // Helper method for providing a title for a field
         private static string GetTitle()
         {
             string title;
@@ -153,7 +157,6 @@ namespace HabitTracker
             return title;
         }
 
-        // Helper method for getting a boolean value from user and converting to a string
         private static string GetBool()
         {
             string result;
@@ -170,7 +173,6 @@ namespace HabitTracker
             return result;
         }
 
-        // Displays the currently logged habits for the user
         private void PrintHabits()
         {
             Console.WriteLine("Current habits:\n");
@@ -178,13 +180,13 @@ namespace HabitTracker
             Console.WriteLine();
         }
 
-        // Prints the main menu options to the user
         private static void DisplayMenu()
         {
             Console.WriteLine("\n1. View logged habits");
             Console.WriteLine("2. Add a new habit");
             Console.WriteLine("3. Update an existing habit");
-            Console.WriteLine("4. Delete an existing habit\n");
+            Console.WriteLine("4. Delete an existing habit");
+            Console.WriteLine("5. Quit the app\n");
         }
     }
 }
