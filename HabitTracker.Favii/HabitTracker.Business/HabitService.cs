@@ -78,6 +78,10 @@ namespace HabitTracker.Business
                                 Unit = reader.GetString(4),
                             });
                     }
+                    foreach (Habit habit in habits)
+                    {
+                        Console.WriteLine($"ID {habit.Id} - {habit.Name}, {habit.Quantity} {habit.Unit} in {habit.Date.ToString("dd-MMM-yyyy")}");
+                    }
                 }
                 else
                 {
@@ -87,10 +91,6 @@ namespace HabitTracker.Business
                 connection.Close();
             }
             Console.WriteLine("-----------------------------");
-            foreach (Habit habit in habits)
-            {
-                Console.WriteLine($"ID {habit.Id} - {habit.Name}, {habit.Quantity} {habit.Unit} in {habit.Date.ToString("dd-MMM-yyyy")}");
-            }
         }
         public void AddEntry(Habit newHabit)
         {
@@ -171,7 +171,7 @@ namespace HabitTracker.Business
                 {
                     var tableCmd = connection.CreateCommand();
 
-                    tableCmd.CommandText = $"UPDATE habit_logger SET date = '{date}', name = {name}, quantity = {quantity}, unit = {unit} WHERE Id = {recordId}";
+                    tableCmd.CommandText = $"UPDATE habit_logger SET date = '{date}', name = '{name}', quantity = '{quantity}', unit = '{unit}' WHERE Id = {recordId}";
                     tableCmd.ExecuteNonQuery();
                     connection.Close();
                 }
@@ -258,19 +258,19 @@ namespace HabitTracker.Business
                                 Unit = reader.GetString(4),
                             });
                     }
+                    foreach (Habit habit in habits)
+                    {
+                        Console.WriteLine($"ID {habit.Id} - {habit.Name}, {habit.Quantity} {habit.Unit} in {habit.Date.ToString("dd-MMM-yyyy")}");
+                    }
                 }
                 else
                 {
                     Console.WriteLine("No rows found");
                     Console.ReadLine();
                 }
+                Console.WriteLine("-----------------------------");
 
                 connection.Close();
-            }
-            Console.WriteLine("-----------------------------");
-            foreach (Habit habit in habits)
-            {
-                Console.WriteLine($"ID {habit.Id} - {habit.Name}, {habit.Quantity} {habit.Unit} in {habit.Date.ToString("dd-MMM-yyyy")}");
             }
 
             Console.ReadLine();
