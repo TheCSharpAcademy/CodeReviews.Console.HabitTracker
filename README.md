@@ -10,9 +10,9 @@ Console based CRUD application to track habits measured in Times/Time.
 - [x] When the application starts, it should create a sqlite database, if one isn’t present.
 - [x] It should also create a table in the database, where the habit will be logged.
 - [x] The users should be able to insert, delete, update and view their logged habit.
-- [ ] You should handle all possible errors so that the application never crashes.
+- [x] You should handle all possible errors so that the application never crashes.
 - [x] You can only interact with the database using ADO.NET. You can’t use mappers such as Entity Framework or Dapper.
-- [ ] Follow the DRY Principle, and avoid code repetition.
+- [x] Follow the DRY Principle, and avoid code repetition.
 - [x] Your project needs to contain a Read Me file where you'll explain how your app works.
 
 ## Optional:
