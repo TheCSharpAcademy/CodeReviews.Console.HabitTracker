@@ -17,9 +17,9 @@ Console based CRUD application to track habits measured in Times/Time.
 
 ## Optional:
 - [x] If you haven't, try using parameterized queries to make your application more secure.
-- [ ] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
+- [x] Let the users create their own habits to track. That will require that you let them choose the unit of measurement of each habit.
 - [x] Seed Data into the database automatically when the database gets created for the first time, generating a few habits and inserting a hundred records with randomly generated values. This is specially helpful during development so you don't have to reinsert data every time you create the database.
-- [ ] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
+- [x] Create a report functionality where the users can view specific information (i.e. how many times the user ran in a year? how many kms?) SQL allows you to ask very interesting things from your database.
 
 # Resources
 - [The C# academy project page](https://thecsharpacademy.com/project/12/habit-logger)
