@@ -1,8 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Xml;
-using static HabitTracker.S1m0n32002.Models.Habit;
-
-namespace HabitTracker.S1m0n32002.Models
+﻿namespace HabitTracker.S1m0n32002.Models
 {
     public class Habit
     {
@@ -92,7 +88,7 @@ namespace HabitTracker.S1m0n32002.Models
             /// <summary>
             /// date when habit was done
             /// </summary>
-            public DateTime Date { get; set; } = new DateTime(0);
+            public DateTime Date { get; set; } = new();
             /// <summary>
             /// Id of habit
             /// </summary>
