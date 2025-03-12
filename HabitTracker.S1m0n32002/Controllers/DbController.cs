@@ -194,7 +194,7 @@ public class DbController
         par.Value = occurrence.HabitId;
         cmd.Parameters.Add(par);
 
-        var reader = cmd.ExecuteReader();
+        using var reader = cmd.ExecuteReader();
 
         if (reader.CanGetColumnSchema())
         {

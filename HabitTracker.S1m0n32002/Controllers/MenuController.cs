@@ -23,33 +23,34 @@ namespace HabitTracker.S1m0n32002.Controllers;
 
     static readonly DbController dbController = new();
 
-    public bool ShowMainMenu()
+    public void ShowMainMenu()
     {
-        Console.Clear();
-
-        PrintRule("Main menu"); // Somehow if i make the whole class static the first time it's called the rule gets deleted
-
-        var prompt = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .AddChoices(mainMenuStrs.Keys)
-        );
-
-        if (mainMenuStrs.TryGetValue(prompt, out MainMenuChoices result))
+        while(true)
         {
-            switch (result)
+            Console.Clear();
+
+            PrintRule("Main menu"); // Somehow if i make the whole class static the first time it's called the rule gets deleted
+
+            var prompt = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .AddChoices(mainMenuStrs.Keys)
+            );
+
+            if (mainMenuStrs.TryGetValue(prompt, out MainMenuChoices result))
             {
-                case MainMenuChoices.Begin:
-                    EditHabits();
-                    break;
-                case MainMenuChoices.ShowReport:
-                    ShowReport();
-                    break;
-                case MainMenuChoices.Exit:
-                    return false;
+                switch (result)
+                {
+                    case MainMenuChoices.Begin:
+                        EditHabits();
+                        break;
+                    case MainMenuChoices.ShowReport:
+                        ShowReport();
+                        break;
+                    case MainMenuChoices.Exit:
+                        return;
+                }
             }
         }
-
-        return true;
     }
 
     /// <summary>
@@ -158,7 +159,7 @@ namespace HabitTracker.S1m0n32002.Controllers;
                 catch (SqliteException ex)
                 {
                     Debug.WriteLine(ex);
-                    AnsiConsole.MarkupLine($"[red]Habit name \"{habit.Name}\" already exists[/]");
+                    AnsiConsole.MarkupLine($"[red]An occurred while saving the occurrence[/]");
                     AnsiConsole.MarkupLine($"Press [blue]ENTER[/] to continue");
                     Console.ReadLine();
                 }
