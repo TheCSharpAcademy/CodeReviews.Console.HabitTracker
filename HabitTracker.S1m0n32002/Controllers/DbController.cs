@@ -1,18 +1,24 @@
 ﻿using HabitTracker.S1m0n32002.Models;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
-using System;
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
-using System.Reflection.PortableExecutable;
-using System.Runtime.Serialization;
 namespace HabitTracker.S1m0n32002.Controllers;
 
 public class DbController
 {
+    /// <summary>
+    /// Name of database file name
+    /// </summary>
     const string DbName = "Db.sqlite";
+    /// <summary>
+    /// Database template file name
+    /// </summary>
     const string DbTemplate = "SqliteTemplate.sql";
+    /// <summary>
+    /// DateTime format used in database
+    /// </summary>
     const string DateTimeFormat = "yyyyMMddTHHmmssZ";
 
     public DbController()
@@ -20,31 +26,56 @@ public class DbController
         CheckAndInitDB();
     }
 
+    #region "Habit"
     /// <summary>
-    /// Save habit to database
+    /// Add habit to database
     /// </summary>
     /// <param name="name"> name of habit </param>
     /// <param name="periodicity"> Periodicities of habit </param>
     /// <returns> Habit object just created </returns>
-    public Habit? AddHabit(string name, Habit.Periodicities periodicity)
+    public Habit? SaveHabit(string name, Habit.Periodicities periodicity)
     {
-        string StrCmd = @$"INSERT INTO [{Habit.TabName}] ({nameof(Habit.Id).ToLower()},
-                                                          {nameof(Habit.Name).ToLower()},
-                                                          {nameof(Habit.Periodicity).ToLower()}) 
-                                                  VALUES ((SELECT IFNULL(MAX({nameof(Habit.Id).ToLower()}), -1) + 1 FROM [{Habit.TabName}]),
-                                                          @{nameof(Habit.Name).ToLower()},
-                                                          @{nameof(Habit.Periodicity).ToLower()})
-                                                  RETURNING *;";
+        return SaveHabit(new Habit() { Name = name, Periodicity = periodicity });
+    }
+
+    /// <summary>
+    /// SaveHabit habit to database
+    /// </summary>
+    /// <param name="habit"> habit to save </param>
+    /// <returns> Habit object just created </returns>
+    public Habit? SaveHabit(Habit habit)
+    {
+        string StrCmd;
+
+        if (habit.Id < 0)
+            StrCmd = @$"INSERT INTO [{Habit.TabName}] ({nameof(Habit.Id).ToLower()},
+                                                       {nameof(Habit.Name).ToLower()},
+                                                       {nameof(Habit.Periodicity).ToLower()}) 
+                                               VALUES ((SELECT IFNULL(MAX({nameof(Habit.Id).ToLower()}), -1) + 1 FROM [{Habit.TabName}]),
+                                                       @{nameof(Habit.Name).ToLower()},
+                                                       @{nameof(Habit.Periodicity).ToLower()})
+                                               RETURNING *;";
+        else
+            StrCmd = @$"UPDATE [{Habit.TabName}] SET {nameof(Habit.Name).ToLower()} = @{nameof(Habit.Name).ToLower()},
+                                                     {nameof(Habit.Periodicity).ToLower()} = @{nameof(Habit.Periodicity).ToLower()} 
+                                                 WHERE {nameof(Habit.Id).ToLower()} = @{nameof(Habit.Id).ToLower()}
+                                                 RETURNING *;";
+        
 
         using SqliteCommand cmd = new(StrCmd, Connect());
         var par = cmd.CreateParameter();
-        par.ParameterName = $"@{nameof(name).ToLower()}";
-        par.Value = name;
+        par.ParameterName = $"@{nameof(Habit.Id).ToLower()}";
+        par.Value = habit.Id;
         cmd.Parameters.Add(par);
 
         par = cmd.CreateParameter();
-        par.ParameterName = $"@{nameof(periodicity).ToLower()}";
-        par.Value = periodicity;
+        par.ParameterName = $"@{nameof(Habit.Name).ToLower()}";
+        par.Value = habit.Name;
+        cmd.Parameters.Add(par);
+
+        par = cmd.CreateParameter();
+        par.ParameterName = $"@{nameof(Habit.Periodicity).ToLower()}";
+        par.Value = habit.Periodicity;
         cmd.Parameters.Add(par);
 
         var rdr = cmd.ExecuteReader();
@@ -59,12 +90,9 @@ public class DbController
 
             while (rdr.Read())
             {
-                Habit habit = new()
-                {
-                    Id = rdr.GetInt32(colId),
-                    Name = rdr.GetString(colName),
-                    Periodicity = (Habit.Periodicities)rdr.GetInt32(colPeriodicity),
-                };
+                habit.Id = rdr.GetInt32(colId);
+                habit.Name = rdr.GetString(colName);
+                habit.Periodicity = (Habit.Periodicities)rdr.GetInt32(colPeriodicity);
 
                 return habit;
             }
@@ -76,10 +104,9 @@ public class DbController
     /// Delete a habit from the database
     /// </summary>
     /// <param name="habit"> habit to delete </param>
-    /// <returns> True if habit was deleted, false otherwise </returns>
-    public bool DeleteHabit(Habit habit)
+    public void DeleteHabit(Habit habit)
     {
-        string StrCmd = @$"DELETE FROM [{Habit.TabName}] WHERE {nameof(Habit.Id).ToLower()} = @{nameof(Habit.Id).ToLower()})";
+        string StrCmd = @$"DELETE FROM [{Habit.TabName}] WHERE {nameof(Habit.Id).ToLower()} = @{nameof(Habit.Id).ToLower()}";
 
         using SqliteCommand cmd = new(StrCmd, Connect());
         var par = cmd.CreateParameter();
@@ -87,84 +114,7 @@ public class DbController
         par.Value = habit.Id;
         cmd.Parameters.Add(par);
 
-        if (cmd.ExecuteNonQuery() != 0)
-            return true;
-
-        return false;
-    }
-
-    /// <summary>
-    /// Add occurrance to habit
-    /// </summary>
-    /// <param name="habit"></param>
-    /// <param name="date"></param>
-    /// <returns> Occurrence object just created </returns>
-    public Habit.Occurrence? AddOccurrence(Habit habit, DateTime date)
-    {
-        string StrCmd = @$"INSERT INTO [{Habit.Occurrence.TabName}] ({nameof(Habit.Occurrence.Id).ToLower()},
-                                                                     {nameof(Habit.Occurrence.Date).ToLower()},
-                                                                     {nameof(Habit.Occurrence.HabitId).ToLower()}) 
-                                                              VALUES ((SELECT IFNULL(MAX({nameof(Habit.Occurrence.Id).ToLower()}), -1) + 1 FROM [{Habit.Occurrence.TabName}]),
-                                                                     @{nameof(Habit.Occurrence.Date).ToLower()},
-                                                                     @{nameof(Habit.Occurrence.HabitId).ToLower()})
-                                                              RETURNING *;";
-        using SqliteCommand cmd = new(StrCmd, Connect());
-        
-        var par = cmd.CreateParameter();
-        par.ParameterName = $"@{nameof(Habit.Occurrence.Date).ToLower()}";
-        par.Value = date.ToString("yyyyMMddTHHmmssZ");
-        cmd.Parameters.Add(par);
-
-        par = cmd.CreateParameter();
-        par.ParameterName = $"@{nameof(Habit.Occurrence.HabitId).ToLower()}";
-        par.Value = habit.Id;
-        cmd.Parameters.Add(par);
-
-        var reader = cmd.ExecuteReader();
-
-        if (reader.CanGetColumnSchema())
-        {
-            var schema = reader.GetColumnSchema();
-
-            var colId = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Occurrence.Id), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
-            var colDate = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Occurrence.Date), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
-            var colHabitId = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Occurrence.HabitId), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
-
-            while (reader.Read())
-            {
-                var datetime = DateTime.ParseExact(reader.GetString(colDate), DateTimeFormat, CultureInfo.InvariantCulture).ToLocalTime();
-                Habit.Occurrence occurrence = new()
-                {
-                    Id = reader.GetInt32(colId),
-                    Date = datetime,
-                    HabitId = reader.GetInt32(colHabitId),
-                };
-
-                return occurrence;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Delete an occurrence from the database
-    /// </summary>
-    /// <param name="occurrence"> occurrence to delete </param>
-    /// <returns> True if occurrence was deleted, false otherwise </returns>
-    public bool DeleteOccurrence(Habit.Occurrence occurrence)
-    {
-        string StrCmd = @$"DELETE FROM [{Habit.Occurrence.TabName}] WHERE {nameof(Habit.Occurrence.Id).ToLower()} = @{nameof(Habit.Occurrence.Id).ToLower()})";
-
-        using SqliteCommand cmd = new(StrCmd, Connect());
-        var par = cmd.CreateParameter();
-        par.ParameterName = $"@{nameof(occurrence.Id).ToLower()}";
-        par.Value = occurrence.Id;
-        cmd.Parameters.Add(par);
-
-        if (cmd.ExecuteNonQuery() != 0)
-            return true;
-
-        return false;
+        cmd.ExecuteNonQuery();
     }
 
     /// <summary>
@@ -180,8 +130,8 @@ public class DbController
         using var reader = cmd.ExecuteReader();
         if (reader.CanGetColumnSchema())
         {
-            // Get the column indexes
             var schema = reader.GetColumnSchema();
+
             var id = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Id), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
             var name = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Name), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
             var periodicity = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Periodicity), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
@@ -195,7 +145,7 @@ public class DbController
                     Periodicity = (Habit.Periodicities)reader.GetInt32(periodicity),
                 };
 
-                habit.Occurrences = [.. LoadAllOccurrences(habit.Id)];
+                habit.Occurrences = [.. LoadAllOccurrences(habit)];
 
                 habits.Add(habit);
             }
@@ -203,17 +153,131 @@ public class DbController
 
         return habits;
     }
-        /// <summary>
-        /// Load all habits from database
-        /// </summary>
-    public IEnumerable<Habit.Occurrence> LoadAllOccurrences(int HabitId)
+    #endregion
+
+    #region "Occurrence"
+    /// <summary>
+    /// Saves occurrence of a habit
+    /// </summary>
+    /// <param name="occurrence"> Occurrence to save </param>
+    /// <returns> Occurrence object just created </returns>
+    public Habit.Occurrence? SaveOccurrence(Habit.Occurrence occurrence)
     {
-        string StrCmd = $"SELECT * FROM [{Habit.Occurrence.TabName}] WHERE [{nameof(HabitId).ToLower()}] = @{nameof(HabitId).ToLower()}";
+        string StrCmd;
+
+        if (occurrence.Id < 0)
+            StrCmd = @$"INSERT INTO [{Habit.Occurrence.TabName}] ({nameof(Habit.Occurrence.Id).ToLower()},
+                                                                  {nameof(Habit.Occurrence.Date).ToLower()},
+                                                                  {nameof(Habit.Occurrence.HabitId).ToLower()}) 
+                                                           VALUES ((SELECT IFNULL(MAX({nameof(Habit.Occurrence.Id).ToLower()}), -1) + 1 FROM [{Habit.Occurrence.TabName}]),
+                                                                  @{nameof(Habit.Occurrence.Date).ToLower()},
+                                                                  @{nameof(Habit.Occurrence.HabitId).ToLower()})
+                                                           RETURNING *;";
+        else
+            StrCmd = @$"UPDATE [{Habit.Occurrence.TabName}] SET {nameof(Habit.Occurrence.Date).ToLower()} = @{nameof(Habit.Occurrence.Date).ToLower()} 
+                                                          WHERE {nameof(Habit.Occurrence.Id).ToLower()} = @{nameof(Habit.Occurrence.Id).ToLower()}
+                                                      RETURNING *;";
         using SqliteCommand cmd = new(StrCmd, Connect());
 
         var par = cmd.CreateParameter();
-        par.ParameterName = $"@{nameof(HabitId).ToLower()}";
-        par.Value = HabitId;
+        par.ParameterName = $"@{nameof(Habit.Occurrence.Date).ToLower()}";
+        par.Value = occurrence.Date.ToUniversalTime().ToString(DateTimeFormat);
+        cmd.Parameters.Add(par);
+
+        par = cmd.CreateParameter();
+        par.ParameterName = $"@{nameof(Habit.Occurrence.Id).ToLower()}";
+        par.Value = occurrence.Id;
+        cmd.Parameters.Add(par);
+
+        par = cmd.CreateParameter();
+        par.ParameterName = $"@{nameof(Habit.Occurrence.HabitId).ToLower()}";
+        par.Value = occurrence.HabitId;
+        cmd.Parameters.Add(par);
+
+        var reader = cmd.ExecuteReader();
+
+        if (reader.CanGetColumnSchema())
+        {
+            var schema = reader.GetColumnSchema();
+
+            var colId = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Occurrence.Id), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
+            var colDate = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Occurrence.Date), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
+            var colHabitId = schema.Index().Where(x => x.Item.ColumnName.Equals(nameof(Habit.Occurrence.HabitId), StringComparison.CurrentCultureIgnoreCase)).Single().Index;
+
+            while (reader.Read())
+            {
+                var datetime = DateTime.ParseExact(reader.GetString(colDate), DateTimeFormat, CultureInfo.InvariantCulture).ToLocalTime();
+                
+                occurrence.Id = reader.GetInt32(colId);
+                occurrence.Date = datetime;
+                occurrence.HabitId = reader.GetInt32(colHabitId);
+
+                return occurrence;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Adds occurrence to habit
+    /// </summary>
+    /// <param name="habit"> parent habit of the occurrence </param>
+    /// <param name="date"> date of the occurrence </param>
+    /// <returns> Occurrence object just created </returns>
+    public Habit.Occurrence? SaveOccurrence(Habit habit, DateTime date)
+    {
+        return SaveOccurrence(new Habit.Occurrence() { Date = date, HabitId = habit.Id });
+    }
+
+    /// <summary>
+    /// Delete occurrences from the database
+    /// </summary>
+    /// <param name="occurrences"> occurrences to delete </param>
+    public void DeleteOccurrences(params Habit.Occurrence[] occurrences)
+    {
+        string StrCmd = @$"DELETE FROM [{Habit.Occurrence.TabName}] WHERE {nameof(Habit.Occurrence.Id).ToLower()} = @{nameof(Habit.Occurrence.Id).ToLower()}";
+
+        foreach (Habit.Occurrence occurrence in occurrences)
+        {
+            using SqliteCommand cmd = new(StrCmd, Connect());
+            var par = cmd.CreateParameter();
+            par.ParameterName = $"@{nameof(occurrence.Id).ToLower()}";
+            par.Value = occurrence.Id;
+            cmd.Parameters.Add(par);
+
+            cmd.ExecuteNonQuery();
+        }
+    }
+
+    /// <summary>
+    /// Delete all occurrences of a habit from the database
+    /// </summary>
+    /// <param name="habit"> parent habit of the occurrences to delete </param>
+    public void DeleteAllOccurrences(Habit habit)
+    {
+        string StrCmd = @$"DELETE FROM [{Habit.Occurrence.TabName}] WHERE {nameof(Habit.Occurrence.HabitId).ToLower()} = @{nameof(Habit.Occurrence.HabitId).ToLower()}";
+
+            using SqliteCommand cmd = new(StrCmd, Connect());
+            var par = cmd.CreateParameter();
+            par.ParameterName = $"@{nameof(Habit.Occurrence.HabitId).ToLower()}";
+            par.Value = habit.Id;
+            cmd.Parameters.Add(par);
+
+            cmd.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Load all occurrences of a habit from database
+    /// </summary>
+    /// <param name="habit"> habit to load occurrences </param>
+    public IEnumerable<Habit.Occurrence> LoadAllOccurrences(Habit habit)
+    {
+        string StrCmd = $"SELECT * FROM [{Habit.Occurrence.TabName}] WHERE [{nameof(Habit.Occurrence.HabitId).ToLower()}] = @{nameof(Habit.Occurrence.HabitId).ToLower()}";
+        using SqliteCommand cmd = new(StrCmd, Connect());
+
+        var par = cmd.CreateParameter();
+        par.ParameterName = $"@{nameof(Habit.Occurrence.HabitId).ToLower()}";
+        par.Value = habit.Id;
         cmd.Parameters.Add(par);
 
         List<Habit.Occurrence> occurrences = [];
@@ -242,6 +306,7 @@ public class DbController
 
         return occurrences;
     }
+    #endregion
 
     /// <summary>
     /// Check and initialize database against <see cref="DbTemplate"/>
@@ -257,6 +322,7 @@ public class DbController
 
                 AnsiConsole.WriteLine("Database not found!");
                 
+                ctx.Spinner(Spinner.Known.Star); // not working :(
                 ctx.Status("Initializing database...");
                 AnsiConsole.WriteLine("Loading database template...");
 
@@ -282,14 +348,14 @@ public class DbController
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var habit = AddHabit($"Habit {i}", Habit.Periodicities.Daily);
+                    var habit = SaveHabit($"DEMO Habit {i}", Habit.Periodicities.Daily);
                     if (habit != null)
                     {
                         for (int d = 0; d < random.Next(0, 20); d++)
                         {
                             for (int h = 0; h < random.Next(0, 20); h++)
                             {
-                                AddOccurrence(habit, DateTime.Now.AddDays(d).AddHours(h));
+                                SaveOccurrence(habit, DateTime.Now.AddDays(d).AddHours(h));
                             }
                         }
                     }
