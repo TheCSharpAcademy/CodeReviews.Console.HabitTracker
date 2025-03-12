@@ -15,7 +15,7 @@ public class DbController
     /// <summary>
     /// Database template file name
     /// </summary>
-    const string DbTemplate = "SqliteTemplate.sql";
+    const string DbTemplate = "SqliteTemplate.txt";
     /// <summary>
     /// DateTime format used in database
     /// </summary>
