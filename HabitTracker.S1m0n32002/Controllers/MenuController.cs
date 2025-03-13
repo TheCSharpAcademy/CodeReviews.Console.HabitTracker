@@ -16,7 +16,7 @@ namespace HabitTracker.S1m0n32002.Controllers;
 
     readonly Dictionary<string, MainMenuChoices> mainMenuStrs = new()
     {
-        { "Begin"     , MainMenuChoices.Begin},
+        { "Begin"           , MainMenuChoices.Begin},
         { "Show report"     , MainMenuChoices.ShowReport },
         { "[yellow]Exit[/]" , MainMenuChoices.Exit }
     };
@@ -25,7 +25,7 @@ namespace HabitTracker.S1m0n32002.Controllers;
 
     public void ShowMainMenu()
     {
-        while(true)
+        while (true)
         {
             Console.Clear();
 
@@ -247,7 +247,7 @@ namespace HabitTracker.S1m0n32002.Controllers;
 
         var chosenHabitName = AnsiConsole.Prompt(habitPrompt);
 
-        if (menuStrs.TryGetValue(chosenHabitName,out Habit? chosenHabit))
+        if (menuStrs.TryGetValue(chosenHabitName, out Habit? chosenHabit))
                 return chosenHabit;
 
         return null;
@@ -272,7 +272,7 @@ namespace HabitTracker.S1m0n32002.Controllers;
             menuStrs.Add($"{++c}.\t{occurrence.Date}", occurrence);
         }
 
-        menuStrs.Add("[green]Add[/]", new Habit.Occurrence() { HabitId = habit.Id});
+        menuStrs.Add("[green]Add[/]", new Habit.Occurrence() { HabitId = habit.Id });
         menuStrs.Add("[yellow]Exit[/]", null);
 
         var occurrancePrompt = new SelectionPrompt<string>()
@@ -322,7 +322,7 @@ namespace HabitTracker.S1m0n32002.Controllers;
 
         var periodicity = AnsiConsole.Prompt(periodicityPrompt);
 
-        if(periodicity != Habit.Periodicities.None)
+        if (periodicity != Habit.Periodicities.None)
             habit.Periodicity = periodicity;
 
         return habit;
@@ -396,5 +396,6 @@ namespace HabitTracker.S1m0n32002.Controllers;
             Style = Style.Parse("yellow")
         };
         AnsiConsole.Write(rule);
+        AnsiConsole.WriteLine();
     }
 }
