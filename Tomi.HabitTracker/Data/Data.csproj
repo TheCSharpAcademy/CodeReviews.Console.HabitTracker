@@ -8,4 +8,9 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>  
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SQLite" Version="3.12.3" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+  </ItemGroup>
+
 </Project>
