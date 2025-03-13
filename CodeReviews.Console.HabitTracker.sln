@@ -1,0 +1,42 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomi.HabitTracker", "Tomi.HabitTracker\Tomi.HabitTracker.csproj", "{7A371159-BB4B-A2BA-48B1-98C61B08E959}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tomi.HabitTracker (1)", "Tomi.HabitTracker (1)", "{A3AE91F8-BBF2-B784-337C-1E89D6225B2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Tomi.HabitTracker\Data\Data.csproj", "{0931F4D3-1D43-4BF8-B2F1-172591E4B518}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prompts", "Tomi.HabitTracker\Prompts\Prompts.csproj", "{725ADEF2-B3E0-FBBE-78B6-B52EB34C24D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A371159-BB4B-A2BA-48B1-98C61B08E959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A371159-BB4B-A2BA-48B1-98C61B08E959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A371159-BB4B-A2BA-48B1-98C61B08E959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A371159-BB4B-A2BA-48B1-98C61B08E959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0931F4D3-1D43-4BF8-B2F1-172591E4B518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0931F4D3-1D43-4BF8-B2F1-172591E4B518}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0931F4D3-1D43-4BF8-B2F1-172591E4B518}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0931F4D3-1D43-4BF8-B2F1-172591E4B518}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725ADEF2-B3E0-FBBE-78B6-B52EB34C24D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725ADEF2-B3E0-FBBE-78B6-B52EB34C24D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725ADEF2-B3E0-FBBE-78B6-B52EB34C24D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725ADEF2-B3E0-FBBE-78B6-B52EB34C24D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0931F4D3-1D43-4BF8-B2F1-172591E4B518} = {A3AE91F8-BBF2-B784-337C-1E89D6225B2F}
+		{725ADEF2-B3E0-FBBE-78B6-B52EB34C24D4} = {A3AE91F8-BBF2-B784-337C-1E89D6225B2F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F926BC7-3D1C-4402-AA4F-F8B881B96C8B}
+	EndGlobalSection
+EndGlobal
