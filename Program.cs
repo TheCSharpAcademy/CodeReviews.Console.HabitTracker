@@ -14,7 +14,39 @@ class Program
             // Create table
             CreateTable(connection);
 
-            // Offer menu to user
+            // Do while not exit
+            bool shouldContinue = true;
+            do
+            {
+                // Offer menu to user
+                Console.Clear();
+                PrintUI();
+
+                // Get user input
+                Console.Write("\nInput: ");
+                int userInput = GetUserInput("Invalid Input");
+
+                // Handle input
+                switch (userInput)
+                {
+                    // Create new data point
+
+                    // Read from date or id
+
+                    // Update from date or id
+
+                    // Delete from date or id
+
+                    // Exit
+                    case 4:
+                        shouldContinue = false;
+                        break;
+
+                    default:
+                        break;
+                }
+                
+            } while(shouldContinue);
             
             connection.Close();
         }
@@ -35,16 +67,32 @@ class Program
         tableCmd.ExecuteNonQuery();
     }
 
-    static int GetUserInput()
+    static void PrintUI()
+    {
+        Console.WriteLine("Habit Log Program: ");
+        Console.WriteLine("\t[0] - Create log");
+        Console.WriteLine("\t[1] - Find log");
+        Console.WriteLine("\t[2] - Update log");
+        Console.WriteLine("\t[3] - Delete log");
+        Console.WriteLine("\t[4] - Exit");
+    }
+
+    static int GetUserInput(string errorMessage)
     {
         int parsedInt;
-        string input = Console.ReadLine();
-        while (!Int32.TryParse(input, out parsedInt))
+        while (!Int32.TryParse(Console.ReadLine(), out parsedInt))
         {
-            Console.Write("Invalid input: ");
-            input = Console.ReadLine();
+            Console.Write($"{errorMessage}: ");
         }
 
         return parsedInt;
     }
+
+    static void GetData(){}
+
+    static void ReadData(){}
+
+    static void UpdateData(){}
+
+    static void DeleteData(){}
 }
