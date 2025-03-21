@@ -29,19 +29,22 @@ class Program
                 // Handle input
                 switch (userInput)
                 {
-                    // Create new data point
-
-                    // Read from date or id
-
-                    // Update from date or id
-
-                    // Delete from date or id
-
+                    case 0:
+                        AddData();
+                        break;
+                    case 1:
+                        FindData();
+                        break;
+                    case 2:
+                        UpdateData();
+                        break;
+                    case 3:
+                        DeleteData();
+                        break;
                     // Exit
                     case 4:
                         shouldContinue = false;
                         break;
-
                     default:
                         break;
                 }
@@ -87,10 +90,9 @@ class Program
 
         return parsedInt;
     }
+    static void AddData(){}
 
-    static void GetData(){}
-
-    static void ReadData(){}
+    static void FindData(){}
 
     static void UpdateData(){}
 
