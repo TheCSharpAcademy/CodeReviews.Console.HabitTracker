@@ -3,9 +3,26 @@ using Microsoft.Data.Sqlite;
 
 class Program
 {
+    class LogData
+    {
+        public DateTime date;
+        public int quantity;
+        public LogData(DateTime date, int quantity)
+        {
+            this.date = date;
+            this.quantity = quantity;
+        }
+        public LogData(string date, int quantity)
+        {
+            this.date = DateTime.Parse(date);
+            this.quantity = quantity;
+        }
+    }
     static void Main(string[] args)
     {
         string connectionString = @"Data Source=habit-Tracker.db";
+        int userInput = 0;
+        bool shouldContinue = true;
 
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -15,16 +32,14 @@ class Program
             CreateTable(connection);
 
             // Do while not exit
-            bool shouldContinue = true;
             do
             {
                 // Offer menu to user
-                Console.Clear();
                 PrintUI();
 
                 // Get user input
                 Console.Write("\nInput: ");
-                int userInput = GetUserInput("Invalid Input");
+                userInput = GetUserInput("Invalid Input");
 
                 // Handle input
                 switch (userInput)
@@ -48,7 +63,7 @@ class Program
                     default:
                         break;
                 }
-                
+                Console.Clear();
             } while(shouldContinue);
             
             connection.Close();
@@ -90,7 +105,10 @@ class Program
 
         return parsedInt;
     }
-    static void AddData(){}
+    static void AddData()
+    {
+        
+    }
 
     static void FindData(){}
 
