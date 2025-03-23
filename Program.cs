@@ -35,7 +35,8 @@ class Program
                 switch (userInput)
                 {
                     case 0:
-                        AddData();
+                        LogData data = GetLogData();
+                        AddData(data);
                         break;
                     case 1:
                         FindData();
@@ -95,26 +96,24 @@ class Program
 
         return parsedInt;
     }
-    static LogData AddData()
+    static LogData GetLogData()
     {
         LogData newLog = new();
 
         Console.Clear();
-        Console.WriteLine("Adding log to DB");
+        Console.WriteLine("Adding log to DB\n");
         Console.WriteLine("Enter Date: ");
+
         newLog.date = GetDate();
-        
-        do
-        {
-            Console.Write("Quantity (# of glasses): ");
-        }
-        while(!int.TryParse(Console.ReadLine(), out newLog.quantity));
+        newLog.quantity = GetQuantity();
 
         Console.WriteLine($"Log ({newLog.date}, {newLog.quantity} glasses) added. Press enter to continue.");
         Console.Read();
         
         return newLog;
     }
+
+    static void AddData(LogData data){}
 
     static void FindData(){}
 
@@ -141,5 +140,18 @@ class Program
         while(!DateTime.TryParse(date, out returnDate));
 
         return returnDate;
+    }
+
+    static int GetQuantity()
+    {
+        int quantity = 0;
+
+        do
+        {
+            Console.Write("Quantity (# of glasses): ");
+        }
+        while(!int.TryParse(Console.ReadLine(), out quantity));
+
+        return quantity;
     }
 }
