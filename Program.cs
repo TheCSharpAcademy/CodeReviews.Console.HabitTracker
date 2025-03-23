@@ -39,7 +39,8 @@ class Program
                         AddData(data, connection);
                         break;
                     case 1:
-                        FindData(connection);
+                        List<string> columns = GetColumnsToSearch();
+                        FindData(connection, columns);
                         break;
                     case 2:
                         FindData(connection);
@@ -90,34 +91,6 @@ class Program
         Console.WriteLine("\t[5] - Exit");
     }
 
-    static int GetUserInput(string errorMessage)
-    {
-        int parsedInt;
-        while (!Int32.TryParse(Console.ReadLine(), out parsedInt))
-        {
-            Console.Write($"{errorMessage}: ");
-        }
-
-        return parsedInt;
-    }
-
-    static LogData GetLogData()
-    {
-        LogData newLog = new();
-
-        Console.Clear();
-        Console.WriteLine("Adding log to DB\n");
-        Console.WriteLine("Enter Date: ");
-
-        newLog.date = GetDate();
-        newLog.quantity = GetQuantity();
-
-        Console.WriteLine($"Log ({newLog.date.Date:d}, {newLog.quantity} glasses) added. Press enter to continue.");
-        Console.Read();
-        
-        return newLog;
-    }
-
     static void AddData(LogData data, SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
@@ -134,7 +107,7 @@ class Program
         catch (Exception e) { Console.WriteLine(e); Console.Read(); }
     }
 
-    static void FindData(SqliteConnection connection)
+    static void FindData(SqliteConnection connection, List<string>? columns = null)
     {
         SqliteCommand command = connection.CreateCommand();
         command.CommandText = $@"SELECT * FROM drinking_water";
@@ -166,6 +139,34 @@ class Program
     static void UpdateData(){}
 
     static void DeleteData(){}
+
+    static int GetUserInput(string errorMessage)
+    {
+        int parsedInt;
+        while (!Int32.TryParse(Console.ReadLine(), out parsedInt))
+        {
+            Console.Write($"{errorMessage}: ");
+        }
+
+        return parsedInt;
+    }
+
+    static LogData GetLogData()
+    {
+        LogData newLog = new();
+
+        Console.Clear();
+        Console.WriteLine("Adding log to DB\n");
+        Console.WriteLine("Enter Date: ");
+
+        newLog.date = GetDate();
+        newLog.quantity = GetQuantity();
+
+        Console.WriteLine($"Log ({newLog.date.Date:d}, {newLog.quantity} glasses) added. Press enter to continue.");
+        Console.Read();
+        
+        return newLog;
+    }
 
     // Get a valid date from user
     // TODO: fancy error handling
@@ -200,4 +201,10 @@ class Program
 
         return quantity;
     }
+
+    static List<string> GetColumnsToSearch()
+    {
+        return null;
+    }
+
 }
