@@ -36,7 +36,7 @@ class Program
                 {
                     case 0:
                         LogData data = GetLogData();
-                        AddData(data);
+                        AddData(data, connection);
                         break;
                     case 1:
                         FindData();
@@ -96,6 +96,7 @@ class Program
 
         return parsedInt;
     }
+
     static LogData GetLogData()
     {
         LogData newLog = new();
@@ -107,13 +108,26 @@ class Program
         newLog.date = GetDate();
         newLog.quantity = GetQuantity();
 
-        Console.WriteLine($"Log ({newLog.date}, {newLog.quantity} glasses) added. Press enter to continue.");
+        Console.WriteLine($"Log ({newLog.date.Date:d}, {newLog.quantity} glasses) added. Press enter to continue.");
         Console.Read();
         
         return newLog;
     }
 
-    static void AddData(LogData data){}
+    static void AddData(LogData data, SqliteConnection connection)
+    {
+        SqliteCommand command = connection.CreateCommand();
+        
+        command.CommandText = 
+        $@"INSERT INTO drinking_water (Date, Quantity)
+            VALUES ('{data.date.Date:d}', {data.quantity})";
+        
+        try
+        {
+            command.ExecuteNonQuery();
+        }
+        catch { Console.WriteLine("FUCK"); Console.Read(); }
+    }
 
     static void FindData(){}
 
