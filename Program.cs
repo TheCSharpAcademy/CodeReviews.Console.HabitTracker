@@ -139,6 +139,15 @@ class Program
         SqliteCommand command = connection.CreateCommand();
         command.CommandText = $@"SELECT * FROM drinking_water";
         
+        ReadData(command);
+
+        Console.WriteLine("\nPress Enter to continue");
+        Console.Read();
+    }
+
+    // Reads data gotten from passed command
+    static void ReadData(SqliteCommand command)
+    {
         try
         {
             SqliteDataReader reader = command.ExecuteReader();
@@ -152,9 +161,6 @@ class Program
             }
         }
         catch (Exception e) { Console.WriteLine(e); Console.Read(); }
-
-        Console.WriteLine("\nPress Enter to continue");
-        Console.Read();
     }
 
     static void UpdateData(){}
