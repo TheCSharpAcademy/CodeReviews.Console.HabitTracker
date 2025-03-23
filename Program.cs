@@ -39,16 +39,19 @@ class Program
                         AddData(data, connection);
                         break;
                     case 1:
-                        FindData();
+                        FindData(connection);
                         break;
                     case 2:
-                        UpdateData();
+                        FindData(connection);
                         break;
                     case 3:
+                        UpdateData();
+                        break;
+                    case 4:
                         DeleteData();
                         break;
                     // Exit
-                    case 4:
+                    case 5:
                         shouldContinue = false;
                         break;
                     default:
@@ -80,10 +83,11 @@ class Program
     {
         Console.WriteLine("Habit Log Program: ");
         Console.WriteLine("\t[0] - Create log");
-        Console.WriteLine("\t[1] - Find log");
-        Console.WriteLine("\t[2] - Update log");
-        Console.WriteLine("\t[3] - Delete log");
-        Console.WriteLine("\t[4] - Exit");
+        Console.WriteLine("\t[1] - Retrieve log");
+        Console.WriteLine("\t[2] - Retrieve all logs");
+        Console.WriteLine("\t[3] - Update log");
+        Console.WriteLine("\t[4] - Delete log");
+        Console.WriteLine("\t[5] - Exit");
     }
 
     static int GetUserInput(string errorMessage)
@@ -119,17 +123,39 @@ class Program
         SqliteCommand command = connection.CreateCommand();
         
         command.CommandText = 
-        $@"INSERT INTO drinking_water (Date, Quantity)
+        $@"INSERT 
+            INTO drinking_water (Date, Quantity)
             VALUES ('{data.date.Date:d}', {data.quantity})";
         
         try
         {
             command.ExecuteNonQuery();
         }
-        catch { Console.WriteLine("FUCK"); Console.Read(); }
+        catch (Exception e) { Console.WriteLine(e); Console.Read(); }
     }
 
-    static void FindData(){}
+    static void FindData(SqliteConnection connection)
+    {
+        SqliteCommand command = connection.CreateCommand();
+        command.CommandText = $@"SELECT * FROM drinking_water";
+        
+        try
+        {
+            SqliteDataReader reader = command.ExecuteReader();
+
+            if (!reader.HasRows)
+                Console.WriteLine("Empty DB");
+            
+            while (reader.Read())
+            {
+                Console.WriteLine($"{reader.GetValue(0)}\t{reader.GetValue(1)}\t{reader.GetValue(2)}");
+            }
+        }
+        catch (Exception e) { Console.WriteLine(e); Console.Read(); }
+
+        Console.WriteLine("\nPress Enter to continue");
+        Console.Read();
+    }
 
     static void UpdateData(){}
 
