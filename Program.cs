@@ -7,16 +7,6 @@ class Program
     {
         public DateTime date;
         public int quantity;
-        public LogData(DateTime date, int quantity)
-        {
-            this.date = date;
-            this.quantity = quantity;
-        }
-        public LogData(string date, int quantity)
-        {
-            this.date = DateTime.Parse(date);
-            this.quantity = quantity;
-        }
     }
     static void Main(string[] args)
     {
@@ -115,4 +105,25 @@ class Program
     static void UpdateData(){}
 
     static void DeleteData(){}
+
+    // Get a valid date from user
+    // TODO: fancy error handling
+    static DateTime GetDate()
+    {
+        DateTime returnDate = new();
+        string date = "";
+
+        do
+        {
+            Console.Write("Month: ");
+            date += Console.ReadLine().PadLeft(2, '0') + '/';
+            Console.Write("Day: ");
+            date += Console.ReadLine().PadLeft(2, '0') + '/';
+            Console.Write("Year: ");
+            date += Console.ReadLine().PadLeft(4, '0');
+        }
+        while(!DateTime.TryParse(date, out returnDate));
+
+        return returnDate;
+    }
 }
