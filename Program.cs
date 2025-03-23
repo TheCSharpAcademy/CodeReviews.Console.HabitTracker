@@ -8,6 +8,12 @@ class Program
     {
         public DateTime date;
         public int quantity;
+        public LogData(){}
+        public LogData(DateTime date, int quantity)
+        {
+            this.date = date;
+            this.quantity = quantity;
+        }
     }
     static void Main(string[] args)
     {
@@ -40,13 +46,15 @@ class Program
                         AddData(data, connection);
                         break;
                     case 1:
-                        FindData(connection);
+                        PrintAllData(connection);
+                        Console.WriteLine("\nPress Enter to continue");
+                        Console.Read();
                         break;
                     case 2:
                         UpdateData();
                         break;
                     case 3:
-                        DeleteData();
+                        DeleteData(connection);
                         break;
                     // Exit
                     case 4:
@@ -93,22 +101,20 @@ class Program
         catch (Exception e) { Console.WriteLine(e); Console.Read(); }
     }
 
-    static void FindData(SqliteConnection connection)
+    static void PrintAllData(SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
 
         command.CommandText = $@"SELECT * FROM drinking_water";
+        ReadData(command);
         
         Console.Clear();
-        ReadData(command);
-
-        Console.WriteLine("\nPress Enter to continue");
-        Console.Read();
     }
 
     // Reads data gotten from passed command
-    static void ReadData(SqliteCommand command)
+    static List<LogData> ReadData(SqliteCommand command)
     {
+        List<LogData> logs = new();
         try
         {
             SqliteDataReader reader = command.ExecuteReader();
@@ -119,14 +125,23 @@ class Program
             while (reader.Read())
             {
                 Console.WriteLine($"{reader.GetValue(0)}\t{reader.GetValue(1)}\t{reader.GetValue(2)}");
+                logs.Add(new LogData(DateTime.Parse(reader.GetString(1)), reader.GetInt32(2)));
             }
         }
         catch (Exception e) { Console.WriteLine(e); Console.Read(); }
+
+        return logs;
     }
 
     static void UpdateData(){}
 
-    static void DeleteData(){}
+    static void DeleteData(SqliteConnection connection)
+    {
+        SqliteCommand command = connection.CreateCommand();
+
+        PrintAllData(connection);
+
+    }
 
     static void PrintUI()
     {
