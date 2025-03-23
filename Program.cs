@@ -95,9 +95,25 @@ class Program
 
         return parsedInt;
     }
-    static void AddData()
+    static LogData AddData()
     {
+        LogData newLog = new();
+
+        Console.Clear();
+        Console.WriteLine("Adding log to DB");
+        Console.WriteLine("Enter Date: ");
+        newLog.date = GetDate();
         
+        do
+        {
+            Console.Write("Quantity (# of glasses): ");
+        }
+        while(!int.TryParse(Console.ReadLine(), out newLog.quantity));
+
+        Console.WriteLine($"Log ({newLog.date}, {newLog.quantity} glasses) added. Press enter to continue.");
+        Console.Read();
+        
+        return newLog;
     }
 
     static void FindData(){}
