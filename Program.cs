@@ -1,5 +1,6 @@
 ﻿namespace CodeReviews_Console_HabitTracker;
 using Microsoft.Data.Sqlite;
+using Microsoft.VisualBasic;
 
 class Program
 {
@@ -39,20 +40,16 @@ class Program
                         AddData(data, connection);
                         break;
                     case 1:
-                        List<string> columns = GetColumnsToSearch();
-                        FindData(connection, columns);
-                        break;
-                    case 2:
                         FindData(connection);
                         break;
-                    case 3:
+                    case 2:
                         UpdateData();
                         break;
-                    case 4:
+                    case 3:
                         DeleteData();
                         break;
                     // Exit
-                    case 5:
+                    case 4:
                         shouldContinue = false;
                         break;
                     default:
@@ -80,17 +77,6 @@ class Program
         tableCmd.ExecuteNonQuery();
     }
 
-    static void PrintUI()
-    {
-        Console.WriteLine("Habit Log Program: ");
-        Console.WriteLine("\t[0] - Create log");
-        Console.WriteLine("\t[1] - Retrieve log");
-        Console.WriteLine("\t[2] - Retrieve all logs");
-        Console.WriteLine("\t[3] - Update log");
-        Console.WriteLine("\t[4] - Delete log");
-        Console.WriteLine("\t[5] - Exit");
-    }
-
     static void AddData(LogData data, SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
@@ -107,11 +93,13 @@ class Program
         catch (Exception e) { Console.WriteLine(e); Console.Read(); }
     }
 
-    static void FindData(SqliteConnection connection, List<string>? columns = null)
+    static void FindData(SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
+
         command.CommandText = $@"SELECT * FROM drinking_water";
         
+        Console.Clear();
         ReadData(command);
 
         Console.WriteLine("\nPress Enter to continue");
@@ -139,6 +127,16 @@ class Program
     static void UpdateData(){}
 
     static void DeleteData(){}
+
+    static void PrintUI()
+    {
+        Console.WriteLine("Habit Log Program: ");
+        Console.WriteLine("\t[0] - Create log");
+        Console.WriteLine("\t[1] - Retrieve all logs");
+        Console.WriteLine("\t[2] - Update log");
+        Console.WriteLine("\t[3] - Delete log");
+        Console.WriteLine("\t[4] - Exit");
+    }
 
     static int GetUserInput(string errorMessage)
     {
@@ -200,11 +198,6 @@ class Program
         while(!int.TryParse(Console.ReadLine(), out quantity));
 
         return quantity;
-    }
-
-    static List<string> GetColumnsToSearch()
-    {
-        return null;
     }
 
 }
