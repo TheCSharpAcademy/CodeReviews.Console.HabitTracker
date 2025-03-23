@@ -107,8 +107,6 @@ class Program
 
         command.CommandText = $@"SELECT * FROM drinking_water";
         ReadData(command);
-        
-        Console.Clear();
     }
 
     // Reads data gotten from passed command
@@ -139,8 +137,22 @@ class Program
     {
         SqliteCommand command = connection.CreateCommand();
 
+        Console.Clear();
+        Console.WriteLine("Deleting Log\n");
         PrintAllData(connection);
+        Console.Write("Input ID: ");
+        int id = GetUserInput("Invalid Input");
 
+        try
+        {
+            command.CommandText = $@"DELETE FROM drinking_water WHERE Id = {id}";
+            command.ExecuteNonQuery();
+
+            Console.WriteLine("Log Deleted. Press Enter to continue.");
+            Console.Read();
+        }
+        catch (Exception e) { Console.WriteLine(e); Console.Read();};
+        
     }
 
     static void PrintUI()
