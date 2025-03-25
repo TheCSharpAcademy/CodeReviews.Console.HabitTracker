@@ -93,16 +93,16 @@ class Program
     {
         SqliteCommand command = connection.CreateCommand();
         
-        command.CommandText = 
-        $@"INSERT 
-            INTO drinking_water (Date, Quantity)
-            VALUES ('{data.date.Date:d}', {data.quantity})";
-        
         try
         {
+            command.CommandText = 
+            $@"INSERT 
+                INTO drinking_water (Date, Quantity)
+                VALUES ('{data.date.Date:d}', {data.quantity})";
+        
             command.ExecuteNonQuery();
         }
-        catch (Exception e) { Console.WriteLine(e); Console.Read(); }
+        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); }
     }
 
     static void PrintAllLog(SqliteConnection connection)
@@ -110,11 +110,11 @@ class Program
         SqliteCommand command = connection.CreateCommand();
 
         command.CommandText = $@"SELECT * FROM drinking_water";
-        ReadData(command);
+        ReadLogData(command);
     }
 
     // Reads data gotten from passed command
-    static List<LogData> ReadData(SqliteCommand command)
+    static List<LogData> ReadLogData(SqliteCommand command)
     {
         List<LogData> logs = new();
         try
@@ -130,7 +130,7 @@ class Program
                 logs.Add(new LogData(DateTime.Parse(reader.GetString(1)), reader.GetInt32(2)));
             }
         }
-        catch (Exception e) { Console.WriteLine(e); Console.Read(); }
+        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); return null; }
 
         return logs;
     }
