@@ -138,13 +138,18 @@ class Program
     {
         SqliteCommand command = connection.CreateCommand();
 
-        command.CommandText = $@"
-        UPDATE drinking_water
-        SET Date = '{newLog.date.Date:d}',
-            Quantity = {newLog.quantity}
-        WHERE Id = {id}";
+        try
+        {
+            command.CommandText = $@"
+            UPDATE drinking_water
+            SET Date = '{newLog.date.Date:d}',
+                Quantity = {newLog.quantity}
+            WHERE Id = {id}";
 
-        command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
+        catch (Exception e) { Console.WriteLine(e); Console.Read(); }
+            
     }
 
     static void DeleteData(SqliteConnection connection)
@@ -194,12 +199,11 @@ class Program
     {
         LogData newLog = new();
 
-        Console.Clear();
         Console.WriteLine("Adding log to DB\n");
         Console.WriteLine("Enter Date: ");
 
-        newLog.date = GetDate();
-        newLog.quantity = GetQuantity();
+        do { newLog.date = GetDate(); } while (newLog.date == default);
+        do { newLog.quantity = GetQuantity(); } while (newLog.quantity == -1);
 
         Console.WriteLine($"Log ({newLog.date.Date:d}, {newLog.quantity} glasses) added. Press enter to continue.");
         Console.Read();
@@ -214,16 +218,15 @@ class Program
         DateTime returnDate = new();
         string date = "";
 
-        do
-        {
-            Console.Write("Month: ");
-            date += Console.ReadLine().PadLeft(2, '0') + '/';
-            Console.Write("Day: ");
-            date += Console.ReadLine().PadLeft(2, '0') + '/';
-            Console.Write("Year: ");
-            date += Console.ReadLine().PadLeft(4, '0');
-        }
-        while(!DateTime.TryParse(date, out returnDate));
+        Console.Write("Month: ");
+        date += Console.ReadLine().PadLeft(2, '0') + '/';
+        Console.Write("Day: ");
+        date += Console.ReadLine().PadLeft(2, '0') + '/';
+        Console.Write("Year: ");
+        date += Console.ReadLine().PadLeft(4, '0');
+        
+        try { returnDate = DateTime.Parse(date); }
+        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); return default; }
 
         return returnDate;
     }
@@ -232,11 +235,9 @@ class Program
     {
         int quantity = 0;
 
-        do
-        {
-            Console.Write("Quantity (# of glasses): ");
-        }
-        while(!int.TryParse(Console.ReadLine(), out quantity));
+        Console.Write("Quantity (# of glasses): ");
+        try { quantity = int.Parse(Console.ReadLine()); }
+        catch (Exception e) { Console.Write($"{e}\nPress Enter to continue"); Console.Read(); return -1; }
 
         return quantity;
     }
