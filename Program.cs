@@ -114,9 +114,8 @@ class Program
     }
 
     // Reads data gotten from passed command
-    static List<LogData> ReadLogData(SqliteCommand command)
+    static void ReadLogData(SqliteCommand command)
     {
-        List<LogData> logs = new();
         try
         {
             SqliteDataReader reader = command.ExecuteReader();
@@ -127,12 +126,9 @@ class Program
             while (reader.Read())
             {
                 Console.WriteLine($"{reader.GetValue(0)}\t{reader.GetValue(1)}\t{reader.GetValue(2)}");
-                logs.Add(new LogData(DateTime.Parse(reader.GetString(1)), reader.GetInt32(2)));
             }
         }
-        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); return null; }
-
-        return logs;
+        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); }
     }
 
     static void UpdateLog(SqliteConnection connection, int id, LogData newLog)
@@ -149,7 +145,7 @@ class Program
 
             command.ExecuteNonQuery();
         }
-        catch (Exception e) { Console.WriteLine(e); Console.Read(); }
+        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); }
             
     }
 
@@ -171,7 +167,7 @@ class Program
             Console.WriteLine("Log Deleted. Press Enter to continue.");
             Console.Read();
         }
-        catch (Exception e) { Console.WriteLine(e); Console.Read();};
+        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); };
         
     }
 
