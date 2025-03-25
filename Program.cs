@@ -51,7 +51,10 @@ class Program
                         Console.Read();
                         break;
                     case 2:
-                        UpdateData();
+                        PrintAllData(connection);
+                        int id = GetUserInput("Invalid input");
+                        LogData newLog = GetLogData();
+                        UpdateData(connection, id, newLog);
                         break;
                     case 3:
                         DeleteData(connection);
@@ -131,7 +134,18 @@ class Program
         return logs;
     }
 
-    static void UpdateData(){}
+    static void UpdateData(SqliteConnection connection, int id, LogData newLog)
+    {
+        SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = $@"
+        UPDATE drinking_water
+        SET Date = '{newLog.date.Date:d}',
+            Quantity = {newLog.quantity}
+        WHERE Id = {id}";
+
+        command.ExecuteNonQuery();
+    }
 
     static void DeleteData(SqliteConnection connection)
     {
