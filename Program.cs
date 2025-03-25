@@ -52,7 +52,8 @@ class Program
                         break;
                     case 2:
                         PrintAllData(connection);
-                        int id = GetUserInput("Invalid input");
+                        Console.Write("Select Id:");
+                        int id = GetUserInput("Invalid Id");
                         LogData newLog = GetLogData();
                         UpdateData(connection, id, newLog);
                         break;
