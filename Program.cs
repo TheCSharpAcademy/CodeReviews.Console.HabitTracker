@@ -43,22 +43,22 @@ class Program
                 {
                     case 0:
                         LogData data = GetLogData();
-                        AddData(data, connection);
+                        AddLog(data, connection);
                         break;
                     case 1:
-                        PrintAllData(connection);
+                        PrintAllLog(connection);
                         Console.WriteLine("\nPress Enter to continue");
                         Console.Read();
                         break;
                     case 2:
-                        PrintAllData(connection);
+                        PrintAllLog(connection);
                         Console.Write("Select Id:");
                         int id = GetUserInput("Invalid Id");
                         LogData newLog = GetLogData();
-                        UpdateData(connection, id, newLog);
+                        UpdateLog(connection, id, newLog);
                         break;
                     case 3:
-                        DeleteData(connection);
+                        DeleteLog(connection);
                         break;
                     // Exit
                     case 4:
@@ -89,7 +89,7 @@ class Program
         tableCmd.ExecuteNonQuery();
     }
 
-    static void AddData(LogData data, SqliteConnection connection)
+    static void AddLog(LogData data, SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
         
@@ -105,7 +105,7 @@ class Program
         catch (Exception e) { Console.WriteLine(e); Console.Read(); }
     }
 
-    static void PrintAllData(SqliteConnection connection)
+    static void PrintAllLog(SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
 
@@ -135,7 +135,7 @@ class Program
         return logs;
     }
 
-    static void UpdateData(SqliteConnection connection, int id, LogData newLog)
+    static void UpdateLog(SqliteConnection connection, int id, LogData newLog)
     {
         SqliteCommand command = connection.CreateCommand();
 
@@ -153,13 +153,13 @@ class Program
             
     }
 
-    static void DeleteData(SqliteConnection connection)
+    static void DeleteLog(SqliteConnection connection)
     {
         SqliteCommand command = connection.CreateCommand();
 
         Console.Clear();
         Console.WriteLine("Deleting Log\n");
-        PrintAllData(connection);
+        PrintAllLog(connection);
         Console.Write("Input ID: ");
         int id = GetUserInput("Invalid Input");
 
