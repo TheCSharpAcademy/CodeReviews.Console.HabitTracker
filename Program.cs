@@ -159,15 +159,11 @@ class Program
         Console.Write("Input ID: ");
         int id = GetUserInput("Invalid Input");
 
-        try
-        {
-            command.CommandText = $@"DELETE FROM drinking_water WHERE Id = {id}";
-            command.ExecuteNonQuery();
+        command.CommandText = $@"DELETE FROM drinking_water WHERE Id = {id}";
+        command.ExecuteNonQuery();
 
-            Console.WriteLine("Log Deleted. Press Enter to continue.");
-            Console.Read();
-        }
-        catch (Exception e) { Console.WriteLine($"{e}\nPress Enter to continue"); Console.Read(); };
+        Console.WriteLine("Log Deleted. Press Enter to continue.");
+        Console.Read();
         
     }
 
