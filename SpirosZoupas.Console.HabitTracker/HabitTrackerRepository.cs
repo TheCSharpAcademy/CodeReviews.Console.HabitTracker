@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 using SpirosZoupas.Console.HabitTracker.Model;
+using System;
 using System.Globalization;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker
@@ -9,6 +11,9 @@ namespace habit_tracker
     {
         const string connectionString = @"Data Source=habit-Tracker.db";
 
+        // user chooses a hobby, then select * from habit_tracker where habitID = id of habit user chose
+        // Count(*) of the rows for how many times it happened, Sum(Quantity) for how many [MeasurementUnit] in total
+        // Past for month, week, etc. along with past year?
         public void CreateTables()
         {
             using (var connection = new SqliteConnection(connectionString))
@@ -36,6 +41,84 @@ namespace habit_tracker
                     )";
 
                 tableCmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
+            PopulateTablesIfEmpty();
+        }
+
+        private void PopulateTablesIfEmpty()
+        {
+            var random = new Random();
+            string[] habitNames = { "Reading", "Exercise", "Meditation", "Journaling", "Coding", "Yoga", "Walking", "Running", "Painting", "Cooking" };
+            string[] measurementUnits = { "Minutes", "Hours", "Days", "Repetitions", "Sessions", "Kilometers", "Pages", "Exercises", "Meals" };
+
+            using (var connection = new SqliteConnection(connectionString)) 
+            {
+                connection.Open();
+
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT COUNT(*) FROM habit";
+                int habitCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                if (habitCount == 0)
+                {
+
+                    cmd.CommandText =
+                        @"INSERT INTO
+                        habit(Name, MeasurementUnit)
+                    VALUES
+                        (@Name, @MeasurementUnit)";
+
+                    var nameParam = cmd.Parameters.Add("@Name", SqliteType.Text);
+                    var unitParam = cmd.Parameters.Add("@MeasurementUnit", SqliteType.Text);
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        nameParam.Value = habitNames[random.Next(habitNames.Length)];
+                        unitParam.Value = measurementUnits[random.Next(measurementUnits.Length)];
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                cmd.CommandText = "SELECT COUNT(*) FROM habit_tracker";
+                int habitTrackerCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                if (habitTrackerCount == 0)
+                {
+                    cmd.CommandText =
+                   @"INSERT INTO
+                        habit_tracker(Date, Quantity, HabitId)
+                    VALUES
+                        (@Date, @Quantity, @HabitId)";
+
+
+                    var dateParam = cmd.Parameters.Add("@Date", SqliteType.Text);
+                    var quantityParam = cmd.Parameters.Add("@Quantity", SqliteType.Integer);
+                    var habitIdParam = cmd.Parameters.Add("@HabitId", SqliteType.Integer);
+
+                    var fkCmd = connection.CreateCommand();
+                    fkCmd.CommandText = "SELECT Id FROM habit";
+                    SqliteDataReader dataReader = fkCmd.ExecuteReader();
+                    List<int> habitIds = new List<int>();
+                    if (dataReader.HasRows)
+                    {
+                        while (dataReader.Read())
+                        {
+                            habitIds.Add(dataReader.GetInt32(0));
+                        }
+                    }
+
+                    for (int i = 0; i < 100; i++)
+                    {
+                        dateParam.Value = DateTime.Today.AddDays(-random.Next(365)).ToString("dd-MM-yy");
+                        quantityParam.Value = random.Next(101);
+                        int randomHabitId = random.Next(habitIds.Count);
+                        habitIdParam.Value = habitIds[randomHabitId];
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
                 connection.Close();
             }
