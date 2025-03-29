@@ -54,17 +54,17 @@ namespace HabitTracker.KamilKolanowski.Data
 
         public Tuple<int, string, double, string, string>[] ListHabits(SqliteConnection connection)
         {
-            var command = new SqliteCommand("SELECT Id, Habit, Quantity, UnitOfMeasure, Timestamp FROM Habits", connection);
+            var command = new SqliteCommand("SELECT Id, ROW_NUMBER() OVER(ORDER BY Id) AS app_id,  Habit, Quantity, UnitOfMeasure, Timestamp FROM Habits", connection);
             var reader = command.ExecuteReader();
 
             var habits = new List<Tuple<int, string, double, string, string>>();
             while (reader.Read())
             {
-                int id = reader.GetInt32(0);
-                string habit = reader.GetString(1);
-                double quantity = reader.GetDouble(2);
-                string unitOfMeasure = reader.GetString(3);
-                string timestamp = reader.GetString(4);
+                int id = reader.GetInt32(1);
+                string habit = reader.GetString(2);
+                double quantity = reader.GetDouble(3);
+                string unitOfMeasure = reader.GetString(4);
+                string timestamp = reader.GetString(5);
                 
                 habits.Add(new Tuple<int, string, double, string, string>(id, habit, quantity, unitOfMeasure, timestamp));
             }
@@ -186,6 +186,24 @@ namespace HabitTracker.KamilKolanowski.Data
             Console.ReadKey();
         }
 
+        public Tuple<string, double, string>[] CreateReport(SqliteConnection connection)
+        {
+            var command = new SqliteCommand("SELECT Habit, SUM(Quantity), UnitOfMeasure FROM Habits GROUP BY  Habit, UnitOfMeasure", connection);
+            var reader = command.ExecuteReader(); 
+
+            var habitsReport = new List<Tuple<string, double, string>>();
+            while (reader.Read())
+            {
+                string habit = reader.GetString(0);
+                double quantity = reader.GetDouble(1);
+                string unitOfMeasure = reader.GetString(2);
+                
+                habitsReport.Add(new Tuple<string, double, string>(habit, quantity, unitOfMeasure));
+            }
+            return habitsReport.ToArray();
+            
+        }
+        
         public void CloseConnection(SqliteConnection connection)
         {
             connection.Close();

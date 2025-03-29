@@ -1,12 +1,11 @@
-﻿using HabitTracker.KamilKolanowski.Data;
-using HabitTracker.KamilKolanowski.Views;
+using HabitTracker.KamilKolanowski.Data;
 
-namespace HabitTracker.KamilKolanowski
+namespace HabitTracker.KamilKolanowski.Views;
+
+public class MainInterface
 {
-    class Program
+    public void Start()
     {
-        public static void Main(string[] args)
-        {
             DatabaseManager db = new();
             HabitsPresentator hp = new();
             var connection = db.OpenConnection();
@@ -14,14 +13,17 @@ namespace HabitTracker.KamilKolanowski
             db.CreateDatabaseIfNotExists();
             db.CreateHabitLoggerTable(connection);
 
-            string[] menuOptions = new [] { "Add Habit", "Delete Habit", "Update Habit", "List Habit(s)", "Quit" };
+            string[] menuOptions = new [] { "Add Habit", "Delete Habit", "Update Habit", "List Habit(s)", "Get Report", "Quit" };
             int menuSelect = 0;
 
             while (true)
             {
                 Console.Clear();
                 Console.CursorVisible = false;
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Habit Logger\n");
+                Console.ResetColor();
                 
                 for (int i = 0; i < menuOptions.Length; i++)
                 {
@@ -86,13 +88,16 @@ namespace HabitTracker.KamilKolanowski
                             break;
 
                         case 4:
+                            hp.PresentReport(db, connection);
+                            Console.WriteLine("Press any key to go back...");
+                            Console.ReadKey();
+                            break;
+                        
+                        case 5:
                             db.CloseConnection(connection);
                             return;
                     }
                 }
             }
-
-
-        }
     }
 }
