@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SpirosZoupas.Console.HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Projects\\CodeReviews.Console.HabitTracker\\SpirosZoupas.Console.HabitTracker"
+    }
+  }
+}
