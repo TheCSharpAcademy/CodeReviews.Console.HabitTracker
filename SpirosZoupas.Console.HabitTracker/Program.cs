@@ -10,8 +10,167 @@ namespace habit_tracker
 
         static void Main(string[] args)
         {
-            _habitTrackerRepository.CreateTable();
+            _habitTrackerRepository.CreateTables();
             GetUserInput();
+        }
+
+        private static void CreateHabit()
+        {
+            Console.WriteLine("\n\nPlease enter a name for the habit");
+            string habit = Console.ReadLine();
+            Console.WriteLine("Please enter unit of measurement");
+            string uom = Console.ReadLine();
+
+            bool success = _habitTrackerRepository.InsertHabit(habit, uom);
+
+            if (success) Console.WriteLine("Habit Created Successful");
+            else Console.WriteLine("Sorry, insert failed.");
+        }
+
+        private static void CreateRecord()
+        {
+            Console.WriteLine("\n\nPlease enter habit name");
+            string habit = Console.ReadLine();
+
+            int habitId = _habitTrackerRepository.GetHabitIdByName(habit);
+            bool habitFound = habitId != -1;
+
+            if (!habitFound)
+            {
+                Console.WriteLine("Habit doesn't exist!");
+                Thread.Sleep(1000);
+                CreateRecord();
+                return;
+            }
+
+            string date = GetDateInput();
+
+            int quantity = GetNumberInput("\n\nPlease enter quantity");
+
+            bool success = _habitTrackerRepository.InsertRecord(habitId, date, quantity);
+
+            if (success) Console.WriteLine("Insert Successful");
+            else Console.WriteLine("Sorry, insert failed.");
+        }
+
+        private static void UpdateHabit()
+        {
+            Console.Clear();
+            // GetAllHabits();
+
+            Console.WriteLine("\n\nPlease enter the name of the habit you want to update. Press 0 to return to main menu.");
+            string habitName = Console.ReadLine();
+
+            int habitId = _habitTrackerRepository.GetHabitIdByName(habitName);
+            bool habitFound = habitId != -1;
+
+            if (!habitFound)
+            {
+                Console.WriteLine("Habit doesn't exist!");
+                Thread.Sleep(1000);
+                UpdateHabit();
+                return;
+            }
+
+            Console.WriteLine("Enter habit.");
+            string name = Console.ReadLine();
+            Console.WriteLine("Enter measurement unit.");
+            int measurementUnit = GetNumberInput("\n\nPleaser enter measurement unit");
+
+            bool success = _habitTrackerRepository.UpdateHabit(habitId, name, measurementUnit);
+
+            if (success) Console.WriteLine($"Habit with ID {habitId} was updated.");
+            else Console.WriteLine("Sorry, update failed.");
+        }
+
+        private static void UpdateRecord()
+        {
+            Console.Clear();
+            GetAllRecords();
+
+            int idInput = GetNumberInput("\n\nPlease enter the ID of the record you want to update. Press 0 to return to main menu.");
+
+            if (!_habitTrackerRepository.DoesRecordExist(idInput))
+            {
+                Console.WriteLine("Record doesn't exist!");
+                Thread.Sleep(1000);
+                UpdateRecord();
+                return;
+            }
+
+            string date = GetDateInput();
+
+            int quantity = GetNumberInput("\n\nPleaser enter quantity");
+
+            bool success = _habitTrackerRepository.UpdateRecord(idInput, date, quantity);
+
+            if (success) Console.WriteLine($"Row with ID {idInput} was updated.");
+            else Console.WriteLine("Sorry, update failed.");
+        }
+
+        private static void DeleteHabit()
+        {
+            Console.Clear();
+            Console.WriteLine("\n\nPlease enter the name of the habit you want to delete or 0 to go back to main menu");
+            string habitName = Console.ReadLine();
+
+            int habitId = _habitTrackerRepository.GetHabitIdByName(habitName);
+            bool habitFound = habitId != -1;
+
+            if (!habitFound)
+            {
+                Console.WriteLine("Habit doesn't exist!");
+                Thread.Sleep(1000);
+                UpdateHabit();
+                return;
+            }
+
+            bool success = _habitTrackerRepository.DeleteHabit(habitId);
+
+            if (success) Console.WriteLine($"Habit '{habitName}' was deleted.");
+            else Console.WriteLine("Sorry, Delete failed.");
+        }
+
+        private static void DeleteRecord()
+        {
+            Console.Clear();
+            GetAllRecords();
+
+            int idInput = GetNumberInput("\n\nPlease enter the ID of the record you want to delete or 0 to go back to main menu");
+
+            if (!_habitTrackerRepository.DoesRecordExist(idInput))
+            {
+                Console.WriteLine("Record doesn't exist!");
+                Thread.Sleep(1000);
+                DeleteRecord();
+                return;
+            }
+
+            bool success = _habitTrackerRepository.DeleteRecord(idInput);
+
+            if (success) Console.WriteLine($"Row with ID {idInput} was deleted.");
+            else Console.WriteLine("Sorry, Delete failed.");
+        }
+
+        private static void GetAllRecords()
+        {
+            Console.Clear();
+
+            Console.WriteLine("\n\nPlease find below a list of all your records.");
+            List<Habit> records = _habitTrackerRepository.GetListOfAllRecords();
+
+            if (records.Count == 0)
+            {
+                Console.WriteLine("Sorry, no rows found.");
+            }
+            else
+            {
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"ID: {record.ID} - Habit: {record.HabitName} - Date: {record.Date.ToString("dd-MM-yyyy")} - Measurement Unit: {record.MeasurementUnit} - Quantity: {record.Quantity}");
+                    // Console.WriteLine($"{record.ID}) You drank {record.Quantity} glasses of water on {record.Date.ToString("dd-MM-yyyy")}");
+                }
+            }
         }
 
         private static void GetUserInput()
@@ -27,6 +186,7 @@ namespace habit_tracker
                 Console.WriteLine("2) Insert Record");
                 Console.WriteLine("3) Delete Record");
                 Console.WriteLine("4) Update Record");
+                Console.WriteLine("5) Create Habit");
 
                 string input = Console.ReadLine();
 
@@ -41,7 +201,7 @@ namespace habit_tracker
                         GetAllRecords();
                         break;
                     case "2":
-                        InsertRecord();
+                        CreateRecord();
                         break;
                     case "3":
                         DeleteRecord();
@@ -51,6 +211,12 @@ namespace habit_tracker
                         break;
                     case "5":
                         CreateHabit();
+                        break;
+                    case "6":
+                        UpdateHabit();
+                        break;
+                    case "7":
+                        DeleteHabit();
                         break;
                     default:
                         Console.WriteLine("Invalid command!");
@@ -93,112 +259,6 @@ namespace habit_tracker
             }
 
             return dateInput;
-        }
-
-        private static void CreateHabit()
-        {
-            Console.WriteLine("\n\nPlease enter a name for the habit");
-            string habit = Console.ReadLine();
-            Console.WriteLine("Please enter unit of measurement");
-            string uom = Console.ReadLine();
-
-            bool success = _habitTrackerRepository.InsertHabit(habit, uom);
-
-            if (success) Console.WriteLine("Habit Created Successful");
-            else Console.WriteLine("Sorry, insert failed.");
-        }
-
-        private static void GetAllRecords()
-        {
-            Console.Clear();
-
-            Console.WriteLine("\n\nPlease find below a list of all your records.");
-            List<Habit> records = _habitTrackerRepository.GetListOfAllRecords();
-
-            if (records.Count == 0)
-            {
-                Console.WriteLine("Sorry, no rows found.");
-            }
-            else
-            {
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"{record.ID} Habit: {record.HabitName} Measurement Unit: {record.MeasurementUnit} Quantity: {record.Quantity}");
-                    // Console.WriteLine($"{record.ID}) You drank {record.Quantity} glasses of water on {record.Date.ToString("dd-MM-yyyy")}");
-                }
-            }
-        }
-
-        private static void UpdateRecord()
-        {
-            Console.Clear();
-            GetAllRecords();
-
-            int idInput = GetNumberInput("\n\nPlease enter the ID of the record you want to update. Press 0 to return to main menu.");
-
-            if (!_habitTrackerRepository.DoesRecordExist(idInput))
-            {
-                Console.WriteLine("Record doesn't exist!");
-                Thread.Sleep(1000);
-                UpdateRecord();
-                return;
-            }
-
-            string date = GetDateInput();
-
-            int quantity = GetNumberInput("\n\nPleaser enter number of glasses");
-
-            bool success = _habitTrackerRepository.Update(idInput, date, quantity);
-
-            if (success) Console.WriteLine($"Row with ID {idInput} was updated.");
-            else Console.WriteLine("Sorry, update failed.");
-        }
-
-        private static void InsertRecord()
-        {
-            Console.WriteLine("\n\nPlease enter habit name");
-            string habit = Console.ReadLine();
-
-            int habitId = _habitTrackerRepository.GetHabitIdByName(habit);
-            bool habitFound = habitId != -1;
-
-            if (!habitFound)
-            {
-                Console.WriteLine("Habit doesn't exist!");
-                Thread.Sleep(1000);
-                InsertRecord();
-                return;
-            }
-
-            string date = GetDateInput();
-
-            int quantity = GetNumberInput("\n\nPlease enter number of glasses.");
-
-            bool success = _habitTrackerRepository.Insert(habitId, date, quantity);
-
-            if (success) Console.WriteLine("Insert Successful");
-            else Console.WriteLine("Sorry, insert failed.");
-        }
-
-        private static void DeleteRecord()
-        {
-            Console.Clear();
-            GetAllRecords();
-
-            int idInput = GetNumberInput("\n\nPlease enter the ID of the record you want to delete or 0 to go back to main menu");
-
-            if (!_habitTrackerRepository.DoesRecordExist(idInput))
-            {
-                Console.WriteLine("Record doesn't exist!");
-                Thread.Sleep(1000);
-                DeleteRecord();
-                return;
-            }
-
-            bool success = _habitTrackerRepository.Delete(idInput);
-
-            if (success) Console.WriteLine($"Row with ID {idInput} was deleted.");
-            else Console.WriteLine("Sorry, Delete failed.");
         }
     }
 }

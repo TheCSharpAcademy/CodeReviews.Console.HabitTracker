@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using SpirosZoupas.Console.HabitTracker.Model;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker
 {
@@ -8,7 +9,7 @@ namespace habit_tracker
     {
         const string connectionString = @"Data Source=habit-Tracker.db";
 
-        public void CreateTable()
+        public void CreateTables()
         {
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -23,7 +24,7 @@ namespace habit_tracker
                         MeasurementUnit TEXT
                     )";
 
-                var x = tableCmd.ExecuteNonQuery();
+                tableCmd.ExecuteNonQuery();
 
                 tableCmd.CommandText =
                     @"CREATE TABLE IF NOT EXISTS habit_tracker (
@@ -31,20 +32,20 @@ namespace habit_tracker
                         Date TEXT,
                         Quantity INTEGER,
                         HabitId INTEGER,
-                        FOREIGN KEY(HabitId) REFERENCES habit(Id)
+                        FOREIGN KEY(HabitId) REFERENCES habit(Id) ON DELETE CASCADE
                     )";
 
-                var y = tableCmd.ExecuteNonQuery();
+                tableCmd.ExecuteNonQuery();
 
                 connection.Close();
             }
         }
 
-        public bool Insert(int habitId, string date, int quantity)
+        public bool InsertRecord(int habitId, string date, int quantity)
         {
             string query = @"
                 INSERT INTO 
-                    drinking_water(Date, Quantity, HabitId) 
+                    habit_tracker(Date, Quantity, HabitId) 
                 VALUES 
                     (@Date, @Quantity, @HabitId)";
 
@@ -58,11 +59,11 @@ namespace habit_tracker
             return ExecuteNonQuery(query, parameters);
         }
 
-        public bool Update(int id, string date, int quantity)
+        public bool UpdateRecord(int id, string date, int quantity)
         {
             string query = @"
                 UPDATE 
-                    drinking_water 
+                    habit_tracker 
                 SET 
                     Date = @Date, Quantity = @Quantity 
                 WHERE 
@@ -78,11 +79,11 @@ namespace habit_tracker
             return ExecuteNonQuery(query, parameters);
         }
 
-        public bool Delete(int id)
+        public bool DeleteRecord(int id)
         {
             string query = @$"
                 DELETE FROM
-                    drinking_water
+                    habit_tracker
                 WHERE
                     ID = @Id";
 
@@ -102,7 +103,9 @@ namespace habit_tracker
                 var cmd = connection.CreateCommand();
                 cmd.CommandText =
                     @$"SELECT
-                        habit_tracker.*,
+                        habit_tracker.ID,
+                        habit_tracker.Date,
+                        habit_tracker.Quantity,
                         habit.Name,
                         habit.MeasurementUnit
                     FROM
@@ -132,6 +135,59 @@ namespace habit_tracker
 
                 return tableData;
             }
+        }
+
+        public bool InsertHabit(string name, string uom)
+        {
+            string query = @"
+                INSERT INTO 
+                    habit(Name, MeasurementUnit) 
+                VALUES 
+                    (@Name, @MeasurementUnit)";
+
+            var parameters = new Dictionary<string, (object, SqliteType)>
+            {
+                { "@Name", (name, SqliteType.Text) },
+                { "@MeasurementUnit", (uom, SqliteType.Text) }
+            };
+
+            return ExecuteNonQuery(query, parameters);
+        }
+
+        public bool UpdateHabit(int id, string name, int measurementUnit)
+        {
+            string query = @"
+                UPDATE 
+                    habit 
+                SET 
+                    Name = @Name, MeasurementUnit = @MeasurementUnit 
+                WHERE 
+                    Id = @Id";
+
+            var parameters = new Dictionary<string, (object, SqliteType)>
+            {
+                { "@Id", (id, SqliteType.Integer) },
+                { "@Name", (name, SqliteType.Text) },
+                { "@MeasurementUnit", (measurementUnit, SqliteType.Integer) }
+            };
+
+            return ExecuteNonQuery(query, parameters);
+        }
+
+        public bool DeleteHabit(int id)
+        {
+            string query = @$"
+                DELETE FROM
+                    habit
+                WHERE
+                    ID = @Id";
+
+            var parameters = new Dictionary<string, (object, SqliteType)>
+            {
+                { "Id", (id, SqliteType.Integer) }
+            };
+
+            return ExecuteNonQuery(query, parameters);
         }
 
         private bool ExecuteNonQuery(string query, Dictionary<string, (object parameterValue, SqliteType Type)> parameters)
@@ -169,7 +225,7 @@ namespace habit_tracker
                     @$"SELECT
                         *
                     FROM
-                        drinking_water
+                        habit_tracker
                     WHERE
                         Id = {id}";
 
@@ -183,7 +239,7 @@ namespace habit_tracker
 
         public int GetHabitIdByName(string name)
         {
-            SqliteDataReader dataReader;
+            int habitId = -1;
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
@@ -195,31 +251,19 @@ namespace habit_tracker
                     FROM
                         habit
                     WHERE
-                        Name = {name}";
+                        Name = '{name}'";
 
-                dataReader = cmd.ExecuteReader();
+                SqliteDataReader dataReader = cmd.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    if (dataReader.HasRows) habitId = dataReader.GetInt32(0);
+                }
 
                 connection.Close();
             }
 
-            return dataReader.HasRows ? dataReader.GetInt32(0) : -1;
-        }
-
-        public bool InsertHabit(string name, string uom)
-        {
-            string query = @"
-                INSERT INTO 
-                    habit(Name, MeasurementUnit) 
-                VALUES 
-                    (@Name, @MeasurementUnit)";
-
-            var parameters = new Dictionary<string, (object, SqliteType)>
-            {
-                { "@Name", (name, SqliteType.Text) },
-                { "@MeasurementUnit", (uom, SqliteType.Text) }
-            };
-
-            return ExecuteNonQuery(query, parameters);
+            return habitId;
         }
     }
 }
