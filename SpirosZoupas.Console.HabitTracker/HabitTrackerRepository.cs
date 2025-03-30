@@ -124,22 +124,23 @@ namespace habit_tracker
             }
         }
 
-        public bool InsertRecord(int habitId, string date, int quantity)
+        public bool Insert(string tableName, Dictionary<string, object> parameters)
         {
-            string query = @"
+            string columns = string.Join(", ", parameters.Keys);
+            string values = string.Join(", ", parameters.Keys.Select(k => $"@{k}"));
+
+            string query = $@"
                 INSERT INTO 
-                    habit_tracker(Date, Quantity, HabitId) 
+                    {tableName} ({columns}) 
                 VALUES 
-                    (@Date, @Quantity, @HabitId)";
+                    ({values})";
 
-            var parameters = new Dictionary<string, (object, SqliteType)>
-            {
-                { "@Date", (date, SqliteType.Text) },
-                { "@Quantity", (quantity, SqliteType.Integer) },
-                { "@HabitId", (habitId, SqliteType.Integer) }
-            };
+            Dictionary<string, (object, SqliteType)> typedParameters = parameters.ToDictionary(
+                kvp => $"@{kvp.Key}",
+                kvp => (kvp.Value, InferSqliteType(kvp.Value))
+            );
 
-            return ExecuteNonQuery(query, parameters);
+            return ExecuteNonQuery(query, typedParameters);
         }
 
         public bool UpdateRecord(int id, string date, int quantity)
@@ -157,81 +158,6 @@ namespace habit_tracker
                 { "@Date", (date, SqliteType.Text) },
                 { "@Quantity", (quantity, SqliteType.Integer) },
                 { "@Id", (id, SqliteType.Integer) }
-            };
-
-            return ExecuteNonQuery(query, parameters);
-        }
-
-        public bool DeleteRecord(int id)
-        {
-            string query = @$"
-                DELETE FROM
-                    habit_tracker
-                WHERE
-                    ID = @Id";
-
-            var parameters = new Dictionary<string, (object, SqliteType)>
-            {
-                { "Id", (id, SqliteType.Integer) }
-            };
-
-            return ExecuteNonQuery(query, parameters);
-        }
-
-        public List<Habit> GetListOfAllRecords()
-        {
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                var cmd = connection.CreateCommand();
-                cmd.CommandText =
-                    @$"SELECT
-                        habit_tracker.ID,
-                        habit_tracker.Date,
-                        habit_tracker.Quantity,
-                        habit.Name,
-                        habit.MeasurementUnit
-                    FROM
-                        habit_tracker INNER JOIN
-                        habit ON habit.ID = habit_tracker.HabitID";
-
-                SqliteDataReader dataReader = cmd.ExecuteReader();
-
-                List<Habit> tableData = new List<Habit>();
-                if (dataReader.HasRows)
-                {
-                    while (dataReader.Read())
-                    {
-                        tableData.Add(
-                            new Habit
-                            {
-                                ID = dataReader.GetInt32(0),
-                                Date = DateTime.ParseExact(dataReader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                                Quantity = dataReader.GetInt32(2),
-                                HabitName = dataReader.GetString(3),
-                                MeasurementUnit = dataReader.GetString(4),
-                            });
-                    }
-                }
-
-                connection.Close();
-
-                return tableData;
-            }
-        }
-
-        public bool InsertHabit(string name, string uom)
-        {
-            string query = @"
-                INSERT INTO 
-                    habit(Name, MeasurementUnit) 
-                VALUES 
-                    (@Name, @MeasurementUnit)";
-
-            var parameters = new Dictionary<string, (object, SqliteType)>
-            {
-                { "@Name", (name, SqliteType.Text) },
-                { "@MeasurementUnit", (uom, SqliteType.Text) }
             };
 
             return ExecuteNonQuery(query, parameters);
@@ -257,43 +183,99 @@ namespace habit_tracker
             return ExecuteNonQuery(query, parameters);
         }
 
-        public bool DeleteHabit(int id)
+        public bool Delete(string tableName, int id)
         {
             string query = @$"
                 DELETE FROM
-                    habit
+                    {tableName}
                 WHERE
                     ID = @Id";
 
             var parameters = new Dictionary<string, (object, SqliteType)>
             {
-                { "Id", (id, SqliteType.Integer) }
+                { "@Id", (id, SqliteType.Integer) }
             };
 
             return ExecuteNonQuery(query, parameters);
         }
 
-        private bool ExecuteNonQuery(string query, Dictionary<string, (object parameterValue, SqliteType Type)> parameters)
+        public List<HabitRow> GetListOfAllRecords()
         {
-            int rowCount;
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
-                using (var cmd = connection.CreateCommand())
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    @$"SELECT
+                        habit_tracker.ID,
+                        habit_tracker.Date,
+                        habit_tracker.Quantity,
+                        habit.Name,
+                        habit.MeasurementUnit
+                    FROM
+                        habit_tracker INNER JOIN
+                        habit ON habit.ID = habit_tracker.HabitID";
+
+                SqliteDataReader dataReader = cmd.ExecuteReader();
+
+                List<HabitRow> tableData = new List<HabitRow>();
+                if (dataReader.HasRows)
                 {
-                    cmd.CommandText = query;
-
-                    foreach (var param in parameters)
+                    while (dataReader.Read())
                     {
-                        var dbParam = cmd.Parameters.Add(param.Key, param.Value.Type);
-                        dbParam.Value = param.Value.parameterValue;
+                        tableData.Add(
+                            new HabitRow
+                            {
+                                ID = dataReader.GetInt32(0),
+                                Date = DateTime.ParseExact(dataReader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
+                                Quantity = dataReader.GetInt32(2),
+                                HabitName = dataReader.GetString(3),
+                                MeasurementUnit = dataReader.GetString(4),
+                            });
                     }
-
-                    rowCount = cmd.ExecuteNonQuery();
                 }
+
                 connection.Close();
+
+                return tableData;
             }
-            return rowCount != 0;
+        }
+
+        public List<Habit> GetListOfAllHabits()
+        {
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    @$"SELECT
+                        habit.ID,
+                        habit.Name,
+                        habit.MeasurementUnit,
+                    FROM
+                        habit";
+
+                SqliteDataReader dataReader = cmd.ExecuteReader();
+
+                List<Habit> tableData = new List<Habit>();
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        tableData.Add(
+                            new Habit
+                            {
+                                ID = dataReader.GetInt32(0),
+                                Name = dataReader.GetString(1),
+                                MeasurementUnit = dataReader.GetString(2),
+                            });
+                    }
+                }
+
+                connection.Close();
+
+                return tableData;
+            }
         }
 
         public bool DoesRecordExist(int id)
@@ -347,6 +329,39 @@ namespace habit_tracker
             }
 
             return habitId;
+        }
+
+        private bool ExecuteNonQuery(string query, Dictionary<string, (object parameterValue, SqliteType Type)> parameters)
+        {
+            int rowCount;
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = query;
+
+                    foreach (var param in parameters)
+                    {
+                        var dbParam = cmd.Parameters.Add(param.Key, param.Value.Type);
+                        dbParam.Value = param.Value.parameterValue;
+                    }
+
+                    rowCount = cmd.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+            return rowCount != 0;
+        }
+
+        private SqliteType InferSqliteType(object value)
+        {
+            return value switch
+            {
+                int => SqliteType.Integer,
+                string => SqliteType.Text,
+                _ => throw new ArgumentException($"Unsupported data type: {value.GetType()}")
+            };
         }
     }
 }
