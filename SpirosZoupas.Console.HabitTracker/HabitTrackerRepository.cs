@@ -336,6 +336,42 @@ namespace habit_tracker
             return habitId;
         }
 
+        public Habit GetHabitByID(int id)
+        {
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    @$"SELECT
+                        habit.ID,
+                        habit.Name,
+                        habit.MeasurementUnit
+                    FROM
+                        habit
+                    WHERE
+                        ID = {id}";
+
+                SqliteDataReader dataReader = cmd.ExecuteReader();
+
+                Habit habit = new Habit();
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        habit.ID = dataReader.GetInt32(0);
+                        habit.Name = dataReader.GetString(1);
+                        habit.MeasurementUnit = dataReader.GetString(2);
+                    }
+                }
+
+                connection.Close();
+
+                return habit;
+            }
+        }
+
         private bool ExecuteNonQuery(string query, Dictionary<string, (object parameterValue, SqliteType Type)> parameters)
         {
             int rowCount;
@@ -369,19 +405,22 @@ namespace habit_tracker
             };
         }
 
-        public int GetHabitTrackerCountByHabitId(int habitId)
+        public int GetHabitTrackerCountFromLastYearByHabitId(int habitId)
         {
+            string currentDateTime = GetCurrentDateTimeAsString();
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
+
                 var cmd = connection.CreateCommand();
                 cmd.CommandText =
-                    @$"SELECT
+                    @$"SELECT 
                         COUNT(*)
-                    FROM
+                    FROM 
                         habit_tracker
-                    WHERE
-                        HabitId = {habitId}";
+                    WHERE 
+	                    HabitId = {habitId} AND
+                        substr(Date, 7, 2) || '-' || substr(Date, 4, 2) || '-' || '20' || substr(Date, 7, 2) > '{currentDateTime}'";
 
                 var count = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -389,6 +428,54 @@ namespace habit_tracker
 
                 return count;
             }
+        }
+
+        public int GetSumOfQuantityFromLastYearByHabitId(int habitId)
+        {
+            string currentDateTime = GetCurrentDateTimeAsString();
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    @$"SELECT 
+                        SUM(Quantity)
+                    FROM 
+                        habit_tracker
+                    WHERE 
+	                    HabitId = {habitId} AND
+                        substr(Date, 7, 2) || '-' || substr(Date, 4, 2) || '-' || '20' || substr(Date, 7, 2) > '{currentDateTime}'";
+
+                var count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                connection.Close();
+
+                return count;
+            }
+        }
+
+        private string GetCurrentDateTimeAsString()
+        {
+            string currentDateTimeString;
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var cdtCmd = connection.CreateCommand();
+                cdtCmd.CommandText =
+                    $@"SELECT 
+                        strftime('%d-%m-%Y', date())
+                    ";
+
+                DateTime.TryParseExact(cdtCmd.ExecuteScalar().ToString(), "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime currentDateTime);
+                currentDateTime = currentDateTime.AddYears(-1);
+                currentDateTimeString = currentDateTime.ToString("yy-MM-dd");
+
+                connection.Close();
+            }
+
+            return currentDateTimeString;
         }
     }
 }

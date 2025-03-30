@@ -44,15 +44,9 @@ namespace habit_tracker
             string habit = Console.ReadLine();
 
             int habitId = _habitTrackerRepository.GetHabitIdByName(habit);
-            bool habitFound = habitId != -1;
 
-            if (!habitFound)
-            {
-                Console.WriteLine("Habit doesn't exist!");
-                Thread.Sleep(1000);
-                CreateRecord();
-                return;
-            }
+            bool habitFound = FindHabit(habitId);
+            if (!habitFound) CreateRecord();
 
             string date = GetDateInput();
 
@@ -78,17 +72,10 @@ namespace habit_tracker
 
             int habitId = GetNumberInput("\n\nPlease enter ID of the habit you want to update. Press 0 to return to main menu.");
 
-            bool habitFound = _habitTrackerRepository.DoesRowExist(habitId, "habit");
+            bool habitFound = FindHabit(habitId);
+            if (!habitFound) UpdateHabit();
 
-            if (!habitFound)
-            {
-                Console.WriteLine("Habit doesn't exist!");
-                Thread.Sleep(1000);
-                UpdateHabit();
-                return;
-            }
-
-            Console.WriteLine("Enter habit.");
+            Console.WriteLine("Enter habit name.");
             string name = Console.ReadLine();
             Console.WriteLine("Enter measurement unit.");
             int measurementUnit = GetNumberInput("\n\nPleaser enter measurement unit");
@@ -129,15 +116,8 @@ namespace habit_tracker
             Console.Clear();
             int habitId = GetNumberInput("\n\nPlease enter ID of the habit you want to delete or 0 to go back to main menu");
 
-            bool habitFound = _habitTrackerRepository.DoesRowExist(habitId, "habit");
-
-            if (!habitFound)
-            {
-                Console.WriteLine("Habit doesn't exist!");
-                Thread.Sleep(1000);
-                UpdateHabit();
-                return;
-            }
+            bool habitFound = FindHabit(habitId);
+            if (!habitFound) DeleteHabit();
 
             bool success = _habitTrackerRepository.Delete("habit", habitId);
 
@@ -221,7 +201,7 @@ namespace habit_tracker
                 Console.WriteLine("3) Delete Record");
                 Console.WriteLine("4) Update Record");
                 Console.WriteLine("5) View all Habits");
-                Console.WriteLine("2) Insert Habit");
+                Console.WriteLine("6) Insert Habit");
                 Console.WriteLine("7) Delete Habit");
                 Console.WriteLine("8) Update Habit");
                 Console.WriteLine("9) View Reports");
@@ -288,10 +268,10 @@ namespace habit_tracker
                     Environment.Exit(0);
                     break;
                 case "1":
-                    GetNumberOfTimesHabitWasPracticed();
+                    GetNumberOfTimesHabitWasPracticedLastYear();
                     break;
                 case "2":
-                    GetTotalMeasurementUnits();
+                    GetTotalAmountOfMeasurementUnitFromLastYear();
                     break;
                 default:
                     Console.WriteLine("Invalid command!");
@@ -300,31 +280,35 @@ namespace habit_tracker
             }
         }
 
-        private void GetNumberOfTimesHabitWasPracticed()
+        private void GetNumberOfTimesHabitWasPracticedLastYear()
         {
             Console.Clear();
             GetAllHabits();
 
             int habitId = GetNumberInput("\n\nPlease enter ID of habit");
 
-            bool habitFound = _habitTrackerRepository.DoesRowExist(habitId, "habit");
+            bool habitFound = FindHabit(habitId);
+            if (!habitFound) GetNumberOfTimesHabitWasPracticedLastYear();
 
-            if (!habitFound)
-            {
-                Console.WriteLine("Habit doesn't exist!");
-                Thread.Sleep(1000);
-                GetNumberOfTimesHabitWasPracticed();
-                return;
-            }
-
-            int occurences = _habitTrackerRepository.GetHabitTrackerCountByHabitId(habitId);
+            int occurences = _habitTrackerRepository.GetHabitTrackerCountFromLastYearByHabitId(habitId);
 
             Console.WriteLine($"You practiced this habit {occurences} times last year!");
         }
 
-        private void GetTotalMeasurementUnits()
+        private void GetTotalAmountOfMeasurementUnitFromLastYear()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            GetAllHabits();
+
+            int habitId = GetNumberInput("\n\nPlease enter ID of habit");
+
+            bool habitFound = FindHabit(habitId);
+            if (!habitFound) GetTotalAmountOfMeasurementUnitFromLastYear();
+
+            int amount = _habitTrackerRepository.GetSumOfQuantityFromLastYearByHabitId(habitId);
+            Habit habit = _habitTrackerRepository.GetHabitByID(habitId);
+
+            Console.WriteLine($"You did {amount} {habit.MeasurementUnit} of {habit.Name} last year");
         }
 
         private int GetNumberInput(string message)
@@ -360,6 +344,18 @@ namespace habit_tracker
             }
 
             return dateInput;
+        }
+
+        private bool FindHabit(int id)
+        {
+            if (!_habitTrackerRepository.DoesRowExist(id, "habit"))
+            {
+                Console.WriteLine("Habit doesn't exist!");
+                Thread.Sleep(1000);
+                return false;
+            }
+
+            return true;
         }
     }
 }
