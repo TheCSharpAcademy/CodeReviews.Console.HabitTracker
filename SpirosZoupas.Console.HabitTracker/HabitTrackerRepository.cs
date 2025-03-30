@@ -9,7 +9,12 @@ namespace habit_tracker
 {
     public class HabitTrackerRepository
     {
-        const string connectionString = @"Data Source=habit-Tracker.db";
+        private readonly string connectionString;
+
+        public HabitTrackerRepository(string dbConnectionString)
+        {
+            connectionString = dbConnectionString;
+        }
 
         // user chooses a hobby, then select * from habit_tracker where habitID = id of habit user chose
         // Count(*) of the rows for how many times it happened, Sum(Quantity) for how many [MeasurementUnit] in total
@@ -251,7 +256,7 @@ namespace habit_tracker
                     @$"SELECT
                         habit.ID,
                         habit.Name,
-                        habit.MeasurementUnit,
+                        habit.MeasurementUnit
                     FROM
                         habit";
 
@@ -278,7 +283,7 @@ namespace habit_tracker
             }
         }
 
-        public bool DoesRecordExist(int id)
+        public bool DoesRowExist(int id, string tableName)
         {
             object? result;
             using (var connection = new SqliteConnection(connectionString))
@@ -290,7 +295,7 @@ namespace habit_tracker
                     @$"SELECT
                         *
                     FROM
-                        habit_tracker
+                        {tableName}
                     WHERE
                         Id = {id}";
 
@@ -362,6 +367,28 @@ namespace habit_tracker
                 string => SqliteType.Text,
                 _ => throw new ArgumentException($"Unsupported data type: {value.GetType()}")
             };
+        }
+
+        public int GetHabitTrackerCountByHabitId(int habitId)
+        {
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    @$"SELECT
+                        COUNT(*)
+                    FROM
+                        habit_tracker
+                    WHERE
+                        HabitId = {habitId}";
+
+                var count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                connection.Close();
+
+                return count;
+            }
         }
     }
 }

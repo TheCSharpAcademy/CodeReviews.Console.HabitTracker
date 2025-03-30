@@ -10,7 +10,12 @@ namespace habit_tracker
 {
     public class HabitTrackerApp
     {
-        private HabitTrackerRepository _habitTrackerRepository = new HabitTrackerRepository();
+        private readonly HabitTrackerRepository _habitTrackerRepository;
+
+        public HabitTrackerApp(HabitTrackerRepository habitTrackerRepository)
+        {
+            _habitTrackerRepository = habitTrackerRepository;
+        }
 
         public void CreateTables() =>
             _habitTrackerRepository.CreateTables();
@@ -69,13 +74,11 @@ namespace habit_tracker
         public void UpdateHabit()
         {
             Console.Clear();
-            // GetAllHabits();
+            GetAllHabits();
 
-            Console.WriteLine("\n\nPlease enter the name of the habit you want to update. Press 0 to return to main menu.");
-            string habitName = Console.ReadLine();
+            int habitId = GetNumberInput("\n\nPlease enter ID of the habit you want to update. Press 0 to return to main menu.");
 
-            int habitId = _habitTrackerRepository.GetHabitIdByName(habitName);
-            bool habitFound = habitId != -1;
+            bool habitFound = _habitTrackerRepository.DoesRowExist(habitId, "habit");
 
             if (!habitFound)
             {
@@ -103,7 +106,7 @@ namespace habit_tracker
 
             int idInput = GetNumberInput("\n\nPlease enter the ID of the record you want to update. Press 0 to return to main menu.");
 
-            if (!_habitTrackerRepository.DoesRecordExist(idInput))
+            if (!_habitTrackerRepository.DoesRowExist(idInput, "habit_tracker"))
             {
                 Console.WriteLine("Record doesn't exist!");
                 Thread.Sleep(1000);
@@ -124,11 +127,9 @@ namespace habit_tracker
         public void DeleteHabit()
         {
             Console.Clear();
-            Console.WriteLine("\n\nPlease enter the name of the habit you want to delete or 0 to go back to main menu");
-            string habitName = Console.ReadLine();
+            int habitId = GetNumberInput("\n\nPlease enter ID of the habit you want to delete or 0 to go back to main menu");
 
-            int habitId = _habitTrackerRepository.GetHabitIdByName(habitName);
-            bool habitFound = habitId != -1;
+            bool habitFound = _habitTrackerRepository.DoesRowExist(habitId, "habit");
 
             if (!habitFound)
             {
@@ -140,7 +141,7 @@ namespace habit_tracker
 
             bool success = _habitTrackerRepository.Delete("habit", habitId);
 
-            if (success) Console.WriteLine($"Habit '{habitName}' was deleted.");
+            if (success) Console.WriteLine($"Habit with ID '{habitId}' was deleted.");
             else Console.WriteLine("Sorry, Delete failed.");
         }
 
@@ -151,7 +152,7 @@ namespace habit_tracker
 
             int idInput = GetNumberInput("\n\nPlease enter the ID of the record you want to delete or 0 to go back to main menu");
 
-            if (!_habitTrackerRepository.DoesRecordExist(idInput))
+            if (!_habitTrackerRepository.DoesRowExist(idInput, "habit_tracker"))
             {
                 Console.WriteLine("Record doesn't exist!");
                 Thread.Sleep(1000);
@@ -219,7 +220,12 @@ namespace habit_tracker
                 Console.WriteLine("2) Insert Record");
                 Console.WriteLine("3) Delete Record");
                 Console.WriteLine("4) Update Record");
-                Console.WriteLine("5) Create Habit");
+                Console.WriteLine("5) View all Habits");
+                Console.WriteLine("2) Insert Habit");
+                Console.WriteLine("7) Delete Habit");
+                Console.WriteLine("8) Update Habit");
+                Console.WriteLine("9) View Reports");
+
 
                 string input = Console.ReadLine();
 
@@ -267,14 +273,11 @@ namespace habit_tracker
 
         private void GetReportMenu()
         {
-            Console.WriteLine("\n\nMAIN MENU");
+            Console.WriteLine("\n\nREPORT MENU");
             Console.WriteLine("\nPlease choose an action:");
             Console.WriteLine("\n0) Close Application");
             Console.WriteLine("1) View number of times a habit was practiced");
             Console.WriteLine("2) View total amount of measurement unit of a hobby");
-            Console.WriteLine("3) Delete Record");
-            Console.WriteLine("4) Update Record");
-            Console.WriteLine("5) Create Habit");
 
             string input = Console.ReadLine();
 
@@ -297,12 +300,29 @@ namespace habit_tracker
             }
         }
 
-        private void GetTotalMeasurementUnits()
+        private void GetNumberOfTimesHabitWasPracticed()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            GetAllHabits();
+
+            int habitId = GetNumberInput("\n\nPlease enter ID of habit");
+
+            bool habitFound = _habitTrackerRepository.DoesRowExist(habitId, "habit");
+
+            if (!habitFound)
+            {
+                Console.WriteLine("Habit doesn't exist!");
+                Thread.Sleep(1000);
+                GetNumberOfTimesHabitWasPracticed();
+                return;
+            }
+
+            int occurences = _habitTrackerRepository.GetHabitTrackerCountByHabitId(habitId);
+
+            Console.WriteLine($"You practiced this habit {occurences} times last year!");
         }
 
-        private void GetNumberOfTimesHabitWasPracticed()
+        private void GetTotalMeasurementUnits()
         {
             throw new NotImplementedException();
         }

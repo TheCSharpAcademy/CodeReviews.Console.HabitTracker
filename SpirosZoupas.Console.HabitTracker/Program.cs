@@ -1,14 +1,13 @@
-﻿using SpirosZoupas.Console.HabitTracker.Model;
-using System.Globalization;
-
-namespace habit_tracker
+﻿namespace habit_tracker
 {
     class Program
     {
-        public HabitTrackerApp app { get; set; } = new HabitTrackerApp();
-
-        void Main(string[] args)
+        static void Main(string[] args)
         {
+            string connectionString = @"Data Source=habit-Tracker.db";
+            var repository = new HabitTrackerRepository(connectionString);
+            var app = new HabitTrackerApp(repository);
+
             app.CreateTables();
             app.GetUserInput();
         }
