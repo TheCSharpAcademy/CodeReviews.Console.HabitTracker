@@ -161,8 +161,7 @@ namespace habit_tracker
             {
                 foreach (var record in records)
                 {
-                    Console.WriteLine($"ID: {record.ID} - Habit: {record.HabitName} - Date: {record.Date.ToString("dd-MM-yyyy")} - Measurement Unit: {record.MeasurementUnit} - Quantity: {record.Quantity}");
-                    // Console.WriteLine($"{record.ID}) You drank {record.Quantity} glasses of water on {record.Date.ToString("dd-MM-yyyy")}");
+                    Console.WriteLine($"ID: {record.ID} - Date: {record.Date.ToString("dd-MM-yyyy")} - You did {record.Quantity} {record.MeasurementUnit} of {record.HabitName}");
                 }
             }
         }

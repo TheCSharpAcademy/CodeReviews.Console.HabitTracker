@@ -15,10 +15,6 @@ namespace habit_tracker
         {
             connectionString = dbConnectionString;
         }
-
-        // user chooses a hobby, then select * from habit_tracker where habitID = id of habit user chose
-        // Count(*) of the rows for how many times it happened, Sum(Quantity) for how many [MeasurementUnit] in total
-        // Past for month, week, etc. along with past year?
         public void CreateTables()
         {
             using (var connection = new SqliteConnection(connectionString))
