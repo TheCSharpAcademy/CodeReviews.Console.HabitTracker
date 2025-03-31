@@ -393,7 +393,7 @@ internal static class Program
             .Start($"Fetching summary for '{selectedHabit.Name}'...", ctx =>
             {
                 summary = DbManager.GetYearlyHabitSummary(selectedHabit.Id, year);
-                // Simulate work if needed: Thread.Sleep(500);
+                
                 ctx.Status("Done.");
             });
 
@@ -437,9 +437,7 @@ internal static class Program
         if (habits.Count == 0)
         {
             AnsiConsole.MarkupLine("[yellow]No habits found in the database.[/]");
-            // Optional pause
-            // Console.WriteLine("Press any key to continue...");
-            // Console.ReadKey();
+           
             return null;
         }
 
