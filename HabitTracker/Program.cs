@@ -424,30 +424,42 @@ internal static class Program
     // --- Input Helper Functions (Using Spectre Prompts) ---
 
     // Gets a valid habit selection using SelectionPrompt
-    static Habit? GetHabitSelectionPrompt(string promptTitle)
+    // Required for .Select()
+
+     // Keep for .Any()
+
+     private static Habit? GetHabitSelectionPrompt(string promptTitle)
     {
+        // Assuming DbManager.GetAllHabits() returns List<Habit> or IEnumerable<Habit>
         var habits = DbManager.GetAllHabits();
 
+        // Ensure habits itself isn't null and has items
         if (habits.Count == 0)
         {
-            // Message handled by the caller function
+            AnsiConsole.MarkupLine("[yellow]No habits found in the database.[/]");
+            // Optional pause
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             return null;
         }
 
-        // Add a "Cancel" option represented by null
-        new SelectionPrompt<Habit>() // Note the nullable Habit?
+        // --- Modification: Explicitly declare the prompt variable type ---
+        // --- Rely on covariance for AddChoices ---
+        var prompt = new SelectionPrompt<Habit?>()
             .Title($"[dodgerblue1]{promptTitle}[/]")
             .PageSize(10)
             .MoreChoicesText("[grey](Move up and down to reveal more habits)[/]")
-            // Provide a converter to display habit name and unit, handling the null cancel option
+            // Converter still needs to handle the null possibility explicitly
             .UseConverter(habit => $"{habit.Name} ([grey]{habit.UnitOfMeasurement}[/])")
-            .AddChoices(habits) // Add the actual habits
-            .AddChoice(null!);
+            // --- Modification: Pass the original IEnumerable<Habit> directly ---
+            // Let C# handle the conversion from Habit to Habit? implicitly via covariance
+            .AddChoices(habits);
+            // Add the explicit null choice separately
+            
 
-        return AnsiConsole.Prompt<Habit?>(null!); // Prompt returns the selected Habit or null
+        // Call Prompt with the explicitly typed variable and explicit generic type argument
+        return AnsiConsole.Prompt<Habit?>(prompt);
     }
-
-
     // Gets a valid date string using TextPrompt with validation
     private static string GetDateInputPrompt(string prompt)
     {
