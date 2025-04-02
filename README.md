@@ -1,6 +1,6 @@
 # Habit Logger App
 
-![img.png](Assets/img.png)
+![img.png](HabitTracker.KamilKolanowski/Assets/img.png)
 
 ## 📌 Overview
 **Habit Logger** is a simple console-based application that helps you track your habits efficiently. You can log habits with custom quantities and units, update them, and generate a summary report. The application features an easy-to-use navigation system using arrow keys and the enter key for selection.
