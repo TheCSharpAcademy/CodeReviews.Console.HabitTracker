@@ -88,7 +88,7 @@ namespace HabitTracker.KamilKolanowski.Data
             while (true)
             {
                 Console.Write("Add Quantity: ");
-                if (double.TryParse(Console.ReadLine(), NumberStyles.Float, CultureInfo.InvariantCulture, out quantity)) // Adding CultureInfo, so user can add either in format 123.456 as well as 123,456.
+                if (double.TryParse(Console.ReadLine(), NumberStyles.Float, CultureInfo.InvariantCulture, out quantity)) // Added CultureInfo, so user can add either in format 123.456 as well as 123,456.
                 {
                     break;
                 }
@@ -146,24 +146,32 @@ namespace HabitTracker.KamilKolanowski.Data
             int id;
             Dictionary<int, Tuple<int, string, double, string, string>> habits = ListHabits(connection);
             
-            while (true)
+            if (habits.Count > 0)
             {
-                Console.Write("Specify the id of the Habit to delete: ");
-                if (int.TryParse(Console.ReadLine(), out id) && habits.ContainsKey(id))
+                while (true)
                 {
-                    break;
-                }
-                Console.WriteLine("Invalid Id, try again.");
+                    Console.Write("Specify the id of the Habit to delete: ");
+                    if (int.TryParse(Console.ReadLine(), out id) && habits.ContainsKey(id))
+                    {
+                        break;
+                    }
+                    Console.WriteLine("Invalid Id, try again.");
+                }   
+                int dbId = habits[id].Item1;
+                
+                var command = connection.CreateCommand();
+                
+                command.CommandText = "DELETE FROM Habits WHERE Id = @id";
+                command.Parameters.AddWithValue("@id", dbId);
+                command.ExecuteNonQuery();
+                
+                Console.WriteLine("\nHabit deleted successfully.\nPress any key to go back.");
+            }
+            else
+            {
+                Console.WriteLine("\nNo Habit(s) found.\nPress any key to go back.");
             }
             
-            int dbId = habits[id].Item1;
-            
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM Habits WHERE Id = @id";
-            command.Parameters.AddWithValue("@id", dbId);
-            
-            command.ExecuteNonQuery();
-            Console.WriteLine("\nHabit deleted successfully.\nPress any key to go back.");
             Console.ReadKey();
         }
 
@@ -171,48 +179,57 @@ namespace HabitTracker.KamilKolanowski.Data
         {
             int id;
             Dictionary<int, Tuple<int, string, double, string, string>> habits = ListHabits(connection);
-            
-            while (true)
+
+            if (habits.Count > 0)
             {
-                Console.Write("Specify the id of the Habit to update: ");
-                if (int.TryParse(Console.ReadLine(), out id) && habits.ContainsKey(id))
+                while (true)
                 {
-                    break;
+                    Console.Write("Specify the id of the Habit to update: ");
+                    if (int.TryParse(Console.ReadLine(), out id) && habits.ContainsKey(id))
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine("Invalid Id, try again.");
                 }
-                Console.WriteLine("Invalid Id, try again.");
-            }
-            
-            int dbId = habits[id].Item1;
-            
-            string column;
-            while (true)
-            {
-                Console.Write("What would you like to update [Habit (h), Quantity (q), Unit of Measure (u)]: ");
-                var choice = Console.ReadLine()?.ToLower();
-            
-                column = choice switch
+
+                int dbId = habits[id].Item1;
+
+                string column;
+                while (true)
                 {
-                    "h" => "Habit",
-                    "q" => "Quantity",
-                    "u" => "UnitOfMeasure",
-                    _ => null
-                };
-            
-                if (column != null)
-                    break;
-                Console.WriteLine("Invalid choice. Try again.");
+                    Console.Write("What would you like to update [Habit (h), Quantity (q), Unit of Measure (u)]: ");
+                    var choice = Console.ReadLine()?.ToLower();
+
+                    column = choice switch
+                    {
+                        "h" => "Habit",
+                        "q" => "Quantity",
+                        "u" => "UnitOfMeasure",
+                        _ => null
+                    };
+
+                    if (column != null)
+                        break;
+                    Console.WriteLine("Invalid choice. Try again.");
+                }
+
+                Console.Write($"Enter new value for {column}: ");
+                var newValue = Console.ReadLine();
+
+                var command = connection.CreateCommand();
+                command.CommandText = $"UPDATE Habits SET {column} = @newValue WHERE Id = @id";
+                command.Parameters.AddWithValue("@newValue", newValue);
+                command.Parameters.AddWithValue("@id", dbId);
+
+                command.ExecuteNonQuery();
+                Console.WriteLine("\nHabit updated successfully.\nPress any key to go back.");
             }
-            
-            Console.Write($"Enter new value for {column}: ");
-            var newValue = Console.ReadLine();
-            
-            var command = connection.CreateCommand();
-            command.CommandText = $"UPDATE Habits SET {column} = @newValue WHERE Id = @id";
-            command.Parameters.AddWithValue("@newValue", newValue);
-            command.Parameters.AddWithValue("@id", dbId);
-            
-            command.ExecuteNonQuery();
-            Console.WriteLine("\nHabit updated successfully.\nPress any key to go back.");
+            else
+            {
+                Console.WriteLine("\nNo Habit(s) found.\nPress any key to go back.");
+            }
+
             Console.ReadKey();
         }
 
