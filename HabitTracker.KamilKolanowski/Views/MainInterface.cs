@@ -21,9 +21,7 @@ public class MainInterface
                 Console.Clear();
                 Console.CursorVisible = false;
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Habit Logger\n");
-                Console.ResetColor();
+                hp.PresentTitle();
                 
                 for (int i = 0; i < menuOptions.Length; i++)
                 {
@@ -68,6 +66,8 @@ public class MainInterface
                     switch (menuSelect)
                     {
                         case 0:
+                            Console.Clear();
+                            hp.PresentTitle();
                             db.AddHabit(connection);
                             break;
 
