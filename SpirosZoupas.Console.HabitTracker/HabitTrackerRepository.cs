@@ -1,9 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using SpirosZoupas.Console.HabitTracker.Model;
-using System;
 using System.Globalization;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace habit_tracker
 {
