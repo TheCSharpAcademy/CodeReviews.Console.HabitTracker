@@ -161,7 +161,7 @@ namespace habit_tracker
             return ExecuteNonQuery(query, parameters);
         }
 
-        public bool UpdateHabit(int id, string name, int measurementUnit)
+        public bool UpdateHabit(int id, string name, string measurementUnit)
         {
             string query = @"
                 UPDATE 
@@ -175,7 +175,7 @@ namespace habit_tracker
             {
                 { "@Id", (id, SqliteType.Integer) },
                 { "@Name", (name, SqliteType.Text) },
-                { "@MeasurementUnit", (measurementUnit, SqliteType.Integer) }
+                { "@MeasurementUnit", (measurementUnit, SqliteType.Text) }
             };
 
             return ExecuteNonQuery(query, parameters);

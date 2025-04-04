@@ -73,7 +73,7 @@ namespace habit_tracker
             Console.WriteLine("Enter habit name.");
             string name = Console.ReadLine();
             Console.WriteLine("Enter measurement unit.");
-            int measurementUnit = GetNumberInput("\n\nPleaser enter measurement unit");
+            string measurementUnit = Console.ReadLine();
 
             bool success = _habitTrackerRepository.UpdateHabit(habitId, name, measurementUnit);
 
@@ -229,10 +229,10 @@ namespace habit_tracker
                         CreateHabit();
                         break;
                     case "7":
-                        UpdateHabit();
+                        DeleteHabit();
                         break;
                     case "8":
-                        DeleteHabit();
+                        UpdateHabit();
                         break;
                     case "9":
                         GetReportMenu();
