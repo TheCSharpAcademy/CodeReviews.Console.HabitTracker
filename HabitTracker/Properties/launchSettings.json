@@ -2,7 +2,7 @@
   "profiles": {
     "HabitTracker": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\johnw\\Source\\repos\\HabitTracker",
+      "workingDirectory": "C:\\Users\\johnw\\Source\\repos\\CodeReviews.Console.HabitTracker\\HabitTracker",
       "sqlDebugging": false
     }
   }

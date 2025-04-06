@@ -1,7 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.Collections;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace HabitTracker
 {
     class Program
