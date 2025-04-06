@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\johnw\\Source\\repos\\HabitTracker",
+      "sqlDebugging": false
+    }
+  }
+}
