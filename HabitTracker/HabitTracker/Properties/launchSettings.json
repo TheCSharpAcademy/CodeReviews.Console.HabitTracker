@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker\\HabitTracker"
+    }
+  }
+}
