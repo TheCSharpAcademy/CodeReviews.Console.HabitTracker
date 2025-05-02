@@ -1,12 +1,7 @@
 ﻿using habitTracker;
-using HabitTracker;
 using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HabitTracker
 {
@@ -29,8 +24,6 @@ namespace HabitTracker
                         Unit TEXT
                         )";
 
-                var habitTable = tableCmd.ExecuteNonQuery();
-
                 tableCmd.CommandText =
                     @"CREATE TABLE IF NOT EXISTS habits_records (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,8 +32,6 @@ namespace HabitTracker
                         Date TEXT,
                         FOREIGN KEY (HabitId) REFERENCES habits(Id)
                         )";
-
-                var recordTable = tableCmd.ExecuteNonQuery();
 
                 connection.Close();
 

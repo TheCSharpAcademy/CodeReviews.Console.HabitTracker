@@ -1,10 +1,6 @@
 ﻿using HabitTracker;
-using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.InteropServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace habitTracker
 {
