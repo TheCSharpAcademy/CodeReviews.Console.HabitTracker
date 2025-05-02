@@ -330,11 +330,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker\\HabitTracker\\HabitTracker.csproj",
+      "projectUniqueName": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker.Kaeteh\\HabitTracker\\HabitTracker\\HabitTracker.csproj",
       "projectName": "HabitTracker",
-      "projectPath": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker\\HabitTracker\\HabitTracker.csproj",
+      "projectPath": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker.Kaeteh\\HabitTracker\\HabitTracker\\HabitTracker.csproj",
       "packagesPath": "C:\\Users\\katie\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker\\HabitTracker\\obj\\",
+      "outputPath": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker.Kaeteh\\HabitTracker\\HabitTracker\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Q0nEQllXGAc=",
+  "dgSpecHash": "8WE0JTFPCvA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker\\HabitTracker\\HabitTracker.csproj",
+  "projectFilePath": "C:\\Users\\katie\\OneDrive\\Desktop\\Learning\\HabitTracker.Kaeteh\\HabitTracker\\HabitTracker\\HabitTracker.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\katie\\.nuget\\packages\\microsoft.data.sqlite\\8.0.12\\microsoft.data.sqlite.8.0.12.nupkg.sha512",
     "C:\\Users\\katie\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.12\\microsoft.data.sqlite.core.8.0.12.nupkg.sha512",

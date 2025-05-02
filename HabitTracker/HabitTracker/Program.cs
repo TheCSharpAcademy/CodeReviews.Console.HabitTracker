@@ -71,18 +71,30 @@ namespace habitTracker
             Console.Clear();
             Console.WriteLine("\t*** RECORDS ***");
             List<Habit> habitRecords = habits.AllRecordsDb();
-            { 
 
+            DisplayHabitRecords(habitRecords);
+        }
+
+        private static void DisplayHabitRecords(List<Habit> habitRecords)
+        {
+            if (habitRecords == null || habitRecords.Count == 0)
+            {
+                Console.WriteLine("No records found.");
+            }
+            else
+            {
                 Console.WriteLine("------------------------------------------\n");
                 foreach (var record in habitRecords)
                 {
-                   Console.WriteLine($"#{record.Id} Date: {record.Date.ToString("dd-MM-yy")}  || {record.Quantity} {record.Unit} {record.HabitType}  ");
+                    Console.WriteLine($"#{record.Id} Date: {record.Date:dd-MM-yy}  || {record.Quantity} {record.Unit} {record.HabitType}");
                 }
                 Console.WriteLine("------------------------------------------\n");
-
-                Console.ReadLine();
             }
+
+            Console.WriteLine("Press Enter to return.");
+            Console.ReadLine();
         }
+
 
         private static void Insert()
         {
