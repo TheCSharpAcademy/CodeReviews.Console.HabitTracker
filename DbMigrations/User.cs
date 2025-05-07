@@ -44,13 +44,13 @@ public class User
             command.CommandText = @"
                 DROP TABLE IF EXISTS Users;";
             command.ExecuteNonQuery();
-            Console.WriteLine("User Table is created");
+            Console.WriteLine("User Table is dropped");
             db.Connection.Close();
         }
         catch (SqliteException e)
         {
             Console.WriteLine(e.Message);
-            Console.WriteLine("Failed to create User table");
+            Console.WriteLine("Failed to drop User table");
         }
     }
 }
