@@ -53,7 +53,6 @@ static class MenuService
                 validMenuSelection = false;
                 continue;
             }
-
             validMenuSelection = true;
 
         } while (!validMenuSelection);
@@ -79,6 +78,10 @@ static class MenuService
                     validMenuSelection = false;
                     continue;
                 }
+
+                newHabitEntry.Occurences = parsedOccurrences;
+                validMenuSelection = true;
+
             }
             catch
             {
@@ -87,7 +90,6 @@ static class MenuService
                 continue;
             }
 
-            validMenuSelection = true;
 
         } while (!validMenuSelection);
 
