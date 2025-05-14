@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitLogger": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Santi\\Desktop\\c#\\ConsoleApps\\HabitLogger\\HabitLogger"
+    }
+  }
+}
