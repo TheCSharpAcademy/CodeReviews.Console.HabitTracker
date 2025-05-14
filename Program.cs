@@ -1,7 +1,9 @@
-﻿namespace DotNETConsole.HabitTracker;
+namespace DotNETConsole.HabitTracker;
 
 using DB;
 using DbMigrations;
+using Controllers;
+
 public class Program
 {
     public static void Main(string[] args)
@@ -10,5 +12,9 @@ public class Program
         db.ConnectionStatus();
         var migrations = new Migrations();
         migrations.Migrate();
+
+        var mainController = new MenuController();
+        Console.Clear();
+        mainController.MainMenu();
     }
 }
