@@ -143,14 +143,14 @@ internal class Program
 
             var styleOfReport = GetStringInput("Enter if you would like to see all records or the total of them");
 
-            var query = GetSQLQuery(typeOfReport, styleOfReport);
+            var query = GetSqlQuery(typeOfReport, styleOfReport);
 
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
 
-                tableCmd.CommandText = (string)query;
+                tableCmd.CommandText = query;
 
                 tableCmd.Parameters.Add("@Name", SqliteType.Text).Value = habitName;
 
@@ -412,7 +412,7 @@ internal class Program
                 else return true;
             }
         }
-        static string GetSQLQuery(string typeOfReport, string styleOfReport)
+        static string GetSqlQuery(string typeOfReport, string styleOfReport)
         {
             while (typeOfReport != "w" && typeOfReport != "y" && typeOfReport != "m")
             {
