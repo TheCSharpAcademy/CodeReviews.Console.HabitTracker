@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Spectre.Console;
 using System;
-using System.ComponentModel;
 using static System.Formats.Asn1.AsnWriter;
 using System.Security.AccessControl;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -227,7 +226,6 @@ class Program
     private static void UpdateRecord()
     {
         AnsiConsole.MarkupLine("Insert '0' to return to main menu:\n");
-        //ViewRecords();
 
         using (var connection = new SqliteConnection(connection_string))
         {
@@ -429,8 +427,6 @@ class Program
         string measurement_input = AnsiConsole.Ask<string>("Please insert unit of measurement of your habit (e.g. Glasses, Pushups, Kilometers): ");
 
         if (measurement_input == "0") return null;
-
-        string formatted_measurement_input = FirstLetterToUpper(measurement_input.ToLower().Replace(" ", "_"));
 
         return measurement_input;
     }
