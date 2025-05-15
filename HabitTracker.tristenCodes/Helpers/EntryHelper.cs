@@ -1,8 +1,8 @@
-namespace HabitTracker.tristenCodes.Helpers;
 using Microsoft.Data.Sqlite;
-using Services;
 using HabitTracker.tristenCodes.Models;
+using HabitTracker.tristenCodes.Services;
 
+namespace HabitTracker.tristenCodes.Helpers;
 public static class EntryHelper
 {
     public static Habit GenerateHabitEntry(string userEntry)
@@ -48,7 +48,7 @@ public static class EntryHelper
         return habit;
     }
 
-    public static bool IsValidId(string id, DBService dbService)
+    public static bool IsExistingEntryId(string id, DBService dbService)
     {
         bool validHabitIdEntry = int.TryParse(id, out int parsedId);
         try
