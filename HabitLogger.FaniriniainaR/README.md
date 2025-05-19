@@ -1,13 +1,13 @@
 # 🧠 HabitLogger
 
-Une application console en C# conçue pour suivre et gérer ses habitudes quotIdiennes. Ce projet a été développé dans un objectif d'apprentissage du langage C#, de la programmation structurée et de l'utilisation de SQLite sans ORM.
+Une application console en C# conçue pour suivre et gérer ses habitudes quotidiennes. Ce projet a été développé dans un objectif d'apprentissage du langage C#, de la programmation structurée et de l'utilisation de SQLite sans ORM.
 
 ---
 
 ## 🎯 Objectif du projet
 
 Créer une application fonctionnelle capable de :
-- Gérer des enregistrements d'habitudes (type, quantité, Date, commentaire)
+- Gérer des enregistrements d'habitudes (type, quantité, date, commentaire)
 - Permettre à l'utilisateur d'ajouter, modifier, supprimer et consulter ses habitudes
 - Générer des statistiques simples à partir des données enregistrées
 - Offrir une interface en console claire et sans plantage
@@ -19,9 +19,9 @@ Créer une application fonctionnelle capable de :
 - **Création automatique** de la base de données SQLite et des tables au démarrage
 - **Interface textuelle** avec un menu principal pour naviguer entre les options
 - **Opérations CRUD** complètes (Créer, Lire, Mettre à jour, Supprimer)
-- **Filtrage par type ou Date** pour explorer les habitudes
+- **Filtrage par type ou date** pour explorer les habitudes
 - **Résumés statistiques** : total, moyenne, max, etc.
-- **ValIdation des entrées** (Dates, quantités, types)
+- **Validation des entrées** (dates, quantités, types)
 - **Gestion des erreurs** robuste pour éviter les blocages
 
 ---
@@ -40,7 +40,7 @@ Créer une application fonctionnelle capable de :
 - Apprendre à manipuler **SQLite sans ORM** en C# avec des requêtes SQL pures
 - Mettre en place un **menu réactif** et ergonomique en ligne de commande
 - Structurer le code de façon modulaire en **séparant les responsabilités**
-- Travailler avec le **formatage de Dates** de manière stricte, en utilisant `DateTime.TryParseExact()`
+- Travailler avec le **formatage de dates** de manière stricte, en utilisant `DateTime.TryParseExact()`
 - Afficher les résultats en colonnes lisibles, **sans utiliser de bibliothèques tierces**
 - Assurer la stabilité de l’application en gérant toutes les exceptions critiques
 
@@ -50,7 +50,7 @@ Créer une application fonctionnelle capable de :
 
 - Ajouter une **exportation CSV** pour sauvegarder les habitudes hors ligne
 - Utiliser **Spectre.Console** pour améliorer l’interface visuelle
-- Ajouter un **rappel quotIdien** via console ou notification système
+- Ajouter un **rappel quotidien** via console ou notification système
 - Créer une **interface graphique simple** (WinForms ou MAUI)
 - Ajouter un **système de comptes utilisateurs** pour différencier les données
 
@@ -60,9 +60,9 @@ Créer une application fonctionnelle capable de :
 
 - Mettre en place une base de données SQLite manuellement en C#
 - Structurer une application avec des **méthodes réutilisables** et une logique claire
-- ValIder les saisies utilisateur pour éviter les comportements inattendus
+- Valider les saisies utilisateur pour éviter les comportements inattendus
 - Utiliser des structures de données simples pour générer des **statistiques** utiles
-- Appréhender l’importance de la **gestion d’erreurs** et de la culture (`CultureInfo`) dans le traitement des Dates
+- Appréhender l’importance de la **gestion d’erreurs** et de la culture (`CultureInfo`) dans le traitement des dates
 
 ---
 
@@ -77,7 +77,7 @@ Créer une application fonctionnelle capable de :
 
 ## 👤 Auteur
 
-Développé par **RAKOTOMAHENINA FanirniainaR** dans le cadre d’un projet d’apprentissage approfondi du C# en console. Ce projet m’a permis de consolIder mes compétences en gestion de base de données, structuration du code et manipulation de données utilisateur.
+Développé par **RAKOTOMAHENINA FanirniainaR** dans le cadre d’un projet d’apprentissage approfondi du C# en console. Ce projet m’a permis de consolider mes compétences en gestion de base de données, structuration du code et manipulation de données utilisateur.
 
 ---
 

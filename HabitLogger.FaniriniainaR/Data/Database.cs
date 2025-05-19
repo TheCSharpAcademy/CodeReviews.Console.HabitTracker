@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-Namespace HabitLogger.Data
+namespace HabitLogger.Data
 {
     public static class Database
     {
@@ -20,7 +20,7 @@ Namespace HabitLogger.Data
             return connection;
         }
 
-        public static voId InitializeDatabase()
+        public static void InitializeDatabase()
         {
             using var connection = GetConnection();
 

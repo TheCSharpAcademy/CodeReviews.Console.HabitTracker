@@ -2,7 +2,7 @@
 
 class Program
 {
-    static voId Main()
+    static void Main()
     {
         Menu.Show();
     }

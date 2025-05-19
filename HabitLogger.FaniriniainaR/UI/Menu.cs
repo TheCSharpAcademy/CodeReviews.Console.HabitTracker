@@ -1,10 +1,10 @@
 ﻿using HabitLogger.Services;
 
-Namespace HabitLogger.UI
+namespace HabitLogger.UI
 {
     public static class Menu
     {
-        public static voId Show()
+        public static void Show()
         {
             while (true)
             {
@@ -23,7 +23,7 @@ Namespace HabitLogger.UI
             }
         }
 
-        private static voId HandleAction(string input)
+        private static void HandleAction(string input)
         {
             try
             {
@@ -51,7 +51,7 @@ Namespace HabitLogger.UI
                         Quitter();
                         break;
                     default:
-                        Console.WriteLine("Option invalIde. Veuillez réessayer.");
+                        Console.WriteLine("Option invalide. Veuillez réessayer.");
                         break;
                 }
             }
@@ -61,18 +61,18 @@ Namespace HabitLogger.UI
             }
         }
 
-        private static voId AjouterHabitude()
+        private static void AjouterHabitude()
         {
             Console.WriteLine("\nAJOUT D'UNE HABITUDE");
-            Console.Write("Entrez la Date (AAAA-MM-JJ) : ");
-            string Date = Console.ReadLine();
+            Console.Write("Entrez la date (AAAA-MM-JJ) : ");
+            string date = Console.ReadLine();
 
-            if (!DateTime.TryParse(Date, out _))
-                throw new Exception("Format de Date invalIde.");
+            if (!DateTime.TryParse(date, out _))
+                throw new Exception("Format de date invalide.");
 
             Console.Write("Entrez la quantité : ");
-            if (!int.TryParse(Console.ReadLine(), out int Quantity))
-                throw new Exception("Quantité invalIde.");
+            if (!int.TryParse(Console.ReadLine(), out int quantity))
+                throw new Exception("Quantité invalide.");
 
             var types = HabitService.GetHabitTypes();
             if (types.Count == 0)
@@ -82,26 +82,26 @@ Namespace HabitLogger.UI
             foreach (var t in types)
                 Console.WriteLine($" {t.Id} - {t.Name} ({t.Unit})");
 
-            Console.Write("Entrez l'Id du type d’habitude : ");
+            Console.Write("Entrez l'ID du type d’habitude : ");
             if (!int.TryParse(Console.ReadLine(), out int typeId) || !types.Any(t => t.Id == typeId))
-                throw new Exception("Id de type invalIde.");
+                throw new Exception("ID de type invalide.");
 
-            HabitService.AddHabit(Date, Quantity, typeId);
+            HabitService.AddHabit(date, quantity, typeId);
         }
 
-        private static voId VoirToutesLesHabitudes()
+        private static void VoirToutesLesHabitudes()
         {
             HabitService.ShowAllHabits();
         }
 
-        private static voId VoirHabitudesParType()
+        private static void VoirHabitudesParType()
         {
             Console.Write("\nEntrez le nom du type d’habitude : ");
             string type = Console.ReadLine();
             HabitService.ShowHabitsByType(type);
         }
 
-        private static voId VoirHabitudesParPeriode()
+        private static void VoirHabitudesParPeriode()
         {
             Console.Write("Date de début (AAAA-MM-JJ) : ");
             string start = Console.ReadLine();
@@ -111,32 +111,32 @@ Namespace HabitLogger.UI
             HabitService.ShowHabitsByDateRange(start, end);
         }
 
-        private static voId VoirStatistiques()
+        private static void VoirStatistiques()
         {
             HabitService.ShowStatistics();
         }
 
-        private static voId AjouterTypeHabitude()
+        private static void AjouterTypeHabitude()
         {
             Console.WriteLine("\nAJOUT D'UN TYPE D’HABITUDE");
             Console.Write("Entrez le nom du type : ");
-            string Name = Console.ReadLine();
+            string name = Console.ReadLine();
             Console.Write("Entrez l’unité de mesure (ex: min, km, verres...) : ");
             string unit = Console.ReadLine();
 
-            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(unit))
-                throw new Exception("Nom ou unité invalIde.");
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(unit))
+                throw new Exception("Nom ou unité invalide.");
 
-            HabitService.AddHabitType(Name, unit);
+            HabitService.AddHabitType(name, unit);
         }
 
-        private static voId Quitter()
+        private static void Quitter()
         {
             Console.WriteLine("Au revoir !");
             Environment.Exit(0);
         }
 
-        private static voId AfficherErreur(string message)
+        private static void AfficherErreur(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Erreur : {message}");

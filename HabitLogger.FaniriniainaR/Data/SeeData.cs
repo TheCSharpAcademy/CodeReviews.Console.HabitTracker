@@ -1,10 +1,10 @@
 ﻿using System.Data.SQLite;
 
-Namespace HabitLogger.Data
+namespace HabitLogger.Data
 {
     public static class SeedData
     {
-        public static voId Initialize()
+        public static void Initialize()
         {
             using var connection = Database.GetConnection();
 
