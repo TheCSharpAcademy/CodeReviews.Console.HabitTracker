@@ -3,10 +3,10 @@ namespace HabitLogger.Models
 {
     public class Habit
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string Date { get; set; }
-        public string quantity { get; set; }
-        public int habitTypeId { get; set; }
+        public string Quantity { get; set; }
+        public int HabitTypeId { get; set; }
 
     }
 }
