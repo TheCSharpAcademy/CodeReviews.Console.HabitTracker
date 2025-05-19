@@ -30,9 +30,11 @@ namespace TheCSharpAcademy.HabitTracker
       Console.WriteLine("2. Remove a habit");
       Console.WriteLine("3. Update a habit");
       Console.WriteLine("4. View habits");
-      Console.WriteLine("5. Exit");
+      Console.WriteLine("5. Log a habit");
+      Console.WriteLine("6. View this months occurences of a habit");
+      Console.WriteLine("7. Exit");
 
-      string choice = Console.ReadLine();
+      string? choice = Console.ReadLine();
       switch (choice)
       {
         case "1":
@@ -48,6 +50,12 @@ namespace TheCSharpAcademy.HabitTracker
           ViewHabitsMainmenu();
           break;
         case "5":
+          LogHabitOccurence();
+          break;
+        case "6":
+          ViewOccurences();
+          break;
+        case "7":
           Environment.Exit(0);
           break;
         default:
@@ -58,19 +66,118 @@ namespace TheCSharpAcademy.HabitTracker
       #endregion
     }
 
+    /// <summary>
+    /// Prompts the user to log a habit occurrence.
+    /// </summary>
+    void LogHabitOccurence()
+    {
+      ViewHabits();
+
+      int id;
+      while (true)
+      {
+        Console.WriteLine("Enter the ID of the habit to log an occurrence:");
+        string? idInput = Console.ReadLine();
+        if (int.TryParse(idInput, out id))
+          break;
+        Console.WriteLine("Invalid ID. Please enter a valid positive integer.");
+      }
+
+      string? date;
+      while (true)
+      {
+        Console.WriteLine("Enter the date of the occurrence (DD-MM-YYYY):");
+        date = Console.ReadLine();
+        if (DateTime.TryParseExact(date, "dd-MM-yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
+          break;
+        Console.WriteLine("Invalid date format. Please use DD-MM-YYYY.");
+      }
+
+      double value;
+      while (true)
+      {
+        Console.WriteLine("Enter the value of the occurrence:");
+        string? valueInput = Console.ReadLine();
+        if (double.TryParse(valueInput, out value))
+          break;
+        Console.WriteLine("Invalid value. Please enter a valid number.");
+      }
+
+      Occurence occurence = new(date, id, value);
+
+      if (occurence.LogOccurence(occurence))
+      {
+        Console.WriteLine("Occurrence logged successfully.");
+      }
+      else
+      {
+        Console.WriteLine("Failed to log occurrence.");
+      }
+
+      MainMenu();
+
+
+    }
+
+    /// <summary>
+    /// Displays the habits and then returns to the main menu.
+    /// </summary>
     void ViewHabitsMainmenu()
     {
       ViewHabits();
       MainMenu();
     }
-    void ViewHabits()
+    /// <summary>
+    /// Calculates the current month's occurrences for a given habit.
+    /// </summary>
+    /// <param name="habit"></param>
+    /// <returns></returns>
+   static int CalculateCurrentMonthOccurences(Habit habit)
     {
-      DatabaseHandler databaseHandler = new DatabaseHandler();
+      int value = 0;
+
+      DatabaseHandler databaseHandler = new();
+      databaseHandler.Connect();
+
+      List<Occurence> occurences = databaseHandler.GetOccurencesForCurrentMonthByHabit(habit);
+
+      foreach(Occurence occurence in occurences)
+      {
+        value += (int)occurence.value;
+      }
+
+      return value;
+    }
+    /// <summary>
+    /// Retrieves all occurrences for the current month and displays them to the user.
+    /// </summary>
+    void ViewOccurences()
+    {
+      Console.WriteLine("Enter the ID of the habit to view occurrences:");
+      ViewHabits();
+      int id = Convert.ToInt32(Console.ReadLine());
+      DatabaseHandler databaseHandler = new();
+      databaseHandler.Connect();
+      List<Occurence> occurences = databaseHandler.GetOccurencesForCurrentMonthByHabit(databaseHandler.GetHabitById(id));
+      foreach (var occurence in occurences)
+      {
+        Console.WriteLine($"ID: {occurence.id}, Date: {occurence.Date}, Habit: {databaseHandler.GetHabitById(id).Habitname}, Value: {occurence.value}");
+        Console.WriteLine("");
+      }
+      databaseHandler.Close();
+      MainMenu();
+    }
+    /// <summary>
+    /// Retrieves all habits from the database and displays them to the user.
+    /// </summary>
+    static void ViewHabits()
+    {
+      DatabaseHandler databaseHandler = new();
       databaseHandler.Connect();
       List<Habit> habits = databaseHandler.GetAllHabits();
       foreach (var habit in habits)
       {
-        Console.WriteLine($"ID: {habit.Id}, Name: {habit.Habitname}, Unit: {habit.MeasuringUnit}, Amount: {habit.Amount}");
+        Console.WriteLine($"ID: {habit.Id}, Name: {habit.Habitname}, Unit: {habit.MeasuringUnit}, Current month occurences: {CalculateCurrentMonthOccurences(habit)}");
         Console.WriteLine("");
       }
     }
@@ -79,19 +186,19 @@ namespace TheCSharpAcademy.HabitTracker
     /// </summary>
     void UpdateHabit()
     {
-      DatabaseHandler databaseHandler = new DatabaseHandler();
+      DatabaseHandler databaseHandler = new();
       databaseHandler.Connect();
       ViewHabits();
       Console.WriteLine("Enter the ID of the habit to update:");
       int id = Convert.ToInt32(Console.ReadLine());
       Console.WriteLine("Enter the new name of the habit:");
-      string name = Console.ReadLine();
+      string? name = Console.ReadLine();
       Console.WriteLine("Enter the new measuring unit:");
-      string unit = Console.ReadLine();
+      string? unit = Console.ReadLine();
       Console.WriteLine("Enter the new amount:");
       double amount = Convert.ToDouble(Console.ReadLine());
       Habit oldHabit = databaseHandler.GetHabitById(id);
-      Habit newHabit = new Habit(name, unit, amount);
+      Habit newHabit = new(name, unit, amount);
       if (oldHabit.UpdateHabit(oldHabit, newHabit))
       { Console.WriteLine("Habit updated succesfully"); }
       ViewHabitsMainmenu();
@@ -102,11 +209,13 @@ namespace TheCSharpAcademy.HabitTracker
     /// </summary>
     void RemoveHabit()
     {
+      DatabaseHandler databaseHandler = new();
+      databaseHandler.Connect();
       ViewHabits();
       Console.WriteLine("Enter the ID of the habit to remove:");
       int id = Convert.ToInt32(Console.ReadLine());
-      Habit habit = new Habit("", "", 0);
-      if (habit.RemoveHabit(habit))
+      Habit habit = new("", "", 0);
+      if (habit.RemoveHabit(databaseHandler.GetHabitById(id)))
       { Console.WriteLine("Habit removed succesfully"); }
       ViewHabitsMainmenu();
 
@@ -118,12 +227,12 @@ namespace TheCSharpAcademy.HabitTracker
     void AddHabit()
     {
       Console.WriteLine("Enter the name of the habit:");
-      string name = Console.ReadLine();
+      string? name = Console.ReadLine();
       Console.WriteLine("Enter the measuring unit:");
-      string unit = Console.ReadLine();
+      string? unit = Console.ReadLine();
       Console.WriteLine("Enter the amount:");
       double amount = Convert.ToDouble(Console.ReadLine());
-      Habit habit = new Habit(name, unit, amount);
+      Habit habit = new(name, unit, amount);
       if (!habit.AddHabit(habit))
       {
         Console.WriteLine("Habit not created");

@@ -7,30 +7,22 @@ using System.Threading.Tasks;
 using TheCSharpAcademy.HabitTracker.Interfaces;
 namespace TheCSharpAcademy.HabitTracker.Models
 {
-  internal class Habit : IHabit
+  /// <summary>
+  /// Constructor for the habit class
+  /// </summary>
+  /// <param name="habitname"></param>
+  /// <param name="unit"></param>
+  /// <param name="amount"></param>
+  internal class Habit(string habitname, string unit, double amount) : IHabit
   {
     #region properties
     public int Id { get; set; }
-    public string Habitname { get; set; }
-    public string MeasuringUnit { get; set; }
-    public double Amount { get; set; }
+    public string Habitname { get; set; } = habitname;
+    public string MeasuringUnit { get; set; } = unit;
+    public double Amount { get; set; } = amount;
 
     #endregion
-
-    #region constructors
-    /// <summary>
-    /// Constructor for the habit class
-    /// </summary>
-    /// <param name="habitname"></param>
-    /// <param name="unit"></param>
-    /// <param name="amount"></param>
-    public Habit(string habitname, string unit, double amount)
-    {
-      Habitname = habitname;
-      MeasuringUnit = unit;
-      Amount = amount;
-    }
-    #endregion
+    
 
     #region methods
     /// <summary>
@@ -40,7 +32,7 @@ namespace TheCSharpAcademy.HabitTracker.Models
     /// <returns>True if succesfull, false if not</returns>
     public bool AddHabit(Habit habit)
     {
-      DatabaseHandler databaseHandler = new DatabaseHandler();
+      DatabaseHandler databaseHandler = new();
 
       if (databaseHandler.AddHabit(habit))
       {
@@ -55,7 +47,7 @@ namespace TheCSharpAcademy.HabitTracker.Models
     /// <param name="habit"></param>
     public bool RemoveHabit(Habit habit)
     {
-      DatabaseHandler databaseHandler = new DatabaseHandler();
+      DatabaseHandler databaseHandler = new();
       databaseHandler.Connect();
       if (databaseHandler.RemoveHabit(habit))
       {
@@ -74,7 +66,7 @@ namespace TheCSharpAcademy.HabitTracker.Models
     /// <param name="newHabit"></param>
     public bool UpdateHabit(Habit oldHabit, Habit newHabit)
     {
-      DatabaseHandler databaseHandler = new DatabaseHandler();
+      DatabaseHandler databaseHandler = new();
       if (databaseHandler.UpdateHabit(oldHabit, newHabit))
       {
         return true;
