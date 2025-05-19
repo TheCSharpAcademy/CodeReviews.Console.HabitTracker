@@ -40,28 +40,27 @@ public class HabitController
         return habits;
     }
 
-    public List<HabitLog> GetHabitLogs()
+    public List<HabitLogView> GetHabitLogs()
     {
         var db = new DbConnection();
-        List<HabitLog> habitLogs = new List<HabitLog>();
+        List<HabitLogView> habitLogs = new List<HabitLogView>();
 
         try
         {
             db.Connection.Open();
             var command = db.Connection.CreateCommand();
-            command.CommandText = @"SELECT * FROM HabitLogs ORDER BY ID DESC;";
+            command.CommandText = @"SELECT HabitLogs.date, HabitLogs.quentity, Habits.title FROM HabitLogs JOIN Habits ON HabitLogs.habitid = Habits.id ORDER BY HabitLogs.id DESC;";
 
             using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    HabitLog habitLog = new HabitLog();
+                    HabitLogView habitLog = new HabitLogView();
 
                     // int eq int32.
-                    habitLog.Id = reader.GetInt32(0);
-                    habitLog.LogDate = reader.GetDateTime(1);
-                    habitLog.Quantity = reader.GetInt32(2);
-                    habitLog.HabitId = reader.GetInt32(3);
+                    habitLog.EntryDate = reader.GetDateTime(0);
+                    habitLog.Quentity = reader.GetInt32(1);
+                    habitLog.HabitTitle = reader.GetString(2);
                     habitLogs.Add(habitLog);
                 }
             }
@@ -73,6 +72,26 @@ public class HabitController
         }
 
         return habitLogs;
+    }
+
+    public long HabitCount()
+    {
+        try
+        {
+            var db = new DbConnection();
+            db.Connection.Open();
+            var command = db.Connection.CreateCommand();
+            command.CommandText = @"SELECT COUNT(*) FROM Habits;";
+            long rowCount = (long)(command.ExecuteScalar() ?? 0);
+            db.Connection.Close();
+            return rowCount;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public void AddHabit(string habit)
