@@ -1,4 +1,4 @@
-﻿using DotNETConsole.HabitTracker.DB;
+using DotNETConsole.HabitTracker.DB;
 using Microsoft.Data.Sqlite;
 
 namespace DotNETConsole.HabitTracker.DbMigrations;
@@ -17,7 +17,8 @@ public class HabitLog
                                     ID INTEGER PRIMARY KEY AUTOINCREMENT,
                                     DATE DATETIME NOT NULL,
                                     QUENTITY INT NOT NULL,
-                                    HABITID FOREGIN KEY REFERENCES Habits(ID)
+                                    HABITID INT NOT NULL,
+                                    FOREIGN KEY(HABITID) REFERENCES Habits(ID)
                                   );";
 
             command.ExecuteNonQuery();
