@@ -1,5 +1,5 @@
 ﻿
-namespace HabitLogger.Models
+Namespace HabitLogger.Models
 {
     public class Habit
     {

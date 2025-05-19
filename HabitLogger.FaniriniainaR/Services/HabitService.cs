@@ -1,18 +1,18 @@
 ﻿using HabitLogger.Data;
 using System.Data.SQLite;
 
-namespace HabitLogger.Services
+Namespace HabitLogger.Services
 {
     public static class HabitService
     {
-        public static void AddHabit(string date, int quantity, int typeId)
+        public static voId AddHabit(string Date, int Quantity, int typeId)
         {
             try
             {
                 using var connection = Database.GetConnection();
-                var insert = new SQLiteCommand("INSERT INTO Habits (Date, Quantity, HabitTypeId) VALUES (@date, @quantity, @typeId);", connection);
-                insert.Parameters.AddWithValue("@date", date);
-                insert.Parameters.AddWithValue("@quantity", quantity);
+                var insert = new SQLiteCommand("INSERT INTO Habits (Date, Quantity, HabitTypeId) VALUES (@Date, @Quantity, @typeId);", connection);
+                insert.Parameters.AddWithValue("@Date", Date);
+                insert.Parameters.AddWithValue("@Quantity", Quantity);
                 insert.Parameters.AddWithValue("@typeId", typeId);
                 insert.ExecuteNonQuery();
 
@@ -47,13 +47,13 @@ namespace HabitLogger.Services
             return types;
         }
 
-        public static void AddHabitType(string name, string unit)
+        public static voId AddHabitType(string Name, string unit)
         {
             try
             {
                 using var connection = Database.GetConnection();
-                var insert = new SQLiteCommand("INSERT INTO HabitTypes (Name, Unit) VALUES (@name, @unit);", connection);
-                insert.Parameters.AddWithValue("@name", name);
+                var insert = new SQLiteCommand("INSERT INTO HabitTypes (Name, Unit) VALUES (@Name, @unit);", connection);
+                insert.Parameters.AddWithValue("@Name", Name);
                 insert.Parameters.AddWithValue("@unit", unit);
                 insert.ExecuteNonQuery();
 
@@ -65,7 +65,7 @@ namespace HabitLogger.Services
             }
         }
 
-        public static void ShowHabitTypes()
+        public static voId ShowHabitTypes()
         {
             try
             {
@@ -85,7 +85,7 @@ namespace HabitLogger.Services
             }
         }
 
-        public static void ShowAllHabits()
+        public static voId ShowAllHabits()
         {
             using var connection = Database.GetConnection();
 
@@ -103,22 +103,22 @@ namespace HabitLogger.Services
 
             while (reader.Read())
             {
-                string date = reader.GetString(0);
+                string Date = reader.GetString(0);
                 string typeName = reader.GetString(1);
-                int quantity = reader.GetInt32(2);
+                int Quantity = reader.GetInt32(2);
                 string unit = reader.GetString(3);
 
-                Console.WriteLine($"{date} | {typeName} | {quantity} {unit}");
+                Console.WriteLine($"{Date} | {typeName} | {Quantity} {unit}");
             }
 
             Console.WriteLine();
         }
 
-        public static void ShowHabitsByType(string typeName)
+        public static voId ShowHabitsByType(string typeName)
         {
             if (string.IsNullOrWhiteSpace(typeName))
             {
-                Console.WriteLine("Type d’habitude invalide.");
+                Console.WriteLine("Type d’habitude invalIde.");
                 return;
             }
 
@@ -144,12 +144,12 @@ namespace HabitLogger.Services
                 while (reader.Read())
                 {
                     hasResults = true;
-                    string date = reader.GetString(0);
-                    string name = reader.GetString(1);
-                    int quantity = reader.GetInt32(2);
+                    string Date = reader.GetString(0);
+                    string Name = reader.GetString(1);
+                    int Quantity = reader.GetInt32(2);
                     string unit = reader.GetString(3);
 
-                    Console.WriteLine($" {date} | {name} | {quantity} {unit}");
+                    Console.WriteLine($" {Date} | {Name} | {Quantity} {unit}");
                 }
 
                 if (!hasResults)
@@ -163,11 +163,11 @@ namespace HabitLogger.Services
             }
         }
 
-        public static void ShowHabitsByDateRange(string startDate, string endDate)
+        public static voId ShowHabitsByDateRange(string startDate, string endDate)
         {
             if (!DateTime.TryParse(startDate, out _) || !DateTime.TryParse(endDate, out _))
             {
-                Console.WriteLine("Format de date invalide. Utilisez AAAA-MM-JJ.");
+                Console.WriteLine("Format de Date invalIde. Utilisez AAAA-MM-JJ.");
                 return;
             }
 
@@ -194,12 +194,12 @@ namespace HabitLogger.Services
                 while (reader.Read())
                 {
                     hasResults = true;
-                    string date = reader.GetString(0);
-                    string name = reader.GetString(1);
-                    int quantity = reader.GetInt32(2);
+                    string Date = reader.GetString(0);
+                    string Name = reader.GetString(1);
+                    int Quantity = reader.GetInt32(2);
                     string unit = reader.GetString(3);
 
-                    Console.WriteLine($" {date} |  {name} | {quantity} {unit}");
+                    Console.WriteLine($" {Date} |  {Name} | {Quantity} {unit}");
                 }
 
                 if (!hasResults)
@@ -213,7 +213,7 @@ namespace HabitLogger.Services
             }
         }
 
-        public static void ShowStatistics()
+        public static voId ShowStatistics()
         {
             try
             {
@@ -231,12 +231,12 @@ namespace HabitLogger.Services
                 Console.WriteLine("\n Statistiques par type d’habitude :\n");
                 while (reader.Read())
                 {
-                    string name = reader.GetString(0);
+                    string Name = reader.GetString(0);
                     int total = reader.GetInt32(1);
                     double average = reader.GetDouble(2);
                     int count = reader.GetInt32(3);
 
-                    Console.WriteLine($" {name} | Total: {total}, Moyenne: {average:F2}, Fréquence: {count}");
+                    Console.WriteLine($" {Name} | Total: {total}, Moyenne: {average:F2}, Fréquence: {count}");
                 }
 
                 Console.WriteLine();
@@ -247,7 +247,7 @@ namespace HabitLogger.Services
             }
         }
 
-        private static void ShowError(Exception ex)
+        private static voId ShowError(Exception ex)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("❌ Une erreur est survenue : " + ex.Message);
