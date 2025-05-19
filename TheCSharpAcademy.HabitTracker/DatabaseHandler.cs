@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Text.Json;
 using System.Data.SQLite;
@@ -65,11 +63,11 @@ namespace TheCSharpAcademy.HabitTracker
     /// Executes a SQL command that writes data to the database.
     /// </summary>
     /// <param name="sqlcommand"></param>
-    public bool ExecuteSQLCommandWrite(SQLiteCommand sqlcommand)
+    public bool ExecuteSqlCommandWrite(SQLiteCommand sqlcommand)
     {
       try
       {
-        var connection = Connect();
+        Connect();
 
         sqlcommand.ExecuteNonQuery();
         return true;
@@ -153,7 +151,7 @@ namespace TheCSharpAcademy.HabitTracker
           amount
         )
           {
-            Id = id
+            Id = ID
           };
           return habit;
         }
@@ -189,7 +187,7 @@ namespace TheCSharpAcademy.HabitTracker
         command.Parameters.AddWithValue("@measuringUnit", newHabit.MeasuringUnit);
         command.Parameters.AddWithValue("@amount", newHabit.Amount);
 
-        ExecuteSQLCommandWrite(command);
+        ExecuteSqlCommandWrite(command);
         Close();
         return true;
       }
@@ -289,7 +287,7 @@ namespace TheCSharpAcademy.HabitTracker
         using var command = new SQLiteCommand(sql, connection);
         command.Parameters.AddWithValue("@HabitID", occurence.HabitID);
         command.Parameters.AddWithValue("@Date", occurence.Date);
-        command.Parameters.AddWithValue("@value", occurence.value);
+        command.Parameters.AddWithValue("@value", occurence.Value);
         command.ExecuteNonQuery();
 
         Habit oldHabit = GetHabitById(occurence.HabitID);
@@ -297,7 +295,7 @@ namespace TheCSharpAcademy.HabitTracker
           new Habit(
             oldHabit.Habitname,
            oldHabit.MeasuringUnit,
-            oldHabit.Amount + occurence.value
+            oldHabit.Amount + occurence.Value
           ));
 
         Close();

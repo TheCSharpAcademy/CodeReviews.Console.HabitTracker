@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheCSharpAcademy.HabitTracker.Interfaces;
 namespace TheCSharpAcademy.HabitTracker.Models
 {

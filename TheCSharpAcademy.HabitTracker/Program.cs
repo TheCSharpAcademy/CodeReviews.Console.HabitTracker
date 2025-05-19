@@ -5,16 +5,19 @@
     public static void Main()
     {
       Program program = new();
+      program.Run();
     }
     #region constructors
     Program()
     {
-      UI ui = new(); 
-      
     }
     #endregion
     #region methods
-
+    void Run()
+    {
+      UI ui = new();
+      ui.MainMenu();
+    }
     #endregion
   }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheCSharpAcademy.HabitTracker.Models;
 
 namespace TheCSharpAcademy.HabitTracker
@@ -15,14 +13,13 @@ namespace TheCSharpAcademy.HabitTracker
     #region constructors
     public UI()
     {
-      MainMenu();
     }
     #endregion
     #region methods
     /// <summary>
     /// Displays the main menu and prompts the user for an action.
     /// </summary>
-    void MainMenu()
+    public void MainMenu()
     {
       Console.WriteLine("Welcome to the Habit Tracker!");
       Console.WriteLine("Please select an option:");
@@ -143,7 +140,7 @@ namespace TheCSharpAcademy.HabitTracker
 
       foreach(Occurence occurence in occurences)
       {
-        value += (int)occurence.value;
+        value += (int)occurence.Value;
       }
 
       return value;
@@ -161,7 +158,7 @@ namespace TheCSharpAcademy.HabitTracker
       List<Occurence> occurences = databaseHandler.GetOccurencesForCurrentMonthByHabit(databaseHandler.GetHabitById(id));
       foreach (var occurence in occurences)
       {
-        Console.WriteLine($"ID: {occurence.id}, Date: {occurence.Date}, Habit: {databaseHandler.GetHabitById(id).Habitname}, Value: {occurence.value}");
+        Console.WriteLine($"ID: {occurence.Id}, Date: {occurence.Date}, Habit: {databaseHandler.GetHabitById(id).Habitname}, Value: {occurence.Value}");
         Console.WriteLine("");
       }
       databaseHandler.Close();

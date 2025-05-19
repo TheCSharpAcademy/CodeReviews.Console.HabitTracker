@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using TheCSharpAcademy.HabitTracker.Interfaces;
 
 namespace TheCSharpAcademy.HabitTracker.Models
@@ -10,10 +6,10 @@ namespace TheCSharpAcademy.HabitTracker.Models
   internal class Occurence(string date, int HabitID, double value) : IOccurence
   {
     #region properties
-    public int id { get; set; }
+    public int Id { get; set; }
     public int HabitID { get; set; } = HabitID;
     public string Date { get; set; } = date;
-    public double value { get; set; } = value;
+    public double Value { get; set; } = value;
 
     #endregion
     #region constructors
