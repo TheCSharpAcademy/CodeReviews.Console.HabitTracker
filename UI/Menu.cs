@@ -13,7 +13,7 @@ namespace Habit_Logger.UI
             {
                 var usersChoice = AnsiConsole.Prompt(
                        new SelectionPrompt<string>()
-                        .Title("Please select an option:")
+                        .Title("Welcome! Please select from the following options:")
                         .AddChoices(
                            "Add Habit",
                            "Delete Habit",

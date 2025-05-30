@@ -9,8 +9,6 @@ namespace Habit_Logger.Data
 
         internal static void CreateDatabase()
         {
-            //var connectionString = @"Data Source=habbitlogger.db";
-
             using (SqliteConnection connection = new(ConnectionString))
             {
                 using (SqliteCommand tableCommand = connection.CreateCommand())
