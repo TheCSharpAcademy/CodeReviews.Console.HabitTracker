@@ -16,9 +16,9 @@ public class HabitLog
             command.CommandText = @"CREATE TABLE IF NOT EXISTS HabitLogs (
                                     ID INTEGER PRIMARY KEY AUTOINCREMENT,
                                     DATE DATETIME NOT NULL,
-                                    QUENTITY INT NOT NULL,
+                                    QUANTITY INT NOT NULL,
                                     HABITID INT NOT NULL,
-                                    FOREIGN KEY(HABITID) REFERENCES Habits(ID)
+                                    FOREIGN KEY(HABITID) REFERENCES Habits(ID) ON DELETE CASCADE
                                   );";
 
             command.ExecuteNonQuery();
