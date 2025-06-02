@@ -16,16 +16,21 @@ public class UserViews
 
         AnsiConsole.Write(table);
     }
-    public void ViewHabitLogs(List<HabitLog> habitLogs)
+    public void ViewHabitLogs(List<HabitLogView> habitLogs)
     {
         var table = new Table();
-        table.AddColumns(new[] { "Id", "Date", "Quentity", "Habit ID" });
+        table.AddColumns(new[] { "Habit", "Date", "Quantity" });
 
-        foreach (HabitLog habit in habitLogs)
+        foreach (HabitLogView habit in habitLogs)
         {
-            table.AddRow($"{habit.Id}", $"{habit.LogDate}", $"{habit.Quantity}", $"{habit.HabitId}");
+            table.AddRow($"{habit.HabitTitle}", $"{habit.EntryDate}", $"{habit.Quantity}");
         }
 
         AnsiConsole.Write(table);
+    }
+
+    public void HabitLogSummary(HabitLogView habitLog)
+    {
+        AnsiConsole.WriteLine($"Editing == Log_id-{habitLog.LogId}::Habit-{habitLog.HabitTitle}::Quantity::{habitLog.Quantity}::Date-{DateOnly.FromDateTime(habitLog.EntryDate)}");
     }
 }
