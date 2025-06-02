@@ -2,9 +2,16 @@ namespace DotNETConsole.HabitTracker.Enums;
 
 public enum MainUI
 {
-    LogRecord,
+    LogHabit,
+    ViewHabitLog,
+    ModifyHabitLog,
     AddNewHabit,
     ViewHabits,
-    ViewLog,
     Exit
+}
+
+public enum HabitModifyActions
+{
+    Edit,
+    Delete
 }

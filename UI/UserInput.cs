@@ -20,7 +20,7 @@ public class UserInput
         var menu = new Menu();
         var habit = menu.SelectSingleHabit();
         AnsiConsole.WriteLine($"Selected Habit: {habit.Title}");
-        int quentity = AnsiConsole.Ask<int>("Enter [green]quentity[/]:");
+        int quentity = AnsiConsole.Ask<int>("Enter [green]quantity[/]:");
         DateTime date = AnsiConsole.Ask<DateTime>("Date: ");
         var newLog = new HabitLog();
         newLog.LogDate = date;
@@ -38,6 +38,19 @@ public class UserInput
             if (keyPressed is { Key: ConsoleKey.Escape })
             {
                 return true;
+            }
+        }
+    }
+
+    public ConsoleKeyInfo? HabitLogModifyOptionPrompt()
+    {
+        AnsiConsole.MarkupLine("[green]Press ESC to return to main menu\n Press E to edit\n Press D to delete...[/]");
+        while (true)
+        {
+            var keyPressed = AnsiConsole.Console.Input.ReadKey(true);
+            if (keyPressed is { Key: ConsoleKey.Escape } || keyPressed is { Key: ConsoleKey.D } || keyPressed is { Key: ConsoleKey.E })
+            {
+                return keyPressed;
             }
         }
     }

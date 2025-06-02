@@ -35,4 +35,16 @@ public class Menu
                 .AddChoices(habits));
         return habit;
     }
+
+    public HabitLogView SelectSingleHabitLog()
+    {
+        var habitController = new HabitController();
+        List<HabitLogView> habits = habitController.GetHabitLogs();
+        var habitLog = AnsiConsole.Prompt(
+            new SelectionPrompt<HabitLogView>()
+                .Title("Select habitlog:")
+                .PageSize(10)
+                .AddChoices(habits));
+        return habitLog;
+    }
 }
