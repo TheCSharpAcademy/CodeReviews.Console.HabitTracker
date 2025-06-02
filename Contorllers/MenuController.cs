@@ -20,17 +20,32 @@ public class MenuController
         var habitController = new HabitController();
         while (Running)
         {
+            Console.Clear();
             var userChoice = menu.GetChoice();
             switch (userChoice)
             {
-                case MainUI.LogRecord:
-                    habitController.LogHabit(userInput.LogHabit());
+                case MainUI.LogHabit:
+                    long numberOfHabit = habitController.HabitCount();
+                    if (numberOfHabit < 1)
+                    {
+                        Console.WriteLine("No Habit Found to log! Please Add new habit then try again.");
+                    }
+                    else
+                    {
+
+                        habitController.LogHabit(userInput.LogHabit());
+                    }
                     userInput.ContinueInput();
                     break;
-                case MainUI.ViewLog:
-                    List<HabitLog> habitLogs = habitController.GetHabitLogs();
+                case MainUI.ViewHabitLog:
+                    List<HabitLogView> habitLogs = habitController.GetHabitLogs();
                     userViews.ViewHabitLogs(habitLogs);
                     userInput.ContinueInput();
+                    break;
+                case MainUI.ModifyHabitLog:
+                    var habitLog = menu.SelectSingleHabitLog();
+                    userViews.HabitLogSummary(habitLog);
+                    habitController.UpdateHabitLog(habitLog.LogId);
                     break;
                 case MainUI.AddNewHabit:
                     string newHabit = userInput.GetNewHabit();
