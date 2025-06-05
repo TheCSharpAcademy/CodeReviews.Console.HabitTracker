@@ -1,16 +1,12 @@
-﻿using Main.Data;
-using Main.Models;
-using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Main.Enums;
-
-namespace Main.UI
+﻿namespace Main.UI
 {
+    using Main.Data;
+    using Main.Models;
+    using Spectre.Console;
+    using System;
+    using System.Globalization;
+    using static Main.Enums;
+
     internal abstract class CrudMenu(string item)
     {
         public void ShowMenu()
@@ -23,10 +19,10 @@ namespace Main.UI
                 switch (choice)
                 {
                     case CrudChoice.ViewAll:
-                        ViewAll();
+                        this.ViewAll();
                         break;
                     case CrudChoice.Insert:
-                        Insert();
+                        this.Insert();
                         break;
                     case CrudChoice.Exit:
                         running = false;
@@ -36,6 +32,7 @@ namespace Main.UI
         }
 
         protected abstract void ViewAll();
+
         protected abstract void Insert();
 
         protected static string GetString(string message, string input = "Input", string? defaultValue = null)
@@ -56,7 +53,7 @@ namespace Main.UI
         {
             AnsiConsole.MarkupLine(message);
             AnsiConsole.MarkupLine("[italic]Or type in 'exit' at any time to return to the previous screen[/]");
-            string response = "";
+            string response = string.Empty;
             int result = 0;
             bool validResult = false;
             while (!validResult)
@@ -69,18 +66,22 @@ namespace Main.UI
                 {
                     response = AnsiConsole.Ask<string>($"[red]{input}: [/]");
                 }
+
                 if (response == "exit")
                 {
                     return null;
                 }
-                if (!Int32.TryParse(response, out result) || result < 0)
+
+                if (!int.TryParse(response, out result) || result < 0)
                 {
                     AnsiConsole.MarkupLine("[red]Please input a valid positive integer[/]");
-                } else
+                }
+                else
                 {
                     validResult = true;
                 }
             }
+
             return result;
         }
 
@@ -90,10 +91,11 @@ namespace Main.UI
             {
                 defaultValue = DateTime.Now.ToString("yyyy-MM-dd");
             }
+
             AnsiConsole.MarkupLine(message);
             AnsiConsole.MarkupLine("Please insert the date in [red]yyyy-mm-dd[/] format");
             AnsiConsole.MarkupLine("[italic]Or type in 'exit' at any time to return to the previous screen[/]");
-            string formattedDate = "";
+            string formattedDate = string.Empty;
             formattedDate = AnsiConsole.Ask<string>($"[red]{input}: [/]", defaultValue);
             while (!DateOnly.TryParseExact(formattedDate, "yyyy-mm-dd", new CultureInfo("lt-LT"), DateTimeStyles.None, out _))
             {
@@ -101,9 +103,11 @@ namespace Main.UI
                 {
                     return formattedDate;
                 }
+
                 AnsiConsole.MarkupLine("[red]Invalid date[/]");
                 formattedDate = AnsiConsole.Ask<string>("Please insert the date in [red]yyyy-mm-dd[/] format. \n[italic]Type 0 to return to the main menu[/]\nDate: ");
             }
+
             return formattedDate;
         }
 
@@ -116,6 +120,7 @@ namespace Main.UI
                 Console.ReadKey();
                 return null;
             }
+
             items.Insert(0, new Category());
             Console.Clear();
             Console.WriteLine("List of habit categories");
@@ -125,6 +130,7 @@ namespace Main.UI
                 {
                     return "[blue]--BACK--[/]";
                 }
+
                 return $"[bold]{category.Name}[/] ({category.Unit})";
             }));
         }

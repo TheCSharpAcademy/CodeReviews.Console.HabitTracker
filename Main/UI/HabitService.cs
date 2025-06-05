@@ -1,12 +1,12 @@
-﻿using Main.Data;
-using Main.Models;
-using Spectre.Console;
-
-namespace Main.UI
+﻿namespace Main.UI
 {
+    using Main.Data;
+    using Main.Models;
+    using Spectre.Console;
+
     internal class HabitService() : CrudMenu("Habit")
     {
-        override protected void ViewAll()
+        protected override void ViewAll()
         {
             Console.Clear();
             var running = true;
@@ -18,6 +18,7 @@ namespace Main.UI
                 {
                     return;
                 }
+
                 secondRunning = true;
                 while (secondRunning)
                 {
@@ -29,6 +30,7 @@ namespace Main.UI
                         secondRunning = false;
                         break;
                     }
+
                     items.Insert(0, new Habit());
                     Console.Clear();
                     AnsiConsole.MarkupLine($"[blue]{category.Name}[/]");
@@ -38,6 +40,7 @@ namespace Main.UI
                         {
                             return "[blue]--BACK--[/]";
                         }
+
                         return $"[bold]{habit.Date}[/] ({habit.Quantity})";
                     }));
                     if (items.IndexOf(choice) == 0)
@@ -45,11 +48,13 @@ namespace Main.UI
                         secondRunning = false;
                         break;
                     }
+
                     EditMode(choice);
                 }
             }
         }
-        override protected void Insert()
+
+        protected override void Insert()
         {
             Habit habit = new();
             var category = PickCategory();
@@ -57,16 +62,19 @@ namespace Main.UI
             {
                 return;
             }
+
             if (category.Id == 0)
             {
                 return;
             }
+
             habit.Category = category;
             var date = GetDate("Enter the date of the habit", "Day of habit");
             if (InputTerminated(date))
             {
                 return;
             }
+
             habit.Date = date;
             Console.Clear();
             var quantity = GetNumber($"How much {habit.Category.Unit}?", habit.Category.Unit);
@@ -74,12 +82,14 @@ namespace Main.UI
             {
                 return;
             }
+
             habit.Quantity = (int)quantity;
             HabitDatabase.Insert(habit);
             AnsiConsole.MarkupLine("[green]Habit added successfully![/]");
             Console.ReadKey();
         }
-        static void Update(Habit habit)
+
+        private static void Update(Habit habit)
         {
             if (habit.Category == null)
             {
@@ -87,6 +97,7 @@ namespace Main.UI
                 Console.ReadKey();
                 return;
             }
+
             var date = GetDate("Please enter a new date for the habit", "Day of habit", habit.Date);
             if (InputTerminated(date))
             {
@@ -100,6 +111,7 @@ namespace Main.UI
             {
                 return;
             }
+
             habit.Quantity = (int)quantity;
             var affected = HabitDatabase.Update(habit);
             if (affected == 0)
@@ -110,9 +122,11 @@ namespace Main.UI
             {
                 AnsiConsole.MarkupLine("[green]Habit successfully updated[/]");
             }
+
             Console.ReadKey();
         }
-        static void Delete(Habit habit)
+
+        private static void Delete(Habit habit)
         {
             var affected = HabitDatabase.Delete(habit.Id);
             if (affected == 0)
@@ -123,10 +137,11 @@ namespace Main.UI
             {
                 AnsiConsole.MarkupLine("[green]Habit successfully deleted[/]");
             }
+
             Console.ReadKey();
         }
 
-        static void EditMode(Habit habit)
+        private static void EditMode(Habit habit)
         {
             if (habit.Category == null)
             {
@@ -134,6 +149,7 @@ namespace Main.UI
                 Console.ReadKey();
                 return;
             }
+
             Console.Clear();
             AnsiConsole.MarkupLine($"Selected {habit.Category.Name} habit from [red]{habit.Date}[/]");
             AnsiConsole.WriteLine("What would you like to do?");

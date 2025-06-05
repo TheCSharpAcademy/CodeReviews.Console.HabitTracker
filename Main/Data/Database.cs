@@ -1,12 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Main.Data
+﻿namespace Main.Data
 {
+    using Microsoft.Data.Sqlite;
+    using System;
+
     internal abstract class Database
     {
         private const string DbFile = "habit-tracker.db";

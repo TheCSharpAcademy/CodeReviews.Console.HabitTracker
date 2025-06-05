@@ -1,13 +1,12 @@
-﻿using Main.Data;
-using Main.Models;
-using Spectre.Console;
-
-namespace Main.UI
+﻿namespace Main.UI
 {
+    using Main.Data;
+    using Main.Models;
+    using Spectre.Console;
+
     internal class CategoryService() : CrudMenu("Category")
     {
-
-        override protected void ViewAll()
+        protected override void ViewAll()
         {
             Console.Clear();
             var running = true;
@@ -18,15 +17,18 @@ namespace Main.UI
                 {
                     return;
                 }
+
                 if (choice.Id == 0)
                 {
                     running = false;
                     break;
                 }
+
                 EditMode(choice);
             }
         }
-        override protected void Insert()
+
+        protected override void Insert()
         {
             Category category = new();
             var name = GetString("Please enter the name for the habit", "Habit name");
@@ -34,6 +36,7 @@ namespace Main.UI
             {
                 return;
             }
+
             category.Name = name;
             Console.Clear();
             var unit = GetString($"How is {name} measured?", "Measurement");
@@ -41,18 +44,21 @@ namespace Main.UI
             {
                 return;
             }
+
             category.Unit = unit;
             CategoryDatabase.Insert(category);
             AnsiConsole.MarkupLine("[green]Category added successfully![/]");
             Console.ReadKey();
         }
-        static void Update(Category category)
+
+        private static void Update(Category category)
         {
             var name = GetString("Please enter a new name for the habit", "Habit name", category.Name);
             if (InputTerminated(name))
             {
                 return;
             }
+
             category.Name = name;
             Console.Clear();
             var unit = GetString($"How is {name} measured?", "Measurement", category.Unit);
@@ -60,6 +66,7 @@ namespace Main.UI
             {
                 return;
             }
+
             category.Unit = unit;
             var affected = CategoryDatabase.Update(category);
             if (affected == 0)
@@ -70,9 +77,11 @@ namespace Main.UI
             {
                 AnsiConsole.MarkupLine("[green]Habit category successfully updated[/]");
             }
+
             Console.ReadKey();
         }
-        static void Delete(Category category)
+
+        private static void Delete(Category category)
         {
             var affected = CategoryDatabase.Delete(category.Id);
             if (affected == 0)
@@ -83,10 +92,11 @@ namespace Main.UI
             {
                 AnsiConsole.MarkupLine("[green]Habit category successfully deleted[/]");
             }
+
             Console.ReadKey();
         }
 
-        static void EditMode(Category category)
+        private static void EditMode(Category category)
         {
             Console.Clear();
             AnsiConsole.MarkupLine($"Selected habit category: [red]{category.Name}[/]");
@@ -104,6 +114,5 @@ namespace Main.UI
                     break;
             }
         }
-
     }
 }

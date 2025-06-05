@@ -1,13 +1,9 @@
-﻿using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Main.Enums;
-
-namespace Main.UI
+﻿namespace Main.UI
 {
+    using Spectre.Console;
+    using System;
+    using static Main.Enums;
+
     internal static class MenuService
     {
         public static MenuChoice ShowMainMenu()

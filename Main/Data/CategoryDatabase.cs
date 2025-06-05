@@ -1,16 +1,10 @@
-﻿using Main.Models;
-using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Main.Data
+﻿namespace Main.Data
 {
-    internal class CategoryDatabase: Database
+    using System.Collections.Generic;
+    using Main.Models;
+    using Microsoft.Data.Sqlite;
+
+    internal class CategoryDatabase : Database
     {
         public static void Insert(Category category)
         {

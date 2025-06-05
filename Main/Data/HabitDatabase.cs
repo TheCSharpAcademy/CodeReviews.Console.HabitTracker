@@ -1,9 +1,9 @@
-﻿using Main.Models;
-using Microsoft.Data.Sqlite;
-
-namespace Main.Data
+﻿namespace Main.Data
 {
-    internal class HabitDatabase: Database
+    using Main.Models;
+    using Microsoft.Data.Sqlite;
+
+    internal class HabitDatabase : Database
     {
         public static void Insert(Habit habit)
         {
@@ -13,6 +13,7 @@ namespace Main.Data
                 {
                     throw new Exception("Habit must have a category defined");
                 }
+
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
                 tableCmd.CommandText = "INSERT INTO habit(date, quantity, category_id) VALUES(@Date, @Quantity, @CategoryId)";
@@ -53,7 +54,7 @@ namespace Main.Data
                         Id = reader.GetInt32(0),
                         Date = reader.GetString(1),
                         Quantity = reader.GetInt32(2),
-                        Category = new Category(reader.GetInt32(3), reader.GetString(4), reader.GetString(5))
+                        Category = new Category(reader.GetInt32(3), reader.GetString(4), reader.GetString(5)),
                     });
                 }
 
