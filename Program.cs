@@ -5,6 +5,10 @@
         static void Main(string[] args)
         {
             DatabaseManager.Initialize();
+            while (true)
+            {
+                ConstructMainMenu();
+            }
         }
 
         static void ConstructMainMenu()
