@@ -77,5 +77,27 @@ namespace TaskManager
 
             return habits;
         }
+
+        public static bool DeleteHabit(int id)
+        {
+            try
+            {
+                using var conn = new SQLiteConnection(connectionString);
+                conn.Open();
+
+                string sql = "DELETE FROM Habits WHERE Habits.Id == @HabitId;";
+                using var cmd = new SQLiteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@HabitId", id);
+
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while deleting habit: {ex.Message}");
+                return false;
+            }
+
+        }
     }
 }

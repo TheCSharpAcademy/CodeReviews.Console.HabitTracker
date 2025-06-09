@@ -97,6 +97,24 @@
                 }
             }
         }
+
+        static void DestroyHabit()
+        {
+            Console.Clear();
+            Console.Write("Tell the ID of the Habit that you want to delete: ");
+
+            if (!Int32.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Invalid input.");
+                return;
+            }
+
+            bool success = DatabaseManager.DeleteHabit(id);
+
+            if (success)
+                Console.WriteLine("Habit deleted successfully!");
+            else
+                Console.WriteLine("Failed to delete habit.");
         }
     }
 }
