@@ -32,14 +32,13 @@
                     ListAllHabits();
                     break;
                 case "2":
-                    // Call method to list people
+                    InsertHabitsAsk();
                     break;
                 case "3":
                     // Call method to delete person
                     break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente.");
-                    ConstructMainMenu();
                     break;
             }
         }
@@ -68,6 +67,15 @@
             else
                 Console.WriteLine("Failed to insert habit.");
         }
+
+        static void ListAllHabits()
+        {
+            List<string> habits = DatabaseManager.ListHabits();
+
+            foreach (string habit in habits)
+            {
+                Console.WriteLine(habit);
+            }
         }
     }
 }

@@ -53,5 +53,29 @@ namespace TaskManager
             }
 
         }
+
+        public static List<string> ListHabits()
+        {
+            List<string> habits = new List<string>();
+
+            using var conn = new SQLiteConnection(connectionString);
+            conn.Open();
+
+            string sql = "SELECT Id, HabitName, Quantity, Date FROM Habits";
+            using var cmd = new SQLiteCommand(sql, conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int id = reader.GetInt32(0);
+                string habitName = reader.GetString(1);
+                int quantity = reader.GetInt32(2);
+                string date = reader.GetString(3);
+
+                habits.Add($"Id: {id}, Habit: {habitName}, Quantity: {quantity}, Date: {date}");
+            }
+
+            return habits;
+        }
     }
 }
