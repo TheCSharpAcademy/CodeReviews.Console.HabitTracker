@@ -99,5 +99,56 @@ namespace TaskManager
             }
 
         }
+
+        public static bool UpdateHabit(int id, string habitName = null, int? quantity = null, string date = null)
+        {
+            List<string> parameters = new List<string>();
+            Dictionary<string, object> camps = new Dictionary<string, object>();
+
+            if (!String.IsNullOrEmpty(habitName))
+            {
+                parameters.Add("HabitName = @HabitName");
+                camps.Add("@HabitName", habitName);
+            }
+
+            if (quantity != null)
+            {
+                parameters.Add("Quantity = @Quantity");
+                camps.Add("@Quantity", quantity);
+            }
+
+            if (!String.IsNullOrEmpty(date))
+            {
+                parameters.Add("Date = @Date");
+                camps.Add("@Date", date);
+            }
+
+            if (camps.Count == 0)
+            {
+                Console.WriteLine("Nothing to update.");
+                return false;
+            }
+
+            string sql = $"UPDATE Habits SET {string.Join(", ", parameters)} WHERE Id = @Id";
+            camps.Add("@Id", id);
+            
+            try
+            {
+                using var conn = new SQLiteConnection(connectionString);
+                conn.Open();
+                using var cmd = new SQLiteCommand(sql, conn);
+                foreach (var p in camps)
+                {
+                    cmd.Parameters.AddWithValue(p.Key, p.Value);
+                }
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while updating habit: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

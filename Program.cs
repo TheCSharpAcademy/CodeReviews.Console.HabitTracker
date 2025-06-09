@@ -41,6 +41,10 @@
                     DestroyHabit();
                     PressAnyKeyToReturn();
                     break;
+                case "4":
+                    UpdateHabit();
+                    PressAnyKeyToReturn();
+                    break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente.");
                     PressAnyKeyToReturn();
@@ -115,6 +119,46 @@
                 Console.WriteLine("Habit deleted successfully!");
             else
                 Console.WriteLine("Failed to delete habit.");
+        }
+
+        static void UpdateHabit()
+        {
+            Console.Clear();
+            Console.WriteLine("What is the ID of the Habit you want to update ?");
+
+            if (!Int32.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Invalid input.");
+                return;
+            }
+
+            Console.WriteLine("What's the new name you want for your Habit ?\nPress Enter if you don't want to update.");
+            string habitName = Console.ReadLine();
+
+            Console.WriteLine("What's the quantity you want for your Habit ?\nPress Enter if you don't want to update.");
+            string quantityInput = Console.ReadLine();
+            int? quantity = null;
+            if (!string.IsNullOrWhiteSpace(quantityInput))
+            {
+                if (Int32.TryParse(quantityInput, out int parsedQuantity))
+                {
+                    quantity = parsedQuantity;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid quantity input. The quantity will not be updated.");
+                }
+            }
+
+            Console.WriteLine("What's the new date you want for your Habit ? (DateFormat: YYYY-MM-DD)\nPress Enter if you don't want to update.");
+            string date = Console.ReadLine();
+
+            bool success = DatabaseManager.UpdateHabit(id, habitName, quantity, date);
+
+            if (success)
+                Console.WriteLine("Habit updated successfully!");
+            else
+                Console.WriteLine("Failed to update habit.");
         }
     }
 }
