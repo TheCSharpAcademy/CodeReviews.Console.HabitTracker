@@ -12,7 +12,7 @@ namespace TaskManager
             CreateTable();
         }
 
-        static void CreateTable()
+        public static void CreateTable()
         {
             using var conn = new SQLiteConnection(connectionString);
             conn.Open();
