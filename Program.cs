@@ -7,12 +7,13 @@
             DatabaseManager.Initialize();
             while (true)
             {
-                ConstructMainMenu();
+                ShowMainMenu();
             }
         }
 
-        static void ConstructMainMenu()
+        static void ShowMainMenu()
         {
+            Console.Clear();
             Console.WriteLine("Welcome to the Habits Manager!");
             Console.WriteLine("0. To exit.");
             Console.WriteLine("1. List Ocurrences");
@@ -30,21 +31,32 @@
                     break;
                 case "1":
                     ListAllHabits();
+                    PressAnyKeyToReturn();
                     break;
                 case "2":
                     InsertHabitsAsk();
+                    PressAnyKeyToReturn();
                     break;
                 case "3":
-                    // Call method to delete person
+                    DestroyHabit();
+                    PressAnyKeyToReturn();
                     break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente.");
+                    PressAnyKeyToReturn();
                     break;
             }
         }
 
+        static void PressAnyKeyToReturn()
+        {
+            Console.WriteLine("\nPress any key to back to the main menu...");
+            Console.ReadKey();
+        }
+
         static void InsertHabitsAsk()
         {
+            Console.Clear();
             Console.WriteLine("Let's start with your new Habit!\n");
 
             Console.Write("What's the name of your new Habit?: ");
@@ -70,12 +82,21 @@
 
         static void ListAllHabits()
         {
+            Console.Clear();
             List<string> habits = DatabaseManager.ListHabits();
 
-            foreach (string habit in habits)
+            if (habits.Count == 0)
             {
-                Console.WriteLine(habit);
+                Console.WriteLine("No habits found.");
             }
+            else
+            {
+                foreach (string habit in habits)
+                {
+                    Console.WriteLine(habit);
+                }
+            }
+        }
         }
     }
 }
