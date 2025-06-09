@@ -6,7 +6,8 @@
       "request": "launch",
       "name": "Launch .NET Habits Manager",
       "program": "${workspaceFolder}/bin/Debug/net9.0/CodeReviews.Console.HabitTracker.dll",
-      "preLaunchTask": "build"
+      "preLaunchTask": "build",
+      "console": "integratedTerminal"
     }
   ]
 }
