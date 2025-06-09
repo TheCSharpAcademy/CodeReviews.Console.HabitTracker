@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "coreclr",
+      "request": "launch",
+      "name": "Launch .NET Habits Manager",
+      "program": "${workspaceFolder}/bin/Debug/net9.0/CodeReviews.Console.HabitTracker.dll",
+      "preLaunchTask": "build",
+      "console": "integratedTerminal"
+    }
+  ]
+}
