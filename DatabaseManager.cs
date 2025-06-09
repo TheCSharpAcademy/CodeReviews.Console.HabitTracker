@@ -29,5 +29,29 @@ namespace TaskManager
             using var cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
         }
+
+        public static bool InsertHabits(string HabitName, int Quantity, string Date)
+        {
+            try
+            {
+                using var conn = new SQLiteConnection(connectionString);
+                conn.Open();
+
+                string sql = "INSERT INTO Habits (HabitName, Quantity, Date) VALUES (@HabitName, @Quantity, @Date)";
+                using var cmd = new SQLiteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@HabitName", HabitName);
+                cmd.Parameters.AddWithValue("@Quantity", Quantity);
+                cmd.Parameters.AddWithValue("@Date", Date);
+                cmd.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while inserting habit: {ex.Message}");
+                return false;
+            }
+
+        }
     }
 }

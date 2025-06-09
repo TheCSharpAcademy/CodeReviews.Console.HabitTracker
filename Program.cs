@@ -29,7 +29,7 @@
                     Environment.Exit(0);
                     break;
                 case "1":
-                    // Call method to insert person
+                    ListAllHabits();
                     break;
                 case "2":
                     // Call method to list people
@@ -44,10 +44,30 @@
             }
         }
 
-        void InsertHabitsAsk()
+        static void InsertHabitsAsk()
         {
             Console.WriteLine("Let's start with your new Habit!\n");
-            
+
+            Console.Write("What's the name of your new Habit?: ");
+            string habitName = Console.ReadLine();
+
+            Console.Write("How many times did you do this habit?: ");
+            if (!int.TryParse(Console.ReadLine(), out int quantity))
+            {
+                Console.WriteLine("Invalid quantity. Please enter a number.");
+                return;
+            }
+
+            Console.Write("Enter the date (YYYY-MM-DD): ");
+            string date = Console.ReadLine();
+
+            bool success = DatabaseManager.InsertHabits(habitName, quantity, date);
+
+            if (success)
+                Console.WriteLine("Habit inserted successfully!");
+            else
+                Console.WriteLine("Failed to insert habit.");
+        }
         }
     }
 }
