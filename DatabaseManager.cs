@@ -131,7 +131,7 @@ namespace TaskManager
 
             string sql = $"UPDATE Habits SET {string.Join(", ", parameters)} WHERE Id = @Id";
             camps.Add("@Id", id);
-            
+
             try
             {
                 using var conn = new SQLiteConnection(connectionString);
@@ -149,6 +149,27 @@ namespace TaskManager
                 Console.WriteLine($"Error while updating habit: {ex.Message}");
                 return false;
             }
+        }
+
+        public static List<int?> getHabitsIDs()
+        {
+            List<int?> habitsId = new List<int?>();
+
+            using var conn = new SQLiteConnection(connectionString);
+            conn.Open();
+
+            string sql = "SELECT Id FROM Habits";
+            using var cmd = new SQLiteCommand(sql, conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int id = reader.GetInt32(0);
+
+                habitsId.Add(id);
+            }
+
+            return habitsId;
         }
     }
 }

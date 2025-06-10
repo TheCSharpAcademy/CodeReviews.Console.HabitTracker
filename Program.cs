@@ -132,6 +132,15 @@ namespace TaskManager
                 return;
             }
 
+            List<int?> allHabitsIds = DatabaseManager.getHabitsIDs();
+
+            if (!allHabitsIds.Contains(id))
+            {
+                Console.WriteLine("You have to put a ID that exists.");
+                Console.WriteLine("Check your list of habits and try again.");
+                return;
+            }
+
             Console.WriteLine("What's the new name you want for your Habit ?\nPress Enter if you don't want to update.");
             string habitName = Console.ReadLine();
 
