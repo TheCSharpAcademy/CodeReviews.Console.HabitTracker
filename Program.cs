@@ -64,7 +64,13 @@ namespace TaskManager
             Console.WriteLine("Let's start with your new Habit!\n");
 
             Console.Write("What's the name of your new Habit?: ");
-            string habitName = Console.ReadLine();
+            string? habitName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(habitName))
+            {
+                Console.WriteLine("Habit name cannot be empty.");
+                return;
+            }
 
             Console.Write("How many times did you do this habit?: ");
             if (!int.TryParse(Console.ReadLine(), out int quantity))
@@ -74,7 +80,13 @@ namespace TaskManager
             }
 
             Console.Write("Enter the date (YYYY-MM-DD): ");
-            string date = Console.ReadLine();
+            string? date = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(date))
+            {
+                Console.WriteLine("Habit date cannot be empty.");
+                return;
+            }
 
             bool success = DatabaseManager.InsertHabits(habitName, quantity, date);
 
