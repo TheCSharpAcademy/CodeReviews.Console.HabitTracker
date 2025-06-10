@@ -151,7 +151,7 @@ namespace TaskManager
             }
         }
 
-        public static List<int?> GetHabitsIDs()
+        public static List<int?> GetHabitsIds()
         {
             List<int?> habitsId = new List<int?>();
 
