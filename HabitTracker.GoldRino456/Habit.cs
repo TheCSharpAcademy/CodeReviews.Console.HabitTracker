@@ -4,14 +4,12 @@ namespace HabitTracker.GoldRino456
 {
     public class Habit
     {
-        int _tableId; //Determines the habit type this habit object belongs to.
         int _id;
         DateTime _date;
         string _habitType;
         float _quantity;
         string _unitOfMeasurement;
 
-        public int TableID { get { return _tableId; } set { _tableId = value; } }
         public int ID { get { return _id; } set { _id = value; } }
         public DateTime Date { get { return _date; } set { _date = value; } }
         public string HabitType { get { return _habitType; } set { _habitType = value; } }
@@ -28,15 +26,18 @@ namespace HabitTracker.GoldRino456
             UnitOfMeasurement = unitOfMeasurement;
         }
 
-        //Existing Habit Object Constructor
-        public Habit(int tableId, int id)
+        public Habit(int id, DateTime date, string habitType, float quantity, string unitOfMeasurement)
         {
-            //Fetch data from database?
+            ID = id;
+            Date = date;
+            HabitType = habitType;
+            Quantity = quantity;
+            UnitOfMeasurement = unitOfMeasurement;
         }
 
         public override string ToString()
         {
-            return ($"{Date.ToShortDateString()}: {Quantity} {UnitOfMeasurement} of {HabitType}.");
+            return ($"{ID}. {Date.ToShortDateString()}: {Quantity} {UnitOfMeasurement} of {HabitType}.");
         }
     }
 }
