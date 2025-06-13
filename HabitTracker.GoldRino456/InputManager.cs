@@ -28,5 +28,26 @@ namespace HabitTracker.GoldRino456
             }
         }
         #endregion
+
+        public string GetValidUserInput()
+        {
+            string? input;
+
+            while (true)
+            {
+                input = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(input))
+                {
+                    Console.WriteLine("Invalid Input.");
+                    Console.WriteLine("Check input and please enter again: ");
+                    continue;
+                }
+                else
+                {
+                    return input;
+                }
+            }
+        }
     }
 }

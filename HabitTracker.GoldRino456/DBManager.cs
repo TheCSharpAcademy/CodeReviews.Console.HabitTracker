@@ -31,12 +31,6 @@ namespace HabitTracker.GoldRino456
         private const string _connectionString = "Data Source=../../../habitTracker.db";
         private const string _createUserTableSQL = "CREATE TABLE IF NOT EXISTS Habits (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, habitType TEXT, quantity REAL, unitOfMeasurement TEXT)";
 
-        public void AddHabitToDB(Habit habit)
-        {
-            CreateTableIfDoesNotExist();
-            InsertHabitToTable(habit);
-        }
-
         public List<Habit> GetAllExistingHabitEntries()
         {
             List<Habit> habits = new();
@@ -68,7 +62,7 @@ namespace HabitTracker.GoldRino456
             return habits;
         }
 
-        private void InsertHabitToTable(Habit habit)
+        public void AddHabitToDB(Habit habit)
         {
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
@@ -88,7 +82,7 @@ namespace HabitTracker.GoldRino456
             }
         }
 
-        private void CreateTableIfDoesNotExist()
+        public void CreateTableIfDoesNotExist()
         {
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
