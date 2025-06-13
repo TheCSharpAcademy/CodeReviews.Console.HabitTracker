@@ -39,6 +39,12 @@
                         ProcessHabitEdit(inputManager, dbManager);
                         break;
 
+                    //Delete existing Habit
+                    case "D":
+                    case "d":
+                        ProcessHabitDelete(inputManager, dbManager);
+                        break;
+
                     //Quit the app
                     case "Q":
                     case "q":
@@ -46,6 +52,38 @@
                         Console.WriteLine("Closing...");
                         isAppRunning = false;
                         break;
+                }
+            }
+        }
+
+        private static void ProcessHabitDelete(InputManager inputManager, DBManager dbManager)
+        {
+            //Finding and Validating Habit to Delete
+            var habits = dbManager.GetAllExistingHabitEntries();
+
+            if (habits.Count <= 0)
+            {
+                Console.WriteLine("No habits to delete!");
+                Console.WriteLine("Press enter to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("Enter the ID number of the habit you wish to delete: ");
+            while (true)
+            {
+                int habitId = inputManager.GetValidUserIntegerInput();
+
+                if (!dbManager.ConfirmHabitExists(habitId))
+                {
+                    Console.Write("Invalid ID. Please choose an ID from the habits listed above: ");
+                }
+                else
+                {
+                    dbManager.DeleteExistingHabit(habitId);
+                    Console.WriteLine("Habit deleted. Press enter to continue...");
+                    Console.ReadLine();
+                    break;
                 }
             }
         }
@@ -59,16 +97,18 @@
             if (habits.Count <= 0)
             {
                 Console.WriteLine("No habits to edit!");
+                Console.WriteLine("Press enter to continue...");
+                Console.ReadLine();
                 return;
             }
 
-            habit = ConfirmHabitExists(inputManager, dbManager);
+            habit = FetchValidHabit(inputManager, dbManager);
 
             //Editing the Habit
             EditExistingHabit(inputManager, dbManager, habit);
         }
 
-        private static Habit? ConfirmHabitExists(InputManager inputManager, DBManager dbManager)
+        private static Habit? FetchValidHabit(InputManager inputManager, DBManager dbManager)
         {
             Habit? habit;
             Console.WriteLine("Enter the ID number of the habit you wish to edit: ");
@@ -150,6 +190,7 @@
             Console.WriteLine("Main Menu: ");
             Console.WriteLine("\tA - Add a New Habit");
             Console.WriteLine("\tE - Edit an Existing Habit");
+            Console.WriteLine("\tD - Delete an Existing Habit");
             Console.WriteLine("\tQ - Quit");
             Console.WriteLine("------------------------------------------------------------");
             Console.Write("Please Make A Selection: ");
@@ -158,7 +199,7 @@
             while (true)
             {
                 input = inputManager.GetValidUserStringInput();
-                var validChoices = new List<string> { "A", "E", "Q"};
+                var validChoices = new List<string> { "A", "E", "D", "Q"};
 
                 if (!validChoices.Contains(input, StringComparer.OrdinalIgnoreCase))
                 {

@@ -97,6 +97,38 @@ namespace HabitTracker.GoldRino456
             return isHabitFound;
         }
 
+        public bool ConfirmHabitExists(int id)
+        {
+            Habit? habit;
+            return GetExistingHabitByID(id, out habit);
+        }
+
+        public bool DeleteExistingHabit(int id)
+        {
+            int rowsAffected;
+
+            using (SqliteConnection connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (SqliteCommand command = new SqliteCommand("DELETE FROM Habits WHERE id = @Id", connection))
+                {
+                    command.Parameters.Add("@Id", SqliteType.Integer).Value = id;
+
+                    rowsAffected = command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+            }
+
+            if(rowsAffected > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void UpdateExistingHabit(Habit habit)
         {
             if(habit.ID == 0) //ID not set.
