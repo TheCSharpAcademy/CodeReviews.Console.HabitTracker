@@ -29,7 +29,7 @@ namespace HabitTracker.GoldRino456
         }
         #endregion
 
-        public string GetValidUserInput()
+        public string GetValidUserStringInput()
         {
             string? input;
 
@@ -47,6 +47,59 @@ namespace HabitTracker.GoldRino456
                 {
                     return input;
                 }
+            }
+        }
+
+        public int GetValidUserIntegerInput()
+        {
+            string? input;
+            int output;
+
+            while(true)
+            {
+                input = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(input) || !Int32.TryParse(input, out output))
+                {
+                    Console.Write("Invalid Input. Please enter a valid integer number: ");
+                    continue;
+                }
+                else
+                {
+                    return output;
+                }
+            }
+        }
+
+        public DateTime GetValidUserDateTimeInput()
+        {
+            string? input;
+            DateTime output;
+
+            while (true)
+            {
+                input = Console.ReadLine();
+
+                if(string.IsNullOrEmpty(input))
+                {
+                    Console.WriteLine("Invalid date input. Cannot be empty!");
+                    Console.Write("Please Enter a Valid Date: ");
+                    continue;
+                }
+
+                if(input.Equals("T") || input.Equals("t"))
+                {
+                    return DateTime.Today;
+                }
+
+                if (!DateTime.TryParse(input, out output))
+                {
+                    Console.WriteLine("Invalid date input. Please ensure date is in the following format (MM/DD/YYYY) or enter 'T' to use Today's date.");
+                    Console.Write("Please Enter a Valid Date: ");
+                    continue;
+                }
+               
+                return output;
             }
         }
     }

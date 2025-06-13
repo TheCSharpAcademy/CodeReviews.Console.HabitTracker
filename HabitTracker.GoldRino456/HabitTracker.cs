@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace HabitTracker.GoldRino456
+﻿namespace HabitTracker.GoldRino456
 {
     class HabitTracker
     {
@@ -30,13 +28,15 @@ namespace HabitTracker.GoldRino456
                     //Add a Habit
                     case "a":
                     case "A":
-                        
+
+                        ProcessHabitCreation(inputManager, dbManager);
                         break;
 
                     //Edit existing Habit
                     case "E":
                     case "e":
-                        
+
+                        ProcessHabitEdit(inputManager, dbManager);
                         break;
 
                     //Quit the app
@@ -48,6 +48,49 @@ namespace HabitTracker.GoldRino456
                         break;
                 }
             }
+        }
+
+        private static void ProcessHabitEdit(InputManager inputManager, DBManager dbManager)
+        {
+            var habits = dbManager.GetAllExistingHabitEntries();
+            int targetHabit = -1;
+
+            Console.WriteLine("Enter the ID number of the habit you wish to edit: ");
+
+            //while()
+        }
+
+        private static void ProcessHabitCreation(InputManager inputManager, DBManager dbManager)
+        {
+            Console.Clear();
+
+            Console.WriteLine("------------------------------------------------------------");
+            Console.WriteLine("Add a New Habit");
+            Console.WriteLine("------------------------------------------------------------");
+
+            DateTime habitDate;
+            string habitType, habitUnits;
+            int habitQuantity;
+            GetHabitInfoFromUser(inputManager, out habitDate, out habitType, out habitQuantity, out habitUnits);
+
+            //Create Habit and Add to DB
+            Habit newHabit = new(habitDate, habitType, habitQuantity, habitUnits);
+            dbManager.AddHabitToDB(newHabit);
+
+            Console.WriteLine("Habit added! Press enter to continue...");
+            Console.ReadLine();
+        }
+
+        private static void GetHabitInfoFromUser(InputManager inputManager, out DateTime habitDate, out string habitType, out int habitQuantity, out string habitUnits)
+        {
+            Console.Write("Enter a date for this habit (MM/DD/YYYY or enter 'T' to use today's date): ");
+            habitDate = inputManager.GetValidUserDateTimeInput();
+            Console.Write("Enter the name of the habit you want to add:  ");
+            habitType = inputManager.GetValidUserStringInput();
+            Console.Write("Enter The quantity of this habit:  ");
+            habitQuantity = inputManager.GetValidUserIntegerInput();
+            Console.Write("Enter the unit of measurement for this habit:  ");
+            habitUnits = inputManager.GetValidUserStringInput();
         }
 
         private static string ProcessHabitTrackerMenu(InputManager inputManager)
@@ -63,7 +106,7 @@ namespace HabitTracker.GoldRino456
             string input;
             while (true)
             {
-                input = inputManager.GetValidUserInput();
+                input = inputManager.GetValidUserStringInput();
                 var validChoices = new List<string> { "A", "E", "Q"};
 
                 if (!validChoices.Contains(input, StringComparer.OrdinalIgnoreCase))

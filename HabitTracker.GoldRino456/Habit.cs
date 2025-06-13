@@ -7,18 +7,18 @@ namespace HabitTracker.GoldRino456
         int _id;
         DateTime _date;
         string _habitType;
-        float _quantity;
+        int _quantity;
         string _unitOfMeasurement;
 
         public int ID { get { return _id; } set { _id = value; } }
         public DateTime Date { get { return _date; } set { _date = value; } }
         public string HabitType { get { return _habitType; } set { _habitType = value; } }
-        public float Quantity { get { return _quantity; } set { _quantity = value; } }
+        public int Quantity { get { return _quantity; } set { _quantity = value; } }
         public string UnitOfMeasurement { get { return _unitOfMeasurement; } set { _unitOfMeasurement = value; } }
 
 
         //New Habit Object Constructor
-        public Habit(DateTime date, string habitType, float quantity, string unitOfMeasurement)
+        public Habit(DateTime date, string habitType, int quantity, string unitOfMeasurement)
         {
             Date = date;
             HabitType = habitType;
@@ -26,7 +26,7 @@ namespace HabitTracker.GoldRino456
             UnitOfMeasurement = unitOfMeasurement;
         }
 
-        public Habit(int id, DateTime date, string habitType, float quantity, string unitOfMeasurement)
+        public Habit(int id, DateTime date, string habitType, int quantity, string unitOfMeasurement)
         {
             ID = id;
             Date = date;

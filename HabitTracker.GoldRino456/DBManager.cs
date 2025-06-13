@@ -29,7 +29,7 @@ namespace HabitTracker.GoldRino456
         #endregion
 
         private const string _connectionString = "Data Source=../../../habitTracker.db";
-        private const string _createUserTableSQL = "CREATE TABLE IF NOT EXISTS Habits (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, habitType TEXT, quantity REAL, unitOfMeasurement TEXT)";
+        private const string _createUserTableSQL = "CREATE TABLE IF NOT EXISTS Habits (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, habitType TEXT, quantity INTEGER, unitOfMeasurement TEXT)";
 
         public List<Habit> GetAllExistingHabitEntries()
         {
@@ -48,7 +48,7 @@ namespace HabitTracker.GoldRino456
                             int id = reader.GetInt32(0);
                             DateTime date = reader.GetDateTime(1);
                             string habitType = reader.GetString(2);
-                            float quantity = reader.GetFloat(3);
+                            int quantity = reader.GetInt32(3);
                             string unitOfMeasurement = reader.GetString(4);
 
                             habits.Add(new Habit(id, date, habitType, quantity, unitOfMeasurement));
@@ -72,7 +72,7 @@ namespace HabitTracker.GoldRino456
                 {
                     command.Parameters.Add("@Date", SqliteType.Text).Value = habit.Date;
                     command.Parameters.Add("@HabitType", SqliteType.Text).Value = habit.HabitType;
-                    command.Parameters.Add("@Quantity", SqliteType.Real).Value = habit.Quantity;
+                    command.Parameters.Add("@Quantity", SqliteType.Integer).Value = habit.Quantity;
                     command.Parameters.Add("@UnitOfMeasurement", SqliteType.Text).Value = habit.UnitOfMeasurement;
 
                     command.ExecuteNonQuery();
