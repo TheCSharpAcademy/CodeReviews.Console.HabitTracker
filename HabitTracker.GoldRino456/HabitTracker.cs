@@ -52,12 +52,63 @@
 
         private static void ProcessHabitEdit(InputManager inputManager, DBManager dbManager)
         {
+            //Finding and Validating Habit to Edit
             var habits = dbManager.GetAllExistingHabitEntries();
-            int targetHabit = -1;
+            Habit? habit;
 
+            if (habits.Count <= 0)
+            {
+                Console.WriteLine("No habits to edit!");
+                return;
+            }
+
+            habit = ConfirmHabitExists(inputManager, dbManager);
+
+            //Editing the Habit
+            EditExistingHabit(inputManager, dbManager, habit);
+        }
+
+        private static Habit? ConfirmHabitExists(InputManager inputManager, DBManager dbManager)
+        {
+            Habit? habit;
             Console.WriteLine("Enter the ID number of the habit you wish to edit: ");
+            while (true)
+            {
+                int habitId = inputManager.GetValidUserIntegerInput();
 
-            //while()
+                if (!dbManager.GetExistingHabitByID(habitId, out habit))
+                {
+                    Console.Write("Invalid ID. Please choose an ID from the habits listed above: ");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return habit;
+        }
+
+        private static void EditExistingHabit(InputManager inputManager, DBManager dbManager, Habit? habit)
+        {
+            Console.Clear();
+
+            Console.WriteLine("------------------------------------------------------------");
+            Console.WriteLine("Current Habit Details: " + habit);
+            Console.WriteLine("------------------------------------------------------------");
+
+            DateTime habitDate;
+            string habitType, habitUnits;
+            int habitQuantity;
+            GetHabitInfoFromUser(inputManager, out habitDate, out habitType, out habitQuantity, out habitUnits);
+
+            habit.Date = habitDate;
+            habit.HabitType = habitType;
+            habit.Quantity = habitQuantity;
+            habit.UnitOfMeasurement = habitUnits;
+
+            dbManager.UpdateExistingHabit(habit);
+            Console.Write("Entry updated! Press enter to continue...");
         }
 
         private static void ProcessHabitCreation(InputManager inputManager, DBManager dbManager)

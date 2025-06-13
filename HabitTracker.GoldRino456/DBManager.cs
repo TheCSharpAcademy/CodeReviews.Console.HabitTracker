@@ -62,6 +62,67 @@ namespace HabitTracker.GoldRino456
             return habits;
         }
 
+        public bool GetExistingHabitByID(int id, out Habit? habit)
+        {
+            habit = null;
+            bool isHabitFound = false;
+
+            using (SqliteConnection connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (SqliteCommand command = new SqliteCommand("SELECT * FROM Habits WHERE id = @Id", connection))
+                {
+                    command.Parameters.Add("@Id", SqliteType.Integer).Value = id;
+
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int habitId = reader.GetInt32(0);
+                            DateTime date = reader.GetDateTime(1);
+                            string habitType = reader.GetString(2);
+                            int quantity = reader.GetInt32(3);
+                            string unitOfMeasurement = reader.GetString(4);
+
+                            habit = new Habit(habitId, date, habitType, quantity, unitOfMeasurement);
+                            isHabitFound = true;
+                        }
+                    }
+                }
+
+                connection.Close();
+            }
+
+            return isHabitFound;
+        }
+
+        public void UpdateExistingHabit(Habit habit)
+        {
+            if(habit.ID == 0) //ID not set.
+            {
+                return;
+            }
+
+            using (SqliteConnection connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (SqliteCommand command = new SqliteCommand("UPDATE Habits SET date = @Date, habitType = @HabitType, quantity = @Quantity, unitOfMeasurement = @UnitOfMeasurement WHERE id = @Id", connection))
+                {
+                    command.Parameters.Add("@Date", SqliteType.Text).Value = habit.Date;
+                    command.Parameters.Add("@HabitType", SqliteType.Text).Value = habit.HabitType;
+                    command.Parameters.Add("@Quantity", SqliteType.Integer).Value = habit.Quantity;
+                    command.Parameters.Add("@UnitOfMeasurement", SqliteType.Text).Value = habit.UnitOfMeasurement;
+                    command.Parameters.Add("@Id", SqliteType.Integer).Value = habit.ID;
+
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+            }
+        }
+
         public void AddHabitToDB(Habit habit)
         {
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
