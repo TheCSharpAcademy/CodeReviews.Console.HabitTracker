@@ -44,8 +44,23 @@ public class MenuController
                     break;
                 case MainUI.ModifyHabitLog:
                     var habitLog = menu.SelectSingleHabitLog();
-                    userViews.HabitLogSummary(habitLog);
-                    habitController.UpdateHabitLog(habitLog.LogId);
+                    userViews.HabitLogSummary(habitLog, "Selected");
+                    var userAction = userInput.ModifyOptionPrompt();
+                    switch (userAction?.Key)
+                    {
+                        case ConsoleKey.Escape:
+                            break;
+                        case ConsoleKey.D:
+                            habitController.RemoveLog(habitLog.LogId);
+                            userInput.ContinueInput($"{habitLog.HabitTitle} - deleted successfully!");
+                            break;
+                        case ConsoleKey.E:
+                            Console.Clear();
+                            userViews.HabitLogSummary(habitLog, "Editing");
+                            habitController.UpdateHabitLog(habitLog.LogId);
+                            userInput.ContinueInput();
+                            break;
+                    }
                     break;
                 case MainUI.AddNewHabit:
                     string newHabit = userInput.GetNewHabit();
@@ -56,6 +71,26 @@ public class MenuController
                     List<Habit> habits = habitController.GetHabits();
                     userViews.ViewHabits(habits);
                     userInput.ContinueInput();
+                    break;
+                case MainUI.ModifyHabit:
+                    var habit = menu.SelectSingleHabit();
+                    userViews.HabitSummary(habit, "Selected");
+                    var habitModificationAction = userInput.ModifyOptionPrompt();
+                    switch (habitModificationAction?.Key)
+                    {
+                        case ConsoleKey.Escape:
+                            break;
+                        case ConsoleKey.D:
+                            habitController.RemoveHabit(habit.Id);
+                            userInput.ContinueInput($"{habit.Title} - deleted successfully!");
+                            break;
+                        case ConsoleKey.E:
+                            Console.Clear();
+                            userViews.HabitSummary(habit, "Editing");
+                            habitController.UpdateHabit(habit.Id);
+                            userInput.ContinueInput();
+                            break;
+                    }
                     break;
                 case MainUI.Exit:
                     Running = false;

@@ -75,31 +75,6 @@ public class HabitController
         return habitLogs;
     }
 
-    public void UpdateHabitLog(int logId)
-    {
-        var db = new DbConnection();
-        var input = new UserInput();
-        var updatedLog = input.LogHabit();
-        try
-        {
-            db.Connection.Open();
-            var command = db.Connection.CreateCommand();
-            command.CommandText = @"UPDATE HabitLogs SET DATE = @date, QUANTITY = @quantity, HABITID = @habitid WHERE ID = @id;";
-            command.Parameters.AddWithValue("@id", logId);
-            command.Parameters.AddWithValue("@date", updatedLog.LogDate);
-            command.Parameters.AddWithValue("@quantity", updatedLog.Quantity);
-            command.Parameters.AddWithValue("@habitid", updatedLog.HabitId);
-            command.ExecuteNonQuery();
-            db.Connection.Close();
-            Console.WriteLine("Log updated successfully");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            Console.WriteLine("Faild to update log.");
-        }
-    }
-
     public long HabitCount()
     {
         try
@@ -142,6 +117,46 @@ public class HabitController
         }
     }
 
+    public void UpdateHabit(int habitId)
+    {
+        var db = new DbConnection();
+        var input = new UserInput();
+        var habitTitle = input.GetNewHabit();
+        try
+        {
+            db.Connection.Open();
+            var command = db.Connection.CreateCommand();
+            command.CommandText = @"UPDATE Habits SET TITLE = @title WHERE ID = @id;";
+            command.Parameters.AddWithValue("@id", habitId);
+            command.Parameters.AddWithValue("@title", habitTitle);
+            command.ExecuteNonQuery();
+            db.Connection.Close();
+            Console.WriteLine("Habit updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine("Faild to update habit.");
+        }
+    }
+    public void RemoveHabit(int habitId)
+    {
+        var db = new DbConnection();
+
+        try
+        {
+            db.Connection.Open();
+            var command = db.Connection.CreateCommand();
+            command.CommandText = @"DELETE FROM Habits WHERE id = @id";
+            command.Parameters.AddWithValue("@id", habitId);
+            command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
     public void LogHabit(HabitLog habitLog)
     {
         var db = new DbConnection();
@@ -150,9 +165,9 @@ public class HabitController
             db.Connection.Open();
             var command = db.Connection.CreateCommand();
             command.CommandText = @"INSERT INTO HabitLogs
-                                            (DATE, QUANTITY, HABITID) VALUES (@date, @quentity, @habitid);";
+                                            (DATE, QUANTITY, HABITID) VALUES (@date, @quantity, @habitid);";
             command.Parameters.AddWithValue("@date", habitLog.LogDate);
-            command.Parameters.AddWithValue("@quentity", habitLog.Quantity);
+            command.Parameters.AddWithValue("@quantity", habitLog.Quantity);
             command.Parameters.AddWithValue("@habitid", habitLog.HabitId);
             command.ExecuteNonQuery();
             db.Connection.Close();
@@ -162,6 +177,49 @@ public class HabitController
         {
             Console.WriteLine(ex.Message);
             Console.WriteLine("Faild to add habit.");
+        }
+    }
+
+    public void UpdateHabitLog(int logId)
+    {
+        var db = new DbConnection();
+        var input = new UserInput();
+        var updatedLog = input.LogHabit();
+        try
+        {
+            db.Connection.Open();
+            var command = db.Connection.CreateCommand();
+            command.CommandText = @"UPDATE HabitLogs SET DATE = @date, QUANTITY = @quantity, HABITID = @habitid WHERE ID = @id;";
+            command.Parameters.AddWithValue("@id", logId);
+            command.Parameters.AddWithValue("@date", updatedLog.LogDate);
+            command.Parameters.AddWithValue("@quantity", updatedLog.Quantity);
+            command.Parameters.AddWithValue("@habitid", updatedLog.HabitId);
+            command.ExecuteNonQuery();
+            db.Connection.Close();
+            Console.WriteLine("Log updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine("Faild to update log.");
+        }
+    }
+
+    public void RemoveLog(int logId)
+    {
+        var db = new DbConnection();
+
+        try
+        {
+            db.Connection.Open();
+            var command = db.Connection.CreateCommand();
+            command.CommandText = @"DELETE FROM HabitLogs WHERE id = @id";
+            command.Parameters.AddWithValue("@id", logId);
+            command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
         }
     }
 }

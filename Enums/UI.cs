@@ -7,6 +7,7 @@ public enum MainUI
     ModifyHabitLog,
     AddNewHabit,
     ViewHabits,
+    ModifyHabit,
     Exit
 }
 
