@@ -29,8 +29,17 @@ public class UserViews
         AnsiConsole.Write(table);
     }
 
-    public void HabitLogSummary(HabitLogView habitLog)
+    public void HabitLogSummary(HabitLogView habitLog, string actionType = "Editing")
     {
-        AnsiConsole.WriteLine($"Editing == Log_id-{habitLog.LogId}::Habit-{habitLog.HabitTitle}::Quantity::{habitLog.Quantity}::Date-{DateOnly.FromDateTime(habitLog.EntryDate)}");
+        AnsiConsole.Write(new Align(new Markup($"[bold blue]{actionType}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+        AnsiConsole.Write(new Align(new Markup($"{habitLog.HabitTitle}[yellow]({DateOnly.FromDateTime(habitLog.EntryDate)})[/] - [blue bold]Q:-{habitLog.Quantity} [/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+        Console.WriteLine();
+    }
+
+    public void HabitSummary(Habit habit, string actionType = "Editing")
+    {
+        AnsiConsole.Write(new Align(new Markup($"[bold blue]{actionType}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+        AnsiConsole.Write(new Align(new Markup($"[yellow]{habit.Title}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+        Console.WriteLine();
     }
 }
