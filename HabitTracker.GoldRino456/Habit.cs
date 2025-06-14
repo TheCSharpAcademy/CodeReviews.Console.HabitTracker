@@ -1,6 +1,4 @@
-﻿
-
-namespace HabitTracker.GoldRino456
+﻿namespace HabitTracker.GoldRino456
 {
     public class Habit
     {

@@ -8,7 +8,7 @@ namespace HabitTracker.GoldRino456
     public sealed class DBManager
     {
         #region Singleton Logic & Properties
-        private static DBManager? _instance = null;
+        private static DBManager? _instance;
         private static readonly object _instanceLock = new object();
 
         public static DBManager Instance
