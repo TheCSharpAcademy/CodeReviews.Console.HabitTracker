@@ -8,8 +8,15 @@ public class Menu
 {
     public MainUI GetChoice()
     {
+
+        var appName = new FigletText("HABITO")
+            .Color(Color.Cyan1)
+            .Centered();
+        AnsiConsole.Write(appName);
+        AnsiConsole.Write(new Align(new Markup("-[orange3 italic] Track Your habits from terminal.[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+
         MainUI choice = AnsiConsole.Prompt(new SelectionPrompt<MainUI>()
-                .Title("Select [green]options from the menu.[/]?").AddChoices(new List<MainUI>((MainUI[])Enum.GetValues(typeof(MainUI)))));
+            .Title("Select [green]options from the menu.[/]?").AddChoices(new List<MainUI>((MainUI[])Enum.GetValues(typeof(MainUI)))));
         return choice;
     }
 
