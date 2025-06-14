@@ -98,7 +98,6 @@ public class HabitController
     public void AddHabit(string habit)
     {
         var db = new DbConnection();
-        var input = new UserInput();
         try
         {
             db.Connection.Open();
