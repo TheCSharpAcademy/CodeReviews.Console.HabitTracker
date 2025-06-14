@@ -29,8 +29,12 @@ public class UserInput
         return newLog;
     }
 
-    public bool ContinueInput()
+    public bool ContinueInput(string? extraMessage = null)
     {
+        if (extraMessage != null)
+        {
+            AnsiConsole.MarkupLineInterpolated($"\n[blue]{extraMessage}...[/]");
+        }
         AnsiConsole.MarkupLine("[green]Press ESC to continue...[/]");
         while (true)
         {
@@ -42,9 +46,9 @@ public class UserInput
         }
     }
 
-    public ConsoleKeyInfo? HabitLogModifyOptionPrompt()
+    public ConsoleKeyInfo? ModifyOptionPrompt()
     {
-        AnsiConsole.MarkupLine("[green]Press ESC to return to main menu\n Press E to edit\n Press D to delete...[/]");
+        AnsiConsole.MarkupLine("[green]> Press ESC to return to main menu\n> Press E to edit\n> Press D to delete...[/]");
         while (true)
         {
             var keyPressed = AnsiConsole.Console.Input.ReadKey(true);
