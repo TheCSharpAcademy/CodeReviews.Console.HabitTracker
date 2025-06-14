@@ -400,6 +400,9 @@ FodyWeavers.xsd
 *.sln.iml
 .idea
 
+# Sqlite DB files
+*.sqlite
+
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
