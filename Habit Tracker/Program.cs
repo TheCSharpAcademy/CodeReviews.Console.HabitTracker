@@ -6,9 +6,7 @@ information. This is an important step only for applications that use Sqlite bec
 to be created in the same folder of the application to avoid confusion.
 */
 
-using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using Microsoft.Data.Sqlite;
 
 string connectionString = @"Data Source=habit-Tracker.db";
@@ -23,7 +21,7 @@ using (var connection = new SqliteConnection(connectionString)) //creating an in
         Date TEXT,
         Quantity INTEGER 
         )";  //@ verbatim strings aren't necessary but are a standard because they allow us to create multiline strings which are quite common in SQL
-        //notation for integer is different from sql server and there's no date type in sql lite
+             //notation for integer is different from sql server and there's no date type in sql lite
     tableCMD.ExecuteNonQuery(); //we don't want database to return any values
 
     connection.Close();
@@ -101,7 +99,7 @@ void GetAllRecords()
         connection.Open();
         var tableCmd = connection.CreateCommand();
         tableCmd.CommandText = $"SELECT * FROM drinking_water";
-        
+
         List<DrinkingWater> tableData = new();
 
         SqliteDataReader reader = tableCmd.ExecuteReader();
