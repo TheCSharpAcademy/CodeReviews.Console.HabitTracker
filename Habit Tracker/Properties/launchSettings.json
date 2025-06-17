@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Habit Tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Laksh\\Documents\\Code\\CSharp\\Habit Tracker\\Habit Tracker"
+    }
+  }
+}
