@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace SchoolApp.Models
 {
-    internal class Professor
+    public class Professor: Person
     {
+        public Guid ProfessorId { get; set; } = Guid.NewGuid();
+        public override string ToString() => $"{FirstName} {LastName} (Professor)";
     }
+    
 }

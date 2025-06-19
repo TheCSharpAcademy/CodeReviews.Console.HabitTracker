@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace SchoolApp.Models
 {
-    internal class Grade
+    public class Grade
     {
+        public string Subject { get; set; }
+        public double Value { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
+
     }
 }

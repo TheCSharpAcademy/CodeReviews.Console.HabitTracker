@@ -6,35 +6,48 @@ using System.Threading.Tasks;
 
 namespace SchoolApp.Repositories
 {
-    public class InMemoryRepository<T> : IRepository<T>
+    public class InMemoryRepository<T>(Func<T, Guid> getId) : IRepository<T>
     where T : class
     {
 
         private readonly Dictionary<Guid, T> _storage = [];
-        private readonly Func<T, Guid> _getId;
+        private readonly Func<T, Guid> _getId = getId;
+
+        public Dictionary<Guid, T> Storage => _storage;
+
+        public Func<T, Guid> GetId => _getId;
+
         public void Add(T entity)
         {
-            throw new NotImplementedException();
+            var id = _getId(entity);
+            _storage[id] = entity;
         }
 
         public IEnumerable<T> GetAll()
         {
-            throw new NotImplementedException();
+            return [.. _storage.Values];
         }
 
         public T GetById(Guid id)
         {
-            throw new NotImplementedException();
+          _storage.TryGetValue(id, out var entity);
+            return entity;
         }
 
-        public void Remove(T entity)
+        public void Remove(Guid id)
         {
-            throw new NotImplementedException();
+            _storage.Remove(id);
         }
 
         public void Update(Guid id, T updatedEnttity)
         {
-            throw new NotImplementedException();
-        }
+           if (_storage.ContainsKey(id))
+            {
+                _storage[id] = updatedEnttity;
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Entity with ID {id} not found.");
+            }
     }
 }
