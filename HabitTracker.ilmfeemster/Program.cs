@@ -28,5 +28,25 @@ class Program
             // Menu header presented after any input
             System.Console.WriteLine("\nSelect an option: \n");
         }
+
+        // Database 
+
+        string connectionSource = "Data Source=mydatabase.db;";
+        SqliteConnection connection = new SqliteConnection(connectionSource);
+
+        try
+        {
+            connection.Open();
+            System.Console.WriteLine("Connected to SQLite");
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            System.Console.WriteLine("Connection Closed");
+            connection.Close();
+        }
     }
 }
