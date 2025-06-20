@@ -6,12 +6,12 @@ class Program
     {
         bool menuActive = true;
 
-        System.Console.WriteLine("Welcome to the Habit Tracker");
+        System.Console.WriteLine("Welcome to the Run Tracker");
         System.Console.WriteLine("Select an option:\n");
 
         while (menuActive)
         {
-
+            System.Console.WriteLine("1: Add Run");
             System.Console.WriteLine("0: Exit Program");
             System.Console.Write("Your selection: ");
 
@@ -29,24 +29,46 @@ class Program
             System.Console.WriteLine("\nSelect an option: \n");
         }
 
-        // Database 
-
-        string connectionSource = "Data Source=mydatabase.db;";
-        SqliteConnection connection = new SqliteConnection(connectionSource);
-
-        try
+        // Create or open database file
+        string dbPath = "habitdatabase.db";
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
         {
             connection.Open();
-            System.Console.WriteLine("Connected to SQLite");
-        }
-        catch (Exception ex)
-        {
-            System.Console.WriteLine($"Error: {ex.Message}");
-        }
-        finally
-        {
-            System.Console.WriteLine("Connection Closed");
-            connection.Close();
+
+            //Enable foregin keys requirement
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = "PRAGMA foreign_keys = ON;";
+                cmd.ExecuteNonQuery();
+
+            }
+
+            // Create Habit table if needed
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Habit (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Name TEXT NOT NULL,
+                Unit TEXT NOT NULL
+                )";
+                cmd.ExecuteNonQuery();
+            }
+
+            // Create Occurence table if needed
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Occurrence (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Ammount INTEGER NOT NULL,
+                OccurenceDate TEXT NOT NULL,
+                HabitId INTEGER,
+                FOREIGN KEY (HabitId) REFERENCES Habit(Id)
+                    ON DELETE SET NULL
+                )";
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }
