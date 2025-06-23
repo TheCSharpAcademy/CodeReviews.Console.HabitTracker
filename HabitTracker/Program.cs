@@ -1,4 +1,5 @@
-﻿ using Microsoft.Data.Sqlite;
+﻿ using System.Globalization;
+ using Microsoft.Data.Sqlite;
  
  internal class Program
  {
@@ -27,8 +28,10 @@
              DrawMenu();
              var input = Console.ReadLine();
              getMenuInput(input);
+             
+             
 
-         } while (exitApp);
+         } while (!exitApp);
 
          Console.ReadLine();
      }
@@ -46,12 +49,6 @@
          Console.WriteLine("Type 4 - View All Records");
          Console.WriteLine("----------------------------------");
      }
-
-     static void closeApplication()
-     {
-         Environment.Exit(0);
-     }
-
         static void insertRecord()
      {
          var date = getDateInput();
@@ -70,7 +67,7 @@
          
          Console.WriteLine("Record inserted");
      }
-         static string getDateInput()
+        static string getDateInput()
          {
              int[] dashPos = { 2, 5 };
              bool validDate = false;
@@ -145,7 +142,101 @@
 
          static void deleteRecord()
          {
-             // TODO: get user input for which ID/record he wants to delete.
+             var id = getIdInput();
+             using (var connection = new SqliteConnection(connectionString))
+             {
+                 connection.Open();
+                 var command = connection.CreateCommand();
+                 // Delete from habit_tracker where id = 1
+                 command.CommandText = @"DELETE FROM habit_tracker WHERE id = @id";
+                 command.Parameters.AddWithValue("@id", id);
+                 command.ExecuteNonQuery();
+                 connection.Close();
+             }
+
+             Console.WriteLine($"{id}: Record deleted.");
+         }
+
+         static int getIdInput()
+         {
+             bool validInput = false;
+             string input = "";
+             int id = 0;
+             do
+             {
+                 Console.WriteLine("Please enter the ID:");
+                 input = Console.ReadLine();
+
+                 if (string.IsNullOrEmpty(input)) Console.WriteLine("ERROR: ID cannot be empty");
+                 else if (!int.TryParse(input, out id)) Console.WriteLine("ERROR: ID must be a number");
+                 else validInput = true;
+                 
+             } while (!validInput);
+                
+             return id;
+         }
+
+         static void updateRecord()
+         {
+             var id = getIdInput();
+             var date = getDateInput();
+             var quantity = getQuantityInput();
+
+             using (var connection = new SqliteConnection(connectionString))
+             {
+                 connection.Open();
+                 var command = connection.CreateCommand();
+                 command.CommandText = @"UPDATE habit_tracker SET Date = @date, Quantity = @quantity  WHERE id = @id";
+                 command.Parameters.AddWithValue("@id", id);
+                 command.Parameters.AddWithValue("@date", date);
+                 command.Parameters.AddWithValue("@quantity", quantity);
+                 command.ExecuteNonQuery();
+                 connection.Close();
+             }
+             
+             Console.WriteLine("Record updated.");
+         }
+
+         static void viewAllRecord()
+         {
+             Console.Clear();
+             
+             using (var connection = new SqliteConnection(connectionString))
+             {
+                 connection.Open();
+                 var command = connection.CreateCommand();
+                 command.CommandText = @"SELECT * FROM habit_tracker";
+
+                 List<Habit> tableData = new();
+                 
+                 SqliteDataReader reader = command.ExecuteReader();
+
+                 if (reader.HasRows)
+                 {
+                     while (reader.Read())
+                     {
+                         tableData.Add(new Habit
+                         {
+                           Id = reader.GetInt32(0),
+                           Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", new CultureInfo("en-US")),
+                           Quantity = reader.GetInt32(2)
+                         });
+                     }
+                 }
+                 else
+                 {
+                     Console.WriteLine("No records found.");
+                 }
+                 connection.Close();
+                 
+                 Console.WriteLine("-------------------");
+                 Console.WriteLine("ID | Date | Quantity");
+                 foreach (var dw in tableData)
+                 {
+                     Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - {dw.Quantity}");
+                 }
+                 Console.WriteLine("-------------------\n");
+             }
          }
 
          public static void getMenuInput(string input)
@@ -153,7 +244,7 @@
              switch (input)
              {
                  case "0":
-                     closeApplication();
+                     //
                      break;
                  case "1":
                      insertRecord();
@@ -162,12 +253,19 @@
                      deleteRecord();
                      break;
                  case "3":
-                     //Update();
+                     updateRecord();
                      break;
                  case "4":
-                     //ViewAll();
+                     viewAllRecord();
                      break;
              }
+         }
+
+         internal class Habit
+         {
+             public int Id { get; set; }
+             public DateTime Date { get; set; }
+             public int Quantity { get; set; }
          }
  }
 
