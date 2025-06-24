@@ -4,6 +4,7 @@
  internal class Program
  {
      static string connectionString = "Data Source=HabitTracker.db";
+     static bool exitApp = false;
 
      public static void Main(string[] args)
      {
@@ -21,19 +22,13 @@
              connection.Close();
          }
 
-         bool exitApp = false;
-
          do
          {
              DrawMenu();
              var input = Console.ReadLine();
              getMenuInput(input);
-             
-             
 
          } while (!exitApp);
-
-         Console.ReadLine();
      }
 
      static void DrawMenu()
@@ -66,56 +61,65 @@
          }
          
          Console.WriteLine("Record inserted");
+         Console.WriteLine("Press any key to continue...");
+         Console.ReadLine();
+     }
+
+     static bool containsOnlyNumbersAndDash(string text)
+     {
+         if (string.IsNullOrEmpty(text))
+         {
+             return false; 
+         }
+
+         foreach (char c in text)
+         {
+             if (!char.IsDigit(c) && c != '-')
+             {
+                 return false;
+             }
+         }
+         return true;
+     }
+
+     static bool checkSeperator(string text)
+     {
+         int[] dashPos = { 2, 5 };
+         
+         foreach (int index in dashPos)
+         {
+             if (index >= 0 && index < text.Length)
+             {
+                 if (text[index] != '-')
+                 {
+                     return false;
+                 }
+             }
+             else
+             {
+                 return false;
+             }
+         }
+         return true;
      }
         static string getDateInput()
          {
-             int[] dashPos = { 2, 5 };
+
              bool validDate = false;
              string? date = "";
-             
              do
              {
                  Console.WriteLine("Please enter the date in this format: dd-mm-yyyy");
                  date = Console.ReadLine();
                  
-                 if (string.IsNullOrEmpty(date))
-                 {
-                     Console.WriteLine("Date cannot be empty");
-                     continue;
-                 }
 
-                 if (date.Length != 10)
-                 {
-                     Console.WriteLine("ERROR: Invalid date format (Length is not good), please try again (dd-mm-yyyy) ");
-                     continue;
-                 }
-
-                 bool validFormat = true;
-
-                 foreach (int index in dashPos)
-                 {
-                     if (index >= 0 && index < date.Length)
-                     {
-                         if (date[index] != '-')
-                         {
-                             validFormat = false;
-                             break;
-                         }
-                     }
-                     else
-                     {
-                         validFormat = false;
-                         break;
-                     }
-                 }
-
-                 if (validFormat)
+                 if (checkSeperator(date) && containsOnlyNumbersAndDash(date))
                  {
                      validDate = true;
                  }
                  else
                  {
-                     Console.WriteLine("ERROR: Invalid date format (Wrong separator), please try again (dd-mm-yyyy)");
+                     Console.WriteLine("ERROR: Invalid date format, please try again (dd-mm-yyyy)");
                  }
              } while (!validDate);
              return date;
@@ -147,14 +151,26 @@
              {
                  connection.Open();
                  var command = connection.CreateCommand();
-                 // Delete from habit_tracker where id = 1
                  command.CommandText = @"DELETE FROM habit_tracker WHERE id = @id";
                  command.Parameters.AddWithValue("@id", id);
-                 command.ExecuteNonQuery();
+                 
+                 int rowCount = command.ExecuteNonQuery();
+
+                 if (rowCount == 0)
+                 {
+                     Console.WriteLine($"Record with ID {id} was not found.");
+                     deleteRecord();
+                 }
+                 else
+                 {
+                     Console.WriteLine($"{id}: Record deleted.");
+                 }
+                 
                  connection.Close();
              }
-
-             Console.WriteLine($"{id}: Record deleted.");
+             
+             Console.WriteLine("Press any key to continue...");
+             Console.ReadLine();
          }
 
          static int getIdInput()
@@ -178,23 +194,46 @@
 
          static void updateRecord()
          {
-             var id = getIdInput();
-             var date = getDateInput();
-             var quantity = getQuantityInput();
-
+             bool idFound = false;
+             var id = 0;
              using (var connection = new SqliteConnection(connectionString))
              {
                  connection.Open();
+                 
+                 while (!idFound)
+                 {
+                     id = getIdInput();
+                     
+                     var checkCmd = connection.CreateCommand();
+                     checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit_tracker WHERE id = @id)";
+                     checkCmd.Parameters.AddWithValue("@id", id);
+                     int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                     if (checkQuery == 0)
+                     {
+                         Console.WriteLine($"Record with ID {id} was not found.");
+                     }
+                     else
+                     {
+                         idFound = true;
+                     }
+                 }
+                 
                  var command = connection.CreateCommand();
+                 var date = getDateInput();
+                 var quantity = getQuantityInput();
                  command.CommandText = @"UPDATE habit_tracker SET Date = @date, Quantity = @quantity  WHERE id = @id";
                  command.Parameters.AddWithValue("@id", id);
                  command.Parameters.AddWithValue("@date", date);
                  command.Parameters.AddWithValue("@quantity", quantity);
                  command.ExecuteNonQuery();
+                 Console.WriteLine("Record updated");
+
                  connection.Close();
              }
              
-             Console.WriteLine("Record updated.");
+             Console.WriteLine("Press any key to continue...");
+             Console.ReadLine();
          }
 
          static void viewAllRecord()
@@ -218,7 +257,7 @@
                          tableData.Add(new Habit
                          {
                            Id = reader.GetInt32(0),
-                           Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", new CultureInfo("en-US")),
+                           Date = reader.GetString(1), 
                            Quantity = reader.GetInt32(2)
                          });
                      }
@@ -233,10 +272,13 @@
                  Console.WriteLine("ID | Date | Quantity");
                  foreach (var dw in tableData)
                  {
-                     Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - {dw.Quantity}");
+                     Console.WriteLine($"{dw.Id} - {dw.Date} - {dw.Quantity}");
                  }
                  Console.WriteLine("-------------------\n");
              }
+
+             Console.WriteLine("Press any key to continue...");
+             Console.ReadLine();
          }
 
          public static void getMenuInput(string input)
@@ -244,7 +286,8 @@
              switch (input)
              {
                  case "0":
-                     //
+                     Console.WriteLine("Bye!");
+                     exitApp = true;
                      break;
                  case "1":
                      insertRecord();
@@ -264,7 +307,7 @@
          internal class Habit
          {
              public int Id { get; set; }
-             public DateTime Date { get; set; }
+             public string Date { get; set; }
              public int Quantity { get; set; }
          }
  }
