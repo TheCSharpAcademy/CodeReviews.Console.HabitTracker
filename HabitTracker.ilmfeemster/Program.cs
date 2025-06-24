@@ -2,10 +2,10 @@
 
 class Program
 {
+    static string dbPath = "habitdatabase.db";
     static void Main()
     {
         // Create or open database file
-        string dbPath = "habitdatabase.db";
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
         {
             connection.Open();
@@ -24,7 +24,7 @@ class Program
                 cmd.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Habit (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Name TEXT NOT NULL,
+                Name TEXT NOT NULL UNIQUE,
                 Unit TEXT NOT NULL
                 )";
                 cmd.ExecuteNonQuery();
@@ -42,6 +42,16 @@ class Program
                 FOREIGN KEY (HabitId) REFERENCES Habit(Id)
                     ON DELETE SET NULL
                 )";
+                cmd.ExecuteNonQuery();
+            }
+
+            // Create Run Habit Column
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                INSERT OR IGNORE INTO Habit (Name, Unit)
+                VALUES ('Run', 'Mile(s)')
+                ";
                 cmd.ExecuteNonQuery();
             }
         }
@@ -95,7 +105,7 @@ class Program
                         break;
 
                     case "1":
-                        RunEntry newRun = AddRunPrompt();
+                        AddRunPrompt();
                         break;
                 }
             }
@@ -116,7 +126,7 @@ class Program
 
     // Function to collect input from user
 
-    public static RunEntry AddRunPrompt()
+    public static void AddRunPrompt()
     {
         double miles;
         DateTime runDate;
@@ -139,7 +149,27 @@ class Program
 
         RunEntry runEntry = new RunEntry { Miles = miles, Date = runDate };
 
-        System.Console.WriteLine(runEntry);
-        return runEntry;
+        InsertRunToDB(runEntry);
+    }
+
+    // Function to add input to DB
+    public static void InsertRunToDB(RunEntry currentRun)
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                INSERT INTO Occurrence (Ammount, OccurenceDate, HabitId)
+                VALUES (@miles, @date, (SELECT Id FROM Habit WHERE Name LIKE 'Run' LIMIT 1))
+                ";
+
+                cmd.Parameters.AddWithValue("@miles", currentRun.Miles);
+                cmd.Parameters.AddWithValue("@date", currentRun.Date.ToString("yyyy-MM-dd"));
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }
