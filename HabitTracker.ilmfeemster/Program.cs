@@ -157,39 +157,23 @@ class Program
 
         RunEntry runEntry = new RunEntry { Miles = miles, Date = runDate };
 
-        InsertRun(runEntry);
+        AddRun(runEntry);
     }
 
     public static void UpdateRunPrompt()
     {
-        System.Console.WriteLine("\nSelect a \"Run ID\" to update:\n");
+        System.Console.WriteLine("\nSelect a Run ID to update:\n");
         ShowRuns();
-        System.Console.WriteLine("\nCancel with 0");
-        System.Console.Write("\nYour Selection: ");
-        string updateInput = System.Console.ReadLine();
-        ValidId(updateInput);
+        int runId = ValidId();
+
+        if (runId == 0)
+            return;
+
+        RunEntry updatedRun = SelectRun(runId);
+        UpdateRun(updatedRun, runId);
     }
 
     // DB FUNCTIONS
-    public static void InsertRun(RunEntry currentRun)
-    {
-        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
-        {
-            connection.Open();
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-                INSERT INTO Occurrence (Amount, OccurrenceDate, HabitId)
-                VALUES (@miles, @date, (SELECT Id FROM Habit WHERE Name LIKE 'Run' LIMIT 1))
-                ";
-
-                cmd.Parameters.AddWithValue("@miles", currentRun.Miles);
-                cmd.Parameters.AddWithValue("@date", currentRun.Date.ToString("yyyy-MM-dd"));
-                cmd.ExecuteNonQuery();
-            }
-        }
-    }
 
     public static void ShowRuns()
     {
@@ -220,14 +204,85 @@ class Program
         }
     }
 
+    public static RunEntry SelectRun(int selectedId)
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                SELECT Id, Amount, OccurrenceDate
+                FROM Occurrence
+                WHERE Id = @id
+                ";
+
+                cmd.Parameters.AddWithValue("@id", selectedId);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        double miles = reader.GetDouble(1);
+                        string runDate = reader.GetString(2);
+
+                        return new RunEntry { Miles = miles, Date = DateTime.Parse(runDate) };
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public static void AddRun(RunEntry currentRun)
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                INSERT INTO Occurrence (Amount, OccurrenceDate, HabitId)
+                VALUES (@miles, @date, (SELECT Id FROM Habit WHERE Name LIKE 'Run' LIMIT 1))
+                ";
+
+                cmd.Parameters.AddWithValue("@miles", currentRun.Miles);
+                cmd.Parameters.AddWithValue("@date", currentRun.Date.ToString("yyyy-MM-dd"));
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public static void UpdateRun(RunEntry currentRun, int id)
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                UPDATE Occurrence
+                SET Amount = @miles, OccurrenceDate = @date
+                WHERE Id = @id
+                ";
+
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@miles", currentRun.Miles);
+                cmd.Parameters.AddWithValue("@date", currentRun.Date.ToString("yyyy-MM-dd"));
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
     // Input Handling Functions
-    public static int ValidId(string id)
+    public static int ValidId()
     {
         int runId;
         while (true)
         {
             System.Console.WriteLine("\nEnter a valid Run ID (or 0 to cancel): ");
-            id = Console.ReadLine();
+            string id = Console.ReadLine();
 
             if (!int.TryParse(id, out runId))
             {
