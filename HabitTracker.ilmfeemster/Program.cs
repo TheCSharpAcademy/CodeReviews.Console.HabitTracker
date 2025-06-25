@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data;
+using Microsoft.Data.Sqlite;
 
 class Program
 {
@@ -30,14 +31,14 @@ class Program
                 cmd.ExecuteNonQuery();
             }
 
-            // Create Occurence table if needed
+            // Create Occurrence table if needed
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Occurrence (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Ammount REAL NOT NULL,
-                OccurenceDate TEXT NOT NULL,
+                Amount REAL NOT NULL,
+                OccurrenceDate TEXT NOT NULL,
                 HabitId INTEGER,
                 FOREIGN KEY (HabitId) REFERENCES Habit(Id)
                     ON DELETE SET NULL
@@ -60,14 +61,14 @@ class Program
         bool menuActive = true;
         bool habitMenuActive = false;
 
-        System.Console.WriteLine("Welcome to the Run Tracker");
+        System.Console.WriteLine("\n\n\nRun Tracker");
         System.Console.WriteLine("Select an option:\n");
 
         while (menuActive)
         {
             System.Console.WriteLine("1: View Runs");
             System.Console.WriteLine("0: Exit Program");
-            System.Console.Write("Your selection: ");
+            System.Console.Write("\nYour selection: ");
 
             string? input = System.Console.ReadLine();
             if (input == null)
@@ -89,11 +90,14 @@ class Program
 
             while (habitMenuActive)
             {
+                ShowRuns();
+
                 System.Console.WriteLine("\nSelect an option:\n");
                 System.Console.WriteLine("1: Add Run");
                 System.Console.WriteLine("2: Update Run");
                 System.Console.WriteLine("3: Delete Run");
                 System.Console.WriteLine("0: Previous Menu");
+                System.Console.Write("\nYour Selection: ");
 
                 string? habitInput = System.Console.ReadLine();
                 input = habitInput != null ? habitInput.ToLower() : string.Empty;
@@ -149,11 +153,11 @@ class Program
 
         RunEntry runEntry = new RunEntry { Miles = miles, Date = runDate };
 
-        InsertRunToDB(runEntry);
+        InsertRun(runEntry);
     }
 
     // Function to add input to DB
-    public static void InsertRunToDB(RunEntry currentRun)
+    public static void InsertRun(RunEntry currentRun)
     {
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
         {
@@ -162,13 +166,42 @@ class Program
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = @"
-                INSERT INTO Occurrence (Ammount, OccurenceDate, HabitId)
+                INSERT INTO Occurrence (Amount, OccurrenceDate, HabitId)
                 VALUES (@miles, @date, (SELECT Id FROM Habit WHERE Name LIKE 'Run' LIMIT 1))
                 ";
 
                 cmd.Parameters.AddWithValue("@miles", currentRun.Miles);
                 cmd.Parameters.AddWithValue("@date", currentRun.Date.ToString("yyyy-MM-dd"));
                 cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public static void ShowRuns()
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                SELECT Id, Amount, OccurrenceDate
+                FROM Occurrence
+                ";
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    System.Console.WriteLine("\nRun History:");
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(0);
+                        double miles = reader.GetDouble(1);
+                        string date = reader.GetString(2);
+
+                        System.Console.WriteLine($"ID: {id} Miles: {miles} Date: {date}");
+                    }
+                }
             }
         }
     }
