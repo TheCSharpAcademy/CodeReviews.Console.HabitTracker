@@ -6,12 +6,12 @@ class Program
     static string dbPath = "habitdatabase.db";
     static void Main()
     {
-        // Create or open database file
+        // DB INIT or OPEN
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
         {
             connection.Open();
 
-            //Enable foregin keys requirement
+
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = "PRAGMA foreign_keys = ON;";
@@ -19,7 +19,7 @@ class Program
 
             }
 
-            // Create Habit table if needed
+
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = @"
@@ -31,7 +31,7 @@ class Program
                 cmd.ExecuteNonQuery();
             }
 
-            // Create Occurrence table if needed
+
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = @"
@@ -46,7 +46,6 @@ class Program
                 cmd.ExecuteNonQuery();
             }
 
-            // Create Run Habit Column
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = @"
@@ -57,9 +56,11 @@ class Program
             }
         }
 
-        // User interface
+        // CONSOLE MENU
         bool menuActive = true;
         bool habitMenuActive = false;
+        bool updateMenuActive = false;
+        bool deleteMenuActive = false;
 
         System.Console.WriteLine("\n\n\nRun Tracker");
         System.Console.WriteLine("Select an option:\n");
@@ -71,10 +72,7 @@ class Program
             System.Console.Write("\nYour selection: ");
 
             string? input = System.Console.ReadLine();
-            if (input == null)
-            {
-                input = string.Empty;
-            }
+            input ??= string.Empty;
 
             switch (input)
             {
@@ -111,16 +109,22 @@ class Program
                     case "1":
                         AddRunPrompt();
                         break;
+                    case "2":
+                        updateMenuActive = true;
+                        break;
+                    case "3":
+                        break;
+                }
+
+                while (updateMenuActive)
+                {
+                    UpdateRunPrompt();
+                    updateMenuActive = false;
                 }
             }
-
-            // Menu header presented after any input
             System.Console.WriteLine("\nSelect an option: \n");
         }
     }
-
-    // Define a class to represent a run
-
     public class RunEntry
     {
         public double Miles { get; set; }
@@ -128,7 +132,7 @@ class Program
         public DateTime Date { get; set; }
     }
 
-    // Function to collect input from user
+    // INTERFACE FUNCTIONS
 
     public static void AddRunPrompt()
     {
@@ -156,7 +160,17 @@ class Program
         InsertRun(runEntry);
     }
 
-    // Function to add input to DB
+    public static void UpdateRunPrompt()
+    {
+        System.Console.WriteLine("\nSelect a \"Run ID\" to update:\n");
+        ShowRuns();
+        System.Console.WriteLine("\nCancel with 0");
+        System.Console.Write("\nYour Selection: ");
+        string updateInput = System.Console.ReadLine();
+        ValidId(updateInput);
+    }
+
+    // DB FUNCTIONS
     public static void InsertRun(RunEntry currentRun)
     {
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
@@ -203,6 +217,27 @@ class Program
                     }
                 }
             }
+        }
+    }
+
+    // Input Handling Functions
+    public static void ValidId(string id)
+    {
+        int validId;
+        while (!int.TryParse(id, out validId))
+        {
+            System.Console.WriteLine("\nEnter a valid number:");
+            id = System.Console.ReadLine();
+        }
+
+        if (validId == 0)
+        {
+            return;
+        }
+        else
+        {
+            System.Console.WriteLine($"You selected: {validId}");
+            return;
         }
     }
 }
