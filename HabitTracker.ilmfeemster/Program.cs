@@ -6,62 +6,14 @@ class Program
     static string dbPath = "habitdatabase.db";
     static void Main()
     {
-        // DB INIT or OPEN
-        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
-        {
-            connection.Open();
-
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = "PRAGMA foreign_keys = ON;";
-                cmd.ExecuteNonQuery();
-
-            }
-
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Habit (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Name TEXT NOT NULL UNIQUE,
-                Unit TEXT NOT NULL
-                )";
-                cmd.ExecuteNonQuery();
-            }
-
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Occurrence (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Amount REAL NOT NULL,
-                OccurrenceDate TEXT NOT NULL,
-                HabitId INTEGER,
-                FOREIGN KEY (HabitId) REFERENCES Habit(Id)
-                    ON DELETE SET NULL
-                )";
-                cmd.ExecuteNonQuery();
-            }
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-                INSERT OR IGNORE INTO Habit (Name, Unit)
-                VALUES ('Run', 'Mile(s)')
-                ";
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        // CONSOLE MENU
         bool menuActive = true;
         bool habitMenuActive = false;
         bool updateMenuActive = false;
         bool deleteMenuActive = false;
+        
+        InitializeDatabase();
 
+        // CONSOLE MENU
         System.Console.WriteLine("\n\n\nRun Tracker");
         System.Console.WriteLine("Select an option:\n");
 
@@ -146,7 +98,7 @@ class Program
         double miles;
         DateTime runDate;
 
-        System.Console.WriteLine("\n How many miles did you run?");
+        System.Console.WriteLine("\nHow many miles did you run?");
         string milesInput = System.Console.ReadLine();
         while (!double.TryParse(milesInput, out miles))
         {
@@ -210,7 +162,44 @@ class Program
     }
 
     // DB FUNCTIONS
+    static void InitializeDatabase()
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
 
+            void Execute(string sql)
+            {
+                using var cmd = connection.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.ExecuteNonQuery();
+            }
+
+            Execute("PRAGMA foreign_keys = ON;");
+
+            Execute(@"
+            CREATE TABLE IF NOT EXISTS Habit (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Name TEXT NOT NULL UNIQUE,
+                Unit TEXT NOT NULL
+            )");
+
+            Execute(@"
+            CREATE TABLE IF NOT EXISTS Occurrence (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Amount REAL NOT NULL,
+                OccurrenceDate TEXT NOT NULL,
+                HabitId INTEGER,
+                FOREIGN KEY (HabitId) REFERENCES Habit(Id)
+                    ON DELETE SET NULL
+            )");
+
+            Execute(@"
+            INSERT OR IGNORE INTO Habit (Name, Unit)
+            VALUES ('Run', 'Mile(s)')
+        ");
+        }
+    }
     public static void ShowRuns()
     {
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
