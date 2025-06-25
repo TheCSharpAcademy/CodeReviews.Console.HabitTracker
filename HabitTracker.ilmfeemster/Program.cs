@@ -113,6 +113,7 @@ class Program
                         updateMenuActive = true;
                         break;
                     case "3":
+                        deleteMenuActive = true;
                         break;
                 }
 
@@ -120,6 +121,12 @@ class Program
                 {
                     UpdateRunPrompt();
                     updateMenuActive = false;
+                }
+
+                while (deleteMenuActive)
+                {
+                    DeleteMenuPrompt();
+                    deleteMenuActive = false;
                 }
             }
             System.Console.WriteLine("\nSelect an option: \n");
@@ -164,8 +171,8 @@ class Program
     {
         double miles;
         DateTime runDate;
-        System.Console.WriteLine("\nSelect a Run ID to update:\n");
         ShowRuns();
+        System.Console.WriteLine("\nSelect a Run ID to update:");
         int runId = ValidId();
 
         if (runId == 0)
@@ -190,6 +197,18 @@ class Program
         UpdateRun(updatedRun, runId);
     }
 
+    public static void DeleteMenuPrompt()
+    {
+        ShowRuns();
+        System.Console.WriteLine("\nSelect a Run ID to delete:");
+        int runId = ValidId();
+
+        if (runId == 0)
+            return;
+
+        DeleteRun(runId);
+    }
+
     // DB FUNCTIONS
 
     public static void ShowRuns()
@@ -203,6 +222,7 @@ class Program
                 cmd.CommandText = @"
                 SELECT Id, Amount, OccurrenceDate
                 FROM Occurrence
+                ORDER BY OccurrenceDate
                 ";
 
                 using (var reader = cmd.ExecuteReader())
@@ -220,7 +240,7 @@ class Program
             }
         }
     }
-    
+
     public static void AddRun(RunEntry currentRun)
     {
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
@@ -258,6 +278,25 @@ class Program
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@miles", currentRun.Miles);
                 cmd.Parameters.AddWithValue("@date", currentRun.Date.ToString("yyyy-MM-dd"));
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public static void DeleteRun(int id)
+    {
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = @"
+                DELETE FROM Occurrence
+                WHERE Id = @id
+                ";
+
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
             }
         }
