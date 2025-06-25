@@ -130,7 +130,7 @@ class Program
         if (runId == 0)
             return;
 
-        System.Console.WriteLine("\n How many miles did you run?");
+        System.Console.WriteLine("\nHow many miles did you run?");
         string milesInput = System.Console.ReadLine();
         while (!double.TryParse(milesInput, out miles))
         {
