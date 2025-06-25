@@ -3,12 +3,12 @@
  
  internal class Program
  {
-     static string connectionString = "Data Source=HabitTracker.db";
-     static bool exitApp = false;
+     static string _connectionString = "Data Source=HabitTracker.db";
+     static bool _exitApp;
 
      public static void Main(string[] args)
      {
-         using (var connection = new SqliteConnection(connectionString))
+         using (var connection = new SqliteConnection(_connectionString))
          {
              connection.Open();
              var command = connection.CreateCommand();
@@ -26,12 +26,11 @@
          {
              DrawMenu();
              var input = Console.ReadLine();
-             getMenuInput(input);
+             GetMenuInput(input);
 
-         } while (!exitApp);
+         } while (!_exitApp);
      }
-
-     static void DrawMenu()
+         static void DrawMenu()
      {
          Console.Clear();
          Console.WriteLine("MAIN MENU");
@@ -44,12 +43,13 @@
          Console.WriteLine("Type 4 - View All Records");
          Console.WriteLine("----------------------------------");
      }
-        static void insertRecord()
+         static void InsertRecord()
      {
-         var date = getDateInput();
-         var quantity = getQuantityInput();
+         var date = GetDateInput();
+         var quantity = GetQuantityInput();
+         
 
-         using (var connection = new SqliteConnection(connectionString))
+         using (var connection = new SqliteConnection(_connectionString))
          {
              connection.Open();
              var command = connection.CreateCommand();
@@ -64,8 +64,7 @@
          Console.WriteLine("Press any key to continue...");
          Console.ReadLine();
      }
-
-     static bool containsOnlyNumbersAndDash(string text)
+         static bool containsOnlyNumbersAndDash(string text)
      {
          if (string.IsNullOrEmpty(text))
          {
@@ -81,8 +80,7 @@
          }
          return true;
      }
-
-     static bool checkSeperator(string text)
+         static bool CheckSeperator(string text)
      {
          int[] dashPos = { 2, 5 };
          
@@ -102,18 +100,18 @@
          }
          return true;
      }
-        static string getDateInput()
+         static string GetDateInput()
          {
 
              bool validDate = false;
-             string? date = "";
+             string? date;
              do
              {
                  Console.WriteLine("Please enter the date in this format: dd-mm-yyyy");
                  date = Console.ReadLine();
                  
 
-                 if (checkSeperator(date) && containsOnlyNumbersAndDash(date))
+                 if (CheckSeperator(date) && containsOnlyNumbersAndDash(date))
                  {
                      validDate = true;
                  }
@@ -124,11 +122,10 @@
              } while (!validDate);
              return date;
          }
-         
-         static int getQuantityInput()
+         static int GetQuantityInput()
          {
              bool validInput = false;
-             string input = "";
+             string input;
              int quantity = 0;
              do
              {
@@ -143,11 +140,10 @@
                 
              return quantity;
          }
-
-         static void deleteRecord()
+         static void DeleteRecord()
          {
-             var id = getIdInput();
-             using (var connection = new SqliteConnection(connectionString))
+             var id = GetIdInput();
+             using (var connection = new SqliteConnection(_connectionString))
              {
                  connection.Open();
                  var command = connection.CreateCommand();
@@ -159,7 +155,7 @@
                  if (rowCount == 0)
                  {
                      Console.WriteLine($"Record with ID {id} was not found.");
-                     deleteRecord();
+                     DeleteRecord();
                  }
                  else
                  {
@@ -172,11 +168,10 @@
              Console.WriteLine("Press any key to continue...");
              Console.ReadLine();
          }
-
-         static int getIdInput()
+         static int GetIdInput()
          {
              bool validInput = false;
-             string input = "";
+             string input;
              int id = 0;
              do
              {
@@ -191,18 +186,17 @@
                 
              return id;
          }
-
-         static void updateRecord()
+         static void UpdateRecord()
          {
              bool idFound = false;
              var id = 0;
-             using (var connection = new SqliteConnection(connectionString))
+             using (var connection = new SqliteConnection(_connectionString))
              {
                  connection.Open();
                  
                  while (!idFound)
                  {
-                     id = getIdInput();
+                     id = GetIdInput();
                      
                      var checkCmd = connection.CreateCommand();
                      checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM habit_tracker WHERE id = @id)";
@@ -220,8 +214,8 @@
                  }
                  
                  var command = connection.CreateCommand();
-                 var date = getDateInput();
-                 var quantity = getQuantityInput();
+                 var date = GetDateInput();
+                 var quantity = GetQuantityInput();
                  command.CommandText = @"UPDATE habit_tracker SET Date = @date, Quantity = @quantity  WHERE id = @id";
                  command.Parameters.AddWithValue("@id", id);
                  command.Parameters.AddWithValue("@date", date);
@@ -235,12 +229,11 @@
              Console.WriteLine("Press any key to continue...");
              Console.ReadLine();
          }
-
-         static void viewAllRecord()
+         static void ViewAllRecord()
          {
              Console.Clear();
              
-             using (var connection = new SqliteConnection(connectionString))
+             using (var connection = new SqliteConnection(_connectionString))
              {
                  connection.Open();
                  var command = connection.CreateCommand();
@@ -281,25 +274,25 @@
              Console.ReadLine();
          }
 
-         public static void getMenuInput(string input)
+         public static void GetMenuInput(string input)
          {
              switch (input)
              {
                  case "0":
                      Console.WriteLine("Bye!");
-                     exitApp = true;
+                     _exitApp = true;
                      break;
                  case "1":
-                     insertRecord();
+                     InsertRecord();
                      break;
                  case "2":
-                     deleteRecord();
+                     DeleteRecord();
                      break;
                  case "3":
-                     updateRecord();
+                     UpdateRecord();
                      break;
                  case "4":
-                     viewAllRecord();
+                     ViewAllRecord();
                      break;
              }
          }
