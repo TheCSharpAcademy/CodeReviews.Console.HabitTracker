@@ -221,23 +221,49 @@ class Program
     }
 
     // Input Handling Functions
-    public static void ValidId(string id)
+    public static int ValidId(string id)
     {
-        int validId;
-        while (!int.TryParse(id, out validId))
+        int runId;
+        while (true)
         {
-            System.Console.WriteLine("\nEnter a valid number:");
-            id = System.Console.ReadLine();
-        }
+            System.Console.WriteLine("\nEnter a valid Run ID (or 0 to cancel): ");
+            id = Console.ReadLine();
 
-        if (validId == 0)
-        {
-            return;
-        }
-        else
-        {
-            System.Console.WriteLine($"You selected: {validId}");
-            return;
+            if (!int.TryParse(id, out runId))
+            {
+                Console.WriteLine("Invalid number. Try again.");
+                continue;
+            }
+
+            if (runId == 0)
+                return 0;
+
+            using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+            {
+                connection.Open();
+
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                SELECT COUNT(*) 
+                FROM Occurrence 
+                WHERE Id = @id
+                ";
+                    cmd.Parameters.AddWithValue("@id", runId);
+
+                    long count = (long)cmd.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        System.Console.WriteLine($"Valid Run ID: {runId}");
+                        return runId;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Invalid ID, try again.");
+                    }
+                }
+            }
         }
     }
 }
