@@ -162,6 +162,8 @@ class Program
 
     public static void UpdateRunPrompt()
     {
+        double miles;
+        DateTime runDate;
         System.Console.WriteLine("\nSelect a Run ID to update:\n");
         ShowRuns();
         int runId = ValidId();
@@ -169,7 +171,22 @@ class Program
         if (runId == 0)
             return;
 
-        RunEntry updatedRun = SelectRun(runId);
+        System.Console.WriteLine("\n How many miles did you run?");
+        string milesInput = System.Console.ReadLine();
+        while (!double.TryParse(milesInput, out miles))
+        {
+            System.Console.WriteLine("Enter a valid number");
+            milesInput = System.Console.ReadLine();
+        }
+
+        System.Console.WriteLine("What date did you run? (YYYY-MM-DD)");
+        string runDateInput = System.Console.ReadLine();
+        while (!DateTime.TryParse(runDateInput, out runDate))
+        {
+            System.Console.WriteLine("Enter a valid date (YYYY-MM-DD)");
+            runDateInput = System.Console.ReadLine();
+        }
+        RunEntry updatedRun = new RunEntry { Miles = miles, Date = runDate };
         UpdateRun(updatedRun, runId);
     }
 
@@ -203,36 +220,7 @@ class Program
             }
         }
     }
-
-    public static RunEntry SelectRun(int selectedId)
-    {
-        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
-        {
-            connection.Open();
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-                SELECT Id, Amount, OccurrenceDate
-                FROM Occurrence
-                WHERE Id = @id
-                ";
-
-                cmd.Parameters.AddWithValue("@id", selectedId);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        double miles = reader.GetDouble(1);
-                        string runDate = reader.GetString(2);
-
-                        return new RunEntry { Miles = miles, Date = DateTime.Parse(runDate) };
-                    }
-                }
-            }
-        }
-        return null;
-    }
+    
     public static void AddRun(RunEntry currentRun)
     {
         using (var connection = new SqliteConnection($"Data Source={dbPath}"))
