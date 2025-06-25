@@ -1,5 +1,4 @@
-﻿ using System.Globalization;
- using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
  
  internal class Program
  {
@@ -64,7 +63,7 @@
          Console.WriteLine("Press any key to continue...");
          Console.ReadLine();
      }
-         static bool containsOnlyNumbersAndDash(string text)
+         static bool ContainsOnlyNumbersAndDash(string text)
      {
          if (string.IsNullOrEmpty(text))
          {
@@ -111,7 +110,7 @@
                  date = Console.ReadLine();
                  
 
-                 if (CheckSeperator(date) && containsOnlyNumbersAndDash(date))
+                 if (CheckSeperator(date) && ContainsOnlyNumbersAndDash(date))
                  {
                      validDate = true;
                  }
