@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿
+
 using Microsoft.Data.Sqlite;
-using System.Collections.Generic; // Added for List
-using System.Linq; // Added for Any()
+
 
 namespace HabitTracker.SheheryarRaza
 {
@@ -20,9 +19,7 @@ namespace HabitTracker.SheheryarRaza
                     connection.Open();
                     var command = connection.CreateCommand();
 
-                    // Create Habits table if it doesn't exist
-                    // Removed DEFAULT CURRENT_TIMESTAMP from CreatedAt to allow user input
-                    // Added Unit column
+
                     command.CommandText = @"
                         CREATE TABLE IF NOT EXISTS Habits (
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,11 +47,7 @@ namespace HabitTracker.SheheryarRaza
             }
         }
 
-        /// <summary>
-        /// Checks if the Habits table contains any records.
-        /// </summary>
-        /// <param name="connection">The active SqliteConnection.</param>
-        /// <returns>True if the table has data, false otherwise.</returns>
+
         private static bool HasData(SqliteConnection connection)
         {
             var command = connection.CreateCommand();
@@ -63,10 +56,7 @@ namespace HabitTracker.SheheryarRaza
             return count > 0;
         }
 
-        /// <summary>
-        /// Seeds the database with sample habits and random records.
-        /// </summary>
-        /// <param name="connection">The active SqliteConnection.</param>
+
         private static void SeedData(SqliteConnection connection)
         {
             var random = new Random();
@@ -80,11 +70,7 @@ namespace HabitTracker.SheheryarRaza
 
             foreach (var habit in habitsToSeed)
             {
-                // Insert the habit itself (though for this structure, habits are just records)
-                // For a more complex app, you might have a separate 'HabitTypes' table.
-                // Here, we just insert records directly.
 
-                // Insert 100 random records for each habit type
                 for (int i = 0; i < 100; i++)
                 {
                     var insertCommand = connection.CreateCommand();
@@ -93,7 +79,7 @@ namespace HabitTracker.SheheryarRaza
                         VALUES (@name, @quantity, @unit, @createdAt);
                     ";
 
-                    // Generate random quantity (e.g., 1 to 10 for water, 1 to 15 for running)
+
                     int quantity = 0;
                     switch (habit.Name)
                     {
@@ -104,7 +90,7 @@ namespace HabitTracker.SheheryarRaza
                         default: quantity = random.Next(1, 10); break;
                     }
 
-                    // Generate a random date within the last year
+
                     DateTime createdAt = DateTime.Now.AddDays(-random.Next(1, 366)).AddHours(random.Next(1, 24)).AddMinutes(random.Next(1, 60));
 
                     insertCommand.Parameters.AddWithValue("@name", habit.Name);
