@@ -2,7 +2,7 @@ namespace DotNETConsole.HabitTracker.Controllers;
 
 using DataModels;
 using DB;
-using UI;
+using Helper;
 
 public class HabitController
 {

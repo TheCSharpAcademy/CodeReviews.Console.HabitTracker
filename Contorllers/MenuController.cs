@@ -2,6 +2,7 @@ namespace DotNETConsole.HabitTracker.Controllers;
 using UI;
 using Enums;
 using DataModels;
+using Helper;
 
 public class MenuController
 {
@@ -111,6 +112,7 @@ public class MenuController
                     break;
                 case MainUI.Exit:
                     Running = false;
+                    Console.Clear();
                     break;
             }
         }

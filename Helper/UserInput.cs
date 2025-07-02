@@ -1,6 +1,7 @@
-namespace DotNETConsole.HabitTracker.UI;
+namespace DotNETConsole.HabitTracker.Helper;
 using Spectre.Console;
 using DataModels;
+using UI;
 
 public class UserInput
 {
