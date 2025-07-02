@@ -27,9 +27,25 @@ public class UserInput
         var habit = menu.SelectSingleHabit();
         AnsiConsole.WriteLine($"Selected Habit: {habit.Title}");
         int quentity = AnsiConsole.Ask<int>("Enter [green]quantity[/] (" + habit.Unit + "): ");
-        DateTime date = AnsiConsole.Ask<DateTime>("Date(Ex. DD/MM/YYYY): ");
+        DateTime dateTime;
+        while (true)
+        {
+            string date = AnsiConsole.Ask<string>("Enter Date(Ex. DD/MM/YYYY) or 'now' for current date: ");
+
+            if (date.Trim().Length != 0 && date == "now")
+            {
+                dateTime = DateTime.Now;
+                break;
+            }
+            
+            if(DateTime.TryParse(date, out dateTime))
+            {
+                break;
+            }
+            AnsiConsole.MarkupLine("[red]Invalid date format. Please enter a valid date or 'now'.[/]");
+        }
         var newLog = new HabitLog();
-        newLog.LogDate = date;
+        newLog.LogDate = dateTime;
         newLog.Quantity = quentity;
         newLog.HabitId = habit.Id;
         return newLog;
