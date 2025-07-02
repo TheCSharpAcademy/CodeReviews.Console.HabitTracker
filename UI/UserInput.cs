@@ -26,13 +26,13 @@ public class UserInput
         var menu = new Menu();
         var habit = menu.SelectSingleHabit();
         AnsiConsole.WriteLine($"Selected Habit: {habit.Title}");
-        int quentity = AnsiConsole.Ask<int>("Enter [green]quantity[/] (" + habit.Unit + "): ");
+        int quantity = AnsiConsole.Ask<int>("Enter [green]quantity[/] (" + habit.Unit + "): ");
         DateTime dateTime;
         while (true)
         {
             string date = AnsiConsole.Ask<string>("Enter Date(Ex. DD/MM/YYYY) or 'now' for current date: ");
 
-            if (date.Trim().Length != 0 && date == "now")
+            if (date.Trim().Length != 0 && date.ToLower() == "now")
             {
                 dateTime = DateTime.Now;
                 break;
@@ -46,7 +46,7 @@ public class UserInput
         }
         var newLog = new HabitLog();
         newLog.LogDate = dateTime;
-        newLog.Quantity = quentity;
+        newLog.Quantity = quantity;
         newLog.HabitId = habit.Id;
         return newLog;
     }
