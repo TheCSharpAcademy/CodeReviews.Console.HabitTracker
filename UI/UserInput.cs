@@ -4,7 +4,7 @@ using DataModels;
 
 public class UserInput
 {
-    public string GetNewHabit()
+    public (string, string) GetNewHabit()
     {
         string habitTitle = AnsiConsole.Prompt(
             new TextPrompt<string>("Habit Title: ").Validate((title) => title.Length switch
@@ -12,7 +12,13 @@ public class UserInput
                 < 3 => ValidationResult.Error("Too short(min 3 char) or blank."),
                 >= 3 => ValidationResult.Success()
             }));
-        return habitTitle;
+        string unit = AnsiConsole.Prompt(
+            new TextPrompt<string>(" Unit(Ex. KM, L, Hour etc.): ").Validate((title) => title.Trim().Length switch
+            {
+                < 1 => ValidationResult.Error("This can not be blank."),
+                >= 1 => ValidationResult.Success()
+            }));
+        return (habitTitle, unit);
     }
 
     public HabitLog LogHabit()
@@ -20,8 +26,8 @@ public class UserInput
         var menu = new Menu();
         var habit = menu.SelectSingleHabit();
         AnsiConsole.WriteLine($"Selected Habit: {habit.Title}");
-        int quentity = AnsiConsole.Ask<int>("Enter [green]quantity[/]:");
-        DateTime date = AnsiConsole.Ask<DateTime>("Date: ");
+        int quentity = AnsiConsole.Ask<int>("Enter [green]quantity[/] (" + habit.Unit + "): ");
+        DateTime date = AnsiConsole.Ask<DateTime>("Date(Ex. DD/MM/YYYY): ");
         var newLog = new HabitLog();
         newLog.LogDate = date;
         newLog.Quantity = quentity;

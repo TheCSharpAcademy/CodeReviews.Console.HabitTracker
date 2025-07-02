@@ -14,7 +14,8 @@ public class Habit
             var command = db.Connection.CreateCommand();
             command.CommandText = @"CREATE TABLE IF NOT EXISTS Habits (
                                     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    TITLE STRING NOT NULL
+                                    TITLE STRING NOT NULL,
+                                    UNIT STRING NOT NULL
                                   );";
             
             command.ExecuteNonQuery();

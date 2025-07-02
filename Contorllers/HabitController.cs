@@ -27,6 +27,7 @@ public class HabitController
                     // int eq int32.
                     habit.Id = reader.GetInt32(0);
                     habit.Title = reader.GetString(1);
+                    habit.Unit = reader.GetString(2);
                     habits.Add(habit);
                 }
             }
@@ -49,7 +50,7 @@ public class HabitController
         {
             db.Connection.Open();
             var command = db.Connection.CreateCommand();
-            command.CommandText = @"SELECT HabitLogs.id, HabitLogs.date, HabitLogs.quantity, Habits.title FROM HabitLogs JOIN Habits ON HabitLogs.habitid = Habits.id ORDER BY HabitLogs.id DESC;";
+            command.CommandText = @"SELECT HabitLogs.id, HabitLogs.date, HabitLogs.quantity, Habits.title, Habits.unit FROM HabitLogs JOIN Habits ON HabitLogs.habitid = Habits.id ORDER BY HabitLogs.id DESC;";
 
             using (var reader = command.ExecuteReader())
             {
@@ -62,6 +63,7 @@ public class HabitController
                     habitLog.EntryDate = reader.GetDateTime(1);
                     habitLog.Quantity = reader.GetInt32(2);
                     habitLog.HabitTitle = reader.GetString(3);
+                    habitLog.Unit = reader.GetString(4);
                     habitLogs.Add(habitLog);
                 }
             }
@@ -81,7 +83,7 @@ public class HabitController
         {
             var db = new DbConnection();
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
+            using var command = db.Connection.CreateCommand();
             command.CommandText = @"SELECT COUNT(*) FROM Habits;";
             long rowCount = (long)(command.ExecuteScalar() ?? 0);
             db.Connection.Close();
@@ -94,17 +96,38 @@ public class HabitController
             throw;
         }
     }
+    
+    public long HabitLogCount()
+    {
+        try
+        {
+            var db = new DbConnection();
+            db.Connection.Open();
+            using var command = db.Connection.CreateCommand();
+            command.CommandText = @"SELECT COUNT(*) FROM HabitLogs;";
+            long rowCount = (long)(command.ExecuteScalar() ?? 0);
+            db.Connection.Close();
+            return rowCount;
 
-    public void AddHabit(string habit)
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+    }
+
+    public void AddHabit(string habit, string unit)
     {
         var db = new DbConnection();
         try
         {
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
+            using var command = db.Connection.CreateCommand();
             command.CommandText = @"INSERT INTO Habits
-                                    (Title) VALUES (@title);";
+                                    (Title, Unit)VALUES (@title, @unit);";
             command.Parameters.AddWithValue("@title", habit);
+            command.Parameters.AddWithValue("@unit", unit);
             command.ExecuteNonQuery();
             db.Connection.Close();
             Console.WriteLine("Habit added successfully");
@@ -112,7 +135,7 @@ public class HabitController
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            Console.WriteLine("Faild to add habit.");
+            Console.WriteLine("Failed to add habit.");
         }
     }
 
@@ -120,14 +143,15 @@ public class HabitController
     {
         var db = new DbConnection();
         var input = new UserInput();
-        var habitTitle = input.GetNewHabit();
+        (string habitTitle, string unit) = input.GetNewHabit();
         try
         {
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
-            command.CommandText = @"UPDATE Habits SET TITLE = @title WHERE ID = @id;";
+            using var command = db.Connection.CreateCommand();
+            command.CommandText = @"UPDATE Habits SET TITLE = @title, UNIT = @unit WHERE ID = @id;";
             command.Parameters.AddWithValue("@id", habitId);
             command.Parameters.AddWithValue("@title", habitTitle);
+            command.Parameters.AddWithValue("@unit", unit);
             command.ExecuteNonQuery();
             db.Connection.Close();
             Console.WriteLine("Habit updated successfully");
@@ -135,7 +159,7 @@ public class HabitController
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            Console.WriteLine("Faild to update habit.");
+            Console.WriteLine("Failed to update habit.");
         }
     }
     public void RemoveHabit(int habitId)
@@ -145,7 +169,7 @@ public class HabitController
         try
         {
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
+            using var command = db.Connection.CreateCommand();
             command.CommandText = @"DELETE FROM Habits WHERE id = @id";
             command.Parameters.AddWithValue("@id", habitId);
             command.ExecuteNonQuery();
@@ -162,7 +186,7 @@ public class HabitController
         try
         {
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
+            using var command = db.Connection.CreateCommand();
             command.CommandText = @"INSERT INTO HabitLogs
                                             (DATE, QUANTITY, HABITID) VALUES (@date, @quantity, @habitid);";
             command.Parameters.AddWithValue("@date", habitLog.LogDate);
@@ -175,7 +199,7 @@ public class HabitController
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            Console.WriteLine("Faild to add habit.");
+            Console.WriteLine("Failed to add habit.");
         }
     }
 
@@ -187,7 +211,7 @@ public class HabitController
         try
         {
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
+            using var command = db.Connection.CreateCommand();
             command.CommandText = @"UPDATE HabitLogs SET DATE = @date, QUANTITY = @quantity, HABITID = @habitid WHERE ID = @id;";
             command.Parameters.AddWithValue("@id", logId);
             command.Parameters.AddWithValue("@date", updatedLog.LogDate);
@@ -200,7 +224,7 @@ public class HabitController
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            Console.WriteLine("Faild to update log.");
+            Console.WriteLine("Failed to update log.");
         }
     }
 
@@ -211,7 +235,7 @@ public class HabitController
         try
         {
             db.Connection.Open();
-            var command = db.Connection.CreateCommand();
+            using var command = db.Connection.CreateCommand();
             command.CommandText = @"DELETE FROM HabitLogs WHERE id = @id";
             command.Parameters.AddWithValue("@id", logId);
             command.ExecuteNonQuery();

@@ -7,11 +7,11 @@ public class UserViews
     public void ViewHabits(List<Habit> habits)
     {
         var table = new Table();
-        table.AddColumns(new[] { "Id", "Title" });
+        table.AddColumns(new[] { "Id", "Title", "Unit" });
 
         foreach (Habit habit in habits)
         {
-            table.AddRow($"{habit.Id}", $"{habit.Title}");
+            table.AddRow($"{habit.Id}", $"{habit.Title}", $"{habit.Unit}");
         }
 
         AnsiConsole.Write(table);
@@ -23,7 +23,7 @@ public class UserViews
 
         foreach (HabitLogView habit in habitLogs)
         {
-            table.AddRow($"{habit.HabitTitle}", $"{habit.EntryDate}", $"{habit.Quantity}");
+            table.AddRow($"{habit.HabitTitle}", $"{habit.EntryDate}", $"{habit.Quantity} {habit.Unit}");
         }
 
         AnsiConsole.Write(table);
@@ -32,14 +32,14 @@ public class UserViews
     public void HabitLogSummary(HabitLogView habitLog, string actionType = "Editing")
     {
         AnsiConsole.Write(new Align(new Markup($"[bold blue]{actionType}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
-        AnsiConsole.Write(new Align(new Markup($"{habitLog.HabitTitle}[yellow]({DateOnly.FromDateTime(habitLog.EntryDate)})[/] - [blue bold]Q:-{habitLog.Quantity} [/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+        AnsiConsole.Write(new Align(new Markup($"{habitLog.HabitTitle}[yellow]({DateOnly.FromDateTime(habitLog.EntryDate)})[/] - [blue bold]Q:-{habitLog.Quantity} {habitLog.Unit}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
         Console.WriteLine();
     }
 
     public void HabitSummary(Habit habit, string actionType = "Editing")
     {
         AnsiConsole.Write(new Align(new Markup($"[bold blue]{actionType}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
-        AnsiConsole.Write(new Align(new Markup($"[yellow]{habit.Title}[/]"), HorizontalAlignment.Center, VerticalAlignment.Top));
+        AnsiConsole.Write(new Align(new Markup($"[yellow]{habit.Title}[/] Unit: {habit.Unit}"), HorizontalAlignment.Center, VerticalAlignment.Top));
         Console.WriteLine();
     }
 }
