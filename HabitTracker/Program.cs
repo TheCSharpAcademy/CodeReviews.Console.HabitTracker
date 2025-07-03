@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Globalization;
+using Microsoft.Data.Sqlite;
  
  internal class Program
  {
@@ -63,54 +64,14 @@
          Console.WriteLine("Press any key to continue...");
          Console.ReadLine();
      }
-         static bool ContainsOnlyNumbersAndDash(string text)
-     {
-         if (string.IsNullOrEmpty(text))
-         {
-             return false; 
-         }
-
-         foreach (char c in text)
-         {
-             if (!char.IsDigit(c) && c != '-')
-             {
-                 return false;
-             }
-         }
-         return true;
-     }
-         static bool CheckSeperator(string text)
-     {
-         int[] dashPos = { 2, 5 };
-         
-         foreach (int index in dashPos)
-         {
-             if (index >= 0 && index < text.Length)
-             {
-                 if (text[index] != '-')
-                 {
-                     return false;
-                 }
-             }
-             else
-             {
-                 return false;
-             }
-         }
-         return true;
-     }
          static string GetDateInput()
          {
-
              bool validDate = false;
-             string? date;
+             DateTime date;
              do
              {
                  Console.WriteLine("Please enter the date in this format: dd-mm-yyyy");
-                 date = Console.ReadLine();
-                 
-
-                 if (CheckSeperator(date) && ContainsOnlyNumbersAndDash(date))
+                 if (DateTime.TryParseExact(Console.ReadLine(), "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out date))
                  {
                      validDate = true;
                  }
@@ -119,7 +80,7 @@
                      Console.WriteLine("ERROR: Invalid date format, please try again (dd-mm-yyyy)");
                  }
              } while (!validDate);
-             return date;
+             return date.ToString("dd-MM-yyyy");
          }
          static int GetQuantityInput()
          {
@@ -249,7 +210,7 @@
                          tableData.Add(new Habit
                          {
                            Id = reader.GetInt32(0),
-                           Date = reader.GetString(1), 
+                           Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", new CultureInfo("en-US")),
                            Quantity = reader.GetInt32(2)
                          });
                      }
@@ -264,7 +225,7 @@
                  Console.WriteLine("ID | Date | Quantity");
                  foreach (var dw in tableData)
                  {
-                     Console.WriteLine($"{dw.Id} - {dw.Date} - {dw.Quantity}");
+                     Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MM-yyyy")} - {dw.Quantity}");
                  }
                  Console.WriteLine("-------------------\n");
              }
@@ -299,7 +260,7 @@
          internal class Habit
          {
              public int Id { get; set; }
-             public string Date { get; set; }
+             public DateTime Date { get; set; }
              public int Quantity { get; set; }
          }
  }
