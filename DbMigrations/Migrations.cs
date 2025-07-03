@@ -21,4 +21,10 @@ public class Migrations
         habitMigration.Down();
         habitLogMigration.Down();
     }
+
+    public void MigrateReset()
+    {
+        this.MigrateDown();
+        this.Migrate();
+    }
 }

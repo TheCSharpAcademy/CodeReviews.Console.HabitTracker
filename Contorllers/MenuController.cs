@@ -3,6 +3,7 @@ using UI;
 using Enums;
 using DataModels;
 using Helper;
+using DbMigrations;
 
 public class MenuController
 {
@@ -77,7 +78,7 @@ public class MenuController
                     userInput.ContinueInput();
                     break;
                 case MainUI.ViewHabits:
-                    List<Habit> habits = habitController.GetHabits();
+                    List<DataModels.Habit> habits = habitController.GetHabits();
                     userViews.ViewHabits(habits);
                     userInput.ContinueInput();
                     break;
@@ -109,6 +110,16 @@ public class MenuController
                                 break;
                         }
                     }
+                    break;
+                case MainUI.Reset:
+                    string confimation = userInput.DeleteConfimation();
+                    if(confimation == "yes")
+                    {
+                        var migration = new Migrations();
+                        migration.MigrateReset();
+                        userInput.ContinueInput("Database Reseted!!!");
+                    }
+                    Console.Clear();
                     break;
                 case MainUI.Exit:
                     Running = false;

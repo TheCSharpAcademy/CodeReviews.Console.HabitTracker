@@ -8,6 +8,7 @@ public enum MainUI
     AddNewHabit,
     ViewHabits,
     ModifyHabit,
+    Reset,
     Exit
 }
 

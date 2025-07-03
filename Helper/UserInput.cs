@@ -2,6 +2,7 @@ namespace DotNETConsole.HabitTracker.Helper;
 using Spectre.Console;
 using DataModels;
 using UI;
+using System;
 
 public class UserInput
 {
@@ -78,6 +79,19 @@ public class UserInput
             if (keyPressed is { Key: ConsoleKey.Escape } || keyPressed is { Key: ConsoleKey.D } || keyPressed is { Key: ConsoleKey.E })
             {
                 return keyPressed;
+            }
+        }
+    }
+
+    public string DeleteConfimation()
+    {
+        while (true)
+        {
+            string option = AnsiConsole.Ask<string>("[bold red]Do you want to reset database? (yes/no): [/]");
+
+            if (option.Trim().Length != 0 && (option.ToLower() == "yes" || option.ToLower() == "no"))
+            {
+                return option;
             }
         }
     }
