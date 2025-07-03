@@ -30,4 +30,4 @@
 - #### Run.
     `dotnet run`
 
-**Note(optional):** Delete data.sql file in the project root folder. (Only if user already have a previous build and tries to update the application).
+**Note(optional):** If you have already build an old version of this app, use `Reset` option to sync DB Schema changes(All data will be destroyed).
