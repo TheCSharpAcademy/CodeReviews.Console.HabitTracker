@@ -14,3 +14,14 @@
 
 ## References
 https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
+
+## Sample user case
+
+- User starts app
+- User provides name
+- Options:
+  - retrieve stored habits
+  - insert habit
+  - update previous habits: count or date
+  - delete single habit
+  - delete all instances of a habit
