@@ -5,6 +5,12 @@ Initialize(dataSource);
 
 var queries = new Queries(dataSource);
 queries.InsertNewHabit("john", "drinkingCoffee", 20, DateTime.Now);
+queries.InsertNewHabit("john", "drinkingWater", 10, DateTime.Now);
+queries.RetrieveHabits("john");
+queries.UpdateHabit("john", "drinkingCoffee", 100);
+queries.RetrieveHabits("john");
+queries.DeleteHabit("john", "drinkingCoffee");
+queries.RetrieveHabits("john");
 
 return;
 
@@ -70,7 +76,6 @@ class Queries(string connection)
         {
             using var reader = readCommand.ExecuteReader();
             {
-                //reader.Depth
                 while (reader.Read())
                 {
                     Console.WriteLine($"Added habit {reader.GetString(2)} to user {reader.GetString(1)}, counted {reader.GetInt32(3)} times, on day: {reader.GetDateTime(4)}");
@@ -81,16 +86,41 @@ class Queries(string connection)
         Connection.Close();
     }
 
-    void RetrieveHabits(string user)
+    public void RetrieveHabits(string user)
     {
+        string readQuery = $"select * from habit where user = '{user}';";
+        using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
+        {
+            Connection.Open();
+            using var reader = readCommand.ExecuteReader();
+            {
+                while (reader.Read())
+                {
+                    Console.WriteLine($"Habit: {reader.GetString(2)} Count: {reader.GetInt32(3)} Day: {reader.GetDateTime(4)}");
+                }
+            }
+            Connection.Close();
+        }
     }
 
-    void UpdateHabit(string user, string habit, int count, DateTime date)
+    public void UpdateHabit(string user, string habit, int count)
     {
+        Connection.Open();
+        string updateQuery = $"update habit set count = {count} where user = '{user}' and habit = '{habit}'; ";
+        using var command = Connection.CreateCommand();
+        command.CommandText = updateQuery;
+        command.ExecuteNonQuery();
+        Connection.Close();
     }
 
-    void DeleteHabit(string user, string habit)
+    public void DeleteHabit(string user, string habit)
     {
+        Connection.Open();
+        string updateQuery = $"delete from habit where user = '{user}' and habit = '{habit}'; ";
+        using var command = Connection.CreateCommand();
+        command.CommandText = updateQuery;
+        command.ExecuteNonQuery();
+        Connection.Close();
     }
 
 }
