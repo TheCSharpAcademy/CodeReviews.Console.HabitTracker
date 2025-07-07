@@ -20,7 +20,7 @@ https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
 - User starts app
 - User provides name
 - Options:
-  - retrieve stored habits
+  - retrieve stored habits 
   - insert habit
   - update previous habits: count or date
   - delete single habit

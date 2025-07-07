@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using Spectre.Console;
 
 string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
@@ -36,6 +37,65 @@ static void Initialize(string dataSource)
     connection.Close();
 }
 
+
+internal class UserInterface
+{
+    private HabitController HabitController = new HabitController();
+    internal void MainMenu()
+    {
+        while (true)
+        {
+            Console.Clear();
+
+            var choice = AnsiConsole.Prompt(
+                new SelectionPrompt<MenuOption>()
+                    .Title("What do you want to do next?")
+                    .AddChoices(Enum.GetValues<MenuOption>()));
+
+            switch (choice)
+            {
+                case MenuOption.InsertHabit:
+                    HabitController.InsertHabit();
+                    break;
+                case MenuOption.SeeHabits:
+                    HabitController.SeeHabits();
+                    break;
+                case MenuOption.UpdateHabit:
+                    HabitController.UpdateHabit();
+                case MenuOption.RemoveHabit:
+                    HabitController.RemoveHabits();
+                    break;
+            }
+
+        }
+    }
+}
+
+enum MenuOption
+{
+    InsertHabit,
+    SeeHabits,
+    UpdateHabit,
+    RemoveHabits
+}
+
+internal class HabitController
+{
+    private Queries = new Queries();
+    internal void InsertHabit()
+    {
+    }
+    internal void SeeHabits()
+    {}
+
+    internal void UpdateHabit()
+    {
+    }
+
+    internal void RemoveHabits()
+    {
+    }
+}
 
 class Queries(string connection)
 {
