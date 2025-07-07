@@ -41,34 +41,20 @@ class Queries(string connection)
 {
     public SqliteConnection Connection = new SqliteConnection(connection); 
     public void InsertNewHabit(string user, string habit, int count, DateTime date) {
-        Connection.Open();
         
+        Connection.Open();
         using var command = Connection.CreateCommand();
-        command.CommandText = @"
+        command.CommandText = $@"
                                INSERT INTO
                                    habit (user, habit, count, date)
                                values
-                                   ($user, $habit, $count, $date);
+                                   ('{user}', '{habit}', {count}, $date);
                                ";
-        command.Parameters.AddWithValue("$user", user);
-        command.Parameters.AddWithValue("$habit", habit);
-        command.Parameters.AddWithValue("$count", count);
         command.Parameters.AddWithValue("$date", date);
-        
         command.ExecuteNonQuery();
+        Connection.Close();
         
-        // to get the row number, so get a more specific query
-        string rowCountQuery = "SELECT COUNT(*) FROM habit;";
-        int rowCount = 0;
-        using (SqliteCommand rowCountCommand = new SqliteCommand(rowCountQuery, Connection))
-        {
-            using var reader = rowCountCommand.ExecuteReader();
-            while (reader.Read())
-            {
-                rowCount = reader.GetInt32(0);
-            }
-        }
-
+        int rowCount = GetRowCount("habit");
         Console.WriteLine($"Amount of rows after insert operation: {rowCount}");
         
         string readQuery = $"select * from habit where id = {rowCount};";
@@ -86,6 +72,23 @@ class Queries(string connection)
         Connection.Close();
     }
 
+    public int GetRowCount(string tableName)
+    {
+        Connection.Open();
+        string rowCountQuery = $"SELECT COUNT(*) FROM {tableName};";
+        int rowCount = 0;
+        using (SqliteCommand rowCountCommand = new SqliteCommand(rowCountQuery, Connection))
+        {
+            using var reader = rowCountCommand.ExecuteReader();
+            while (reader.Read())
+            {
+                rowCount = reader.GetInt32(0);
+            }
+        }
+        return rowCount;
+        Connection.Close();
+
+    }
     public void RetrieveHabits(string user)
     {
         string readQuery = $"select * from habit where user = '{user}';";
@@ -122,5 +125,4 @@ class Queries(string connection)
         command.ExecuteNonQuery();
         Connection.Close();
     }
-
 }
