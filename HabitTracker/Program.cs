@@ -38,9 +38,9 @@ static void Initialize(string dataSource)
 }
 
 
-internal class UserInterface
+internal class UserInterface(string connectionString)
 {
-    private HabitController HabitController = new HabitController();
+    private HabitController HabitController = new HabitController(connectionString);
     internal void MainMenu()
     {
         while (true)
@@ -62,8 +62,9 @@ internal class UserInterface
                     break;
                 case MenuOption.UpdateHabit:
                     HabitController.UpdateHabit();
+                    break;
                 case MenuOption.RemoveHabit:
-                    HabitController.RemoveHabits();
+                    HabitController.RemoveHabit();
                     break;
             }
 
@@ -76,30 +77,33 @@ enum MenuOption
     InsertHabit,
     SeeHabits,
     UpdateHabit,
-    RemoveHabits
+    RemoveHabit,
 }
 
-internal class HabitController
+public class HabitController(string connectionString)
 {
-    private Queries = new Queries();
-    internal void InsertHabit()
+    //private readonly string _dataSource = dataSource;
+    public Queries Queries = new Queries(connectionString);
+    
+    public void InsertHabit()
     {
     }
-    internal void SeeHabits()
+
+    public void SeeHabits()
     {}
 
-    internal void UpdateHabit()
+    public void UpdateHabit()
     {
     }
 
-    internal void RemoveHabits()
+    public void RemoveHabit()
     {
     }
 }
 
-class Queries(string connection)
+public class Queries(string connectionString)
 {
-    public SqliteConnection Connection = new SqliteConnection(connection); 
+    public SqliteConnection Connection = new SqliteConnection(connectionString); 
     public void InsertNewHabit(string user, string habit, int count, DateTime date) {
         
         Connection.Open();
