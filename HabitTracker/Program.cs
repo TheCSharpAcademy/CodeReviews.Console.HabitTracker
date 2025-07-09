@@ -13,6 +13,9 @@ queries.RetrieveHabits("john");
 queries.DeleteHabit("john", "drinkingCoffee");
 queries.RetrieveHabits("john");
 
+var menu = new UserInterface(dataSource);
+menu.MainMenu();
+
 return;
 
 static void Initialize(string dataSource)
@@ -56,6 +59,7 @@ internal class UserInterface(string connectionString)
             {
                 case MenuOption.InsertHabit:
                     HabitController.InsertHabit();
+                    
                     break;
                 case MenuOption.SeeHabits:
                     HabitController.SeeHabits();
@@ -87,6 +91,22 @@ public class HabitController(string connectionString)
     
     public void InsertHabit()
     {
+        var name = AnsiConsole.Prompt(
+            new TextPrompt<string>("What habit do you want to log?"));
+        var count = AnsiConsole.Prompt(
+            new TextPrompt<int>("How often did you do the habit?")
+                .Validate((n) => n switch
+                    {
+                        < 1 => ValidationResult.Error("Please enter a number between 0 and 100."),
+                        <= 100 => ValidationResult.Success(), 
+                        > 100 => ValidationResult.Error("Please enter a number between 0 and 100."),
+                    }
+                ));
+        var date = AnsiConsole.Prompt(
+            new TextPrompt<DateOnly>("What day did you do the habit?"));
+
+        AnsiConsole.WriteLine($"You did {name}, {count} times on day {date.Day}");
+            
     }
 
     public void SeeHabits()
