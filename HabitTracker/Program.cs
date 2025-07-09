@@ -104,7 +104,8 @@ public class HabitController(string connectionString)
                 ));
         var date = AnsiConsole.Prompt(
             new TextPrompt<DateOnly>("What day did you do the habit?"));
-
+        
+        Queries.InsertNewHabit("john", name, count, DateTime.FromOADate(date.Day));
         AnsiConsole.WriteLine($"You did {name}, {count} times on day {date.Day}");
             
     }
