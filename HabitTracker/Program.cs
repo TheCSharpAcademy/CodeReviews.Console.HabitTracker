@@ -5,8 +5,8 @@ string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
 
 var queries = new Queries(dataSource);
-queries.InsertNewHabit("john", "drinkingCoffee", 20, DateTime.Now);
-queries.InsertNewHabit("john", "drinkingWater", 10, DateTime.Now);
+queries.InsertNewHabit("john", "drinkingCoffee", 20, DateTime.Now.Date);
+queries.InsertNewHabit("john", "drinkingWater", 10, DateTime.Now.Date);
 queries.RetrieveHabits("john");
 queries.UpdateHabit("john", "drinkingCoffee", 100);
 queries.RetrieveHabits("john");
@@ -146,6 +146,7 @@ public class Queries(string connectionString)
         using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
         {
             using var reader = readCommand.ExecuteReader();
+			
             {
                 while (reader.Read())
                 {
@@ -174,20 +175,30 @@ public class Queries(string connectionString)
         Connection.Close();
 
     }
-    public void RetrieveHabits(string user)
+    public List<object> RetrieveHabits(string user)
     {
-        string readQuery = $"select * from habit where user = '{user}';";
+        var list = new List<object>();
+        string readQuery = $"select * from habit where user = '{user}' order by id;";
         using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
         {
             Connection.Open();
-            using var reader = readCommand.ExecuteReader();
+            
+			using var reader = readCommand.ExecuteReader();
+            
             {
                 while (reader.Read())
                 {
-                    Console.WriteLine($"Habit: {reader.GetString(2)} Count: {reader.GetInt32(3)} Day: {reader.GetDateTime(4)}");
+                    var row = new {
+                        User = reader.GetString(1),
+                        Count = reader.GetInt32(2),
+                        Date = reader.GetDateTime(3)
+                    };
+                    list.Add(row);
+                    Console.WriteLine($"Habit: {row.User} Count: {row.Count} Day: {row.Date.ToShortDateString()}");
                 }
             }
             Connection.Close();
+            return list;
         }
     }
 
