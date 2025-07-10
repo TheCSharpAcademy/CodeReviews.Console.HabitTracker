@@ -3,7 +3,7 @@ using HabitTrackerLibrary.Models;
 
 namespace HabitTrackerLibrary
 {
-    public static class SQLHelper
+    public static class SqlHelper
     {
 
         private static readonly string CONNECTION_STRING = @"Data Source=habit-Tracker.db";
@@ -86,7 +86,7 @@ namespace HabitTrackerLibrary
             string commandText = $@"INSERT INTO {TABLENAME} (Date, Miles)
                                  VALUES ('{habit.Date}', '{habit.Miles}');";
 
-            return PerformCUDOperation(commandText);
+            return PerformCudOperation(commandText);
         }
 
         public static bool DeleteRecord(int id)
@@ -94,7 +94,7 @@ namespace HabitTrackerLibrary
             string commandText = $@"DELETE FROM {TABLENAME}
                                  WHERE Id={id};";
 
-            return PerformCUDOperation(commandText);
+            return PerformCudOperation(commandText);
         }
 
         public static bool UpdateRecord(int id, Habit habit)
@@ -103,10 +103,10 @@ namespace HabitTrackerLibrary
                                  SET Date='{habit.Date}', Miles={habit.Miles}
                                  WHERE Id={id};";
 
-            return PerformCUDOperation(commandText);
+            return PerformCudOperation(commandText);
         }
 
-        private static bool PerformCUDOperation(string commandText)
+        private static bool PerformCudOperation(string commandText)
         {
             bool commandSuccessful = false;
 

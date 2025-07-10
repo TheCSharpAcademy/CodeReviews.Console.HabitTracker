@@ -7,7 +7,7 @@ namespace HabitTracker
         public static void Main(string[] args)
         {
             Console.WriteLine("Preparing databases, please wait...");
-            SQLHelper.CreateDatabaseIfNotExists();
+            SqlHelper.CreateDatabaseIfNotExists();
             Console.Clear();
 
             Console.WriteLine("-----------------------------");

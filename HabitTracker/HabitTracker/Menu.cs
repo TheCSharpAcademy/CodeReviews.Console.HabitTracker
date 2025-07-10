@@ -55,7 +55,7 @@ namespace HabitTracker
 
         internal static void ShowAllRecords()
         {
-            List<Habit> allEntries = SQLHelper.GetAllRecords();
+            List<Habit> allEntries = SqlHelper.GetAllRecords();
 
             Console.WriteLine("\nBike Riding Tracking");
             Console.WriteLine("----------------------------------------------------");
@@ -78,7 +78,7 @@ namespace HabitTracker
             habit.Date = GetDateInput();
             habit.Miles = GetNumberInput("\nEnter the number of miles you rode your bike. ");
 
-            SQLHelper.InsertSingleRecord(habit);
+            SqlHelper.InsertSingleRecord(habit);
         }
 
         internal static void DeleteRecord()
@@ -88,7 +88,7 @@ namespace HabitTracker
 
             int recordID = GetNumberInput("\nPlease select a record ID to delete.");
 
-            bool deleteSuccessful = SQLHelper.DeleteRecord(recordID);
+            bool deleteSuccessful = SqlHelper.DeleteRecord(recordID);
 
             if (!deleteSuccessful)
             {
@@ -113,7 +113,7 @@ namespace HabitTracker
             updatedHabitInfo.Date = GetDateInput();
             updatedHabitInfo.Miles = GetNumberInput("\nEnter the updated miles you rode. ");
 
-            bool updateSuccessful = SQLHelper.UpdateRecord(recordID, updatedHabitInfo);
+            bool updateSuccessful = SqlHelper.UpdateRecord(recordID, updatedHabitInfo);
 
             if (!updateSuccessful)
             {
