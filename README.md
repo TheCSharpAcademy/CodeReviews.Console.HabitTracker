@@ -22,7 +22,7 @@ https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
 - Options:
   - retrieve stored habits 
   - insert habit
-  - update previous habits: count or date
+  - update previous habits: count
   - delete single habit
   - delete all instances of a habit
 

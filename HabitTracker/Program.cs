@@ -49,6 +49,8 @@ internal class UserInterface(string connectionString)
     private HabitController HabitController = new HabitController(connectionString);
     internal void MainMenu()
     {
+        var userName = AnsiConsole.Ask<string>("What is your name?");
+        
         while (true)
         {
             //Console.Clear();
@@ -72,6 +74,9 @@ internal class UserInterface(string connectionString)
                 case MenuOption.RemoveHabit:
                     HabitController.RemoveHabit();
                     break;
+                case MenuOption.ExitApplication:
+                    AnsiConsole.MarkupLine("[green]Goodbye![/]");
+                    return;
             }
 
         }
@@ -84,11 +89,11 @@ enum MenuOption
     SeeHabits,
     UpdateHabit,
     RemoveHabit,
+    ExitApplication,
 }
 
 public class HabitController(string connectionString)
 {
-    //private readonly string _dataSource = dataSource;
     public Queries Queries = new Queries(connectionString);
     
     public void InsertHabit()
@@ -116,7 +121,7 @@ public class HabitController(string connectionString)
                     DateOnly.FromDateTime(DateTime.Now.AddDays(-4)),
                     DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
                     DateOnly.FromDateTime(DateTime.Now.AddDays(-6)),
-                })
+                }) // Considered making this programmatic, but the amount of complexity did not feel worth it.
                     );
         
         Queries.InsertNewHabit("john", name, count, day);

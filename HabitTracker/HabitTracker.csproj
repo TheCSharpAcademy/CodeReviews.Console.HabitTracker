@@ -13,4 +13,10 @@
       <PackageReference Include="Spectre.Console" Version="0.50.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\README.md">
+        <Link>obj\README.md</Link>
+      </Content>
+    </ItemGroup>
+
 </Project>
