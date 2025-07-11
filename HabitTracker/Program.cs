@@ -5,18 +5,20 @@ using static System.Int32;
 string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
 
-var queries = new Queries(dataSource);
-queries.InsertNewHabit("john", "drinkingCoffee", 20, DateOnly.FromDateTime(DateTime.Now));
-queries.InsertNewHabit("john", "drinkingWater", 10, DateOnly.FromDateTime(DateTime.Now));
-queries.InsertNewHabit("john", "exercise", 10, DateOnly.FromDateTime(DateTime.Now));
-queries.InsertNewHabit("john", "drinkingMoreWater", 10, DateOnly.FromDateTime(DateTime.Now));
-queries.RetrieveHabits("john");
-queries.UpdateHabit(1, 100);
-queries.RetrieveHabits("john");
-queries.DeleteHabit("john", "drinkingCoffee");
-queries.RetrieveHabits("john");
+var userName = AnsiConsole.Ask<string>("What is your name?");
 
-var menu = new UserInterface(dataSource);
+var queries = new Queries(dataSource);
+queries.InsertNewHabit(userName, "drinkingCoffee", 20, DateOnly.FromDateTime(DateTime.Now));
+queries.InsertNewHabit(userName, "drinkingWater", 10, DateOnly.FromDateTime(DateTime.Now));
+queries.InsertNewHabit(userName, "exercise", 10, DateOnly.FromDateTime(DateTime.Now));
+queries.InsertNewHabit(userName, "drinkingMoreWater", 10, DateOnly.FromDateTime(DateTime.Now));
+queries.RetrieveHabits(userName);
+queries.UpdateHabit(1, 100);
+queries.RetrieveHabits(userName);
+queries.DeleteHabit(userName, "drinkingCoffee");
+queries.RetrieveHabits(userName);
+
+var menu = new UserInterface(dataSource, userName);
 menu.MainMenu();
 
 return;
@@ -44,13 +46,11 @@ static void Initialize(string dataSource)
 }
 
 
-internal class UserInterface(string connectionString)
+internal class UserInterface(string connectionString, string userName)
 {
-    private HabitController HabitController = new HabitController(connectionString);
+    private HabitController HabitController = new HabitController(connectionString, userName);
     internal void MainMenu()
     {
-        var userName = AnsiConsole.Ask<string>("What is your name?");
-        
         while (true)
         {
             //Console.Clear();
@@ -92,7 +92,7 @@ enum MenuOption
     ExitApplication,
 }
 
-public class HabitController(string connectionString)
+public class HabitController(string connectionString, string userName)
 {
     public Queries Queries = new Queries(connectionString);
     
@@ -124,14 +124,14 @@ public class HabitController(string connectionString)
                 }) // Considered making this programmatic, but the amount of complexity did not feel worth it.
                     );
         
-        Queries.InsertNewHabit("john", name, count, day);
+        Queries.InsertNewHabit(userName, name, count, day);
         AnsiConsole.WriteLine($"You did {name}, {count} times on day {day}");
             
     }
 
     public void SeeHabits()
     {
-        var habits = Queries.RetrieveHabits("john");
+        var habits = Queries.RetrieveHabits(userName);
         foreach (var dict in habits)
         {
             
@@ -141,7 +141,7 @@ public class HabitController(string connectionString)
 
     public void UpdateHabit()
     {
-        var habits = Queries.RetrieveHabits("john").ToList();
+        var habits = Queries.RetrieveHabits(userName).ToList();
         Console.WriteLine(habits);
         var habitChoice = new SelectionPrompt<string>();
         habitChoice.Title = "What habit do you want to change?";
@@ -163,7 +163,7 @@ public class HabitController(string connectionString)
 
     public void RemoveHabit()
     {
-        var habits = Queries.RetrieveHabits("john").ToList();
+        var habits = Queries.RetrieveHabits(userName).ToList();
         Console.WriteLine(habits);
         var habitChoice = new SelectionPrompt<string>();
         habitChoice.Title = "What habit do you want to change?";
