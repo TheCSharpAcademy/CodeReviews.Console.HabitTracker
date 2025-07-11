@@ -69,13 +69,11 @@ public class Queries(string connectionString)
 
     public void DeleteHabitById(int id)
     {
-        {
-            Connection.Open();
-            string updateQuery = $"delete from habit where id = {id}; ";
-            using var command = Connection.CreateCommand();
-            command.CommandText = updateQuery;
-            command.ExecuteNonQuery();
-            Connection.Close();
-        }
+        Connection.Open();
+        string updateQuery = $"delete from habit where id = {id}; ";
+        using var command = Connection.CreateCommand();
+        command.CommandText = updateQuery;
+        command.ExecuteNonQuery();
+        Connection.Close();
     }
 }
