@@ -5,8 +5,8 @@ string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
 
 var queries = new Queries(dataSource);
-queries.InsertNewHabit("john", "drinkingCoffee", 20, DateTime.Today);
-queries.InsertNewHabit("john", "drinkingWater", 10, DateTime.Today);
+queries.InsertNewHabit("john", "drinkingCoffee", 20, DateOnly.FromDateTime(DateTime.Now));
+queries.InsertNewHabit("john", "drinkingWater", 10, DateOnly.FromDateTime(DateTime.Now));
 queries.RetrieveHabits("john");
 queries.UpdateHabit("john", "drinkingCoffee", 100);
 queries.RetrieveHabits("john");
@@ -102,11 +102,11 @@ public class HabitController(string connectionString)
                         > 100 => ValidationResult.Error("Please enter a number between 0 and 100."),
                     }
                 ));
-        var date = AnsiConsole.Prompt(
+        var day = AnsiConsole.Prompt(
             new TextPrompt<DateOnly>("What day did you do the habit?"));
         
-        Queries.InsertNewHabit("john", name, count, DateTime.FromOADate(date.Day));
-        AnsiConsole.WriteLine($"You did {name}, {count} times on day {date.Day}");
+        Queries.InsertNewHabit("john", name, count, day);
+        AnsiConsole.WriteLine($"You did {name}, {count} times on day {day}");
             
     }
 
@@ -125,7 +125,7 @@ public class HabitController(string connectionString)
 public class Queries(string connectionString)
 {
     public SqliteConnection Connection = new SqliteConnection(connectionString); 
-    public void InsertNewHabit(string user, string habit, int count, DateTime date) {
+    public void InsertNewHabit(string user, string habit, int count, DateOnly day) {
         
         Connection.Open();
         using var command = Connection.CreateCommand();
@@ -135,7 +135,7 @@ public class Queries(string connectionString)
                                values
                                    ('{user}', '{habit}', {count}, $date);
                                ";
-        command.Parameters.AddWithValue("$date", date);
+        command.Parameters.AddWithValue("$date", day);
         command.ExecuteNonQuery();
         Connection.Close();
         
@@ -198,7 +198,7 @@ public class Queries(string connectionString)
                 }
             }
             Connection.Close();
-            return list;g
+            return list;
         }
     }
 
