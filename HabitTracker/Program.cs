@@ -126,9 +126,10 @@ public class HabitController(string connectionString)
     public void SeeHabits()
     {
         var habits = Queries.RetrieveHabits("john");
-        foreach (var row in habits)
+        foreach (var dict in habits)
         {
-            AnsiConsole.WriteLine($"{row}");
+            
+            Console.WriteLine($"Habit: {dict["habit"]} Count: {dict["count"]} Day: {dict["date"]}");
         }
     }
 
@@ -143,6 +144,9 @@ public class HabitController(string connectionString)
             habitChoice.AddChoice(habit.ToString());
         }
         var selectedHabit = AnsiConsole.Prompt(habitChoice);
+        var user = "john";
+        //var count = habits[]
+        
     }
 
     public void RemoveHabit()
@@ -188,9 +192,10 @@ public class Queries(string connectionString)
         Connection.Close();
 
     }
-    public List<object> RetrieveHabits(string user)
+    public List<Dictionary<string, object>> RetrieveHabits(string user)
     {
-        var list = new List<object>();
+        var list = new List<Dictionary<string, object>>();
+        var index = 0;
         string readQuery = $"select * from habit where user = '{user}' order by id;";
         using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
         {
@@ -201,18 +206,24 @@ public class Queries(string connectionString)
             {
                 while (reader.Read())
                 {
-                    var row = new {
-                        Habit = reader.GetString(2),
-                        Count = reader.GetInt32(3),
-                        Date = reader.GetString(4)
+                    var  dict = new Dictionary<string, object>()
+                    {
+                        { "id", reader.GetInt32(0) },
+                        { "user", reader.GetString(1) },
+                        { "habit", reader.GetString(2) },
+                        { "count", reader.GetInt32(3) },
+                        { "date", reader.GetDateTime(4) },
                     };
-                    list.Add(row);
-                    Console.WriteLine($"Habit: {row.Habit} Count: {row.Count} Day: {row.Date}");
+                    list.Add(dict);
+                    index++;
+                    
+                    
                 }
             }
             Connection.Close();
-            return list;
+            
         }
+        return list;
     }
 
     public void UpdateHabit(string user, string habit, int count)
