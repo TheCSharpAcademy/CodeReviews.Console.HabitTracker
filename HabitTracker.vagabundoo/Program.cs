@@ -1,4 +1,4 @@
-﻿using HabitTracker;
+﻿using HabitTracker.vagabundoo;
 using Spectre.Console;
 
 string dataSource = "DataSource=habittracker.db";
@@ -21,4 +21,3 @@ enum MenuOption
     RemoveHabit,
     ExitApplication,
 }
-

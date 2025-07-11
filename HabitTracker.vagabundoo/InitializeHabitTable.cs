@@ -1,7 +1,7 @@
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 
-namespace HabitTracker;
+namespace HabitTracker.vagabundoo;
 
 public static class InitializeDb
 {

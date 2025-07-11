@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace HabitTracker;
+namespace HabitTracker.vagabundoo;
 
 public class HabitController(string connectionString, string userName)
 {
