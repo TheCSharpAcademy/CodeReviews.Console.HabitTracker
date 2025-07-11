@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using HabitTracker;
+using Microsoft.Data.Sqlite;
 using Spectre.Console;
 using static System.Int32;
 
@@ -6,6 +7,9 @@ string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
 
 var userName = AnsiConsole.Ask<string>("What is your name?");
+
+AnsiConsole.MarkupLine($"[green] Hello {userName}![/]");
+AnsiConsole.MarkupLine($"Adding some example data to the habit tracker.");
 
 var queries = new Queries(dataSource);
 queries.InsertNewHabit(userName, "drinkingCoffee", 20, DateOnly.FromDateTime(DateTime.Now));
@@ -46,43 +50,6 @@ static void Initialize(string dataSource)
 }
 
 
-internal class UserInterface(string connectionString, string userName)
-{
-    private HabitController HabitController = new HabitController(connectionString, userName);
-    internal void MainMenu()
-    {
-        while (true)
-        {
-            //Console.Clear();
-
-            var choice = AnsiConsole.Prompt(
-                new SelectionPrompt<MenuOption>()
-                    .Title("What do you want to do next?")
-                    .AddChoices(Enum.GetValues<MenuOption>()));
-
-            switch (choice)
-            {
-                case MenuOption.InsertHabit:
-                    HabitController.InsertHabit();
-                    break;
-                case MenuOption.SeeHabits:
-                    HabitController.SeeHabits();
-                    break;
-                case MenuOption.UpdateHabit:
-                    HabitController.UpdateHabit();
-                    break;
-                case MenuOption.RemoveHabit:
-                    HabitController.RemoveHabit();
-                    break;
-                case MenuOption.ExitApplication:
-                    AnsiConsole.MarkupLine("[green]Goodbye![/]");
-                    return;
-            }
-
-        }
-    }
-}
-
 enum MenuOption
 {
     InsertHabit,
@@ -94,11 +61,11 @@ enum MenuOption
 
 public class HabitController(string connectionString, string userName)
 {
-    public Queries Queries = new Queries(connectionString);
+    private readonly Queries _queries = new Queries(connectionString);
     
     public void InsertHabit()
     {
-        var name = AnsiConsole.Prompt(
+        var habit = AnsiConsole.Prompt(
             new TextPrompt<string>("What habit do you want to log?"));
         var count = AnsiConsole.Prompt(
             new TextPrompt<int>("How often did you do the habit?")
@@ -124,31 +91,32 @@ public class HabitController(string connectionString, string userName)
                 }) // Considered making this programmatic, but the amount of complexity did not feel worth it.
                     );
         
-        Queries.InsertNewHabit(userName, name, count, day);
-        AnsiConsole.WriteLine($"You did {name}, {count} times on day {day}");
+        _queries.InsertNewHabit(userName, habit, count, day);
+        AnsiConsole.MarkupLine($"[blue]Added new habit: {habit}[/]");
+        AnsiConsole.WriteLine($"You did {habit}, {count} times on day {day}");
             
     }
 
     public void SeeHabits()
     {
-        var habits = Queries.RetrieveHabits(userName);
-        foreach (var dict in habits)
+        var habits = _queries.RetrieveHabits(userName);
+        foreach (var habit in habits)
         {
             
-            Console.WriteLine($"Habit: {dict["habit"]} Count: {dict["count"]} Day: {dict["date"]}");
+            Console.WriteLine($"Id: {habit["id"]}, Habit: {habit["habit"]}, Count: {habit["count"]}, Date: {habit["date"]}");
         }
     }
 
     public void UpdateHabit()
     {
-        var habits = Queries.RetrieveHabits(userName).ToList();
+        var habits = _queries.RetrieveHabits(userName).ToList();
         Console.WriteLine(habits);
         var habitChoice = new SelectionPrompt<string>();
         habitChoice.Title = "What habit do you want to change?";
         foreach (var habit in habits)
         {
             habitChoice.AddChoice(
-                $"{habit["id"]}, Habit: {habit["habit"]}, Count: {habit["count"]}, Date: {habit["date"]}");
+                $"Id: {habit["id"]}, Habit: {habit["habit"]}, Count: {habit["count"]}, Date: {habit["date"]}");
         }
         var selectedHabit = AnsiConsole.Prompt(habitChoice);
         var habitIndex = selectedHabit.Split(",")[0];
@@ -158,12 +126,12 @@ public class HabitController(string connectionString, string userName)
             new TextPrompt<int>("What new count do you want to give this habit?")
             );
         
-        Queries.UpdateHabit(habitInt, countChange);
+        _queries.UpdateHabit(habitInt, countChange);
     }
 
     public void RemoveHabit()
     {
-        var habits = Queries.RetrieveHabits(userName).ToList();
+        var habits = _queries.RetrieveHabits(userName).ToList();
         Console.WriteLine(habits);
         var habitChoice = new SelectionPrompt<string>();
         habitChoice.Title = "What habit do you want to change?";
@@ -175,7 +143,7 @@ public class HabitController(string connectionString, string userName)
         var selectedHabit = AnsiConsole.Prompt(habitChoice);
         var habitIndex = selectedHabit.Split(",")[0];
         var habitInt = Parse(habitIndex);
-        Queries.DeleteHabitById(habitInt);
+        _queries.DeleteHabitById(habitInt);
     }
 }
 
@@ -195,32 +163,11 @@ public class Queries(string connectionString)
         command.Parameters.AddWithValue("$date", day);
         command.ExecuteNonQuery();
         Connection.Close();
-        
-        //int rowCount = GetRowCount("habit");
-        var habits = RetrieveHabits(user);
     }
-
-    public int GetRowCount(string tableName)
-    {
-        Connection.Open();
-        string rowCountQuery = $"SELECT COUNT(*) FROM {tableName};";
-        int rowCount = 0;
-        using (SqliteCommand rowCountCommand = new SqliteCommand(rowCountQuery, Connection))
-        {
-            using var reader = rowCountCommand.ExecuteReader();
-            while (reader.Read())
-            {
-                rowCount = reader.GetInt32(0);
-            }
-        }
-        return rowCount;
-        Connection.Close();
-
-    }
+   
     public List<Dictionary<string, object>> RetrieveHabits(string user)
     {
         var list = new List<Dictionary<string, object>>();
-        var index = 0;
         string readQuery = $"select * from habit where user = '{user}' order by id;";
         using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
         {
@@ -240,9 +187,6 @@ public class Queries(string connectionString)
                         { "date", reader.GetDateTime(4) },
                     };
                     list.Add(dict);
-                    index++;
-                    
-                    
                 }
             }
             Connection.Close();
