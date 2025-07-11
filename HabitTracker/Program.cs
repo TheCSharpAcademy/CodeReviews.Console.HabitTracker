@@ -5,8 +5,8 @@ string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
 
 var queries = new Queries(dataSource);
-queries.InsertNewHabit("john", "drinkingCoffee", 20, DateTime.Now.Date);
-queries.InsertNewHabit("john", "drinkingWater", 10, DateTime.Now.Date);
+queries.InsertNewHabit("john", "drinkingCoffee", 20, DateTime.Today);
+queries.InsertNewHabit("john", "drinkingWater", 10, DateTime.Today);
 queries.RetrieveHabits("john");
 queries.UpdateHabit("john", "drinkingCoffee", 100);
 queries.RetrieveHabits("john");
@@ -191,14 +191,14 @@ public class Queries(string connectionString)
                     var row = new {
                         User = reader.GetString(1),
                         Count = reader.GetInt32(2),
-                        Date = reader.GetDateTime(3)
+                        Date = reader.GetString(3)
                     };
                     list.Add(row);
-                    Console.WriteLine($"Habit: {row.User} Count: {row.Count} Day: {row.Date.ToShortDateString()}");
+                    Console.WriteLine($"Habit: {row.User} Count: {row.Count} Day: {row.Date}");
                 }
             }
             Connection.Close();
-            return list;
+            return list;g
         }
     }
 
