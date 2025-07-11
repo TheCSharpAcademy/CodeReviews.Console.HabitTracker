@@ -7,6 +7,8 @@ Initialize(dataSource);
 var queries = new Queries(dataSource);
 queries.InsertNewHabit("john", "drinkingCoffee", 20, DateOnly.FromDateTime(DateTime.Now));
 queries.InsertNewHabit("john", "drinkingWater", 10, DateOnly.FromDateTime(DateTime.Now));
+queries.InsertNewHabit("john", "exercise", 10, DateOnly.FromDateTime(DateTime.Now));
+queries.InsertNewHabit("john", "drinkingMoreWater", 10, DateOnly.FromDateTime(DateTime.Now));
 queries.RetrieveHabits("john");
 queries.UpdateHabit("john", "drinkingCoffee", 100);
 queries.RetrieveHabits("john");
@@ -115,7 +117,6 @@ public class HabitController(string connectionString)
                     DateOnly.FromDateTime(DateTime.Now.AddDays(-6)),
                 })
                     );
-     
         
         Queries.InsertNewHabit("john", name, count, day);
         AnsiConsole.WriteLine($"You did {name}, {count} times on day {day}");
@@ -123,10 +124,25 @@ public class HabitController(string connectionString)
     }
 
     public void SeeHabits()
-    {}
+    {
+        var habits = Queries.RetrieveHabits("john");
+        foreach (var row in habits)
+        {
+            AnsiConsole.WriteLine($"{row}");
+        }
+    }
 
     public void UpdateHabit()
     {
+        var habits = Queries.RetrieveHabits("john").ToList();
+        Console.WriteLine(habits);
+        var habitChoice = new SelectionPrompt<string>();
+        habitChoice.Title = "What habit do you want to change?";
+        foreach (var habit in habits)
+        {
+            habitChoice.AddChoice(habit.ToString());
+        }
+        var selectedHabit = AnsiConsole.Prompt(habitChoice);
     }
 
     public void RemoveHabit()
@@ -186,12 +202,12 @@ public class Queries(string connectionString)
                 while (reader.Read())
                 {
                     var row = new {
-                        User = reader.GetString(1),
-                        Count = reader.GetInt32(2),
-                        Date = reader.GetString(3)
+                        Habit = reader.GetString(2),
+                        Count = reader.GetInt32(3),
+                        Date = reader.GetString(4)
                     };
                     list.Add(row);
-                    Console.WriteLine($"Habit: {row.User} Count: {row.Count} Day: {row.Date}");
+                    Console.WriteLine($"Habit: {row.Habit} Count: {row.Count} Day: {row.Date}");
                 }
             }
             Connection.Close();
