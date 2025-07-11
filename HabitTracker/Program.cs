@@ -48,7 +48,7 @@ internal class UserInterface(string connectionString)
     {
         while (true)
         {
-            Console.Clear();
+            //Console.Clear();
 
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<MenuOption>()
@@ -59,7 +59,6 @@ internal class UserInterface(string connectionString)
             {
                 case MenuOption.InsertHabit:
                     HabitController.InsertHabit();
-                    
                     break;
                 case MenuOption.SeeHabits:
                     HabitController.SeeHabits();
@@ -103,7 +102,20 @@ public class HabitController(string connectionString)
                     }
                 ));
         var day = AnsiConsole.Prompt(
-            new TextPrompt<DateOnly>("What day did you do the habit?"));
+            new SelectionPrompt<DateOnly>()
+                .Title("What day do you want to log?")
+                .AddChoices(new DateOnly[]
+                {
+                    DateOnly.FromDateTime(DateTime.Now),
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(-2)),
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(-3)),
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(-4)),
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(-6)),
+                })
+                    );
+     
         
         Queries.InsertNewHabit("john", name, count, day);
         AnsiConsole.WriteLine($"You did {name}, {count} times on day {day}");
@@ -139,23 +151,8 @@ public class Queries(string connectionString)
         command.ExecuteNonQuery();
         Connection.Close();
         
-        int rowCount = GetRowCount("habit");
-        Console.WriteLine($"Amount of rows after insert operation: {rowCount}");
-        
-        string readQuery = $"select * from habit where id = {rowCount};";
-        using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
-        {
-            using var reader = readCommand.ExecuteReader();
-			
-            {
-                while (reader.Read())
-                {
-                    Console.WriteLine($"Added habit {reader.GetString(2)} to user {reader.GetString(1)}, counted {reader.GetInt32(3)} times, on day: {reader.GetDateTime(4)}");
-                }
-            }
-        }
-        
-        Connection.Close();
+        //int rowCount = GetRowCount("habit");
+        var habits = RetrieveHabits(user);
     }
 
     public int GetRowCount(string tableName)
