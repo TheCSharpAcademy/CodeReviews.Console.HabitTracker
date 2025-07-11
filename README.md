@@ -1,4 +1,7 @@
-## Requirements
+## Project - Habit Tracker Console application
+**with Sqlite database backend & ADO.NET**
+
+## Given requirements
 
 - This is an application where you’ll log occurrences of a habit.
 - This habit can't be tracked by time (ex. hours of sleep), only by quantity (ex. number of water glasses a day)
@@ -13,23 +16,23 @@
 - Your project needs to contain a Read Me file where you'll explain how your app works. 
 
 ## References
-https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
+Project description: https://thecsharpacademy.com/project/12/habit-logger  
+Docs for ADO.NET: https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
 
 ## Sample user case
-
 - User starts app
 - User provides name
 - Options:
   - retrieve stored habits 
   - insert habit
-  - update previous habits: count
+  - update previous habits bycount
   - delete single habit
-  - delete all instances of a habit
+  - exit application
 
 ## Still to do
-- Make user dynamic -> add new prompt at start to provide a username
-- Split up methods to separate files
-- Fix printing to console
-- Add some colour to messages.
+- Make user dynamic -> add new prompt at start to provide a username - DONE
+- Split up methods to separate files - DONE
+- Fix printing to console - DONE
+- Add some colour to messages - DONE
 
 

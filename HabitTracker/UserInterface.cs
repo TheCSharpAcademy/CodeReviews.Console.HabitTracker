@@ -4,7 +4,7 @@ namespace HabitTracker;
 
 internal class UserInterface(string connectionString, string userName)
 {
-    private readonly HabitController _habitController = new HabitController(connectionString, userName);
+    private readonly HabitController _habitController = new(connectionString, userName);
     internal void MainMenu()
     {
         while (true)
