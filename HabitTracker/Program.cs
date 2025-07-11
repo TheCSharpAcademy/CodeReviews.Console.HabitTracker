@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Spectre.Console;
+using static System.Int32;
 
 string dataSource = "DataSource=habittracker.db";
 Initialize(dataSource);
@@ -10,7 +11,7 @@ queries.InsertNewHabit("john", "drinkingWater", 10, DateOnly.FromDateTime(DateTi
 queries.InsertNewHabit("john", "exercise", 10, DateOnly.FromDateTime(DateTime.Now));
 queries.InsertNewHabit("john", "drinkingMoreWater", 10, DateOnly.FromDateTime(DateTime.Now));
 queries.RetrieveHabits("john");
-queries.UpdateHabit("john", "drinkingCoffee", 100);
+queries.UpdateHabit(1, 100);
 queries.RetrieveHabits("john");
 queries.DeleteHabit("john", "drinkingCoffee");
 queries.RetrieveHabits("john");
@@ -141,16 +142,35 @@ public class HabitController(string connectionString)
         habitChoice.Title = "What habit do you want to change?";
         foreach (var habit in habits)
         {
-            habitChoice.AddChoice(habit.ToString());
+            habitChoice.AddChoice(
+                $"{habit["id"]}, Habit: {habit["habit"]}, Count: {habit["count"]}, Date: {habit["date"]}");
         }
         var selectedHabit = AnsiConsole.Prompt(habitChoice);
-        var user = "john";
-        //var count = habits[]
+        var habitIndex = selectedHabit.Split(",")[0];
+        var habitInt = Parse(habitIndex);
+
+        var countChange = AnsiConsole.Prompt(
+            new TextPrompt<int>("What new count do you want to give this habit?")
+            );
         
+        Queries.UpdateHabit(habitInt, countChange);
     }
 
     public void RemoveHabit()
     {
+        var habits = Queries.RetrieveHabits("john").ToList();
+        Console.WriteLine(habits);
+        var habitChoice = new SelectionPrompt<string>();
+        habitChoice.Title = "What habit do you want to change?";
+        foreach (var habit in habits)
+        {
+            habitChoice.AddChoice(
+                $"{habit["id"]}, Habit: {habit["habit"]}, Count: {habit["count"]}, Date: {habit["date"]}");
+        }
+        var selectedHabit = AnsiConsole.Prompt(habitChoice);
+        var habitIndex = selectedHabit.Split(",")[0];
+        var habitInt = Parse(habitIndex);
+        Queries.DeleteHabitById(habitInt);
     }
 }
 
@@ -226,10 +246,10 @@ public class Queries(string connectionString)
         return list;
     }
 
-    public void UpdateHabit(string user, string habit, int count)
+    public void UpdateHabit(int id,int count)
     {
         Connection.Open();
-        string updateQuery = $"update habit set count = {count} where user = '{user}' and habit = '{habit}'; ";
+        string updateQuery = $"update habit set count = {count} where id = {id}; ";
         using var command = Connection.CreateCommand();
         command.CommandText = updateQuery;
         command.ExecuteNonQuery();
@@ -244,5 +264,17 @@ public class Queries(string connectionString)
         command.CommandText = updateQuery;
         command.ExecuteNonQuery();
         Connection.Close();
+    }
+
+    public void DeleteHabitById(int id)
+    {
+        {
+            Connection.Open();
+            string updateQuery = $"delete from habit where id = {id}; ";
+            using var command = Connection.CreateCommand();
+            command.CommandText = updateQuery;
+            command.ExecuteNonQuery();
+            Connection.Close();
+        }
     }
 }

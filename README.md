@@ -25,3 +25,11 @@ https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
   - update previous habits: count or date
   - delete single habit
   - delete all instances of a habit
+
+## Still to do
+- Make user dynamic -> add new prompt at start to provide a username
+- Split up methods to separate files
+- Fix printing to console
+- Add some colour to messages.
+
+
