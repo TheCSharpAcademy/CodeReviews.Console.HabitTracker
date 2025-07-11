@@ -23,26 +23,23 @@ public class Queries(string connectionString)
     public List<Dictionary<string, object>> RetrieveHabits(string user)
     {
         var list = new List<Dictionary<string, object>>();
-        string readQuery = $"select * from habit where user = '{user}' order by id;";
+        string readQuery = $"SELECT * FROM habit WHERE user = '{user}' ORDER BY id;";
         using (SqliteCommand readCommand = new SqliteCommand(readQuery, Connection))
         {
             Connection.Open();
-            
 			using var reader = readCommand.ExecuteReader();
             
+            while (reader.Read())
             {
-                while (reader.Read())
+                var  dict = new Dictionary<string, object>()
                 {
-                    var  dict = new Dictionary<string, object>()
-                    {
-                        { "id", reader.GetInt32(0) },
-                        { "user", reader.GetString(1) },
-                        { "habit", reader.GetString(2) },
-                        { "count", reader.GetInt32(3) },
-                        { "date", reader.GetDateTime(4) },
-                    };
-                    list.Add(dict);
-                }
+                    { "id", reader.GetInt32(0) },
+                    { "user", reader.GetString(1) },
+                    { "habit", reader.GetString(2) },
+                    { "count", reader.GetInt32(3) },
+                    { "date", reader.GetDateTime(4) },
+                };
+                list.Add(dict);
             }
             Connection.Close();
             
