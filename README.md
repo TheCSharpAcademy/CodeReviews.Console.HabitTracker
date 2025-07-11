@@ -19,6 +19,8 @@
 Project description: https://thecsharpacademy.com/project/12/habit-logger  
 Docs for ADO.NET: https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=net-cli
 
+![Screenshot of App](./screenshot.png)
+
 ## Sample user case
 - User starts app
 - User provides name
