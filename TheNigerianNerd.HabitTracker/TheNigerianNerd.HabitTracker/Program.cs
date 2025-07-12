@@ -61,7 +61,92 @@ void MainMenu()
         }
     }
 }
+bool IsTableEmplty(string tableName)
+{
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = $"SELECT COUNT(*) FROM {tableName}";
+            long count = (long)command.ExecuteScalar();
 
+            return count == 0;
+        }
+    }
+}
+void SeedData()
+{
+    bool recorsTableEmpty = IsTableEmplty("records");
+    bool habitsTableEmpty = IsTableEmplty("habits");
+
+    if (!recorsTableEmpty || !habitsTableEmpty)
+        return;
+
+    string[] habitnames = { "Reading", "Running", "Chocolate", "Drinking Water", "Glasses of Wine" };
+    string[] habitUnits = { "Pages", "Meters", "Grams", "Mililiters", "Mililiters" };
+    string[] dates = GenerateRandomDates(100);
+    int[] quantities = GenerateRandomQuantities(100, 0, 2000);
+
+    using (var connection = new SqliteConnection(connectionString))
+    {
+        connection.Open();
+        
+        for (int i = 0; i < habitnames.Length; i++)
+        {
+            var insertSql = $"INSERT INTO habits (Name, MeasurementUnit) VALUES ('{habitnames[i]}', '{habitUnits[i]}');";
+            var command = new SqliteCommand(insertSql, connection);
+
+            command.ExecuteNonQuery();
+        }
+
+        for (int i = 0; i < 100; i++)
+        {
+            var insertSql = $"INSERT INTO records (Date, Quantity, HabitId) VALUES ('{dates[i]}', {quantities[i]}, {GetRandomHabitId()});";
+            var command = new SqliteCommand(insertSql, connection);
+
+            command.ExecuteNonQuery();
+        }
+    }
+}
+int[] GenerateRandomQuantities(int count, int min, int max)
+{
+    Random random = new Random();
+    int[] quantities = new int[count];
+
+    for (int i = 0; i < count; i++)
+    {
+        // max + 1 because the top range is excluded 
+        quantities[i] = random.Next(min, max + 1);
+    }
+
+    return quantities;
+}
+
+string[] GenerateRandomDates(int count)
+{
+    DateTime startDate = new DateTime(2023, 1, 1);
+    DateTime endDate = new DateTime(2024, 12, 31);
+    TimeSpan range = endDate - startDate;
+
+    string[] randomDateStrings = new string[count];
+    Random random = new Random();
+
+    for (int i = 0; i < count; i++)
+    {
+        int daysToAdd = random.Next(0, (int)range.TotalDays);
+        DateTime randomDate = startDate.AddDays(daysToAdd);
+        randomDateStrings[i] = randomDate.ToString("dd-MM-yy");
+    }
+
+    return randomDateStrings;
+}
+
+int GetRandomHabitId()
+{
+    Random random = new Random();
+    return random.Next(1, 6);
+}
 void UpdateRecord()
 {
     GetRecords();
@@ -339,7 +424,7 @@ void ViewRecords(List<RecordWithHabit> records)
 
     foreach (var record in records)
     {
-        table.AddRow(record.Id.ToString(), record.Date.ToString(), $"{record.Quantity} {record.MeasurementUnit}", record.HabitName.ToString());
+        table.AddRow(record.Id.ToString(), record.Date.ToString("D"), $"{record.Quantity} {record.MeasurementUnit}", record.HabitName.ToString());
     }
 
     AnsiConsole.Write(table);
@@ -425,6 +510,7 @@ void CreateDatabase()
             tableCmd.ExecuteNonQuery();
         }
     }
+    SeedData();
 }
 record Habit(int Id, string Name, string UnitOfMeasurement);
 record RecordWithHabit(int Id, DateTime Date, int Quantity, string HabitName, string MeasurementUnit);
