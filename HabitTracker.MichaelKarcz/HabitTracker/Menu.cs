@@ -103,7 +103,6 @@ internal static class Menu
         Console.Clear();
         ShowAllRecords();
         
-        List<int> allIds = SqlHelper.GetAllIds();
         int recordId;
         do 
         { 
