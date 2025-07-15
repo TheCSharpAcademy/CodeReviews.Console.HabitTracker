@@ -25,13 +25,10 @@ A simple, extensible **.NET console application** that helps users manage and tr
 The app uses `Spectre.Console` to render beautiful tables in the terminal:
 
 
-+----+------------+--------+--------------------+
-| Id | Date | Amount | Habit |
-+----+------------+--------+--------------------+
-| 1 | Jan 5, 2024| 1500g | Drinking Water |
-| 2 | Feb 7, 2024| 12pgs | Reading |
-+----+------------+--------+--------------------+
-
+| Id | Date        | Amount | Habit          |
+|----|-------------|--------|----------------|
+| 1  | Jan 5, 2024 | 1500g  | Drinking Water |
+| 2  | Feb 7, 2024 | 12pgs  | Reading        |
 
 ---
 
