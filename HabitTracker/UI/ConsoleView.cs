@@ -34,7 +34,7 @@ public class ConsoleView : IView
         do
         {
             var entry = Console.ReadLine();
-            if (entry == null) Console.WriteLine("Please enter something!");
+            if (string.IsNullOrWhiteSpace(entry)) Console.WriteLine("Please enter something!");
             else return entry;
         } while (true);
     }

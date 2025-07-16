@@ -1,6 +1,5 @@
 ﻿using HabitTracker.Application.DTOs;
 using HabitTracker.Application.Services;
-using HabitTracker.Domain.Models;
 using HabitTracker.UI.Interfaces;
 
 namespace HabitTracker.UI.Controllers;
@@ -18,10 +17,13 @@ public class ConsoleUiController(HabitService habitService,
         {5, "Delete habit"},
         {6, "Exit application"}
     };
+
+    public bool Running { get; private set; }
     
     public void Initialize()
     {
         view.DisplayHeader();
+        Running = true;
     }
 
     public void Execute()
@@ -39,6 +41,7 @@ public class ConsoleUiController(HabitService habitService,
             else
             {
                 HandleMainMenuSelection(selection);
+                return;
             }
         } while (true);
     }
@@ -162,7 +165,7 @@ public class ConsoleUiController(HabitService habitService,
     private void HandleExit()
     {
         view.DisplayMessage("Goodbye!");
-        Environment.Exit(0);
+        Running = false;
     }
 
     private int GetHabitSelection(IReadOnlyList<HabitDisplayDto> habits)

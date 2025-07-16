@@ -19,4 +19,7 @@ ConsoleUiController controller = new ConsoleUiController(habitService, occurrenc
 
 initializer.Initialize();
 controller.Initialize();
-controller.Execute();
+while (controller.Running)
+{
+    controller.Execute();
+}
