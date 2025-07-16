@@ -131,7 +131,6 @@ class Database
             SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                // we need to format the date back to original format we asked for (yyyy-MM-dd) > (dd-MM-yy)
                 DateTime date = DateTime.ParseExact(reader.GetString(4), "yyyy-MM-dd", new CultureInfo("en-US"));
                 records.Add($"{reader.GetInt32(0)}. {reader.GetString(1)} - {reader.GetInt32(2)} {reader.GetString(3)} at {date:dd-MM-yy}");
             }
