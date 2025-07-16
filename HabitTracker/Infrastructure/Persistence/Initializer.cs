@@ -17,17 +17,17 @@ public class Initializer(string connectionString)
         }
     }
 
-    private int CreateHabitsTable(SqliteConnection connection)
+    private void CreateHabitsTable(SqliteConnection connection)
     {
         string query = "CREATE TABLE IF NOT EXISTS habits" +
                        "(id INTEGER PRIMARY KEY," +
                        "name VARCHAR(64) NOT NULL," +
                        "unit VARCHAR(64) NOT NULL)";
         var command = new SqliteCommand(query, connection);
-        return command.ExecuteNonQuery();
+        command.ExecuteNonQuery();
     }
 
-    private int CreateOccurrencesTable(SqliteConnection connection)
+    private void CreateOccurrencesTable(SqliteConnection connection)
     {
         string query = "CREATE TABLE IF NOT EXISTS occurrences" +
                        "(id INTEGER PRIMARY KEY," +
@@ -35,6 +35,6 @@ public class Initializer(string connectionString)
                        "habit_id INTEGER NOT NULL," +
                        "FOREIGN KEY(habit_id) REFERENCES habits(id) ON DELETE CASCADE)";
         var command = new SqliteCommand(query, connection);
-        return command.ExecuteNonQuery();
+        command.ExecuteNonQuery();
     }
 }
