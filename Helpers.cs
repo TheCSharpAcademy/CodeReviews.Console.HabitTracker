@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace habit_logger;
 
@@ -30,28 +31,177 @@ class Helpers
                     closeApp = true;
                     break;
                 case "1":
-                    Database.ShowAllRecords(true);
+                    ShowAllRecords(true);
                     break;
                 case "2":
-                    Database.InsertNewRecord();
+                    InsertNewRecord();
                     break;
                 case "3":
-                    Database.DeleteRecord();
+                    DeleteRecord();
                     break;
                 case "4":
-                    Database.UpdateRecord();
+                    UpdateRecord();
                     break;
                 case "5":
-                    Database.AddNewHabit();
+                    AddNewHabit();
                     break;
                 case "6":
-                    Database.GenerateReport();
+                    ShowReport();
                     break;
                 default:
                     Console.WriteLine("Invalid input, please choose one of the listed options.");
                     break;
             }
         }
+    }
+
+    private static void ShowReport()
+    {
+        Habit habit = PickHabit();
+        var report = Database.GenerateReport(habit);
+
+        // no keys in the dictionary meaning no data returned.
+        if (report.Count == 0)
+        {
+            Console.WriteLine("No data for habit could not be found.");
+            return;
+        }
+
+        Console.WriteLine(@$"
+            {habit.Unit} : {report["TotalQuantity"]}
+            Total Record: {report["RecordCount"]}
+            Average per record: {report["AverageQuantity"]} {habit.Unit}
+            Minimum: {report["MinQuantity"]}
+            Maximum: {report["MaxQuantity"]}
+            First record: {report["FirstRecord"]}
+            Last Record: {report["LastRecord"]}
+        ");
+
+        Console.ReadKey();
+    }
+
+    private static void UpdateRecord()
+    {
+        Console.Clear();
+        if (!Database.HasHabits())
+        {
+            Console.WriteLine("There are no habits to update results of.");
+            return;
+        }
+        ShowAllRecords();
+
+        var recordId = GetNumberInput("Please type the Id of the record you want to update or type 0 to go back to Main Menu");
+        if (recordId == -1) return;
+
+        if (!Database.RecordExists(recordId))
+        {
+            Console.WriteLine($"Record with ID: {recordId} does not exist.");
+            UpdateRecord();
+            return;
+        }
+        string date = GetDateInput();
+        if (date == "0") return;
+        int quantity = GetNumberInput();
+
+        Database.UpdateRecord(recordId, date, quantity);
+    }
+
+    private static void DeleteRecord()
+    {
+        if (!Database.HasHabits())
+        {
+            Console.WriteLine("There are no habits to delete records from.");
+            return;
+        }
+
+        Console.Clear();
+        ShowAllRecords();
+
+        var recordId = GetNumberInput("Please type the Id of the record you want to delete or type 0 to go back to Main Menu");
+
+        if (recordId == 0) return;
+
+        if (!Database.RecordExists(recordId))
+        {
+            Console.WriteLine($"Record with ID: {recordId} does not exist.");
+            DeleteRecord();
+            return;
+        }
+
+        Database.DeleteRecord(recordId);
+        Console.WriteLine($"Record with Id {recordId} deleted.");
+    }
+
+    private static void InsertNewRecord()
+    {
+        if (!Database.HasHabits())
+        {
+            Console.WriteLine("There are no habits to insert into.");
+            return;
+        }
+
+        Habit habit = PickHabit();
+
+        string date = GetDateInput();
+        if (date == "0") return;
+        int quantity = GetNumberInput();
+
+        Database.InsertRecord(habit.Id, date, quantity);
+    }
+
+    private static void ShowAllRecords(bool stopTerminal = false)
+    {
+        if (!Database.HasHabits())
+        {
+            Console.WriteLine("There are no habits to show records of.");
+            return;
+        }
+        List<string> records = Database.GetAllRecords();
+
+        foreach (string record in records)
+        {
+            Console.WriteLine(record);
+        }
+
+        if (stopTerminal) Console.ReadKey();
+    }
+
+    private static bool IsValidHabitName(string name)
+    {
+        // This regex ensures that habit name:
+        // > Starts with a letter
+        // > Contains only letters
+        // > No numbers, special symbols (except _ and -)
+        return Regex.IsMatch(name, @"^[a-zA-Z][a-zA-Z _-]*$");
+    }
+
+    public static void AddNewHabit()
+    {
+        Console.Clear();
+
+        Console.WriteLine("Currently logged habits:");
+        ListAllHabits();
+        var habits = Database.GetAllHabits();
+
+        Console.WriteLine("Provide the table name for the new habit.");
+        string newHabit = Console.ReadLine();
+
+        while (!IsValidHabitName(newHabit) || habits.Any(h => h.Name.Contains(newHabit)))
+        {
+            Console.WriteLine("Habit name invalid or habit already exists.");
+            newHabit = Console.ReadLine();
+        }
+
+        Console.WriteLine("Please provide the unit name for the new habit");
+        string unit = Console.ReadLine();
+
+        while (unit.Trim().Length == 0 || string.IsNullOrEmpty(unit))
+        {
+            Console.WriteLine("Unit name needs to be at least 1 letter long.");
+            unit = Console.ReadLine();
+        }
+
+        Database.AddHabit(newHabit, unit);
     }
 
     public static Habit PickHabit()
