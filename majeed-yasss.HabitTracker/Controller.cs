@@ -50,14 +50,10 @@ internal class Controller
                 break;
         }
     }
-    /// <summary>
-    /// as the name suggests
-    /// </summary>
-    /// <returns>false if the list of records is empty, otherwise true.</returns>
-    private static bool GetAllRecords()
+    private static void GetAllRecords()
     {
         List<DrinkingWater> tableData = Model.GetAllRecords();
-        return View.Records(tableData);
+        View.Records(tableData);
     }
     private static void Insert()
     {

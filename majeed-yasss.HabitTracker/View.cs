@@ -7,17 +7,15 @@ internal class View
     public static Option MainMenu()
     {
         Console.Clear();
-        {
-            Console.WriteLine("\n\nMAIN MENU");
-            Console.WriteLine("------------------------------------------\n");
-            string choice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("What do you want to do next?")
-                .AddChoices(Options.Labels.Keys));
-            Console.WriteLine("------------------------------------------\n");
+        Console.WriteLine("\n\nMAIN MENU");
+        Console.WriteLine("------------------------------------------\n");
+        string choice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("What do you want to do next?")
+            .AddChoices(Options.Labels.Keys));
+        Console.WriteLine("------------------------------------------\n");
 
-            return Options.Labels[choice];
-        }
+        return Options.Labels[choice];
     }
     public static void Exit()
     {
