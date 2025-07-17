@@ -8,7 +8,6 @@ public class DatabaseManager
     readonly private string filename = "habitdatabase.db";
     public DatabaseManager()
     {
-        //File.Delete(filename);
         CreateEntitiesAndBootstrapData();
     }
 

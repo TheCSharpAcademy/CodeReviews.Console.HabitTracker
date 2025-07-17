@@ -72,9 +72,9 @@ class Program
 
     private static void InsertRecord()
     {
-        bool HabitIdSuccess = readHabitId(out int habitId);
-        bool frequencySuccess = readFrequency(out int frequency);
-        bool occurrenceDateSuccess = readDate(out DateOnly occurrenceDate);
+        bool HabitIdSuccess = ReadHabitId(out int habitId);
+        bool frequencySuccess = ReadFrequency(out int frequency);
+        bool occurrenceDateSuccess = ReadDate(out DateOnly occurrenceDate);
 
         Console.Write("\n");
 
@@ -85,7 +85,7 @@ class Program
                 Console.WriteLine("Unable to insert occurrence.");
     }
 
-    private static bool readDate(out DateOnly occurrenceDate)
+    private static bool ReadDate(out DateOnly occurrenceDate)
     {
         Console.WriteLine("Occurrence Date: ");
         string? occurrenceDateInput = Console.ReadLine();
@@ -94,7 +94,7 @@ class Program
         return occurrenceDateSuccess;
     }
 
-    private static bool readFrequency(out int frequency)
+    private static bool ReadFrequency(out int frequency)
     {
         Console.WriteLine("Frequency: ");
         string? frequencyInput = Console.ReadLine();
@@ -103,7 +103,7 @@ class Program
         return frequencySuccess;
     }
 
-    private static bool readHabitId(out int habitId)
+    private static bool ReadHabitId(out int habitId)
     {
         Console.WriteLine("Available Habits:");
         foreach (Habit habit in habitDatabase.GetAvailableHabits())
@@ -138,15 +138,15 @@ class Program
     {
         HabitOccurrence updated = originalOccurrence;
 
-        bool HabitIdSuccess = readHabitId(out int habitId);
+        bool HabitIdSuccess = ReadHabitId(out int habitId);
         if (HabitIdSuccess)
             updated = originalOccurrence with { HabitId = habitId };
 
-        bool frequencySuccess = readFrequency(out int frequency);
+        bool frequencySuccess = ReadFrequency(out int frequency);
         if (frequencySuccess)
             updated = updated with { NumberOfOccurrences = frequency };
 
-        bool occurrenceDateSuccess = readDate(out DateOnly occurrenceDate);
+        bool occurrenceDateSuccess = ReadDate(out DateOnly occurrenceDate);
         if (occurrenceDateSuccess)
             updated = updated with { OccurrenceDate = occurrenceDate };
 
