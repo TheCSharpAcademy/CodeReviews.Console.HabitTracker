@@ -13,6 +13,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.db
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -417,3 +418,5 @@ HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/HabitTracker.Ma
 HabitTracker.MartinL-no/.DS_Store
 HabitTracker.MartinL-no/habitTracker.MartinL-no/.DS_Store
 /HabitTracker.Johay90/HabitTracker/habit_tracker.db
+/HabitTracker.TruthfulUK/to-do.txt
+/HabitTracker.TruthfulUK/Properties/launchSettings.json
