@@ -1,16 +1,22 @@
 ﻿using HabitTracker.TruthfulUK;
+using HabitTracker.TruthfulUK.Helpers;
 using Microsoft.Data.Sqlite;
 
+// [Debug] Delete old database file if it exists
 if (File.Exists("HabitsTrackerLocalDB.db"))
 {
     File.Delete("HabitsTrackerLocalDB.db");
 }
 
-DatabaseUtilities.InitializeDatabase();
-Console.WriteLine("Database initialized.");
+// [Debug] Initialize new database and seed it
+if (!File.Exists("HabitsTrackerLocalDB.db"))
+{
+    DB_Helpers.InitializeDatabase();
+    Console.WriteLine("Database initialized.");
 
-DatabaseUtilities.SeedDatabase();
-Console.WriteLine("Database seeded with initial data.");
+    DB_Helpers.SeedDatabase();
+    Console.WriteLine("Database seeded with initial data.");
+    Console.ReadKey();
+}
 
-Console.ReadKey();
-SqliteConnection.ClearAllPools();
+UserInterface.DisplayMainMenu();

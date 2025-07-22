@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 
-namespace HabitTracker.TruthfulUK;
-public class DatabaseUtilities
+namespace HabitTracker.TruthfulUK.Helpers;
+public class DB_Helpers
 {
     public static SqliteConnection GetOpenConnection() { 
         var connection = new SqliteConnection("Data Source=HabitsTrackerLocalDB.db");
