@@ -8,12 +8,12 @@
         private int startIndex;
         private int endIndex;
 
-        public int RecordCount { get; private set; } = 0;
-        public int DayCount { get; private set; } = 0;
-        public double Sum { get; private set; } = 0;
-        public double DailyAverage { get; private set; } = 0;
-        public int StreakDuration { get; private set; } = 0;
-        public double StreakQuantity { get; private set; } = 0;
+        public int RecordCount { get; private set; }
+        public int DayCount { get; private set; }
+        public double Sum { get; private set; }
+        public double DailyAverage { get; private set; }
+        public int StreakDuration { get; private set; }
+        public double StreakQuantity { get; private set; }
         public DateTime StreakStartDate { get; private set; }
 
 

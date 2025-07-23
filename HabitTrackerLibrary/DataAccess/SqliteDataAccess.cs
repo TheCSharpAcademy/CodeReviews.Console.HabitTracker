@@ -4,7 +4,7 @@ namespace HabitTrackerLibrary
 {
     public class SqliteDataAccess
     {
-        public string connectionStringName { get; set; }
+        private readonly string connectionStringName;
 
         public SqliteDataAccess(string connectionString)
         {

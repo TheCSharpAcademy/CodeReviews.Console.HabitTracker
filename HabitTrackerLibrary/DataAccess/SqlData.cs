@@ -196,8 +196,6 @@ namespace HabitTrackerLibrary.DataAccess
 
         public bool RecordExists(string tableName, int recordId = -1)
         {
-            bool recordExists = false;
-
             using (var connection = new SqliteConnection(connectionStringName))
             {
                 connection.Open();

@@ -45,6 +45,10 @@ namespace HabitTracker
         public ConsoleUI(SqlData sqlData)
         {
             this.sqlData = sqlData;
+        }
+
+        public void RunApplication()
+        {
             MenuHandler_MainMenu();
         }
 
@@ -232,7 +236,7 @@ namespace HabitTracker
         }
         private void ProcessManager_UpdateRecord(List<RecordModel> sortedRecords, HabitModel habit)
         {
-            var record = GetRecordFromList(sortedRecords, "change", habit);
+            var record = GetRecordFromList(sortedRecords, "change");
             PrintRecordData("Changing", record.Quantity, habit.UnitName, habit.HabitName, record.Date.ToString("yyyy-MM-dd"));
 
             (bool dateChanged, var newDate) = GetUpdatedDateFromUser(record.Date);
@@ -243,7 +247,7 @@ namespace HabitTracker
         }
         private void ProcessManager_DeleteRecord(List<RecordModel> sortedRecords, HabitModel habit)
         {
-            var record = GetRecordFromList(sortedRecords, "delete", habit);
+            var record = GetRecordFromList(sortedRecords, "delete");
 
             PrintRecordData("Preparing to delete", record.Quantity, habit.UnitName, habit.HabitName, record.Date.ToString("yyyy-MM-dd"));
 
@@ -465,7 +469,7 @@ namespace HabitTracker
             
             return habitList[userSelection - 1];
         }
-        private RecordModel GetRecordFromList(List<RecordModel> sortedRecords, string action, HabitModel habit)
+        private RecordModel GetRecordFromList(List<RecordModel> sortedRecords, string action)
         {
             int userSelection = (int)UserInput.GetNumberInput($"Enter ID of the record you wish to {action}: ", 1, sortedRecords.Count());
             
@@ -528,7 +532,6 @@ namespace HabitTracker
         private string GetNewUnitName()
         {
             var unitName = string.Empty;
-            var status = string.Empty;
             bool unitExists = true;
 
             while (unitExists == true)

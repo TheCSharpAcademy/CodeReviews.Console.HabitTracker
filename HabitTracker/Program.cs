@@ -13,6 +13,7 @@ namespace HabitTracker
             var sqlData = new SqlData(db, connectionString);
             DBInitializationData.InitializeTables(db, sqlData);
             var consoleUI = new ConsoleUI(sqlData);
+            consoleUI.RunApplication();
         }
     }
 }
