@@ -1,10 +1,7 @@
 ﻿using HabitTracker.TruthfulUK.Helpers;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
-using System.Reflection.PortableExecutable;
-using System.Xml.Linq;
 using static HabitTracker.TruthfulUK.Enums;
-using static HabitTracker.TruthfulUK.Helpers.UIHelpers;
 
 namespace HabitTracker.TruthfulUK;
 internal static class UserInterface
@@ -13,7 +10,7 @@ internal static class UserInterface
 
     public static void DisplayMainMenu()
     {
-        var options = GetMenuOptions<MainMenu>();
+        var options = UIHelpers.GetMenuOptions<MainMenu>();
 
         while (!exitRequested)
         {
@@ -50,15 +47,9 @@ internal static class UserInterface
             }
         }
     }
-
-    public static void ContinuePrompt()
-    {
-        AnsiConsole.MarkupLine("[yellow]Press any key to continue...[/]");
-        Console.ReadKey();
-    }
     public static void DisplayManageHabitsMenu()
     {
-        var options = GetMenuOptions<ManageHabitLogs>();
+        var options = UIHelpers.GetMenuOptions<ManageHabitLogs>();
 
         var selectedOption = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -66,74 +57,24 @@ internal static class UserInterface
                     .AddChoices(options.Keys));
 
         var selectedEnum = options[selectedOption];
-        var selectedHabit = string.Empty;
-        var selectedMeasurement = string.Empty;
 
         switch (selectedEnum)
         {
             case ManageHabitLogs.AddNewHabitLog:
-
-                selectedHabit = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Please select an [blue]option[/]:")
-                    .AddChoices(DB_Helpers.SelectHabits()));
-
-                selectedMeasurement = DB_Helpers.SelectMeasurement(selectedHabit);
-
-                var loggedMeasurement = AnsiConsole.Prompt(
-                    new TextPrompt<int>($"Enter amount ({selectedMeasurement}):"));
-
-                var loggedDate = AnsiConsole.Prompt(
-                    new TextPrompt<DateOnly>("Enter the date (YYYY-MM-DD) or leave blank for today:").AllowEmpty());
-
-                DB_Helpers.AddHabitLog(selectedHabit, loggedMeasurement, loggedDate);
-
-                Console.WriteLine();
-                AnsiConsole.MarkupLine($"[green]Habit log for {selectedHabit} added successfully![/]");
-                Console.WriteLine();
-
-                ContinuePrompt();
+                HabitsManager.AddNewHabitLog();
+                UIHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.ViewHabitLogs:
-
-                selectedHabit = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Please select an [blue]option[/]:")
-                    .AddChoices(DB_Helpers.SelectHabits()));
-
-                DB_Helpers.ViewHabitLogs(selectedHabit);
-
-                List<(string, string)> habitLogs = DB_Helpers.ViewHabitLogs(selectedHabit);
-                selectedMeasurement = DB_Helpers.SelectMeasurement(selectedHabit);
-
-                var habitLogsTable = new Table();
-                habitLogsTable
-                    .AddColumn("[white on blue] Habit [/]")
-                    .AddColumn("[white on blue] Amount [/]")
-                    .AddColumn("[white on blue] Date [/]");
-
-                foreach ((string, string) log in habitLogs)
-                {
-                    habitLogsTable.AddRow(selectedHabit, $"{log.Item2} {selectedMeasurement}", log.Item1);
-                    
-                }
-
-                habitLogsTable
-                    .Border(TableBorder.Minimal)
-                    .Expand();
-
-                AnsiConsole.Write(habitLogsTable);
-
-                ContinuePrompt();
-
+                HabitsManager.ViewHabitLogs();
+                UIHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.DeleteHabitLog:
-                AnsiConsole.Write("Nothing here yet, sorry!");
-                Console.ReadKey();
+                HabitsManager.DeleteHabitLog();
+                UIHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.UpdateHabitLog:
                 AnsiConsole.Write("Nothing here yet, sorry!");
-                Console.ReadKey();
+                UIHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.BackToMainMenu:
                 break;

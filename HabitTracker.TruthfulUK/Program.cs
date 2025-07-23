@@ -12,11 +12,6 @@ if (File.Exists("HabitsTrackerLocalDB.db"))
 if (!File.Exists("HabitsTrackerLocalDB.db"))
 {
     DB_Helpers.InitializeDatabase();
-    Console.WriteLine("Database initialized.");
-
-    DB_Helpers.SeedDatabase();
-    Console.WriteLine("Database seeded with initial data.");
-    Console.ReadKey();
 }
 
 UserInterface.DisplayMainMenu();

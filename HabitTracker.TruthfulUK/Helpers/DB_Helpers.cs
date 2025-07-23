@@ -24,7 +24,7 @@ public class DB_Helpers
         CREATE TABLE IF NOT EXISTS HabitLogs (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             HabitId INTEGER NOT NULL,
-            Amount INTEGER,
+            Amount DOUBLE,
             OccurrenceDate DATE NOT NULL,
             FOREIGN KEY (HabitId) REFERENCES Habits(Id)
         );
@@ -54,7 +54,10 @@ public class DB_Helpers
     {
         using var connection = GetOpenConnection();
         using var selectCommand = connection.CreateCommand();
-        selectCommand.CommandText = "SELECT Measurement FROM Habits WHERE Name = @habitName";
+        selectCommand.CommandText = @"
+            SELECT Measurement 
+            FROM Habits 
+            WHERE Name = @habitName";
         selectCommand.Parameters.AddWithValue("@habitName", habitName);
         
         using var reader = selectCommand.ExecuteReader();
@@ -65,7 +68,7 @@ public class DB_Helpers
         return string.Empty;
     }
 
-    public static void AddHabitLog(string habitName, int amount, DateOnly occurrenceDate)
+    public static void AddHabitLog(string habitName, double amount, DateOnly occurrenceDate)
     {
         if (occurrenceDate == default)
         {
@@ -88,12 +91,12 @@ public class DB_Helpers
         insertCommand.ExecuteNonQuery();
     }
 
-    public static List<(string, string)> ViewHabitLogs(string habitName)
+    public static List<(int, string, double)> ViewHabitLogs(string habitName)
     {
         using var connection = GetOpenConnection();
         using var selectCommand = connection.CreateCommand();
         selectCommand.CommandText = @"
-            SELECT hl.OccurrenceDate, hl.Amount
+            SELECT hl.id, hl.OccurrenceDate, hl.Amount
             FROM HabitLogs hl
             JOIN Habits h ON hl.HabitId = h.Id
             WHERE h.Name = @habitName
@@ -101,25 +104,25 @@ public class DB_Helpers
         selectCommand.Parameters.AddWithValue("@habitName", habitName);
         using var reader = selectCommand.ExecuteReader();
 
-        var habitLogs = new List<(string, string)>();
+        var habitLogs = new List<(int id, string date, double amount)>();
 
         while (reader.Read())
         {
-            string date = reader["OccurrenceDate"] != DBNull.Value
-                ? Convert.ToDateTime(reader["OccurrenceDate"]).ToString("yyyy-MM-dd")
-                : string.Empty;
-
-            string amount = reader["Amount"] != DBNull.Value
-                ? Convert.ToInt32(reader["Amount"]).ToString()
-                : string.Empty;
-
-            habitLogs.Add((date, amount));
+            habitLogs.Add((reader.GetInt32(0), reader.GetString(1), reader.GetDouble(2)));
         }
 
         return habitLogs;
     }
 
-    // Debug method to seed the database with initial data
+    public static void DeleteHabitLog(int rowId)
+    {
+        using var connection = GetOpenConnection();
+        using var deleteCommand = connection.CreateCommand();
+        deleteCommand.CommandText = "DELETE FROM HabitLogs WHERE Id = @rowId";
+        deleteCommand.Parameters.AddWithValue("@rowId", rowId);
+        deleteCommand.ExecuteNonQuery();
+    }
+
     public static void SeedDatabase() {         
         using var connection = GetOpenConnection();
         using var insertCommand = connection.CreateCommand();
@@ -129,7 +132,8 @@ public class DB_Helpers
         ('Water Intake', 'ml', '2025-05-03'),
         ('Push-ups', 'reps', '2025-05-01'),    
         ('Walking', 'steps', '2025-05-05'),
-        ('Reading', 'pages', '2025-05-04');
+        ('Running', 'km', '2025-05-06'),
+        ('Cycling', 'km', '2025-05-07');
 
         -- HABIT Logs (randomized)
         INSERT INTO HabitLogs (HabitId, Amount, OccurrenceDate) VALUES
@@ -166,29 +170,11 @@ public class DB_Helpers
         (3, 10500, '2025-06-13'),
         (4, 20, '2025-06-14'),
         (1, 2000, '2025-06-16'),
-        (2, 42, '2025-06-17'),
-        (3, 9600, '2025-06-18'),
-        (4, 26, '2025-06-19'),
-        (1, 1950, '2025-06-21'),
-        (2, 48, '2025-06-22'),
-        (3, 9900, '2025-06-23'),
-        (4, 32, '2025-06-24'),
-        (1, 2100, '2025-07-01'),
-        (2, 52, '2025-07-02'),
-        (3, 10300, '2025-07-03'),
-        (4, 27, '2025-07-04'),
-        (1, 2250, '2025-07-06'),
-        (2, 65, '2025-07-07'),
-        (3, 9700, '2025-07-08'),
-        (4, 19, '2025-07-09'),
-        (1, 2350, '2025-07-11'),
-        (2, 58, '2025-07-12'),
-        (3, 9300, '2025-07-13'),
-        (4, 21, '2025-07-14'),
-        (1, 1800, '2025-07-16'),
-        (2, 36, '2025-07-17'),
-        (3, 8900, '2025-07-18'),
-        (4, 24, '2025-07-19');
+        (5, 5.4, '2025-06-17'),
+        (5, 2.1, '2025-06-17'),
+        (5, 3.33, '2025-06-17'),
+        (5, 2.44, '2025-06-17'),
+        (5, 4, '2025-07-19');
         ";
         insertCommand.ExecuteNonQuery();
     }
