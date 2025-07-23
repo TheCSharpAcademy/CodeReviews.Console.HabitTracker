@@ -550,7 +550,6 @@ namespace HabitTracker
         private string GetNewHabitName()
         {
             var habitName = string.Empty;
-            var status = string.Empty;
             bool habitExists = true;
 
             while (habitExists == true)
