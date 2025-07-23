@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HabitTracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Programming\\C Sharp Academy\\Habit Tracker\\HabitTrackerApp\\HabitTracker"
+    }
+  }
+}
