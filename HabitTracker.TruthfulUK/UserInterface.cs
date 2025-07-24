@@ -39,7 +39,7 @@ internal static class UserInterface
                     HabitManager.AddNewHabit();
                     UIHelpers.PressKeyToContinue();
                     break;
-                case MainMenu.HabitReport:
+                case MainMenu.HabitReports:
                     DisplayReportMenu();
                     break;
                 case MainMenu.ExitApplication:
@@ -97,12 +97,12 @@ internal static class UserInterface
         switch (selectedEnum)
         {
             case ReportOptions.DayReport:
-                AnsiConsole.Write("Nothing here yet, sorry!");
-                Console.ReadKey();
+                HabitReportManager.GenerateDayReport();
+                UIHelpers.PressKeyToContinue();
                 break;
-            case ReportOptions.DateRangeReport:
-                AnsiConsole.Write("Nothing here yet, sorry!");
-                Console.ReadKey();
+            case ReportOptions.TotalLoggedByHabit:
+                HabitReportManager.GenerateTotalLogged();
+                UIHelpers.PressKeyToContinue();
                 break;
             case ReportOptions.BackToMainMenu:
                 break;

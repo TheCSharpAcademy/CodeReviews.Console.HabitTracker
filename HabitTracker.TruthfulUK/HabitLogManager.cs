@@ -31,8 +31,6 @@ internal static class HabitLogManager
     {
         var selectedHabit = UIHelpers.AskForHabitSelection();
 
-        DB_Helpers.ViewHabitLogs(selectedHabit);
-
         List<(int, string, double)> habitLogs = DB_Helpers.ViewHabitLogs(selectedHabit);
         selectedMeasurement = DB_Helpers.SelectMeasurement(selectedHabit);
 

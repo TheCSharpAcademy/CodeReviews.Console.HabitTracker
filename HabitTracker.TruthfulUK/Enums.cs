@@ -12,8 +12,8 @@ internal class Enums
         [Display(Name = "Add a New Habit")]
         AddHabit,
 
-        [Display(Name = "Habit Report")]
-        HabitReport,
+        [Display(Name = "Habit Reports")]
+        HabitReports,
 
         [Display(Name = "Exit Application")]
         ExitApplication
@@ -42,8 +42,8 @@ internal class Enums
         [Display(Name = "Day Report")]
         DayReport,
 
-        [Display(Name = "Date Range Report")]
-        DateRangeReport,
+        [Display(Name = "Total Logged by Habit")]
+        TotalLoggedByHabit,
 
         [Display(Name = "Back to Main Menu")]
         BackToMainMenu
