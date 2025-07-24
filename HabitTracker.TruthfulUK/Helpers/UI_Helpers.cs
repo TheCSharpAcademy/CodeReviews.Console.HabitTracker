@@ -22,8 +22,21 @@ internal static class UIHelpers
 
     public static void PressKeyToContinue()
     {
-        AnsiConsole.MarkupLine("[blue]Press Any Key to return to the menu...[/]");
+        var paddedContinueText =
+            new Text("Press Any Key to return to the menu...",
+            new Style(Color.Blue));
+        var paddedContinue = new Padder(paddedContinueText).PadTop(2).PadBottom(2).PadLeft(0);
+        AnsiConsole.Write(paddedContinue);
         Console.ReadKey();
+    }
+
+    public static void InvalidIDError(int rowId) 
+    {
+        var paddedErrorText =
+            new Text($"Row ID #{rowId} is not a valid option. Please try again.",
+            new Style(Color.Red));
+        var paddedError = new Padder(paddedErrorText).PadTop(2).PadBottom(2).PadLeft(0);
+        AnsiConsole.Write(paddedError);
     }
 
     public static string AskForHabitSelection()

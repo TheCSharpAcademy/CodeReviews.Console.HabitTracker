@@ -123,6 +123,39 @@ public class DB_Helpers
         deleteCommand.ExecuteNonQuery();
     }
 
+    public static void UpdateHabitLog(int rowId, double newAmount, DateOnly newDate)
+    {
+        if (newDate == default)
+        {
+            newDate = DateOnly.FromDateTime(DateTime.Now);
+        }
+        using var connection = GetOpenConnection();
+        using var updateCommand = connection.CreateCommand();
+        updateCommand.CommandText = @"
+            UPDATE HabitLogs 
+            SET Amount = @newAmount, OccurrenceDate = @newDate 
+            WHERE Id = @rowId";
+        updateCommand.Parameters.AddWithValue("@newAmount", newAmount);
+        updateCommand.Parameters.AddWithValue("@newDate", newDate.ToString("yyyy-MM-dd"));
+        updateCommand.Parameters.AddWithValue("@rowId", rowId);
+        
+        updateCommand.ExecuteNonQuery();
+    }
+
+    public static void AddHabit(string habitName, string measurement)
+    {
+        using var connection = GetOpenConnection();
+        using var insertCommand = connection.CreateCommand();
+        insertCommand.CommandText = @"
+            INSERT INTO Habits (Name, Measurement, CreatedAt) 
+            VALUES (@habitName, @measurement, @createdAt)";
+        insertCommand.Parameters.AddWithValue("@habitName", habitName);
+        insertCommand.Parameters.AddWithValue("@measurement", measurement);
+        insertCommand.Parameters.AddWithValue("@createdAt", DateTime.Now.ToString("yyyy-MM-dd"));
+        
+        insertCommand.ExecuteNonQuery();
+    }
+
     public static void SeedDatabase() {         
         using var connection = GetOpenConnection();
         using var insertCommand = connection.CreateCommand();

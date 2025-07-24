@@ -9,14 +9,11 @@ internal class Enums
         [Display(Name = "Manage Habit Logs")]
         ManageHabitLogs,
 
-        [Display(Name = "Manage Habit Categories")]
-        ManageHabitCategories,
+        [Display(Name = "Add a New Habit")]
+        AddHabit,
 
-        [Display(Name = "Generate Reports")]
-        GenerateReports,
-
-        [Display(Name = "Debug Options")]
-        DebugOptions,
+        [Display(Name = "Habit Report")]
+        HabitReport,
 
         [Display(Name = "Exit Application")]
         ExitApplication
@@ -35,6 +32,18 @@ internal class Enums
 
         [Display(Name = "Update a Habit Log")]
         UpdateHabitLog,
+
+        [Display(Name = "Back to Main Menu")]
+        BackToMainMenu
+    }
+
+    internal enum ReportOptions
+    {
+        [Display(Name = "Day Report")]
+        DayReport,
+
+        [Display(Name = "Date Range Report")]
+        DateRangeReport,
 
         [Display(Name = "Back to Main Menu")]
         BackToMainMenu
