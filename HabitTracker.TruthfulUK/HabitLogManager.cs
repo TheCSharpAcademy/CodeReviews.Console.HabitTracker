@@ -8,9 +8,9 @@ internal static class HabitLogManager
     internal static string selectedMeasurement = string.Empty;
     internal static void AddNewHabitLog()
     {
-        var selectedHabit = UIHelpers.AskForHabitSelection();
+        var selectedHabit = InputHelpers.AskForHabitSelection();
 
-        var selectedMeasurement = DB_Helpers.SelectMeasurement(selectedHabit);
+        var selectedMeasurement = DbHelpers.SelectMeasurement(selectedHabit);
 
         var loggedMeasurement = AnsiConsole.Prompt(
             new TextPrompt<double>($"Enter amount ({selectedMeasurement}):"));
@@ -18,7 +18,7 @@ internal static class HabitLogManager
         var loggedDate = AnsiConsole.Prompt(
             new TextPrompt<DateOnly>("Enter the date (YYYY-MM-DD) or leave blank for today:").AllowEmpty());
 
-        DB_Helpers.AddHabitLog(selectedHabit, loggedMeasurement, loggedDate);
+        DbHelpers.AddHabitLog(selectedHabit, loggedMeasurement, loggedDate);
 
         Console.WriteLine();
 
@@ -29,10 +29,10 @@ internal static class HabitLogManager
 
     internal static void ViewHabitLogs()
     {
-        var selectedHabit = UIHelpers.AskForHabitSelection();
+        var selectedHabit = InputHelpers.AskForHabitSelection();
 
-        List<(int, string, double)> habitLogs = DB_Helpers.ViewHabitLogs(selectedHabit);
-        selectedMeasurement = DB_Helpers.SelectMeasurement(selectedHabit);
+        List<(int, string, double)> habitLogs = DbHelpers.ViewHabitLogs(selectedHabit);
+        selectedMeasurement = DbHelpers.SelectMeasurement(selectedHabit);
 
         var habitLogsTable = new Table();
         habitLogsTable
@@ -49,7 +49,7 @@ internal static class HabitLogManager
             habitLogsTable.AddRow(
                 $"{row.id}",
                 selectedHabit,
-                $"{UIHelpers.FormatDouble(row.amount)} {selectedMeasurement}",
+                $"{InputHelpers.FormatDouble(row.amount)} {selectedMeasurement}",
                 row.date
             );
         }
@@ -79,7 +79,7 @@ internal static class HabitLogManager
             {
                 if (rowIdToDelete == 0) break;
 
-                DB_Helpers.DeleteHabitLog(rowIdToDelete);
+                DbHelpers.DeleteHabitLog(rowIdToDelete);
 
                 AnsiConsole.MarkupLine($"Habit log with ID [blue]{rowIdToDelete}[/] was deleted successfully!");
 
@@ -87,7 +87,7 @@ internal static class HabitLogManager
             }
             else
             {
-                UIHelpers.InvalidIDError(rowIdToDelete);
+                InputHelpers.InvalidIDError(rowIdToDelete);
                 rowIdToDelete = -1;
             }
         }
@@ -116,7 +116,7 @@ internal static class HabitLogManager
                 var newDate = AnsiConsole.Prompt(
                     new TextPrompt<DateOnly>("Enter the date (YYYY-MM-DD) or leave blank for today:").AllowEmpty());
 
-                DB_Helpers.UpdateHabitLog(rowIdToUpdate, newMeasurement, newDate);
+                DbHelpers.UpdateHabitLog(rowIdToUpdate, newMeasurement, newDate);
 
                 AnsiConsole.MarkupLine($"Habit log with ID [blue]{rowIdToUpdate}[/] was updated successfully!");
 
@@ -124,7 +124,7 @@ internal static class HabitLogManager
             }
             else
             {
-                UIHelpers.InvalidIDError(rowIdToUpdate);
+                InputHelpers.InvalidIDError(rowIdToUpdate);
                 rowIdToUpdate = -1;
             }
         }

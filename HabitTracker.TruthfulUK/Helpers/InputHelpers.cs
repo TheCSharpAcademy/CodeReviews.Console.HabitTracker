@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Spectre.Console;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Spectre.Console;
 
 namespace HabitTracker.TruthfulUK.Helpers;
-internal static class UIHelpers
+internal static class InputHelpers
 {
     public static Dictionary<string, TEnum> GetMenuOptions<TEnum>()
         where TEnum : struct, Enum
@@ -44,7 +44,7 @@ internal static class UIHelpers
         return AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Please select an [blue]option[/]:")
-                .AddChoices(DB_Helpers.SelectHabits()));
+                .AddChoices(DbHelpers.SelectHabits()));
     }
 
     public static string FormatDouble(double value)

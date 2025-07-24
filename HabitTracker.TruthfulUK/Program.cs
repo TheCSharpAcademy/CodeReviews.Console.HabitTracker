@@ -8,10 +8,10 @@ class HabitTrackerApp
     {
         if (!File.Exists("HabitsTrackerLocalDB.db"))
         {
-            DB_Helpers.InitializeDatabase();
+            DbHelpers.InitializeDatabase();
 
             if (args.Contains("debug"))
-                DB_Helpers.SeedDatabase();
+                DbHelpers.SeedDatabase();
         }
         UserInterface.DisplayMainMenu();
     }

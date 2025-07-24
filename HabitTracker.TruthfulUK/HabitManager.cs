@@ -18,7 +18,7 @@ internal static class HabitManager
                 return string.IsNullOrWhiteSpace(unit) ? ValidationResult.Error("Measurement cannot be empty.") : ValidationResult.Success();
             }));
 
-        DB_Helpers.AddHabit(habitName, measurement);
+        DbHelpers.AddHabit(habitName, measurement);
 
         Console.WriteLine();
         AnsiConsole.MarkupLine($"Habit [blue]{habitName}[/] with measurement [blue]{measurement}[/] was added successfully!");

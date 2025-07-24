@@ -11,7 +11,7 @@ internal class HabitReportManager
         var reportDate = AnsiConsole.Prompt(
             new TextPrompt<DateOnly>("Enter the requested date (YYYY-MM-DD) or leave blank for today:").AllowEmpty());
 
-        List<(string, double, string)> dayReport = DB_Helpers.HabitDayReport(reportDate);
+        List<(string, double, string)> dayReport = DbHelpers.HabitDayReport(reportDate);
 
         var dayReportTable = new Table();
         dayReportTable
@@ -21,7 +21,7 @@ internal class HabitReportManager
         foreach ((string name, double amount, string measurement) row in dayReport) {             
             dayReportTable.AddRow(
                 $"{row.name}",
-                $"{UIHelpers.FormatDouble(row.amount)} {row.measurement}"
+                $"{InputHelpers.FormatDouble(row.amount)} {row.measurement}"
             );
         }
 
@@ -37,7 +37,7 @@ internal class HabitReportManager
     {
         AnsiConsole.MarkupLine("This report shows [underline]all habits[/] and the [underline]total amount[/] you have logged.");
 
-        List<(string, double, string)> totalLoggedReport = DB_Helpers.TotalLoggedReport();
+        List<(string, double, string)> totalLoggedReport = DbHelpers.TotalLoggedReport();
 
         var totalLoggedTable = new Table();
         totalLoggedTable
@@ -48,7 +48,7 @@ internal class HabitReportManager
         {
             totalLoggedTable.AddRow(
                 $"{row.name}",
-                $"{UIHelpers.FormatDouble(row.amount)} {row.measurement}"
+                $"{InputHelpers.FormatDouble(row.amount)} {row.measurement}"
             );
         }
 

@@ -10,7 +10,7 @@ internal static class UserInterface
 
     public static void DisplayMainMenu()
     {
-        var options = UIHelpers.GetMenuOptions<MainMenu>();
+        var options = InputHelpers.GetMenuOptions<MainMenu>();
 
         while (!exitRequested)
         {
@@ -37,7 +37,7 @@ internal static class UserInterface
                     break;
                 case MainMenu.AddHabit:
                     HabitManager.AddNewHabit();
-                    UIHelpers.PressKeyToContinue();
+                    InputHelpers.PressKeyToContinue();
                     break;
                 case MainMenu.HabitReports:
                     DisplayReportMenu();
@@ -51,7 +51,7 @@ internal static class UserInterface
     }
     public static void DisplayManageHabitsMenu()
     {
-        var options = UIHelpers.GetMenuOptions<ManageHabitLogs>();
+        var options = InputHelpers.GetMenuOptions<ManageHabitLogs>();
 
         var selectedOption = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -64,19 +64,19 @@ internal static class UserInterface
         {
             case ManageHabitLogs.AddNewHabitLog:
                 HabitLogManager.AddNewHabitLog();
-                UIHelpers.PressKeyToContinue();
+                InputHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.ViewHabitLogs:
                 HabitLogManager.ViewHabitLogs();
-                UIHelpers.PressKeyToContinue();
+                InputHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.DeleteHabitLog:
                 HabitLogManager.DeleteHabitLog();
-                UIHelpers.PressKeyToContinue();
+                InputHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.UpdateHabitLog:
                 HabitLogManager.UpdateHabitLog();
-                UIHelpers.PressKeyToContinue();
+                InputHelpers.PressKeyToContinue();
                 break;
             case ManageHabitLogs.BackToMainMenu:
                 break;
@@ -85,7 +85,7 @@ internal static class UserInterface
 
     public static void DisplayReportMenu()
     {
-        var options = UIHelpers.GetMenuOptions<ReportOptions>();
+        var options = InputHelpers.GetMenuOptions<ReportOptions>();
 
         var selectedOption = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -98,11 +98,11 @@ internal static class UserInterface
         {
             case ReportOptions.DayReport:
                 HabitReportManager.GenerateDayReport();
-                UIHelpers.PressKeyToContinue();
+                InputHelpers.PressKeyToContinue();
                 break;
             case ReportOptions.TotalLoggedByHabit:
                 HabitReportManager.GenerateTotalLogged();
-                UIHelpers.PressKeyToContinue();
+                InputHelpers.PressKeyToContinue();
                 break;
             case ReportOptions.BackToMainMenu:
                 break;
