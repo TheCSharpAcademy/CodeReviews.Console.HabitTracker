@@ -8,6 +8,6 @@ public class LearningJS
 
     public override string ToString()
     {
-        return $"Id: {this.Id}, Date: {new string(this.Date.ToShortDateString().TakeWhile(c => c != ' ').ToArray())} , Quantity: {this.Quantity}";
+        return $"Id: {this.Id}, Date: {this.Date.ToShortDateString()} , Quantity: {this.Quantity}";
     }
 }
