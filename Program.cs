@@ -129,6 +129,8 @@ class Program
             if (rowCount == 0)
             {
                 Console.WriteLine($"\n\nNo record with Id {recordToDeleteId} was found in the database!");
+                Console.WriteLine($"Pres any key to continue...");
+                Console.ReadKey();
                 Delete();
             }
         }
