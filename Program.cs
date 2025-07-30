@@ -135,8 +135,14 @@ class Program
             int checkQuery = Convert.ToInt32(checkCommand.ExecuteScalar());
             if (checkQuery == 0)
             {
+
                 Console.WriteLine($"\n\nRecord with Id {recordToDeleteId} doesn't exist!\n\n");
                 
+
+                Console.WriteLine($"\n\nNo record with Id {recordToDeleteId} was found in the database!");
+                Console.WriteLine($"Pres any key to continue...");
+                Console.ReadKey();
+
                 Delete();
             }
             else
@@ -146,7 +152,7 @@ class Program
                 tableCommand.CommandText
                 = $"DELETE from learning_js WHERE Id = '{recordToDeleteId}'";
 
-                int rowCount = tableCommand.ExecuteNonQuery();
+                tableCommand.ExecuteNonQuery();
 
 
                 Console.WriteLine($"\n\nRecord with Id {recordToDeleteId} was successfully deleted! \n\n");
