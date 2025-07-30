@@ -11,8 +11,7 @@ class Program
     static readonly string connectionString = @"Data Source=../../../habit-Tracker.db";
     static void Main(string[] args)
     {
-        using (var connection = new SqliteConnection(connectionString))
-        {
+        using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
             var tableCommand = connection.CreateCommand();
