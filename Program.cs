@@ -39,6 +39,7 @@ class Program
         while (!closeApp)
         {
             Console.WriteLine("\n\nMAINMENU");
+            Console.WriteLine("\n-Habit Tracker for Learning JavaScript-");
             Console.WriteLine("\nWhat would you like to do?");
             Console.WriteLine("\nType 0 to Close Application.");
             Console.WriteLine("Type 1 to View All Records.");
@@ -48,6 +49,8 @@ class Program
             Console.WriteLine("----------------------------------------\n");
 
             string userInput = Console.ReadLine();
+
+            Console.Clear();
 
             switch (userInput)
             {
@@ -77,7 +80,7 @@ class Program
 
     private static void Update()
     {
-        Console.Clear();
+  
 
         int recordToUpdateId = GetNumberInput("\n\nPlease enter the Id of the record you wish to update. Type 0 to return to the Main Menu.\n\n");
 
@@ -91,58 +94,72 @@ class Program
             if (checkQuery == 0)
             {
                 Console.WriteLine($"\n\nRecord with Id {recordToUpdateId} doesn't exist!\n\n");
-                connection.Close();
+                
                 Update();
             }
-            string date = GetDateInput();
+            else
+            {
+                string date = GetDateInput();
 
-            int quantity = GetNumberInput("\n\nPlease insert number of hours/minutes: (no decimals)\n\n");
+                int quantity = GetNumberInput("\n\nPlease insert number of hours/minutes: (no decimals)\n\n");
 
-            var tableCommand = connection.CreateCommand();
+                var tableCommand = connection.CreateCommand();
 
-            tableCommand.CommandText
-            = $"UPDATE learning_js SET Date = '{date}', Quantity = '{quantity}' WHERE Id = '{recordToUpdateId}'";
+                tableCommand.CommandText
+                = $"UPDATE learning_js SET Date = '{date}', Quantity = '{quantity}' WHERE Id = '{recordToUpdateId}'";
 
-            tableCommand.ExecuteNonQuery();
+                tableCommand.ExecuteNonQuery();
 
-            connection.Close();
+                connection.Close();
+
+                Console.WriteLine($"\nSuccessfully updated record with ID {recordToUpdateId}!\n");
+            
+            }
+                
         }
 
     }
 
     private static void Delete()
     {
-        Console.Clear();
+       
 
         int recordToDeleteId = GetNumberInput("\n\nPlease enter the Id of the record you wish to delete. Type 0 to return to the Main Menu.\n\n");
 
-        using (var connection = new SqliteConnection(connectionString))
-        {
+        
+        using var connection = new SqliteConnection(connectionString);
+        
             connection.Open();
 
-            var tableCommand = connection.CreateCommand();
-
-            tableCommand.CommandText
-            = $"DELETE from learning_js WHERE Id = '{recordToDeleteId}'";
-
-            int rowCount = tableCommand.ExecuteNonQuery();
-
-            if (rowCount == 0)
+            var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = $"SELECT EXISTS(SELECT 1 FROM learning_js WHERE Id = {recordToDeleteId})";
+            int checkQuery = Convert.ToInt32(checkCommand.ExecuteScalar());
+            if (checkQuery == 0)
             {
-                Console.WriteLine($"\n\nNo record with Id {recordToDeleteId} was found in the database!");
+                Console.WriteLine($"\n\nRecord with Id {recordToDeleteId} doesn't exist!\n\n");
+                
                 Delete();
             }
-        }
+            else
+            {
+                var tableCommand = connection.CreateCommand();
 
-        Console.WriteLine($"\n\nRecord with Id {recordToDeleteId} was successfully deleted! \n\n");
-        
+                tableCommand.CommandText
+                = $"DELETE from learning_js WHERE Id = '{recordToDeleteId}'";
+
+                int rowCount = tableCommand.ExecuteNonQuery();
+
+
+                Console.WriteLine($"\n\nRecord with Id {recordToDeleteId} was successfully deleted! \n\n");
+            }
+       
     }
 
     private static void GetAllRecords()
     {
-        Console.Clear();
-        using (var connection = new SqliteConnection(connectionString))
-        {
+       
+        using var connection = new SqliteConnection(connectionString);
+        
             connection.Open();
 
             var tableCommand = connection.CreateCommand();
@@ -162,7 +179,7 @@ class Program
                     new LearningJS
                     {
                         Id = reader.GetInt32(0),
-                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", CultureInfo.CurrentCulture),
+                        Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yyyy", CultureInfo.InvariantCulture),
                         Quantity = reader.GetInt32(2)
                     });
                 }
@@ -175,19 +192,20 @@ class Program
             {
                 Console.WriteLine("No data found!");
             }
-          
-            connection.Close();
-        }
+         
+        
     }
 
     private static void Insert()
     {
+      
+
         string date = GetDateInput();
 
         int quantity = GetNumberInput("\n\nPlease insert number of hours/minutes: (no decimals)\n\n");
 
-        using (var connection = new SqliteConnection(connectionString))
-        {
+        using var connection = new SqliteConnection(connectionString);
+        
             connection.Open();
 
             var tableCommand = connection.CreateCommand();
@@ -196,9 +214,10 @@ class Program
             = $"INSERT INTO learning_js(Date, Quantity) VALUES('{date}', {quantity})";
             tableCommand.ExecuteNonQuery();
 
-            connection.Close();
-        }
+        Console.WriteLine("\nSuccesfully inserted new record. Press any key to continue...\n");
 
+        Console.ReadKey();
+        
         GetUserInput();
     }
 
@@ -226,7 +245,7 @@ class Program
 
     private static string GetDateInput()
     {
-        Console.WriteLine("\n\nPlease insert the date: (Format: dd-MM-yyyy). Type 0 to return to Main Menu or type 'Today' to select current date:");
+        Console.WriteLine("\n\nPlease insert the date: (Format: dd-MM-yyyy). Type 0 to return to Main Menu or type 'Today' to select current date:\n");
 
         string dateInput = Console.ReadLine();
 
@@ -236,11 +255,11 @@ class Program
         }
         if (dateInput.ToLower() == "today")
         {
-            dateInput = new string(DateTime.Today.ToString("dd-MM-yyyy").TakeWhile(c => c != ' ').ToArray());
+            dateInput = DateTime.Now.Date.ToString("dd-MM-yyyy");
         }
         else
         {
-            while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out _))
+            while (!DateTime.TryParseExact(dateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
                 Console.WriteLine("\n\nInvalid date. {Format: dd-MM-yyyy}. Type 0 to return to Main Menu or try again:\n\n");
                 dateInput = Console.ReadLine();
@@ -250,7 +269,7 @@ class Program
                 }
                 if (dateInput.ToLower() == "Today")
                 {
-                    dateInput = new string(DateTime.Today.ToShortDateString().TakeWhile(c => c != ' ').ToArray());
+                    dateInput = DateTime.Today.ToShortDateString();
                 }
             }
         }
