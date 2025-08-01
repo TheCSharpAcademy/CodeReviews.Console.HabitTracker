@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "jIk5TZSiDAw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\anarusu\\source\\repos\\CSharp-Academy-Portfolio\\03_HabitLogger\\03_HabitLogger\\HabitLoggerApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\anarusu\\.nuget\\packages\\spectre.console\\0.50.0\\spectre.console.0.50.0.nupkg.sha512",
+    "C:\\Users\\anarusu\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.119\\stub.system.data.sqlite.core.netstandard.1.0.119.nupkg.sha512",
+    "C:\\Users\\anarusu\\.nuget\\packages\\system.data.sqlite.core\\1.0.119\\system.data.sqlite.core.1.0.119.nupkg.sha512",
+    "C:\\Users\\anarusu\\.nuget\\packages\\system.memory\\4.6.3\\system.memory.4.6.3.nupkg.sha512"
+  ],
+  "logs": []
+}

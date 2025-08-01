@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+﻿.vs/
+=======
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio
 
@@ -417,3 +420,4 @@ HabitTracker.MartinL-no/HabitTracker.MartinL-no/obj/Debug/net7.0/HabitTracker.Ma
 HabitTracker.MartinL-no/.DS_Store
 HabitTracker.MartinL-no/habitTracker.MartinL-no/.DS_Store
 /HabitTracker.Johay90/HabitTracker/habit_tracker.db
+>>>>>>> a1aeb9c7fe16e6dfc7db05f8c6e2d5228ec1255c
