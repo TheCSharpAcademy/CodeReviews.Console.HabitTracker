@@ -2,7 +2,10 @@
 📋 Overview
 This is a simple console-based habit tracking application that allows users to create, read, update, and delete records of their daily water intake. It uses SQLite for data storage and demonstrates ADO.NET for database interaction along with strong user input validation.
 
+
+
 🔧 Features
+
 1.Create and manage a drinking_water table in SQLite.
 
 2.Insert records with date and water quantity.
