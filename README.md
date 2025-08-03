@@ -21,7 +21,6 @@ This is a simple console-based habit tracking application that allows users to c
 5.Input validation for date and quantity to ensure data accuracy.
 
 🛠 Technologies Used
-Technology	Purpose
 C# (.NET)	Core language
 SQLite	Lightweight relational database
 ADO.NET	Database communication (via Microsoft.Data.Sqlite)
@@ -29,11 +28,4 @@ Console UI	User interface for input/output
 
 
 ✅ Note: All SQL queries are written manually, giving full control over the database logic and structure. This is typical of ADO.NET-based applications.
-
-
-Gained practical experience with SQL parameterization.
-
-Built resilience with user input validation techniques.
-
-Reinforced concepts of CRUD operations using raw SQL.
 
